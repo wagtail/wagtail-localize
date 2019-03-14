@@ -8,6 +8,8 @@ from django.utils import translation
 from wagtail.core.models import Page
 from wagtail.images.models import AbstractImage
 
+from .utils import find_available_slug
+
 
 class Language(models.Model):
     code = models.CharField(max_length=100, unique=True)
@@ -28,7 +30,7 @@ class Translatable(models.Model):
     language = models.ForeignKey(Language, on_delete=models.PROTECT, related_name='+', default=Language.default)
 
     def get_translations(self, inclusive=False):
-        translations = self.__class__.filter(translation_key=self.translation_key)
+        translations = self.__class__.objects.filter(translation_key=self.translation_key)
 
         if inclusive is False:
             translations = translations.exclude(id=self.id)
@@ -50,14 +52,23 @@ class Translatable(models.Model):
 
             # Find the translated version of the parent page to create the new page under
             parent = self.get_parent().specific
-            translated_parent = parent.get_translation(language)
-            if translated_parent is None:
-                if isinstance(parent, Translatable):
+            slug = self.slug
+            if isinstance(parent, Translatable):
+                try:
+                    translated_parent = parent.get_translation(language)
+                except parent.__class__.DoesNotExist:
                     translated_parent = parent.copy_for_translation(language)
-                else:
-                    translated_parent = parent
+            else:
+                translated_parent = parent
 
-            return self.copy(to=translated_parent, update_attrs={'language': language}, copy_revisions=False, keep_live=False)
+                # Append language code to slug as the new page
+                # will be created in the same section as the existing one
+                slug += '-' + language.code
+
+            # Find available slug for new page
+            slug = find_available_slug(translated_parent, slug)
+
+            return self.copy(to=translated_parent, update_attrs={'language': language, 'slug': slug}, copy_revisions=False, keep_live=False)
 
         else:
             # For other models, fetch a new instance and remove the ID
