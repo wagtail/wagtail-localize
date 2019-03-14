@@ -39,9 +39,9 @@ class Translatable(models.Model):
 
     def get_translation(self, language):
         if isinstance(language, str):
-            return self.get_translations().get(language__code=language)
+            return self.get_translations(inclusive=True).get(language__code=language)
         else:
-            return self.get_translations().get(language=language)
+            return self.get_translations(inclusive=True).get(language=language)
 
     def copy_for_translation(self, language):
         """
@@ -85,6 +85,41 @@ class Translatable(models.Model):
                 translated.file = ContentFile(self.file.read(), name=new_name)
 
             return translated
+
+    def get_translation_for_request(self, request):
+        """
+        Returns the translation of this page that should be used to route
+        the specified request.
+        """
+        language_code = translation.get_supported_language_variant(request.LANGUAGE_CODE)
+
+        try:
+            language = Language.objects.get(code=language_code)
+            return self.get_translation(language)
+
+        except Language.DoesNotExist:
+            return
+
+        except Page.DoesNotExist:
+            return
+
+    def route(self, request, path_components):
+        # When this mixin is applied to a page, this override
+        # will change the routing behaviour to route requests to
+        # the correct translation based on the language code on
+        # the request.
+
+        # Check that an ancestor hasn't already routed the request into
+        # a single-language section of the site.
+        if not getattr(request, '_wagtail_i18n_routed', False):
+            # If the site root is translatable, reroute based on language
+            page = self.get_translation_for_request(request)
+
+            if page is not None:
+                request._wagtail_i18n_routed = True
+                return page.route(request, path_components)
+
+        return super().route(request, path_components)
 
     @classmethod
     def get_translation_model(self):
