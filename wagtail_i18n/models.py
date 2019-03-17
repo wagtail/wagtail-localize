@@ -24,6 +24,19 @@ class Language(models.Model):
 
         return language.id
 
+    @classmethod
+    def get_active(cls):
+        default_code = translation.get_supported_language_variant(translation.get_language())
+
+        language, created = cls.objects.get_or_create(
+            code=default_code,
+        )
+
+        return language.id
+
+    def __str__(self):
+        return dict(settings.LANGUAGES)[self.code]
+
 
 class Translatable(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
