@@ -104,6 +104,34 @@ class TranslatableMixin(models.Model):
 
 class TranslatablePageMixin(TranslatableMixin):
 
+    def copy(self, reset_translation_key=True, **kwargs):
+        # If this is a regular copy (not copy_for_translation) we should change the translation_key
+        # of the page and all child objects so they don't clash with the original page
+
+        if reset_translation_key:
+            if 'update_attrs' in kwargs:
+                if 'translation_key' not in kwargs['update_attrs']:
+                    kwargs['update_attrs']['translation_key'] = uuid.uuid4()
+
+            else:
+                kwargs['update_attrs'] = {
+                    'translation_key': uuid.uuid4(),
+                }
+
+            original_process_child_object = kwargs.pop('process_child_object')
+
+            def process_child_object(child_relation, child_object):
+                # Change translation keys of translatable child objects
+                if isinstance(child_object, TranslatableMixin):
+                    child_object.translation_key = uuid.uuid4()
+
+                if original_process_child_object is not None:
+                    original_process_child_object(child_relation, child_object)
+
+            kwargs['process_child_object'] = process_child_object
+
+        return super().copy(**kwargs)
+
     def copy_for_translation(self, language):
         """
         Copies this page for the specified language.
@@ -126,7 +154,19 @@ class TranslatablePageMixin(TranslatableMixin):
         # Find available slug for new page
         slug = find_available_slug(translated_parent, slug)
 
-        return self.copy(to=translated_parent, update_attrs={'language': language, 'slug': slug}, copy_revisions=False, keep_live=False)
+        # Update language on translatable child objects as well
+        def process_child_object(child_relation, child_object):
+            if isinstance(child_object, TranslatableMixin):
+                child_object.language = language
+
+        return self.copy(
+            to=translated_parent,
+            update_attrs={'language': language, 'slug': slug},
+            copy_revisions=False,
+            keep_live=False,
+            reset_translation_key=False,
+            process_child_object=process_child_object,
+        )
 
     def get_translation_for_request(self, request):
         """
