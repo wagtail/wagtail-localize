@@ -132,7 +132,7 @@ class TranslatablePageMixin(TranslatableMixin):
 
         return super().copy(**kwargs)
 
-    def copy_for_translation(self, language):
+    def copy_for_translation(self, language, copy_parents=False):
         """
         Copies this page for the specified language.
         """
@@ -143,7 +143,8 @@ class TranslatablePageMixin(TranslatableMixin):
             try:
                 translated_parent = parent.get_translation(language)
             except parent.__class__.DoesNotExist:
-                translated_parent = parent.copy_for_translation(language)
+                if copy_parents:
+                    translated_parent = parent.copy_for_translation(language, copy_parents=True)
         else:
             translated_parent = parent
 
