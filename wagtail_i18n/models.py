@@ -60,6 +60,12 @@ class TranslatableMixin(models.Model):
         else:
             return self.get_translations(inclusive=True).get(language=language)
 
+    def has_translation(self, language):
+        if isinstance(language, str):
+            return self.get_translations(inclusive=True).filter(language__code=language).exists()
+        else:
+            return self.get_translations(inclusive=True).filter(language=language).exists()
+
     def copy_for_translation(self, language):
         """
         Copies this instance for the specified language.
