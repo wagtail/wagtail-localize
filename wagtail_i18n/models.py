@@ -22,7 +22,11 @@ class Language(models.Model):
             code=default_code,
         )
 
-        return language.id
+        return language
+
+    @classmethod
+    def default_id(cls):
+        return cls.default().id
 
     @classmethod
     def get_active(cls):
@@ -32,7 +36,7 @@ class Language(models.Model):
             code=default_code,
         )
 
-        return language.id
+        return language
 
     def __str__(self):
         return dict(settings.LANGUAGES)[self.code]
@@ -40,7 +44,7 @@ class Language(models.Model):
 
 class Translatable(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    language = models.ForeignKey(Language, on_delete=models.PROTECT, related_name='+', default=Language.default)
+    language = models.ForeignKey(Language, on_delete=models.PROTECT, related_name='+', default=Language.default_id)
 
     def get_translations(self, inclusive=False):
         translations = self.__class__.objects.filter(translation_key=self.translation_key)
