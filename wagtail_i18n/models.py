@@ -267,6 +267,12 @@ class TranslatableMixin(models.Model):
         """
         return self._meta.get_field('locale').model
 
+    @classmethod
+    def get_translatable_fields(cls):
+        for field in cls._meta.get_fields():
+            if field.name in cls.translatable_fields:
+                yield field
+
     class Meta:
         abstract = True
         unique_together = [
@@ -311,7 +317,7 @@ class TranslatablePageMixin(TranslatableMixin):
         # Find the translated version of the parent page to create the new page under
         parent = self.get_parent().specific
         slug = self.slug
-        if isinstance(parent, TranslatableMixin):
+        if isinstance(parent, TranslatablePageMixin):
             try:
                 translated_parent = parent.get_translation(locale)
             except parent.__class__.DoesNotExist:
