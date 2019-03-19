@@ -42,7 +42,7 @@ class Language(models.Model):
         return dict(settings.LANGUAGES)[self.code]
 
 
-class Translatable(models.Model):
+class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
     language = models.ForeignKey(Language, on_delete=models.PROTECT, related_name='+', default=Language.default_id)
 
@@ -64,44 +64,63 @@ class Translatable(models.Model):
         """
         Copies this instance for the specified language.
         """
-        if isinstance(self, Page):
-            # Use Wagtail's Page copy to copy pages
+        translated = self.__class__.objects.get(id=self.id)
+        translated.id = None
+        translated.language = language
 
-            # Find the translated version of the parent page to create the new page under
-            parent = self.get_parent().specific
-            slug = self.slug
-            if isinstance(parent, Translatable):
-                try:
-                    translated_parent = parent.get_translation(language)
-                except parent.__class__.DoesNotExist:
-                    translated_parent = parent.copy_for_translation(language)
-            else:
-                translated_parent = parent
+        if isinstance(self, AbstractImage):
+            # As we've copied the image record we also need to copy the original image file itself.
+            # This is in case either image record is changed or deleted, the other record will still
+            # have its file.
+            file_stem, file_ext = os.path.splitext(self.file.name)
+            new_name = f'{file_stem}-{language}{file_ext}'
+            translated.file = ContentFile(self.file.read(), name=new_name)
 
-                # Append language code to slug as the new page
-                # will be created in the same section as the existing one
-                slug += '-' + language.code
+        return translated
 
-            # Find available slug for new page
-            slug = find_available_slug(translated_parent, slug)
+    @classmethod
+    def get_translation_model(self):
+        """
+        Gets the model which manages the translations for this model.
+        (The model that has the "translation_key" and "language" fields)
+        Most of the time this would be the current model, but some sites
+        may have intermediate concrete models between wagtailcore.Page and
+        the specfic page model.
+        """
+        return self._meta.get_field('language').model
 
-            return self.copy(to=translated_parent, update_attrs={'language': language, 'slug': slug}, copy_revisions=False, keep_live=False)
+    class Meta:
+        abstract = True
+        unique_together = [
+            ('translation_key', 'language'),
+        ]
 
+
+class TranslatablePageMixin(TranslatableMixin):
+
+    def copy_for_translation(self, language):
+        """
+        Copies this page for the specified language.
+        """
+        # Find the translated version of the parent page to create the new page under
+        parent = self.get_parent().specific
+        slug = self.slug
+        if isinstance(parent, Translatable):
+            try:
+                translated_parent = parent.get_translation(language)
+            except parent.__class__.DoesNotExist:
+                translated_parent = parent.copy_for_translation(language)
         else:
-            # For other models, fetch a new instance and remove the ID
-            translated = self.__class__.objects.get(id=self.id)
-            translated.id = None
-            translated.language = language
+            translated_parent = parent
 
-            if isinstance(self, AbstractImage):
-                # As we've copied the image record we also need to copy the original image file itself.
-                # This is in case either image record is changed or deleted, the other record will still
-                # have its file.
-                file_stem, file_ext = os.path.splitext(self.file.name)
-                new_name = f'{file_stem}-{language}{file_ext}'
-                translated.file = ContentFile(self.file.read(), name=new_name)
+            # Append language code to slug as the new page
+            # will be created in the same section as the existing one
+            slug += '-' + language.code
 
-            return translated
+        # Find available slug for new page
+        slug = find_available_slug(translated_parent, slug)
+
+        return self.copy(to=translated_parent, update_attrs={'language': language, 'slug': slug}, copy_revisions=False, keep_live=False)
 
     def get_translation_for_request(self, request):
         """
@@ -138,17 +157,6 @@ class Translatable(models.Model):
 
         return super().route(request, path_components)
 
-    @classmethod
-    def get_translation_model(self):
-        """
-        Gets the model which manages the translations for this model.
-        (The model that has the "translation_key" and "language" fields)
-        Most of the time this would be the current model, but some sites
-        may have intermediate concrete models between wagtailcore.Page and
-        the specfic page model.
-        """
-        return self._meta.get_field('language').model
-
     class Meta:
         abstract = True
         unique_together = [
@@ -156,17 +164,17 @@ class Translatable(models.Model):
         ]
 
 
-class BootstrapTranslatable(Translatable):
+class BootstrapTranslatableMixin(TranslatableMixin):
     """
-    A version of Translatable without uniqueness constraints.
+    A version of TranslatableMixin without uniqueness constraints.
 
     This is to make it easy to transition existing models to being translatable.
 
     The process is as follows:
-     - Add BootstrapTranslatable to the model
+     - Add BootstrapTranslatableMixin to the model
      - Run makemigrations and migrate
      - Run bootstrap_translatable_models
-     - Change BootstrapTranslatable to Translatable
+     - Change BootstrapTranslatableMixin to TranslatableMixin
      - Run makemigrations and migrate
     """
     translation_key = models.UUIDField(null=True, editable=False)
@@ -177,13 +185,13 @@ class BootstrapTranslatable(Translatable):
 
 def get_translatable_models(include_subclasses=False):
     """
-    Returns a list of all concrete models that inherit from Translatable.
-    By default, this only includes models that are direct children of Translatable,
+    Returns a list of all concrete models that inherit from TranslatableMixin.
+    By default, this only includes models that are direct children of TranslatableMixin,
     to get all models, set the include_subclasses attribute to True.
     """
     translatable_models = [
         model for model in apps.get_models()
-        if issubclass(model, Translatable) and not model._meta.abstract
+        if issubclass(model, TranslatableMixin) and not model._meta.abstract
     ]
 
     if include_subclasses is False:
