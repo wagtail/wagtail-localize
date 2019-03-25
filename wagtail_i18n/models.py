@@ -139,12 +139,14 @@ class TranslatablePageMixin(TranslatableMixin):
         # Find the translated version of the parent page to create the new page under
         parent = self.get_parent().specific
         slug = self.slug
-        if isinstance(parent, Translatable):
+        if isinstance(parent, TranslatableMixin):
             try:
                 translated_parent = parent.get_translation(language)
             except parent.__class__.DoesNotExist:
-                if copy_parents:
-                    translated_parent = parent.copy_for_translation(language, copy_parents=True)
+                if not copy_parents:
+                    return
+
+                translated_parent = parent.copy_for_translation(language, copy_parents=True)
         else:
             translated_parent = parent
 
