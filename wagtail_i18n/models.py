@@ -4,6 +4,7 @@ import uuid
 from django.apps import apps
 from django.conf import settings
 from django.db import models
+from django.db.models import Exists, OuterRef
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from django.utils import translation
@@ -15,6 +16,7 @@ from .utils import find_available_slug
 
 class Language(models.Model):
     code = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
 
     @classmethod
     def default(cls):
@@ -85,6 +87,8 @@ def add_new_languages_to_default_region(sender, instance, created, **kwargs):
 # A locale gives an individual record to a region/language combination
 # I prefer this way as it allows you to easily reorganise your regions and languages
 # after there is already content entered.
+# Note: these are managed entirely through signal handlers so don't update them directly
+# without also updating the Language/Region models as well.
 class Locale(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='locales')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='locales')
@@ -110,16 +114,45 @@ class Locale(models.Model):
         ]
 
 
-# Add new locales when new regions/languages are added
+# Update Locale.is_active when Language.is_active is changed
+@receiver(post_save, sender=Language)
+def update_locales_on_language_change(sender, instance, **kwargs):
+    if instance.is_active:
+        # Activate locales iff the language is selected on the region
+        (
+            Locale.objects
+            .annotate(
+                is_active_on_region=Exists(
+                    Region.languages.through.objects.filter(
+                        region_id=OuterRef('region_id'),
+                        language_id=instance.id,
+                    )
+                )
+            )
+            .filter(
+                language=instance,
+                is_active_on_region=True,
+                is_active=False,
+            )
+            .update(is_active=True)
+        )
+
+    else:
+        # Deactivate locales with this language
+        Locale.objects.filter(language=instance, is_active=True).update(is_active=False)
+
+
+# Add/remove locales when languages are added/removed from regions
 @receiver(m2m_changed, sender=Region.languages.through)
-def update_locales(sender, instance, action, pk_set, **kwargs):
+def update_locales_on_region_change(sender, instance, action, pk_set, **kwargs):
     if action == 'post_add':
         for language_id in pk_set:
             Locale.objects.update_or_create(
                 region=instance,
                 language_id=language_id,
                 defaults={
-                    'is_active': True,
+                    # Note: only activate locale if language is active
+                    'is_active': Language.filter(id=language_id, is_active=True).exists(),
                 }
             )
     elif action == 'post_remove':
