@@ -265,10 +265,12 @@ class BootstrapTranslatableMixin(TranslatableMixin):
 
     The process is as follows:
      - Add BootstrapTranslatableMixin to the model
-     - Run makemigrations and migrate
-     - Run bootstrap_translatable_models
+     - Run makemigrations
+     - Create a data migration for each app, then use the BootstrapTranslatableModel operation in
+       wagtail_i18n.bootstrap on each model in that app
      - Change BootstrapTranslatableMixin to TranslatableMixin
-     - Run makemigrations and migrate
+     - Run makemigrations again
+     - Migrate!
     """
     translation_key = models.UUIDField(null=True, editable=False)
 
