@@ -1,7 +1,6 @@
-import uuid
-
 from django.core.management.base import BaseCommand, CommandError
 
+from wagtail_i18n.bootstrap import bootstrap_translatable_model
 from wagtail_i18n.models import BootstrapTranslatableMixin, get_translatable_models
 
 
@@ -13,7 +12,4 @@ class Command(BaseCommand):
             if issubclass(model, BootstrapTranslatableMixin):
                 print("Bootstrapping: {}.{}".format(model._meta.app_label, model.__name__))
 
-                # TODO: Optimise for databases that have a UUID4 function
-                for instance in model.objects.filter(translation_key__isnull=True).defer().iterator():
-                    instance.translation_key = uuid.uuid4()
-                    instance.save(update_fields=['translation_key'])
+                bootstrap_translatable_model(model)
