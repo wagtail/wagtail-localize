@@ -268,7 +268,7 @@ class BootstrapTranslatableMixin(TranslatableMixin):
      - Run makemigrations
      - Create a data migration for each app, then use the BootstrapTranslatableModel operation in
        wagtail_i18n.bootstrap on each model in that app
-     - Change BootstrapTranslatableMixin to TranslatableMixin
+     - Change BootstrapTranslatableMixin to TranslatableMixin (or TranslatablePageMixin, if it's a page model)
      - Run makemigrations again
      - Migrate!
     """
