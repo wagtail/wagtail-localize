@@ -4,7 +4,7 @@ import uuid
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from django.utils import translation
 from wagtail.core.models import Page
@@ -82,10 +82,60 @@ def add_new_languages_to_default_region(sender, instance, created, **kwargs):
             default_region.languages.add(instance)
 
 
+# A locale gives an individual record to a region/language combination
+# I prefer this way as it allows you to easily reorganise your regions and languages
+# after there is already content entered.
+class Locale(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='locales')
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='locales')
+    is_active = models.BooleanField()
+
+    @classmethod
+    def default(cls):
+        locale, created = cls.objects.get_or_create(
+            region=Region.default(),
+            language=Language.default(),
+            is_active=True,
+        )
+
+        return locale
+
+    @classmethod
+    def default_id(cls):
+        return cls.default().id
+
+    class Meta:
+        unique_together = [
+            ('region', 'language'),
+        ]
+
+
+# Add new locales when new regions/languages are added
+@receiver(m2m_changed, sender=Region.languages.through)
+def update_locales(sender, instance, action, pk_set, **kwargs):
+    if action == 'post_add':
+        for language_id in pk_set:
+            Locale.objects.update_or_create(
+                region=instance,
+                language_id=language_id,
+                defaults={
+                    'is_active': True,
+                }
+            )
+    elif action == 'post_remove':
+        for language_id in pk_set:
+            Locale.objects.update_or_create(
+                region=instance,
+                language_id=language_id,
+                defaults={
+                    'is_active': False,
+                }
+            )
+
+
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='+', default=Region.default_id)
-    language = models.ForeignKey(Language, on_delete=models.PROTECT, related_name='+', default=Language.default_id)
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+', default=Locale.default_id)
 
     def get_translations(self, inclusive=False, all_regions=False):
         translations = self.__class__.objects.filter(translation_key=self.translation_key)
@@ -142,7 +192,7 @@ class TranslatableMixin(models.Model):
     class Meta:
         abstract = True
         unique_together = [
-            ('translation_key', 'region', 'language'),
+            ('translation_key', 'locale'),
         ]
 
 
@@ -253,7 +303,7 @@ class TranslatablePageMixin(TranslatableMixin):
     class Meta:
         abstract = True
         unique_together = [
-            ('translation_key', 'region', 'language'),
+            ('translation_key', 'locale'),
         ]
 
 
