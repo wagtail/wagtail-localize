@@ -42,15 +42,43 @@ class Language(models.Model):
         return dict(settings.LANGUAGES)[self.code]
 
 
+class Region(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+    languages = models.ManyToManyField(Language)
+
+    @classmethod
+    def default(cls):
+        region, created = cls.objects.get_or_create(
+            slug='default',
+            defaults={
+                'name': 'Default',
+            }
+        )
+
+        if created:
+            region.languages.add(Language.default())
+
+        return region
+
+    @classmethod
+    def default_id(cls):
+        return cls.default().id
+
+
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
+    region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='+', default=Region.default_id)
     language = models.ForeignKey(Language, on_delete=models.PROTECT, related_name='+', default=Language.default_id)
 
-    def get_translations(self, inclusive=False):
+    def get_translations(self, inclusive=False, all_regions=False):
         translations = self.__class__.objects.filter(translation_key=self.translation_key)
 
         if inclusive is False:
             translations = translations.exclude(id=self.id)
+
+        if all_regions is False:
+            translations = translations.filter(region=self.region)
 
         return translations
 
@@ -98,7 +126,7 @@ class TranslatableMixin(models.Model):
     class Meta:
         abstract = True
         unique_together = [
-            ('translation_key', 'language'),
+            ('translation_key', 'region', 'language'),
         ]
 
 
@@ -209,7 +237,7 @@ class TranslatablePageMixin(TranslatableMixin):
     class Meta:
         abstract = True
         unique_together = [
-            ('translation_key', 'language'),
+            ('translation_key', 'region', 'language'),
         ]
 
 

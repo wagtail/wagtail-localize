@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Case, Q, When
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail_i18n.models import Language
+from wagtail_i18n.models import Language, Region
 
 
 MATCH_HOSTNAME_PORT = 0
@@ -181,6 +181,7 @@ class Site(models.Model):
 
 class SiteLanguage(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='languages')
+    region = models.ForeignKey(Region, verbose_name=_('region'), on_delete=models.CASCADE, related_name='+', default=Region.default_id)
     language = models.ForeignKey(Language, verbose_name=_('language'), on_delete=models.CASCADE, related_name='+')
     root_page = models.ForeignKey('wagtailcore.Page', verbose_name=_('root page'), on_delete=models.CASCADE, related_name='+')
     is_active = models.BooleanField(_('is active'), default=True)

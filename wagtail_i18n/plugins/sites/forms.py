@@ -18,7 +18,7 @@ class SiteLanguageForm(forms.ModelForm):
 
     class Meta:
         model = SiteLanguage
-        fields = ['language', 'root_page', 'is_active']
+        fields = ['region', 'language', 'root_page', 'is_active']
 
 
 SiteLanguageFormSetBase = forms.inlineformset_factory(Site, SiteLanguage, form=SiteLanguageForm, extra=0)
