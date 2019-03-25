@@ -1,8 +1,10 @@
 from django import forms
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from wagtail.admin.widgets import AdminPageChooser
 
+from wagtail_i18n.models import Region
 from .models import Site, SiteLanguage
 
 
@@ -27,6 +29,10 @@ class SiteLanguageFormSet(SiteLanguageFormSetBase):
     minimum_forms = 1
     minimum_forms_message = _("Please specify at least one language for this site.")
 
+    @cached_property
+    def single_region(self):
+        return Region.objects.count() == 1
+
     def add_fields(self, form, *args, **kwargs):
         super().add_fields(form, *args, **kwargs)
 
@@ -35,3 +41,7 @@ class SiteLanguageFormSet(SiteLanguageFormSetBase):
 
         # Use page chooser for root page
         form.fields['root_page'].widget = AdminPageChooser()
+
+        # Hide region field if there is only one
+        if self.single_region:
+            form.fields['region'].widget = forms.HiddenInput()

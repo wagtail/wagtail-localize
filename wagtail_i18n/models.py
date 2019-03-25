@@ -65,6 +65,9 @@ class Region(models.Model):
     def default_id(cls):
         return cls.default().id
 
+    def __str__(self):
+        return self.name
+
 
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
