@@ -4,6 +4,8 @@ import uuid
 from django.apps import apps
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import translation
 from wagtail.core.models import Page
 from wagtail.images.models import AbstractImage
@@ -67,6 +69,17 @@ class Region(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Add new languages to default region automatically
+# This allows sites that don't care about regions to still work
+@receiver(post_save, sender=Language)
+def add_new_languages_to_default_region(sender, instance, created, **kwargs):
+    if created:
+        default_region = Region.default()
+
+        if default_region is not None:
+            default_region.languages.add(instance)
 
 
 class TranslatableMixin(models.Model):
