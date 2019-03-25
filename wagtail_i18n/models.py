@@ -43,7 +43,12 @@ class Language(models.Model):
         return language
 
     def __str__(self):
-        return dict(settings.LANGUAGES)[self.code]
+        language_name = dict(settings.LANGUAGES).get(self.code)
+
+        if language_name:
+            return f'{language_name} ({self.code})'
+        else:
+            return self.code
 
 
 class Region(models.Model):
@@ -152,7 +157,7 @@ def update_locales_on_region_change(sender, instance, action, pk_set, **kwargs):
                 language_id=language_id,
                 defaults={
                     # Note: only activate locale if language is active
-                    'is_active': Language.filter(id=language_id, is_active=True).exists(),
+                    'is_active': Language.objects.filter(id=language_id, is_active=True).exists(),
                 }
             )
     elif action == 'post_remove':

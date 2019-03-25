@@ -13,3 +13,8 @@ class RegionForm(forms.ModelForm):
     class Meta:
         model = Region
         fields = ['name', 'slug', 'languages']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['languages'].queryset = self.fields['languages'].queryset.filter(is_active=True)
