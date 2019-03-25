@@ -34,9 +34,16 @@
     </div>
 {% endblock %}
 
+{% block extra_css %}
+    {{ block.super }}
+    {% include "wagtailadmin/pages/_editor_css.html" %}
+    {{ languages_formset.media.css }}
+{% endblock %}
+
 {% block extra_js %}
     {{ block.super }}
     {% include "wagtailadmin/pages/_editor_js.html" %}
+    {{ languages_formset.media.js }}
 
     <script type="text/javascript">
         {% include "wagtail_i18n_sites/includes/languages_formset.js" with formset=languages_formset only  %}
