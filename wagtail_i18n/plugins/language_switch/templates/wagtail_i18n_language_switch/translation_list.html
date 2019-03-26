@@ -19,7 +19,7 @@
             <tbody>
                 {% for translated_page in translations %}
                     <tr>
-                        <td>{{ translated_page.language }}</td>
+                        <td>{{ translated_page.locale.language.get_display_name }}</td>
                         <td class="title">{{ translated_page.get_admin_display_title }}</td>
                         <td class="listing__item--active">
                             {% if translated_page == page %}
