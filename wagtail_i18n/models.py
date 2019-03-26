@@ -187,32 +187,26 @@ class TranslatableMixin(models.Model):
 
         return translations
 
-    def get_translation(self, language):
-        if isinstance(language, str):
-            return self.get_translations(inclusive=True).get(language__code=language)
-        else:
-            return self.get_translations(inclusive=True).get(language=language)
+    def get_translation(self, locale):
+        return self.get_translations(inclusive=True).get(locale=locale)
 
-    def has_translation(self, language):
-        if isinstance(language, str):
-            return self.get_translations(inclusive=True).filter(language__code=language).exists()
-        else:
-            return self.get_translations(inclusive=True).filter(language=language).exists()
+    def has_translation(self, locale):
+        return self.get_translations(inclusive=True).filter(locale=locale).exists()
 
-    def copy_for_translation(self, language):
+    def copy_for_translation(self, locale):
         """
-        Copies this instance for the specified language.
+        Copies this instance for the specified locale.
         """
         translated = self.__class__.objects.get(id=self.id)
         translated.id = None
-        translated.language = language
+        translated.locale = locale
 
         if isinstance(self, AbstractImage):
             # As we've copied the image record we also need to copy the original image file itself.
             # This is in case either image record is changed or deleted, the other record will still
             # have its file.
             file_stem, file_ext = os.path.splitext(self.file.name)
-            new_name = f'{file_stem}-{language}{file_ext}'
+            new_name = f'{file_stem}-{locale.slug}{file_ext}'
             translated.file = ContentFile(self.file.read(), name=new_name)
 
         return translated
@@ -221,12 +215,12 @@ class TranslatableMixin(models.Model):
     def get_translation_model(self):
         """
         Gets the model which manages the translations for this model.
-        (The model that has the "translation_key" and "language" fields)
+        (The model that has the "translation_key" and "locale" fields)
         Most of the time this would be the current model, but some sites
         may have intermediate concrete models between wagtailcore.Page and
         the specfic page model.
         """
-        return self._meta.get_field('language').model
+        return self._meta.get_field('locale').model
 
     class Meta:
         abstract = True
@@ -265,39 +259,39 @@ class TranslatablePageMixin(TranslatableMixin):
 
         return super().copy(**kwargs)
 
-    def copy_for_translation(self, language, copy_parents=False):
+    def copy_for_translation(self, locale, copy_parents=False):
         """
-        Copies this page for the specified language.
+        Copies this page for the specified locale.
         """
         # Find the translated version of the parent page to create the new page under
         parent = self.get_parent().specific
         slug = self.slug
         if isinstance(parent, TranslatableMixin):
             try:
-                translated_parent = parent.get_translation(language)
+                translated_parent = parent.get_translation(locale)
             except parent.__class__.DoesNotExist:
                 if not copy_parents:
                     return
 
-                translated_parent = parent.copy_for_translation(language, copy_parents=True)
+                translated_parent = parent.copy_for_translation(locale, copy_parents=True)
         else:
             translated_parent = parent
 
-            # Append language code to slug as the new page
+            # Append locale code to slug as the new page
             # will be created in the same section as the existing one
-            slug += '-' + language.code
+            slug += '-' + locale.slug
 
         # Find available slug for new page
         slug = find_available_slug(translated_parent, slug)
 
-        # Update language on translatable child objects as well
+        # Update locale on translatable child objects as well
         def process_child_object(child_relation, child_object):
             if isinstance(child_object, TranslatableMixin):
-                child_object.language = language
+                child_object.locale = locale
 
         return self.copy(
             to=translated_parent,
-            update_attrs={'language': language, 'slug': slug},
+            update_attrs={'locale': locale, 'slug': slug},
             copy_revisions=False,
             keep_live=False,
             reset_translation_key=False,
