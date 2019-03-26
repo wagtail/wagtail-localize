@@ -59,24 +59,21 @@ class Region(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     languages = models.ManyToManyField(Language)
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-is_default', 'name']
 
     @classmethod
     def default(cls):
-        region, created = cls.objects.get_or_create(
-            slug='default',
-            defaults={
-                'name': 'Default',
-            }
-        )
-
-        if created:
-            region.languages.add(Language.default())
-
-        return region
+        return cls.objects.filter(is_default).first()
 
     @classmethod
     def default_id(cls):
-        return cls.default().id
+        default = cls.default()
+
+        if default:
+            return default.id
 
     def __str__(self):
         return self.name
