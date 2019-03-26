@@ -20,7 +20,11 @@ class TranslationRequestPage(models.Model):
 
     @property
     def source_page(self):
-        return self.source_revision.page.specific
+        return self.source_revision.page
+
+    @property
+    def previous_request(self):
+        return TranslationRequestPage.objects.filter(source_revision__page=self.source_page, id__lt=self.id).order_by('-request__created_at').first()
 
     def get_translation(self):
-        return self.source_page.get_translation(self.request.target_locale)
+        return self.source_page.specific.get_translation(self.request.target_locale)

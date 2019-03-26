@@ -1,0 +1,34 @@
+{% extends "wagtailadmin/generic/index.html" %}
+{% load i18n %}
+
+{% block listing %}
+    <div class="nice-padding">
+        <div id="sites-list">
+            <table class="listing">
+                <thead>
+                    <tr>
+                        <th class="name">{% trans "Source locale" %}</th>
+                        <th class="name">{% trans "Target locale" %}</th>
+                        <th class="name">{% trans "Number of pages" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for translation_request in translation_requests %}
+                        <tr>
+                            <td class="hostname title">
+                                <a href="{% url 'wagtail_i18n_workflow_management:detail' translation_request.id %}">{{ translation_request.source_locale }}</a>
+                            </td>
+                            <td class="hostname title">
+                                <a href="{% url 'wagtail_i18n_workflow_management:detail' translation_request.id %}">{{ translation_request.target_locale }}</a>
+                            </td>
+                            <td class="hostname title">
+                                <a href="{% url 'wagtail_i18n_workflow_management:detail' translation_request.id %}">{{ translation_request.pages.all|length }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

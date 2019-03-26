@@ -1,3 +1,5 @@
+from django import forms
+
 from django.contrib import messages
 from django.db import transaction
 from django.http import Http404
@@ -6,10 +8,25 @@ from django.utils import timezone
 
 from wagtail.core.models import Page
 
-from wagtail_i18n.models import get_translatable_models, TranslatablePageMixin
+from wagtail_i18n.models import get_translatable_models, Locale, TranslatablePageMixin
 
-from .forms import CreateTranslationRequestForm
-from .models import TranslationRequest, TranslationRequestPage
+from ..models import TranslationRequest, TranslationRequestPage
+
+
+class CreateTranslationRequestForm(forms.Form):
+    locales = forms.ModelMultipleChoiceField(queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple)
+    include_subtree = forms.BooleanField(required=False)
+
+    def __init__(self, page, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        page_descendant_count = page.get_descendants().type(tuple(get_translatable_models())).count()
+        if page_descendant_count > 0:
+            self.fields['include_subtree'].help_text = f"This will add {page_descendant_count} additional pages to the request"
+        else:
+            self.fields['include_subtree'].widget = forms.HiddenInput()
+
+        self.fields['locales'].queryset = Locale.objects.filter(is_active=True).exclude(id=page.locale_id)
 
 
 def create_translation_request(request, page_id):
