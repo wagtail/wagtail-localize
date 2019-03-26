@@ -1,0 +1,14 @@
+{% load i18n %}
+
+{% if is_translatable %}
+    <div>
+        {% trans "Translations" %}
+        <a href="{% url 'translations_list' page.id %}" class="status-tag primary action-switch-language">
+            {% blocktrans count counter=language_count %}
+                {{ counter }} language
+            {% plural %}
+                {{ counter }} languages
+            {% endblocktrans %}
+        </a>
+    </div>
+{% endif %}
