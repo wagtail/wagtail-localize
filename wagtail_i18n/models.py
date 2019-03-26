@@ -117,6 +117,18 @@ class Locale(models.Model):
     def default_id(cls):
         return cls.default().id
 
+    def __str__(self):
+        return f"{self.region.name} / {self.language.get_display_name()}"
+
+    @property
+    def slug(self):
+        slug = self.language.code
+
+        if self.region != Region.default():
+            return f'{self.region.slug}-{self.language.code}'
+        else:
+            return self.language.code
+
     class Meta:
         unique_together = [
             ('region', 'language'),
