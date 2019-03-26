@@ -57,24 +57,6 @@ class Region(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     languages = models.ManyToManyField(Language)
 
-    @classmethod
-    def default(cls):
-        region, created = cls.objects.get_or_create(
-            slug='default',
-            defaults={
-                'name': 'Default',
-            }
-        )
-
-        if created:
-            region.languages.add(Language.default())
-
-        return region
-
-    @classmethod
-    def default_id(cls):
-        return cls.default().id
-
     def __str__(self):
         return self.name
 
