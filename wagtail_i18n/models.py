@@ -25,12 +25,7 @@ class Language(models.Model):
     @classmethod
     def default(cls):
         default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
-
-        language, created = cls.objects.get_or_create(
-            code=default_code,
-        )
-
-        return language
+        return cls.objects.get(code=default_code)
 
     @classmethod
     def default_id(cls):
@@ -220,7 +215,7 @@ def update_locales_on_region_languages_change(sender, instance, action, pk_set, 
 
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+', default=Locale.default_id)
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+')
 
     def get_translations(self, inclusive=False):
         translations = self.__class__.objects.filter(translation_key=self.translation_key)
@@ -411,6 +406,7 @@ class BootstrapTranslatableMixin(TranslatableMixin):
      - Migrate!
     """
     translation_key = models.UUIDField(null=True, editable=False)
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, null=True, related_name='+')
 
     class Meta:
         abstract = True

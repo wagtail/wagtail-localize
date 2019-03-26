@@ -1,11 +1,14 @@
 import uuid
 
+from django.conf import settings
 from django.db import migrations
 
+from .compat import get_supported_language_variant
 
-def bootstrap_translatable_model(model):
+
+def bootstrap_translatable_model(model, locale):
     """
-    This function populates the "translation_key" field on model instances that were created
+    This function populates the "translation_key", and "locale" fields on model instances that were created
     before wagtail-i18n was added to the site.
 
     This can be called from a data migration, or instead you could use the "boostrap_translatable_models"
@@ -14,14 +17,21 @@ def bootstrap_translatable_model(model):
     # TODO: Optimise for databases that have a UUID4 function
     for instance in model.objects.filter(translation_key__isnull=True).defer().iterator():
         instance.translation_key = uuid.uuid4()
-        instance.save(update_fields=['translation_key'])
+        instance.locale = locale
+        instance.save(update_fields=['translation_key', 'locale'])
 
 
 class BootstrapTranslatableModel(migrations.RunPython):
-    def __init__(self, model_string):
+    def __init__(self, model_string, language_code=None, region_slug='default'):
+        if language_code is None:
+            language_code = get_supported_language_variant(settings.LANGUAGE_CODE)
+
         def forwards(apps, schema_editor):
             model = apps.get_model(model_string)
-            bootstrap_translatable_model(model)
+            Locale = apps.get_model('wagtail_i18n.Locale')
+            locale = Locale.objects.get(language__code=language_code, region__slug=region_slug)
+
+            bootstrap_translatable_model(model, locale)
 
         def backwards(apps, schema_editor):
             pass
