@@ -190,6 +190,12 @@ class TranslatableMixin(models.Model):
     def get_translation(self, locale):
         return self.get_translations(inclusive=True).get(locale=locale)
 
+    def get_translation_or_none(self, locale):
+        try:
+            return self.get_translation(locale)
+        except self.__class__.DoesNotExist:
+            return None
+
     def has_translation(self, locale):
         return self.get_translations(inclusive=True).filter(locale=locale).exists()
 
