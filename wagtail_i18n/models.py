@@ -176,14 +176,11 @@ class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
     locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+', default=Locale.default_id)
 
-    def get_translations(self, inclusive=False, all_regions=False):
+    def get_translations(self, inclusive=False):
         translations = self.__class__.objects.filter(translation_key=self.translation_key)
 
         if inclusive is False:
             translations = translations.exclude(id=self.id)
-
-        if all_regions is False:
-            translations = translations.filter(region=self.region)
 
         return translations
 
