@@ -2,7 +2,8 @@
 
 from django.conf import settings
 from django.db import migrations
-from django.utils import translation
+
+from wagtail_i18n.compat import get_supported_language_variant
 
 
 def initial_data(apps, schema_editor):
@@ -11,7 +12,7 @@ def initial_data(apps, schema_editor):
 
 
     default_language, created = Language.objects.get_or_create(
-        code=translation.get_supported_language_variant(settings.LANGUAGE_CODE),
+        code=get_supported_language_variant(settings.LANGUAGE_CODE),
     )
 
     default_region = Region.objects.create(

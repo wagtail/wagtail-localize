@@ -11,6 +11,7 @@ from django.utils import translation
 from wagtail.core.models import Page
 from wagtail.images.models import AbstractImage
 
+from .compat import get_supported_language_variant
 from .utils import find_available_slug
 
 
@@ -20,7 +21,7 @@ class Language(models.Model):
 
     @classmethod
     def default(cls):
-        default_code = translation.get_supported_language_variant(settings.LANGUAGE_CODE)
+        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
 
         language, created = cls.objects.get_or_create(
             code=default_code,
@@ -34,7 +35,7 @@ class Language(models.Model):
 
     @classmethod
     def get_active(cls):
-        default_code = translation.get_supported_language_variant(translation.get_language())
+        default_code = get_supported_language_variant(translation.get_language())
 
         language, created = cls.objects.get_or_create(
             code=default_code,
