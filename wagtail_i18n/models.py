@@ -43,11 +43,14 @@ class Language(models.Model):
 
         return language
 
-    def __str__(self):
-        language_name = dict(settings.LANGUAGES).get(self.code)
+    def get_display_name(self):
+        return dict(settings.LANGUAGES).get(self.code)
 
-        if language_name:
-            return f'{language_name} ({self.code})'
+    def __str__(self):
+        display_name = self.get_display_name()
+
+        if display_name:
+            return f'{display_name} ({self.code})'
         else:
             return self.code
 
