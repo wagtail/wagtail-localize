@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         src_locale = Locale.default()
-        tgt_locale = Locale.objects.get(language=Language.objects.filter(code='fr').first(), region=Region.default())
+        tgt_locale = Locale.objects.get(language=Language.objects.filter(code='fr').first(), region=Region.objects.filter(slug='france').first())
 
         po = polib.pofile('site-fr.po')
         translations = [(message.msgid, message.msgstr) for message in po]

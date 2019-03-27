@@ -6,15 +6,15 @@ from django.contrib.contenttypes.models import ContentType
 from wagtail.core.models import Page
 
 from wagtail_i18n.models import get_translatable_models, Language, Locale, Region
-from wagtail_i18n.plugins.segmentizer.models import TextSegment, TextSegmentPageLocation, HTMLSegmentPageLocation
-from wagtail_i18n.segments.extractor import extract_segments
+from wagtail_i18n.plugins.segmentizer.models import TextSegment, TextSegmentTranslation, TextSegmentPageLocation, HTMLSegmentPageLocation
+from wagtail_i18n.segments.extract import extract_segments
 
 
 class Command(BaseCommand):
 
     def handle(self, **options):
         src_locale = Locale.default()
-        tgt_locale = Locale.objects.get(language=Language.objects.filter(code='fr').first(), region=Region.default())
+        tgt_locale = Locale.objects.get(language=Language.objects.filter(code='fr').first(), region=Region.objects.filter(slug='france').first())
         messages = OrderedDict()
 
         def get_page_revision(page):
@@ -75,7 +75,7 @@ class Command(BaseCommand):
         for text_segment, occurances in messages.items():
             existing_translation = ''
             if tgt_locale:
-                translation = TextSegment.objects.filter(translation_of=text_segment, locale=tgt_locale).first()
+                translation = TextSegmentTranslation.objects.filter(translation_of=text_segment, locale=tgt_locale).first()
 
                 if translation:
                     existing_translation = translation.text

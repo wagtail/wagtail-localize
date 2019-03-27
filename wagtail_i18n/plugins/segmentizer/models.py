@@ -8,16 +8,14 @@ class TextSegment(models.Model):
     UUID_NAMESPACE = uuid.UUID('59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7')
 
     locale = models.ForeignKey('wagtail_i18n.Locale', on_delete=models.CASCADE)
-    translation_of = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
-    uuid = models.UUIDField()
+    uuid = models.UUIDField(unique=True)
     text = models.TextField()
 
     @classmethod
-    def from_text(cls, locale, text, translation_of=None):
+    def from_text(cls, locale, text):
         segment, created = cls.objects.get_or_create(
             locale=locale,
             uuid=uuid.uuid5(cls.UUID_NAMESPACE, text),
-            translation_of=translation_of,
             defaults={
                 'text': text,
             }
@@ -25,10 +23,28 @@ class TextSegment(models.Model):
 
         return segment
 
+
+class TextSegmentTranslation(models.Model):
+    translation_of = models.ForeignKey(TextSegment, on_delete=models.CASCADE, related_name='translations')
+    locale = models.ForeignKey('wagtail_i18n.Locale', on_delete=models.CASCADE)
+    text = models.TextField()
+
     class Meta:
         unique_together = [
-            ('translation_of', 'uuid'),
+            ('locale', 'translation_of'),
         ]
+
+    @classmethod
+    def from_text(cls, translation_of, locale, text):
+        segment, created = cls.objects.get_or_create(
+            translation_of=translation_of,
+            locale=locale,
+            defaults={
+                'text': text,
+            }
+        )
+
+        return segment
 
 
 class HTMLSegment(models.Model):

@@ -10,7 +10,7 @@ from wagtail_i18n.models import Locale
 from wagtail_i18n.segments import SegmentValue
 from wagtail_i18n.segments.ingest import ingest_segments
 
-from .models import TextSegment, TextSegmentPageLocation, HTMLSegmentPageLocation, HTMLSegmentText
+from .models import TextSegment, TextSegmentTranslation, TextSegmentPageLocation, HTMLSegmentPageLocation, HTMLSegmentText
 from .utils import get_translation_progress
 
 
@@ -36,7 +36,7 @@ def handle_completed_revision(revision_id, src_locale, tgt_locale):
         .filter(page_revision_id=revision_id)
         .annotate(
             translation=Subquery(
-                TextSegment.objects.filter(
+                TextSegmentTranslation.objects.filter(
                     translation_of_id=OuterRef('text_segment_id'),
                     locale=tgt_locale,
                 ).values('text')
@@ -55,7 +55,7 @@ def handle_completed_revision(revision_id, src_locale, tgt_locale):
                     HTMLSegmentText.objects
                     .annotate(
                         translation=Subquery(
-                            TextSegment.objects.filter(
+                            TextSegmentTranslation.objects.filter(
                                 translation_of_id=OuterRef('text_segment_id'),
                                 locale=tgt_locale,
                             ).values('text')
@@ -103,9 +103,9 @@ def handle_completed_revision(revision_id, src_locale, tgt_locale):
             handle_completed_revision(page_revision_id, src_locale, tgt_locale)
 
 
-@receiver(post_save, sender=TextSegment)
+@receiver(post_save, sender=TextSegmentTranslation)
 def on_new_segment_translation(sender, instance, created, **kwargs):
-    if created and instance.translation_of_id is not None:
+    if created:
         text_segment_page_locations = TextSegmentPageLocation.objects.filter(text_segment_id=instance.translation_of_id)
         html_segment_page_locations = HTMLSegmentPageLocation.objects.filter(html_segment__text_segments__text_segment_id=instance.translation_of_id)
 
@@ -127,4 +127,4 @@ def on_new_segment_translation(sender, instance, created, **kwargs):
 def ingest_translations(src_locale, tgt_locale, translations):
     for source, translation in translations:
         src_text_segment = TextSegment.from_text(src_locale, source)
-        TextSegment.from_text(tgt_locale, translation, translation_of=src_text_segment)
+        TextSegmentTranslation.from_text(src_text_segment, tgt_locale, translation)

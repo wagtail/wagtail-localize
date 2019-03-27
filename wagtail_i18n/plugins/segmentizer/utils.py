@@ -1,6 +1,6 @@
 from django.db.models import Case, Count, Exists, IntegerField, OuterRef, Q, Sum, Value, When
 
-from .models import TextSegment, HTMLSegment, HTMLSegmentText, TextSegmentPageLocation, HTMLSegmentPageLocation
+from .models import TextSegment, TextSegmentTranslation, HTMLSegment, HTMLSegmentText, TextSegmentPageLocation, HTMLSegmentPageLocation
 
 
 def get_translation_progress(page_revision_id, locale):
@@ -27,7 +27,7 @@ def get_translation_progress(page_revision_id, locale):
     # into the specified locale
     required_segments = required_segments.annotate(
         is_translated=Exists(
-            TextSegment.objects.filter(
+            TextSegmentTranslation.objects.filter(
                 translation_of_id=OuterRef('pk'),
                 locale=locale,
             )
