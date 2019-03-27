@@ -1,7 +1,8 @@
 import uuid
 
-from bs4 import BeautifulSoup
 from django.db import models, transaction
+
+from wagtail_i18n.segment_formatters import get_segment_formatter_class
 
 
 class Segment(models.Model):
@@ -47,51 +48,52 @@ class SegmentTranslation(models.Model):
         return segment
 
 
-class HTMLTemplate(models.Model):
-    UUID_NAMESPACE = uuid.UUID('4599eabc-3f8e-41a9-be61-95417d26a8cd')
+class Template(models.Model):
+    BASE_UUID_NAMESPACE = uuid.UUID('4599eabc-3f8e-41a9-be61-95417d26a8cd')
 
     uuid = models.UUIDField(unique=True)
     template = models.TextField()
+    template_format = models.CharField(max_length=100)
 
     @classmethod
-    def from_html(cls, locale, html):
-        segment_uuid = uuid.uuid5(cls.UUID_NAMESPACE, html)
+    def from_segment_value(cls, locale, segment_value):
+        formatter = get_segment_formatter_class(segment_value.format)()
+        uuid_namespace = uuid.uuid5(cls.BASE_UUID_NAMESPACE, segment_value.format)
+
+        segment_uuid = uuid.uuid5(uuid_namespace, segment_value.text)
 
         try:
             return cls.objects.get(uuid=segment_uuid)
-        except HTMLTemplate.DoesNotExist:
+        except Template.DoesNotExist:
             pass
 
-        soup = BeautifulSoup(html, 'html.parser')
-        texts = []
+        segment_texts = []
+        def emit_segment(text):
+            position = len(segment_texts)
+            segment_texts.append((position, text))
+            return position
 
-        for descendant in soup.descendants:
-            if descendant.name in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li']:
-                string = descendant.string
-
-                if string:
-                    position = len(texts)
-                    texts.append(descendant.string)
-                    descendant.clear()
-                    descendant.append(soup.new_tag('text', position=position))
+        template_value = formatter.parse(segment_value.text, emit_segment)
 
         with transaction.atomic():
-            html_template = HTMLTemplate.objects.create(
+            template = Template.objects.create(
                 uuid=segment_uuid,
-                template=str(soup),
+                template=template_value,
             )
 
-            for position, text in enumerate(texts):
+            for position, text in segment_texts:
                 segment = Segment.from_text(locale, text)
-                HTMLTemplateSegment.objects.create(
-                    html_template=html_template,
+                TemplateSegment.objects.create(
+                    template=template,
                     position=position,
                     segment=segment,
                 )
 
-        return html_template
+        return template
 
     def get_translated_content(self, locale):
+        formatter = get_segment_formatter_class(segment_value.format)()
+
         # Note: this method is reliant on text segment translations being prefetched
         texts = {
             segment.position: segment.translation
@@ -99,21 +101,14 @@ class HTMLTemplate(models.Model):
         }
 
         if texts:
-            soup = BeautifulSoup(self.template, 'html.parser')
-
-            for text_element in soup.findAll('text'):
-                value = texts[int(text_element.get('position'))]
-                text_element.replaceWith(value)
-
-            return str(soup)
-
+            return formatter.render(self.template, texts)
         else:
-            # There are no translatable snippets in the HTML
+            # There are no translatable snippets in the template
             return self.template
 
 
-class HTMLTemplateSegment(models.Model):
-    html_template = models.ForeignKey(HTMLTemplate, on_delete=models.CASCADE, related_name='segments')
+class TemplateSegment(models.Model):
+    template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name='segments')
     position = models.IntegerField()
     segment = models.ForeignKey(Segment, on_delete=models.PROTECT, related_name='+')
 
@@ -142,17 +137,17 @@ class SegmentPageLocation(BasePageLocation):
         return segment_page_loc
 
 
-class HTMLTemplatePageLocation(BasePageLocation):
-    html_template = models.ForeignKey(HTMLTemplate, on_delete=models.CASCADE, related_name='page_locations')
+class TemplatePageLocation(BasePageLocation):
+    template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name='page_locations')
 
     @classmethod
     def from_segment_value(cls, page_revision, segment_value):
-        html_template = HTMLTemplate.from_html(page_revision.page.locale, segment_value.text)
+        template = Template.from_segment_value(page_revision.page.locale, segment_value)
 
         segment_page_loc, created = cls.objects.get_or_create(
             page_revision=page_revision,
             path=segment_value.path,
-            html_template=html_template,
+            template=template,
         )
 
         return segment_page_loc

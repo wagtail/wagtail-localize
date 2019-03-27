@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from wagtail.core.models import Page
 
 from wagtail_i18n.models import get_translatable_models, Language, Locale, Region
-from wagtail_i18n.plugins.translation_memory.models import Segment, SegmentTranslation, SegmentPageLocation, HTMLTemplatePageLocation
+from wagtail_i18n.plugins.translation_memory.models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
 from wagtail_i18n.segments.extract import extract_segments
 
 
@@ -34,13 +34,13 @@ class Command(BaseCommand):
 
             messages[text].append((segment.page_revision.page.url_path, segment.path))
 
-        def add_html_template(html_template):
-            for segment in html_template.html_template.segments.all():
+        def add_template(template):
+            for segment in template.template.segments.all():
                 text = segment.segment
 
                 if text not in messages:
                     messages[text] = []
-                    messages[text].append((html_template.page_revision.page.url_path, html_template.path + ':' + str(segment.position)))
+                    messages[text].append((template.page_revision.page.url_path, template.path + ':' + str(segment.position)))
 
         for model in get_translatable_models():
             if not issubclass(model, Page):
@@ -54,8 +54,8 @@ class Command(BaseCommand):
 
             for page in pages:
                 for segment in extract_segments(page):
-                    if segment.html:
-                        add_html_template(HTMLTemplatePageLocation.from_segment_value(get_page_revision(page), segment))
+                    if segment.format != 'plain':
+                        add_template(TemplatePageLocation.from_segment_value(get_page_revision(page), segment))
                     else:
                         add_segment(SegmentPageLocation.from_segment_value(get_page_revision(page), segment))
 

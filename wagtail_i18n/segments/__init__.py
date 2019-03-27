@@ -1,8 +1,8 @@
 class SegmentValue:
-    def __init__(self, path, text, html=False):
+    def __init__(self, path, text, format='plain'):
         self.path = path
         self.text = text
-        self.html = html
+        self.format = format
 
     def wrap(self, base_path):
         """
@@ -19,7 +19,7 @@ class SegmentValue:
         if self.path:
             new_path += '.' + self.path
 
-        return SegmentValue(new_path, self.text, html=self.html)
+        return SegmentValue(new_path, self.text, format=self.format)
 
     def unwrap(self):
         """
@@ -33,10 +33,10 @@ class SegmentValue:
         """
         base_path, *remaining_components = self.path.split('.')
         new_path = '.'.join(remaining_components)
-        return base_path, SegmentValue(new_path, self.text, html=self.html)
+        return base_path, SegmentValue(new_path, self.text, format=self.format)
 
     def __eq__(self, other):
-        return isinstance(other, SegmentValue) and self.path == other.path and self.text == other.text
+        return isinstance(other, SegmentValue) and self.path == other.path and self.text == other.text and self.format == other.format
 
     def __repr__(self):
         return f'<SegmentValue {self.path} "{self.text}">'

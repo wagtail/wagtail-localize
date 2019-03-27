@@ -22,7 +22,7 @@ class StreamFieldSegmentExtractor:
             return [SegmentValue('', block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            return [SegmentValue('', block_value.source, html=True)]
+            return [SegmentValue('', block_value.source, format='html')]
 
         elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
             return self.handle_related_object_block(block_value)
@@ -75,7 +75,7 @@ def extract_segments(instance):
             segments.extend(segment.wrap(field.name) for segment in StreamFieldSegmentExtractor(field).handle_stream_block(field.value_from_object(instance)))
 
         elif isinstance(field, RichTextField):
-            segments.append(SegmentValue(field.name, field.value_from_object(instance), html=True))
+            segments.append(SegmentValue(field.name, field.value_from_object(instance), format='html'))
 
         elif isinstance(field, (models.TextField, models.CharField)):
             if not field.choices:

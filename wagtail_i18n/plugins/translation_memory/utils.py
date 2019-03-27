@@ -1,6 +1,6 @@
 from django.db.models import Case, Count, Exists, IntegerField, OuterRef, Q, Sum, Value, When
 
-from .models import Segment, SegmentTranslation, HTMLTemplate, HTMLTemplateSegment, SegmentPageLocation, HTMLTemplatePageLocation
+from .models import Segment, SegmentTranslation, Template, TemplateSegment, SegmentPageLocation, TemplatePageLocation
 
 
 def get_translation_progress(page_revision_id, locale):
@@ -18,8 +18,8 @@ def get_translation_progress(page_revision_id, locale):
     )
 
     required_segments |= Segment.objects.filter(
-        id__in=HTMLTemplateSegment.objects.filter(
-            html_template__id__in=HTMLTemplatePageLocation.objects.filter(page_revision_id=page_revision_id).values_list('html_template_id')
+        id__in=TemplateSegment.objects.filter(
+            template__id__in=TemplatePageLocation.objects.filter(page_revision_id=page_revision_id).values_list('template_id')
         ).values_list('segment_id')
     )
 

@@ -10,7 +10,7 @@ from wagtail_i18n.models import Locale
 from wagtail_i18n.segments import SegmentValue
 from wagtail_i18n.segments.ingest import ingest_segments
 
-from .models import Segment, SegmentTranslation, SegmentPageLocation, HTMLTemplatePageLocation, HTMLTemplateSegment
+from .models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation, TemplateSegment
 from .utils import get_translation_progress
 
 
@@ -44,15 +44,15 @@ def handle_completed_revision(revision_id, src_locale, tgt_locale):
         )
     )
 
-    html_template_page_locations = (
-        HTMLTemplatePageLocation.objects
+    template_page_locations = (
+        TemplatePageLocation.objects
         .filter(page_revision_id=revision_id)
-        .select_related('html_template')
+        .select_related('template')
         .prefetch_related(
             Prefetch(
-                'html_template__segments',
+                'template__segments',
                 queryset=(
-                    HTMLTemplateSegment.objects
+                    TemplateSegment.objects
                     .annotate(
                         translation=Subquery(
                             SegmentTranslation.objects.filter(
@@ -72,8 +72,8 @@ def handle_completed_revision(revision_id, src_locale, tgt_locale):
         segment = SegmentValue(page_location.path, page_location.translation)
         segments.append(segment)
 
-    for page_location in html_template_page_locations:
-        segment = SegmentValue(page_location.path, page_location.html_template.get_translated_content(tgt_locale))
+    for page_location in template_page_locations:
+        segment = SegmentValue(page_location.path, page_location.template.get_translated_content(tgt_locale))
         segments = []
 
     ingest_segments(original_page_at_revision, translated_page, src_locale, tgt_locale, segments)
@@ -107,9 +107,9 @@ def handle_completed_revision(revision_id, src_locale, tgt_locale):
 def on_new_segment_translation(sender, instance, created, **kwargs):
     if created:
         segment_page_locations = SegmentPageLocation.objects.filter(segment_id=instance.translation_of_id)
-        html_template_page_locations = HTMLTemplatePageLocation.objects.filter(html_template__segments__segment_id=instance.translation_of_id)
+        template_page_locations = TemplatePageLocation.objects.filter(template__segments__segment_id=instance.translation_of_id)
 
-        revision_ids = segment_page_locations.values_list('page_revision_id', flat=True).union(html_template_page_locations.values_list('page_revision_id', flat=True))
+        revision_ids = segment_page_locations.values_list('page_revision_id', flat=True).union(template_page_locations.values_list('page_revision_id', flat=True))
 
         # Check if any translated pages can now be created
         for page_revision_id in revision_ids:
