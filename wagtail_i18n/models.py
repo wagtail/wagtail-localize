@@ -60,9 +60,10 @@ class Region(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     languages = models.ManyToManyField(Language)
     is_default = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['-is_default', 'name']
+        ordering = ['-is_active', '-is_default', 'name']
 
     @classmethod
     def default(cls):
@@ -149,6 +150,7 @@ def update_locales_on_language_change(sender, instance, **kwargs):
             )
             .filter(
                 language=instance,
+                region__is_active=True,
                 is_active_on_region=True,
                 is_active=False,
             )
@@ -160,9 +162,37 @@ def update_locales_on_language_change(sender, instance, **kwargs):
         Locale.objects.filter(language=instance, is_active=True).update(is_active=False)
 
 
+# Update Locale.is_active when Region.is_active is changed
+@receiver(post_save, sender=Region)
+def update_locales_on_region_change(sender, instance, **kwargs):
+    if instance.is_active:
+        # Activate locales with this region
+        (
+            Locale.objects
+            .annotate(
+                is_active_on_region=Exists(
+                    Region.languages.through.objects.filter(
+                        region_id=instance.id,
+                        language_id=OuterRef('language_id'),
+                    )
+                )
+            )
+            .filter(
+                region=instance,
+                is_active_on_region=True,
+                is_active=False,
+            )
+            .update(is_active=True)
+        )
+
+    else:
+        # Deactivate locales with this region
+        Locale.objects.filter(region=instance, is_active=True).update(is_active=False)
+
+
 # Add/remove locales when languages are added/removed from regions
 @receiver(m2m_changed, sender=Region.languages.through)
-def update_locales_on_region_change(sender, instance, action, pk_set, **kwargs):
+def update_locales_on_region_languages_change(sender, instance, action, pk_set, **kwargs):
     if action == 'post_add':
         for language_id in pk_set:
             Locale.objects.update_or_create(

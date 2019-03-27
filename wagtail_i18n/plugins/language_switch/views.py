@@ -11,7 +11,7 @@ from wagtail_i18n.models import Region
 
 def translations_list(request, page_id):
     page = get_object_or_404(Page, id=page_id).specific
-    regions = list(Region.objects.all())
+    regions = list(Region.objects.filter(is_active=True))
 
     # Get translations by region
     translations_by_region_unsorted = defaultdict(list)
