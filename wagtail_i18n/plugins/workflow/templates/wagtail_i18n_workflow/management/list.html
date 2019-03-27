@@ -7,6 +7,7 @@
             <table class="listing">
                 <thead>
                     <tr>
+                        <th class="name">{% trans "ID" %}</th>
                         <th class="name">{% trans "Source locale" %}</th>
                         <th class="name">{% trans "Target locale" %}</th>
                         <th class="name">{% trans "Number of pages" %}</th>
@@ -16,13 +17,16 @@
                     {% for translation_request in translation_requests %}
                         <tr>
                             <td class="hostname title">
-                                <a href="{% url 'wagtail_i18n_workflow_management:detail' translation_request.id %}">{{ translation_request.source_locale }}</a>
+                                <b><a href="{% url 'wagtail_i18n_workflow_management:detail' translation_request.id %}">{{ translation_request.id }}</a></b>
                             </td>
-                            <td class="hostname title">
-                                <a href="{% url 'wagtail_i18n_workflow_management:detail' translation_request.id %}">{{ translation_request.target_locale }}</a>
+                            <td>
+                                {{ translation_request.source_locale }}
                             </td>
-                            <td class="hostname title">
-                                <a href="{% url 'wagtail_i18n_workflow_management:detail' translation_request.id %}">{{ translation_request.pages.all|length }}</a>
+                            <td>
+                                {{ translation_request.target_locale }}
+                            </td>
+                            <td>
+                                {{ translation_request.pages.all|length }}
                             </td>
                         </tr>
                     {% endfor %}
