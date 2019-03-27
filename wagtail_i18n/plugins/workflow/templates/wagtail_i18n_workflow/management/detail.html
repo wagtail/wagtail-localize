@@ -38,9 +38,9 @@
                 </tr>
             </thead>
             <tbody>
-                {% for page in translation_request.pages.all %}
+                {% for page in pages %}
                     <tr>
-                        <td class="title">
+                        <td class="title" style="padding-left: {% widthratio page.depth 1 10 %}px;">
                             {{ page.source_page.get_admin_display_title }}
                         </td>
                         <td>

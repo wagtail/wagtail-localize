@@ -38,6 +38,25 @@ class TranslationRequestDetailView(DetailView):
     detail_url_name = None
     header_icon = ''
 
+    def get_context_data(self, object):
+        context = super().get_context_data(object=object)
+        pages = list(object.pages.order_by('id'))
+        pages_by_id = {
+            page.id: page
+            for page in pages
+        }
+
+        # Add depths to pages
+        for page in pages:
+            # Pages are in depth-first-search order so parents are processed before their children
+            if page.parent_id:
+                page.depth = pages_by_id[page.parent_id].depth + 1
+            else:
+                page.depth = 0
+
+        context['pages'] = pages
+        return context
+
 
 class TranslationRequestViewSet(ViewSet):
     icon = 'site'
