@@ -66,7 +66,7 @@ class Region(models.Model):
 
     @classmethod
     def default(cls):
-        return cls.objects.filter(is_default).first()
+        return cls.objects.filter(is_default=True).first()
 
     @classmethod
     def default_id(cls):
