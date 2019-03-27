@@ -32,7 +32,7 @@ def register_admin_urls():
     ]
 
     return [
-        url('^i18nworkflow/', include(urls, namespace='wagtail_i18n_workflow')),
+        url('^i18nworkflow/', include((urls, 'wagtail_i18n_workflow'), namespace='wagtail_i18n_workflow')),
     ]
 
 
