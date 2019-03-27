@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     atomic = False
 
     dependencies = [
-        ('wagtailcore', '0041_group_collection_permissions_verbose_name_plural'),
+        ('wagtailcore', '0040_page_draft_title'),
         ('wagtail_i18n_translation_memory', '0001_initial'),
     ]
 
