@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('path', models.TextField()),
-                ('html_segment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_locations', to='wagtail_i18n_segmentizer.HTMLSegment')),
+                ('html_segment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_locations', to='wagtail_i18n_translation_memory.HTMLSegment')),
                 ('page_revision', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.PageRevision')),
             ],
             options={
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('position', models.IntegerField()),
-                ('html_segment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='text_segments', to='wagtail_i18n_segmentizer.HTMLSegment')),
+                ('html_segment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='text_segments', to='wagtail_i18n_translation_memory.HTMLSegment')),
             ],
         ),
         migrations.CreateModel(
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('path', models.TextField()),
                 ('page_revision', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.PageRevision')),
-                ('text_segment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_locations', to='wagtail_i18n_segmentizer.TextSegment')),
+                ('text_segment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_locations', to='wagtail_i18n_translation_memory.TextSegment')),
             ],
             options={
                 'abstract': False,
@@ -69,13 +69,13 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField()),
                 ('locale', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtail_i18n.Locale')),
-                ('translation_of', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translations', to='wagtail_i18n_segmentizer.TextSegment')),
+                ('translation_of', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translations', to='wagtail_i18n_translation_memory.TextSegment')),
             ],
         ),
         migrations.AddField(
             model_name='htmlsegmenttext',
             name='text_segment',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtail_i18n_segmentizer.TextSegment'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtail_i18n_translation_memory.TextSegment'),
         ),
         migrations.AlterUniqueTogether(
             name='textsegmenttranslation',
