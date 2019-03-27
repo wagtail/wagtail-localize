@@ -1,0 +1,22 @@
+{% extends "wagtailadmin/generic/edit.html" %}
+{% load i18n %}
+
+{% block titletag %}Copy for translation{% endblock %}
+
+{% block content %}
+
+    {% include "wagtailadmin/shared/header.html" with title="copy for translation" subtitle=translation_request_page.source_page.get_admin_display_title icon=view.header_icon %}
+
+    <div class="nice-padding">
+        <p>
+            This will copy the "{{ translation_request_page.request.source_locale }}" version of the page into the "{{ translation_request_page.request.target_locale }}" section.
+        </p>
+
+        <form action="{% url view.copy_for_translation_url_name translation_request_page.request.id translation_request_page.id %}" method="post">
+            {% csrf_token %}
+
+            <button type="submit">Confirm</button>
+            <a href="{% url view.detail_url_name translation_request_page.request.id %}">Go back</a>
+        </form>
+    </div>
+{% endblock %}

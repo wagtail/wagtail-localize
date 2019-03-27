@@ -64,7 +64,7 @@
                                 {% else %}
                                      {% if not page.parent or page.parent.get_translation %}
                                         <li style="visibility: visible !important">
-                                            <a href="#" class="button button-small button-secondary">{% trans "Copy for translation" %}</a>
+                                            <a href="{% url view.copy_for_translation_url_name translation_request.id page.id %}" class="button button-small button-secondary">{% trans "Copy for translation" %}</a>
                                         </li>
                                     {% endif %}
                                 {% endif %}

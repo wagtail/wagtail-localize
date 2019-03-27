@@ -3,6 +3,7 @@ from django.conf.urls import url
 from django.db import transaction
 from django.utils.translation import ugettext_lazy
 from django.views.generic import DetailView, ListView
+from django.shortcuts import get_object_or_404, redirect
 
 from wagtail.admin.views import generic
 from wagtail.admin.viewsets.base import ViewSet
@@ -36,6 +37,7 @@ class TranslationRequestDetailView(DetailView):
     permission_policy = None
     list_url_name = None
     detail_url_name = None
+    copy_for_translation_url_name = None
     header_icon = ''
 
     def get_context_data(self, object):
@@ -58,6 +60,28 @@ class TranslationRequestDetailView(DetailView):
         return context
 
 
+class CopyForTranslationView(DetailView):
+    success_message = ugettext_lazy("Translation request '{0}' updated.")
+    error_message = ugettext_lazy("The translation request could not be saved due to errors.")
+    context_object_name = 'translation_request_page'
+    template_name = 'wagtail_i18n_workflow/management/copy_for_translation.html'
+    permission_policy = None
+    list_url_name = None
+    detail_url_name = None
+    copy_for_translation_url_name = None
+    header_icon = ''
+
+    def get_object(self):
+        translation_request = super().get_object()
+        return get_object_or_404(translation_request.pages.all(), id=self.kwargs['page_id'])
+
+    def post(self, request, *args, **kwargs):
+        translation_request_page = self.get_object()
+
+        new_page = translation_request_page.source_page.specific.copy_for_translation(translation_request_page.request.target_locale)
+        return redirect('wagtailadmin_pages:edit', new_page.id)
+
+
 class TranslationRequestViewSet(ViewSet):
     icon = 'site'
 
@@ -66,6 +90,7 @@ class TranslationRequestViewSet(ViewSet):
 
     list_view_class = TranslationRequestListView
     detail_view_class = TranslationRequestDetailView
+    copy_for_translation_view_class = CopyForTranslationView
 
     @property
     def list_view(self):
@@ -84,6 +109,18 @@ class TranslationRequestViewSet(ViewSet):
             permission_policy=self.permission_policy,
             list_url_name=self.get_url_name('list'),
             detail_url_name=self.get_url_name('detail'),
+            copy_for_translation_url_name=self.get_url_name('copy_for_translation'),
+            header_icon=self.icon,
+        )
+
+    @property
+    def copy_for_translation_view(self):
+        return self.copy_for_translation_view_class.as_view(
+            model=self.model,
+            permission_policy=self.permission_policy,
+            list_url_name=self.get_url_name('list'),
+            detail_url_name=self.get_url_name('detail'),
+            copy_for_translation_url_name=self.get_url_name('copy_for_translation'),
             header_icon=self.icon,
         )
 
@@ -91,4 +128,5 @@ class TranslationRequestViewSet(ViewSet):
         return super().get_urlpatterns() + [
             url(r'^$', self.list_view, name='list'),
             url(r'^(?P<pk>\d+)/$', self.detail_view, name='detail'),
+            url(r'^(?P<pk>\d+)/copy_for_translation/(?P<page_id>\d+)/$', self.copy_for_translation_view, name='copy_for_translation'),
         ]
