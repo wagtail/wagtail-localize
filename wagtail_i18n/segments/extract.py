@@ -71,7 +71,10 @@ def extract_segments(instance):
     segments = []
 
     for field in instance.get_translatable_fields():
-        if isinstance(field, StreamField):
+        if hasattr(field, 'get_translatable_segments'):
+            segments.extend(segment.wrap(field.name) for segment in field.get_translatable_segments(field.value_from_object(instance)))
+
+        elif isinstance(field, StreamField):
             segments.extend(segment.wrap(field.name) for segment in StreamFieldSegmentExtractor(field).handle_stream_block(field.value_from_object(instance)))
 
         elif isinstance(field, RichTextField):
