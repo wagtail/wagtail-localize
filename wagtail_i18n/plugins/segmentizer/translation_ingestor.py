@@ -14,9 +14,9 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from wagtail_i18n.models import TranslatableMixin, Locale
+from wagtail_i18n.segments import SegmentValue
 
 from .models import TextSegment, TextSegmentPageLocation, HTMLSegmentPageLocation, HTMLSegmentText
-from .segmentizer import Segment as SegmentValue
 from .utils import get_translation_progress
 
 

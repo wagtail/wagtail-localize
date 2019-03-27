@@ -7,7 +7,7 @@ from wagtail.core.models import Page
 
 from wagtail_i18n.models import get_translatable_models, Language, Locale, Region
 from wagtail_i18n.plugins.segmentizer.models import TextSegment, TextSegmentPageLocation, HTMLSegmentPageLocation
-from wagtail_i18n.plugins.segmentizer.segmentizer import segmentize
+from wagtail_i18n.segments.extractor import extract_segments
 
 
 class Command(BaseCommand):
@@ -53,7 +53,7 @@ class Command(BaseCommand):
             pages = model.objects.live().filter(content_type=content_type, locale=src_locale)
 
             for page in pages:
-                for segment in segmentize(page):
+                for segment in extract_segments(page):
                     if segment.html:
                         add_html_segment(HTMLSegmentPageLocation.from_segment_value(get_page_revision(page), segment))
                     else:
