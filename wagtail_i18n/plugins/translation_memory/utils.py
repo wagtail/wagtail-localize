@@ -1,6 +1,6 @@
 from django.db.models import Case, Count, Exists, IntegerField, OuterRef, Q, Sum, Value, When
 
-from .models import TextSegment, TextSegmentTranslation, HTMLSegment, HTMLSegmentText, TextSegmentPageLocation, HTMLSegmentPageLocation
+from .models import Segment, SegmentTranslation, HTMLTemplate, HTMLTemplateSegment, SegmentPageLocation, HTMLTemplatePageLocation
 
 
 def get_translation_progress(page_revision_id, locale):
@@ -13,21 +13,21 @@ def get_translation_progress(page_revision_id, locale):
      - The number of segments that have been translated into the locale
     """
     # Get QuerySet of Segments that need to be translated
-    required_segments = TextSegment.objects.filter(
-        id__in=TextSegmentPageLocation.objects.filter(page_revision_id=page_revision_id).values_list('text_segment_id')
+    required_segments = Segment.objects.filter(
+        id__in=SegmentPageLocation.objects.filter(page_revision_id=page_revision_id).values_list('segment_id')
     )
 
-    required_segments |= TextSegment.objects.filter(
-        id__in=HTMLSegmentText.objects.filter(
-            html_segment__id__in=HTMLSegmentPageLocation.objects.filter(page_revision_id=page_revision_id).values_list('html_segment_id')
-        ).values_list('text_segment_id')
+    required_segments |= Segment.objects.filter(
+        id__in=HTMLTemplateSegment.objects.filter(
+            html_template__id__in=HTMLTemplatePageLocation.objects.filter(page_revision_id=page_revision_id).values_list('html_template_id')
+        ).values_list('segment_id')
     )
 
     # Annotate each Segment with a flag that indicates whether the segment is translated
     # into the specified locale
     required_segments = required_segments.annotate(
         is_translated=Exists(
-            TextSegmentTranslation.objects.filter(
+            SegmentTranslation.objects.filter(
                 translation_of_id=OuterRef('pk'),
                 locale=locale,
             )

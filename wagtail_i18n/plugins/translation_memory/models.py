@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from django.db import models, transaction
 
 
-class TextSegment(models.Model):
+class Segment(models.Model):
     UUID_NAMESPACE = uuid.UUID('59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7')
 
     locale = models.ForeignKey('wagtail_i18n.Locale', on_delete=models.CASCADE)
@@ -24,8 +24,8 @@ class TextSegment(models.Model):
         return segment
 
 
-class TextSegmentTranslation(models.Model):
-    translation_of = models.ForeignKey(TextSegment, on_delete=models.CASCADE, related_name='translations')
+class SegmentTranslation(models.Model):
+    translation_of = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='translations')
     locale = models.ForeignKey('wagtail_i18n.Locale', on_delete=models.CASCADE)
     text = models.TextField()
 
@@ -47,7 +47,7 @@ class TextSegmentTranslation(models.Model):
         return segment
 
 
-class HTMLSegment(models.Model):
+class HTMLTemplate(models.Model):
     UUID_NAMESPACE = uuid.UUID('4599eabc-3f8e-41a9-be61-95417d26a8cd')
 
     uuid = models.UUIDField(unique=True)
@@ -59,7 +59,7 @@ class HTMLSegment(models.Model):
 
         try:
             return cls.objects.get(uuid=segment_uuid)
-        except HTMLSegment.DoesNotExist:
+        except HTMLTemplate.DoesNotExist:
             pass
 
         soup = BeautifulSoup(html, 'html.parser')
@@ -76,26 +76,26 @@ class HTMLSegment(models.Model):
                     descendant.append(soup.new_tag('text', position=position))
 
         with transaction.atomic():
-            html_segment = HTMLSegment.objects.create(
+            html_template = HTMLTemplate.objects.create(
                 uuid=segment_uuid,
                 template=str(soup),
             )
 
             for position, text in enumerate(texts):
-                text_segment = TextSegment.from_text(locale, text)
-                HTMLSegmentText.objects.create(
-                    html_segment=html_segment,
+                segment = Segment.from_text(locale, text)
+                HTMLTemplateSegment.objects.create(
+                    html_template=html_template,
                     position=position,
-                    text_segment=text_segment,
+                    segment=segment,
                 )
 
-        return html_segment
+        return html_template
 
     def get_translated_content(self, locale):
         # Note: this method is reliant on text segment translations being prefetched
         texts = {
-            text_segment.position: text_segment.translation
-            for text_segment in self.text_segments.all()
+            segment.position: segment.translation
+            for segment in self.segments.all()
         }
 
         if texts:
@@ -112,13 +112,13 @@ class HTMLSegment(models.Model):
             return self.template
 
 
-class HTMLSegmentText(models.Model):
-    html_segment = models.ForeignKey(HTMLSegment, on_delete=models.CASCADE, related_name='text_segments')
+class HTMLTemplateSegment(models.Model):
+    html_template = models.ForeignKey(HTMLTemplate, on_delete=models.CASCADE, related_name='segments')
     position = models.IntegerField()
-    text_segment = models.ForeignKey(TextSegment, on_delete=models.PROTECT, related_name='+')
+    segment = models.ForeignKey(Segment, on_delete=models.PROTECT, related_name='+')
 
 
-class BaseSegmentPageLocation(models.Model):
+class BasePageLocation(models.Model):
     page_revision = models.ForeignKey('wagtailcore.PageRevision', on_delete=models.CASCADE)
     path = models.TextField()
 
@@ -126,33 +126,33 @@ class BaseSegmentPageLocation(models.Model):
         abstract = True
 
 
-class TextSegmentPageLocation(BaseSegmentPageLocation):
-    text_segment = models.ForeignKey(TextSegment, on_delete=models.CASCADE, related_name='page_locations')
+class SegmentPageLocation(BasePageLocation):
+    segment = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='page_locations')
 
     @classmethod
     def from_segment_value(cls, page_revision, segment_value):
-        text_segment = TextSegment.from_text(page_revision.page.locale, segment_value.text)
+        segment = Segment.from_text(page_revision.page.locale, segment_value.text)
 
         segment_page_loc, created = cls.objects.get_or_create(
             page_revision=page_revision,
             path=segment_value.path,
-            text_segment=text_segment,
+            segment=segment,
         )
 
         return segment_page_loc
 
 
-class HTMLSegmentPageLocation(BaseSegmentPageLocation):
-    html_segment = models.ForeignKey(HTMLSegment, on_delete=models.CASCADE, related_name='page_locations')
+class HTMLTemplatePageLocation(BasePageLocation):
+    html_template = models.ForeignKey(HTMLTemplate, on_delete=models.CASCADE, related_name='page_locations')
 
     @classmethod
     def from_segment_value(cls, page_revision, segment_value):
-        html_segment = HTMLSegment.from_html(page_revision.page.locale, segment_value.text)
+        html_template = HTMLTemplate.from_html(page_revision.page.locale, segment_value.text)
 
         segment_page_loc, created = cls.objects.get_or_create(
             page_revision=page_revision,
             path=segment_value.path,
-            html_segment=html_segment,
+            html_template=html_template,
         )
 
         return segment_page_loc

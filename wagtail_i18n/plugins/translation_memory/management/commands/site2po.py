@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from wagtail.core.models import Page
 
 from wagtail_i18n.models import get_translatable_models, Language, Locale, Region
-from wagtail_i18n.plugins.translation_memory.models import TextSegment, TextSegmentTranslation, TextSegmentPageLocation, HTMLSegmentPageLocation
+from wagtail_i18n.plugins.translation_memory.models import Segment, SegmentTranslation, SegmentPageLocation, HTMLTemplatePageLocation
 from wagtail_i18n.segments.extract import extract_segments
 
 
@@ -27,20 +27,20 @@ class Command(BaseCommand):
 
             return page.save_revision(changed=False)
 
-        def add_text_segment(text_segment):
-            text = text_segment.text_segment
+        def add_segment(segment):
+            text = segment.segment
             if text not in messages:
                 messages[text] = []
 
-            messages[text].append((text_segment.page_revision.page.url_path, text_segment.path))
+            messages[text].append((segment.page_revision.page.url_path, segment.path))
 
-        def add_html_segment(html_segment):
-            for text_segment in html_segment.html_segment.text_segments.all():
-                text = text_segment.text_segment
+        def add_html_template(html_template):
+            for segment in html_template.html_template.segments.all():
+                text = segment.segment
 
                 if text not in messages:
                     messages[text] = []
-                    messages[text].append((html_segment.page_revision.page.url_path, html_segment.path + ':' + str(text_segment.position)))
+                    messages[text].append((html_template.page_revision.page.url_path, html_template.path + ':' + str(segment.position)))
 
         for model in get_translatable_models():
             if not issubclass(model, Page):
@@ -55,9 +55,9 @@ class Command(BaseCommand):
             for page in pages:
                 for segment in extract_segments(page):
                     if segment.html:
-                        add_html_segment(HTMLSegmentPageLocation.from_segment_value(get_page_revision(page), segment))
+                        add_html_template(HTMLTemplatePageLocation.from_segment_value(get_page_revision(page), segment))
                     else:
-                        add_text_segment(TextSegmentPageLocation.from_segment_value(get_page_revision(page), segment))
+                        add_segment(SegmentPageLocation.from_segment_value(get_page_revision(page), segment))
 
         po = polib.POFile()
         po.metadata = {
@@ -72,17 +72,17 @@ class Command(BaseCommand):
             'Content-Transfer-Encoding': '8bit',
         }
 
-        for text_segment, occurances in messages.items():
+        for segment, occurances in messages.items():
             existing_translation = ''
             if tgt_locale:
-                translation = TextSegmentTranslation.objects.filter(translation_of=text_segment, locale=tgt_locale).first()
+                translation = SegmentTranslation.objects.filter(translation_of=segment, locale=tgt_locale).first()
 
                 if translation:
                     existing_translation = translation.text
 
             po.append(
                 polib.POEntry(
-                    msgid=text_segment.text,
+                    msgid=segment.text,
                     msgstr=existing_translation,
                     occurrences=occurances
                 )
