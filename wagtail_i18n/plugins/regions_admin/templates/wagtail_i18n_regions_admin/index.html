@@ -14,8 +14,8 @@
                     {% for region in regions %}
                         <tr>
                             <td class="hostname title">
-                                <h2>
-                                    <a href="{% url 'wagtail_i18n_regions_admin:edit' region.id %}">{{ region.name }}</a>
+                                <h2{% if not region.is_active %} style="color: #777;"{% endif %}>
+                                    <a href="{% url 'wagtail_i18n_regions_admin:edit' region.id %}">{{ region.name }}{% if not region.is_active %} (inactive){% endif %}</a>
                                 </h2>
                             </td>
                         </tr>

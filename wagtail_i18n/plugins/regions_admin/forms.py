@@ -12,7 +12,7 @@ class RegionForm(forms.ModelForm):
 
     class Meta:
         model = Region
-        fields = ['name', 'slug', 'languages']
+        fields = ['name', 'slug', 'languages', 'is_active']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
