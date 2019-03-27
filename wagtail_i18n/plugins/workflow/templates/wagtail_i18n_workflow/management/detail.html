@@ -25,7 +25,9 @@
 
         <h2>Actions</h2>
 
-        TODO
+        {% for action_module in action_modules %}
+            {{ action_module.render }}
+        {% endfor %}
 
         <h2>Pages</h2>
 

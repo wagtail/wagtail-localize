@@ -9,6 +9,7 @@ from wagtail.admin.views import generic
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.core.permission_policies import ModelPermissionPolicy
 
+from ..action_modules import get_action_modules
 from ..models import TranslationRequest
 
 
@@ -57,6 +58,12 @@ class TranslationRequestDetailView(DetailView):
                 page.depth = 0
 
         context['pages'] = pages
+
+        context['action_modules'] = [
+            action_module(self.request, object)
+            for action_module in get_action_modules()
+        ]
+
         return context
 
 
