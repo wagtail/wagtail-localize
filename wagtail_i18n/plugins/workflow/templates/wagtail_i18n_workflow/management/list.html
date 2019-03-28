@@ -11,6 +11,7 @@
                         <th class="name">{% trans "Source locale" %}</th>
                         <th class="name">{% trans "Target locale" %}</th>
                         <th class="name">{% trans "Number of pages" %}</th>
+                        <th class="name">{% trans "Status" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,6 +28,9 @@
                             </td>
                             <td>
                                 {{ translation_request.pages.all|length }}
+                            </td>
+                            <td>
+                                {{ translation_request.get_status }}
                             </td>
                         </tr>
                     {% endfor %}
