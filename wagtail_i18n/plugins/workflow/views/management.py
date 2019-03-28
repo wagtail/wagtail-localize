@@ -74,7 +74,7 @@ def copy_pages(request, translation_request_id):
     translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
     num_copied = 0
 
-    for page in translation_request.pages.all():
+    for page in translation_request.pages.filter(is_completed=False):
         instance = page.source_revision.as_page_object()
 
         if instance.has_translation(translation_request.target_locale):
@@ -82,7 +82,12 @@ def copy_pages(request, translation_request_id):
 
         with transaction.atomic():
             translation = instance.copy_for_translation(translation_request.target_locale)
-            translation.save_revision()
+            revision = translation.save_revision()
+
+            # Update translation request
+            page.is_completed = True
+            page.completed_revision = revision
+            page.save(update_fields=['is_completed', 'completed_revision'])
 
         num_copied += 1
 

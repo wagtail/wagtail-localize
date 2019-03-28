@@ -30,7 +30,7 @@ def translate(request, translation_request_id):
     translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
     translator = Translator()
 
-    for page in translation_request.pages.all():
+    for page in translation_request.pages.filter(is_completed=False):
         instance = page.source_revision.as_page_object()
 
         segments = extract_segments(instance)
@@ -64,7 +64,14 @@ def translate(request, translation_request_id):
 
             ingest_segments(instance, translation, translation_request.source_locale, translation_request.target_locale, translated_segments)
             translation.slug = slugify(translation.slug)
-            translation.save_revision()
+            revision = translation.save_revision()
+
+            # Update translation request
+            page.is_completed = True
+            page.completed_revision = revision
+            page.save(update_fields=['is_completed', 'completed_revision'])
+
+
 
     # TODO: Plural
     messages.success(request, "%d pages successfully translated with Google Translate" % translation_request.pages.count())

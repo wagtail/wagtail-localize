@@ -37,7 +37,7 @@
             <thead>
                 <tr>
                     <th class="name">Title</th>
-                    <th class="name">Change</th>
+                    <th class="name">Status</th>
                     <th class="name">Actions</th>
                 </tr>
             </thead>
@@ -48,7 +48,9 @@
                             {{ page.source_page.get_admin_display_title }}
                         </td>
                         <td>
-                            {% if page.get_translation %}
+                            {% if page.is_completed %}
+                                Completed
+                            {% elif page.get_translation %}
                                 Modified
                             {% else %}
                                 New
@@ -60,7 +62,7 @@
                                     <li style="visibility: visible !important">
                                         <a href="{% url 'wagtailadmin_pages:edit' page.get_translation.id %}" class="button button-small button-secondary">{% trans "Edit" %}</a>
                                     </li>
-                                    {% if page.previous_request %}
+                                    {% if not page.is_completed and page.previous_request %}
                                         <li style="visibility: visible !important">
                                             <a href="{% url 'wagtailadmin_pages:revisions_compare' page.source_page.id page.previous_request.source_revision_id page.source_revision_id %}" class="button button-small button-secondary">{% trans "View changes" %}</a>
                                         </li>

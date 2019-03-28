@@ -77,7 +77,7 @@ def upload(request, translation_request_id):
 
     try:
         with transaction.atomic():
-            for page in translation_request.pages.all():
+            for page in translation_request.pages.filter(is_completed=False):
                 instance = page.source_revision.as_page_object()
 
                 segments = extract_segments(instance)
@@ -104,7 +104,13 @@ def upload(request, translation_request_id):
 
                 ingest_segments(instance, translation, translation_request.source_locale, translation_request.target_locale, translated_segments)
                 translation.slug = slugify(translation.slug)
-                translation.save_revision()
+                revision = translation.save_revision()
+
+                # Update translation request
+                page.is_completed = True
+                page.completed_revision = revision
+                page.save(update_fields=['is_completed', 'completed_revision'])
+
     except MissingSegmentsException as e:
         # TODO: Plural
         messages.error(request, "Unable to translate %s. %s missing segments." % (e.instance.get_admin_display_title(), e.num_missing))

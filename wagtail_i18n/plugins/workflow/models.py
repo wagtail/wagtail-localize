@@ -15,8 +15,14 @@ class TranslationRequest(models.Model):
 
 class TranslationRequestPage(models.Model):
     request = models.ForeignKey(TranslationRequest, on_delete=models.CASCADE, related_name='pages')
+    # FIXME: what if the original page is deleted?
     source_revision = models.ForeignKey(PageRevision, on_delete=models.CASCADE, related_name='+')
     parent = models.ForeignKey('self', on_delete=models.PROTECT, null=True, related_name='child_pages')
+    is_completed = models.BooleanField(default=False)
+
+    # The revision that was created when this change was made
+    # Nullable as pages can be deleted later on
+    completed_revision = models.ForeignKey(PageRevision, on_delete=models.SET_NULL, null=True, related_name='+')
 
     @property
     def source_page(self):
