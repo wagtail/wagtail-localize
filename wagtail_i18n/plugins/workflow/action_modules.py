@@ -20,9 +20,15 @@ class BaseActionModule:
         return render_to_string(self.template_name, context, request=self.request)
 
 
+class CopyPagesActionModule(BaseActionModule):
+    template_name = 'wagtail_i18n_workflow/action_modules/copy_pages.html'
+
+
 @functools.lru_cache()
 def get_action_modules():
-    action_modules = []
+    action_modules = [
+        CopyPagesActionModule,
+    ]
 
     for fn in hooks.get_hooks('wagtail_i18n_workflow_register_action_modules'):
         new_action_modules = fn()

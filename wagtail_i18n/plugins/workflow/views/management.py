@@ -1,7 +1,9 @@
 from django import forms
 from django.conf.urls import url
+from django.contrib import messages
 from django.db import transaction
 from django.utils.translation import ugettext_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView
 from django.shortcuts import get_object_or_404, redirect
 
@@ -65,6 +67,29 @@ class TranslationRequestDetailView(DetailView):
         ]
 
         return context
+
+
+@require_POST
+def copy_pages(request, translation_request_id):
+    translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
+    num_copied = 0
+
+    for page in translation_request.pages.all():
+        instance = page.source_revision.as_page_object()
+
+        if instance.has_translation(translation_request.target_locale):
+            continue
+
+        with transaction.atomic():
+            translation = instance.copy_for_translation(translation_request.target_locale)
+            translation.save_revision()
+
+        num_copied += 1
+
+    # TODO: Plural
+    messages.success(request, "%d pages successfully copied" % num_copied)
+
+    return redirect('wagtail_i18n_workflow_management:detail', translation_request_id)
 
 
 class CopyForTranslationView(DetailView):
@@ -135,5 +160,6 @@ class TranslationRequestViewSet(ViewSet):
         return super().get_urlpatterns() + [
             url(r'^$', self.list_view, name='list'),
             url(r'^(?P<pk>\d+)/$', self.detail_view, name='detail'),
+            url(r'^(\d+)/copy_pages/$', copy_pages, name='copy_pages'),
             url(r'^(?P<pk>\d+)/copy_for_translation/(?P<page_id>\d+)/$', self.copy_for_translation_view, name='copy_for_translation'),
         ]
