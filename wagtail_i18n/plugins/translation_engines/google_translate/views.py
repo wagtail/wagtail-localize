@@ -23,13 +23,14 @@ def translate(request, translation_request_id):
 
         segments = extract_segments(instance)
 
-        # TODO: Handle inline HTML
+        # TODO: Process non-plaintext segments
         translations = translator.translate(
             [segment.text for segment in segments],
             src='en',
             dest=translation_request.target_locale.language.code,
         )
 
+        # FIXME: This will break if multiple segments have the same text
         source_to_path_mapping = {
             segment.text: segment.path
             for segment in segments
@@ -50,6 +51,7 @@ def translate(request, translation_request_id):
             translation.slug = slugify(translation.slug)
             translation.save_revision()
 
+    # TODO: Plural
     messages.success(request, "%d pages successfully translated with Google Translate" % translation_request.pages.count())
 
     return redirect('wagtail_i18n_workflow_management:detail', translation_request_id)
