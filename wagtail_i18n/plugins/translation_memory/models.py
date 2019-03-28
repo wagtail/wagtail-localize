@@ -2,8 +2,6 @@ import uuid
 
 from django.db import models, transaction
 
-from wagtail_i18n.segment_formatters import get_segment_formatter_class
-
 
 class Segment(models.Model):
     UUID_NAMESPACE = uuid.UUID('59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7')
@@ -54,63 +52,22 @@ class Template(models.Model):
     uuid = models.UUIDField(unique=True)
     template = models.TextField()
     template_format = models.CharField(max_length=100)
+    segment_count = models.PositiveIntegerField()
 
     @classmethod
-    def from_segment_value(cls, locale, segment_value):
-        formatter = get_segment_formatter_class(segment_value.format)()
-        uuid_namespace = uuid.uuid5(cls.BASE_UUID_NAMESPACE, segment_value.format)
+    def from_template_value(cls, template_value):
+        uuid_namespace = uuid.uuid5(cls.BASE_UUID_NAMESPACE, template_value.format)
 
-        segment_uuid = uuid.uuid5(uuid_namespace, segment_value.text)
-
-        try:
-            return cls.objects.get(uuid=segment_uuid)
-        except Template.DoesNotExist:
-            pass
-
-        segment_texts = []
-        def emit_segment(text):
-            position = len(segment_texts)
-            segment_texts.append((position, text))
-            return position
-
-        template_value = formatter.parse(segment_value.text, emit_segment)
-
-        with transaction.atomic():
-            template = Template.objects.create(
-                uuid=segment_uuid,
-                template=template_value,
-            )
-
-            for position, text in segment_texts:
-                segment = Segment.from_text(locale, text)
-                TemplateSegment.objects.create(
-                    template=template,
-                    position=position,
-                    segment=segment,
-                )
+        template, created = cls.objects.get_or_create(
+            uuid=uuid.uuid5(uuid_namespace, template_value.template),
+            defaults={
+                'template': template_value.template,
+                'template_format': template_value.format,
+                'segment_count': template_value.segment_count,
+            }
+        )
 
         return template
-
-    def get_translated_content(self, locale):
-        formatter = get_segment_formatter_class(segment_value.format)()
-
-        # Note: this method is reliant on text segment translations being prefetched
-        texts = {
-            segment.position: segment.translation
-            for segment in self.segments.all()
-        }
-
-        if texts:
-            return formatter.render(self.template, texts)
-        else:
-            # There are no translatable snippets in the template
-            return self.template
-
-
-class TemplateSegment(models.Model):
-    template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name='segments')
-    position = models.IntegerField()
-    segment = models.ForeignKey(Segment, on_delete=models.PROTECT, related_name='+')
 
 
 class BasePageLocation(models.Model):
@@ -141,13 +98,13 @@ class TemplatePageLocation(BasePageLocation):
     template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name='page_locations')
 
     @classmethod
-    def from_segment_value(cls, page_revision, segment_value):
-        template = Template.from_segment_value(page_revision.page.locale, segment_value)
+    def from_template_value(cls, page_revision, template_value):
+        template = Template.from_template_value(template_value)
 
-        segment_page_loc, created = cls.objects.get_or_create(
+        template_page_loc, created = cls.objects.get_or_create(
             page_revision=page_revision,
-            path=segment_value.path,
+            path=template_value.path,
             template=template,
         )
 
-        return segment_page_loc
+        return template_page_loc

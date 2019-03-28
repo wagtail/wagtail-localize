@@ -1,6 +1,6 @@
 from django.db.models import Case, Count, Exists, IntegerField, OuterRef, Q, Sum, Value, When
 
-from .models import Segment, SegmentTranslation, Template, TemplateSegment, SegmentPageLocation, TemplatePageLocation
+from .models import Segment, SegmentTranslation, SegmentPageLocation
 
 
 def get_translation_progress(page_revision_id, locale):
@@ -15,12 +15,6 @@ def get_translation_progress(page_revision_id, locale):
     # Get QuerySet of Segments that need to be translated
     required_segments = Segment.objects.filter(
         id__in=SegmentPageLocation.objects.filter(page_revision_id=page_revision_id).values_list('segment_id')
-    )
-
-    required_segments |= Segment.objects.filter(
-        id__in=TemplateSegment.objects.filter(
-            template__id__in=TemplatePageLocation.objects.filter(page_revision_id=page_revision_id).values_list('template_id')
-        ).values_list('segment_id')
     )
 
     # Annotate each Segment with a flag that indicates whether the segment is translated

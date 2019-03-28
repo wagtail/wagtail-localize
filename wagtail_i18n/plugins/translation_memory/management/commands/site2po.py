@@ -7,6 +7,7 @@ from wagtail.core.models import Page
 
 from wagtail_i18n.models import get_translatable_models, Language, Locale, Region
 from wagtail_i18n.plugins.translation_memory.models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
+from wagtail_i18n.segments import TemplateValue
 from wagtail_i18n.segments.extract import extract_segments
 
 
@@ -27,20 +28,12 @@ class Command(BaseCommand):
 
             return page.save_revision(changed=False)
 
-        def add_segment(segment):
-            text = segment.segment
+        def add_segment(page, segment):
+            text = segment.text
             if text not in messages:
                 messages[text] = []
 
-            messages[text].append((segment.page_revision.page.url_path, segment.path))
-
-        def add_template(template):
-            for segment in template.template.segments.all():
-                text = segment.segment
-
-                if text not in messages:
-                    messages[text] = []
-                    messages[text].append((template.page_revision.page.url_path, template.path + ':' + str(segment.position)))
+            messages[text].append((page.url_path, segment.path))
 
         for model in get_translatable_models():
             if not issubclass(model, Page):
@@ -54,10 +47,11 @@ class Command(BaseCommand):
 
             for page in pages:
                 for segment in extract_segments(page):
-                    if segment.format != 'plain':
-                        add_template(TemplatePageLocation.from_segment_value(get_page_revision(page), segment))
+                    if isinstance(segment, TemplateValue):
+                        TemplatePageLocation.from_template_value(get_page_revision(page), segment)
                     else:
-                        add_segment(SegmentPageLocation.from_segment_value(get_page_revision(page), segment))
+                        SegmentPageLocation.from_segment_value(get_page_revision(page), segment)
+                        add_segment(page, segment)
 
         po = polib.POFile()
         po.metadata = {
@@ -75,14 +69,14 @@ class Command(BaseCommand):
         for segment, occurances in messages.items():
             existing_translation = ''
             if tgt_locale:
-                translation = SegmentTranslation.objects.filter(translation_of=segment, locale=tgt_locale).first()
+                translation = SegmentTranslation.objects.filter(translation_of__text=segment, translation_of__locale=src_locale, locale=tgt_locale).first()
 
                 if translation:
                     existing_translation = translation.text
 
             po.append(
                 polib.POEntry(
-                    msgid=segment.text,
+                    msgid=segment,
                     msgstr=existing_translation,
                     occurrences=occurances
                 )

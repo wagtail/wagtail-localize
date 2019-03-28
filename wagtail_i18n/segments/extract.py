@@ -7,7 +7,9 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from wagtail_i18n.models import TranslatableMixin
-from wagtail_i18n.segments import SegmentValue
+from wagtail_i18n.segments import SegmentValue, TemplateValue
+
+from .html import extract_html_segment
 
 
 class StreamFieldSegmentExtractor:
@@ -22,7 +24,13 @@ class StreamFieldSegmentExtractor:
             return [SegmentValue('', block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            return [SegmentValue('', block_value.source, format='html')]
+            template, texts = extract_html_segment(block_value.source)
+            return [
+                TemplateValue('', 'html', template, len(texts))
+            ] + [
+                SegmentValue(str(position), text)
+                for position, text in enumerate(texts)
+            ]
 
         elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
             return self.handle_related_object_block(block_value)
@@ -78,7 +86,16 @@ def extract_segments(instance):
             segments.extend(segment.wrap(field.name) for segment in StreamFieldSegmentExtractor(field).handle_stream_block(field.value_from_object(instance)))
 
         elif isinstance(field, RichTextField):
-            segments.append(SegmentValue(field.name, field.value_from_object(instance), format='html'))
+            template, texts = extract_html_segment(field.value_from_object(instance))
+
+            field_segments = [
+                TemplateValue('', 'html', template, len(texts))
+            ] + [
+                SegmentValue(str(position), text)
+                for position, text in enumerate(texts)
+            ]
+
+            segments.extend(segment.wrap(field.name) for segment in field_segments)
 
         elif isinstance(field, (models.TextField, models.CharField)):
             if not field.choices:
@@ -96,4 +113,4 @@ def extract_segments(instance):
             for child_instance in manager.all():
                 segments.extend(segment.wrap(f'{field.name}.{child_instance.translation_key}') for segment in extract_segments(child_instance))
 
-    return [segment for segment in segments if segment.text not in [None, '']]
+    return [segment for segment in segments if not segment.is_empty()]

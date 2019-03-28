@@ -3,12 +3,32 @@ from collections import defaultdict
 from django.db import models
 
 from wagtail.core import blocks
-from wagtail.core.fields import StreamField
+from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from wagtail_i18n.models import TranslatableMixin
+from wagtail_i18n.segments import TemplateValue
+
+from .html import render_html_segment
+
+
+def organise_template_segments(segments):
+    template = None
+    segments_by_position = {}
+
+    for segment in segments:
+        if isinstance(segment, TemplateValue):
+            template = segment
+        else:
+            segments_by_position[int(segment.path)] = segment
+
+    texts = []
+    for position in range(template.segment_count):
+        texts.append(segments_by_position[position].text)
+
+    return template.format, template.template, texts
 
 
 def handle_related_object(related_object, src_locale, tgt_locale, segments):
@@ -42,7 +62,9 @@ class StreamFieldSegmentsWriter:
             return segments[0].text
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            return RichText(segments[0].text)
+            format, template, texts = organise_template_segments(segments)
+            assert format == 'html'
+            return RichText(render_html_segment(template, texts))
 
         elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
             return self.handle_related_object_block(block_value, segments)
@@ -111,6 +133,12 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
             data = field.value_from_object(translated_obj)
             StreamFieldSegmentsWriter(field, src_locale, tgt_locale).handle_stream_block(data, field_segments)
             setattr(translated_obj, field_name, data)
+
+        elif isinstance(field, RichTextField):
+            format, template, texts = organise_template_segments(field_segments)
+            assert format == 'html'
+            html = render_html_segment(template, texts)
+            setattr(translated_obj, field_name, RichText(html))
 
         elif isinstance(field, (models.TextField, models.CharField)):
             setattr(translated_obj, field_name, field_segments[0].text)
