@@ -1,19 +1,22 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
 
 def extract_html_segment(html):
     soup = BeautifulSoup(html, 'html.parser')
     texts = []
+    replacements = []
 
     for descendant in soup.descendants:
-        if descendant.name in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li']:
-            string = descendant.string
+        if isinstance(descendant, NavigableString):
+            string = descendant.strip()
 
             if string:
                 position = len(texts)
                 texts.append(descendant.string)
-                descendant.clear()
-                descendant.append(soup.new_tag('text', position=position))
+                replacements.append((descendant, soup.new_tag('text', position=position)))
+
+    for descendant, replacement in replacements:
+        descendant.replaceWith(replacement)
 
     return str(soup), texts
 
