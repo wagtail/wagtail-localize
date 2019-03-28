@@ -29,6 +29,4 @@ def get_action_modules():
         if new_action_modules:
             action_modules.extend(new_action_modules)
 
-    print("HEY", action_modules)
-
     return action_modules

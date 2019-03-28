@@ -48,6 +48,5 @@ class TranslationsMenuItem(MenuItem):
 
 @hooks.register('register_admin_menu_item')
 def register_menu_item():
-    print("FOOOOO")
     return TranslationsMenuItem(_('Translations'), reverse('wagtail_i18n_workflow_management:list'),
                          classnames='icon icon-site', order=500)
