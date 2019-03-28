@@ -15,6 +15,16 @@ from wagtail_i18n.segments.ingest import ingest_segments
 from googletrans import Translator
 
 
+def language_code(code):
+    if code in ['zh-hans', 'zh-cn']:
+        return 'zh-cn'
+
+    if code in ['zh-hant', 'zh-tw']:
+        return 'zh-tw'
+
+    return code.split('-')[0]
+
+
 @require_POST
 def translate(request, translation_request_id):
     translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
@@ -35,8 +45,8 @@ def translate(request, translation_request_id):
 
         translations = translator.translate(
             list(text_segments_grouped.keys()),
-            src='en',  # FIXME (Google Translate doesn't like 'en-gb')
-            dest=translation_request.target_locale.language.code,
+            src=language_code(translation_request.source_locale.language.code),
+            dest=language_code(translation_request.target_locale.language.code),
         )
 
         translated_segments = template_segments.copy()
