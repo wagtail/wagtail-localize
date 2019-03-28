@@ -27,6 +27,8 @@
 
         {% for action_module in action_modules %}
             {{ action_module.render }}
+        {% empty %}
+            <p>No actions can be performed on this request</p>
         {% endfor %}
 
         <h2>Pages</h2>
