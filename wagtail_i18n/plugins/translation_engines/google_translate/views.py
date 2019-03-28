@@ -71,8 +71,6 @@ def translate(request, translation_request_id):
             page.completed_revision = revision
             page.save(update_fields=['is_completed', 'completed_revision'])
 
-
-
     # TODO: Plural
     messages.success(request, "%d pages successfully translated with Google Translate" % translation_request.pages.count())
 

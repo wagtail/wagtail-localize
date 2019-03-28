@@ -81,12 +81,11 @@ def copy_pages(request, translation_request_id):
             continue
 
         with transaction.atomic():
-            translation = instance.copy_for_translation(translation_request.target_locale)
-            revision = translation.save_revision()
+            new_page = instance.copy_for_translation(translation_request.target_locale)
 
             # Update translation request
             page.is_completed = True
-            page.completed_revision = revision
+            page.completed_revision = new_page.get_latest_revision()
             page.save(update_fields=['is_completed', 'completed_revision'])
 
         num_copied += 1
@@ -116,6 +115,9 @@ class CopyForTranslationView(DetailView):
         translation_request_page = self.get_object()
 
         new_page = translation_request_page.source_page.specific.copy_for_translation(translation_request_page.request.target_locale)
+        translation_request_page.is_completed = True
+        translation_request_page.completed_revision = new_page.get_latest_revision()
+        translation_request_page.save(update_fields=['is_completed', 'completed_revision'])
         return redirect('wagtailadmin_pages:edit', new_page.id)
 
 
