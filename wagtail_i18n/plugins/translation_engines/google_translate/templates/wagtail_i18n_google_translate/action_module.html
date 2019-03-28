@@ -1,6 +1,8 @@
 {% extends "wagtail_i18n_workflow/action_modules/base.html" %}
 
 {% block content %}
+    <h3>Google Translate</h3>
+
     <form action="{% url 'wagtail_i18n_google_translate:translate' translation_request.id %}" method="post">
         {% csrf_token %}
 

@@ -1,7 +1,11 @@
 {% extends "wagtail_i18n_workflow/action_modules/base.html" %}
 
 {% block content %}
-    <a href="{% url 'wagtail_i18n_pofile:download' translation_request.id %}" download>Download PO file</a>
+    <h3>Download / Upload PO file</h3>
+
+    <a class="icon icon-download" href="{% url 'wagtail_i18n_pofile:download' translation_request.id %}" download>Download PO file</a>
+
+    <hr>
 
     <form action="{% url 'wagtail_i18n_pofile:upload' translation_request.id %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
