@@ -19,6 +19,9 @@ class Language(models.Model):
     code = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ['-is_active', 'code']
+
     @classmethod
     def default(cls):
         default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
@@ -131,6 +134,7 @@ class Locale(models.Model):
         unique_together = [
             ('region', 'language'),
         ]
+        ordering = ['-is_active', '-region__is_default', 'region__name', 'language__code']
 
 
 # Update Locale.is_active when Language.is_active is changed
