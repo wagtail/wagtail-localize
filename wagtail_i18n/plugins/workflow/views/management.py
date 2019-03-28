@@ -66,6 +66,12 @@ class TranslationRequestDetailView(DetailView):
             for action_module in get_action_modules()
         ]
 
+        # Hide action modules if their is_shown method returns false
+        context['action_modules'] = [
+            action_module for action_module in context['action_modules']
+            if action_module.is_shown()
+        ]
+
         return context
 
 

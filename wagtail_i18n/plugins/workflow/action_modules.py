@@ -12,6 +12,9 @@ class BaseActionModule:
         self.request = request
         self.translation_request = translation_request
 
+    def is_shown(self):
+        return True
+
     def render(self):
         context = {
             'translation_request': self.translation_request,
