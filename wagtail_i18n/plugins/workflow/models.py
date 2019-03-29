@@ -13,12 +13,10 @@ class TranslationRequest(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='translation_requests_created')
 
     def get_status(self):
-        aggs = self.pages.aggregate(
-            num_total=models.Count('id'),
-            num_completed=models.Count('id', filter=models.Q(is_completed=True))
-        )
+        num_total = self.pages.count()
+        num_completed = self.pages.filter(is_completed=True).count()
 
-        if aggs['num_total'] == aggs['num_completed']:
+        if num_total == num_completed:
             return "Completed"
         else:
             return "In progress"
