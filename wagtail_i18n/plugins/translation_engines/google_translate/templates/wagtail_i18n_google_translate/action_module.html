@@ -6,6 +6,6 @@
     <form action="{% url 'wagtail_i18n_google_translate:translate' translation_request.id %}" method="post">
         {% csrf_token %}
 
-        <button type="submit">Translate with Google Translate</button>
+        <button type="submit" class="button button-secondary">Translate with Google Translate</button>
     </form>
 {% endblock %}
