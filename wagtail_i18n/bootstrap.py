@@ -23,13 +23,14 @@ def bootstrap_translatable_model(model, locale):
 
 class BootstrapTranslatableModel(migrations.RunPython):
     def __init__(self, model_string, language_code=None, region_slug='default'):
-        if language_code is None:
-            language_code = get_supported_language_variant(settings.LANGUAGE_CODE)
-
         def forwards(apps, schema_editor):
             model = apps.get_model(model_string)
             Locale = apps.get_model('wagtail_i18n.Locale')
-            locale = Locale.objects.get(language__code=language_code, region__slug=region_slug)
+
+            if language_code is not None:
+                locale = Locale.objects.get(language__code=language_code, region__slug=region_slug)
+            else:
+                locale = Locale.objects.default()
 
             bootstrap_translatable_model(model, locale)
 

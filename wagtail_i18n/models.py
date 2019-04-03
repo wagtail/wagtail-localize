@@ -15,21 +15,35 @@ from .compat import get_supported_language_variant
 from .utils import find_available_slug
 
 
+class LanguageManager(models.Manager):
+    use_in_migrations = True
+
+    def default(self):
+        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
+        return self.get(code=default_code)
+
+    def default_id(self):
+        return self.default().id
+
+
 class Language(models.Model):
     code = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
 
+    objects = LanguageManager()
+
     class Meta:
         ordering = ['-is_active', 'code']
 
+    # For backwards compatibility
     @classmethod
     def default(cls):
-        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
-        return cls.objects.get(code=default_code)
+        return cls.objects.default()
 
+    # For backwards compatibility
     @classmethod
     def default_id(cls):
-        return cls.default().id
+        return cls.objects.default_id()
 
     @classmethod
     def get_active(cls):
@@ -53,6 +67,19 @@ class Language(models.Model):
             return self.code
 
 
+class RegionManager(models.Manager):
+    use_in_migrations = True
+
+    def default(self):
+        return self.filter(is_default=True).first()
+
+    def default_id(self):
+        default = self.default()
+
+        if default:
+            return default.id
+
+
 class Region(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
@@ -60,19 +87,20 @@ class Region(models.Model):
     is_default = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    objects = RegionManager()
+
     class Meta:
         ordering = ['-is_active', '-is_default', 'name']
 
+    # For backwards compatibility
     @classmethod
     def default(cls):
-        return cls.objects.filter(is_default=True).first()
+        return cls.objects.default()
 
+    # For backwards compatibility
     @classmethod
     def default_id(cls):
-        default = cls.default()
-
-        if default:
-            return default.id
+        return cls.objects.default_id()
 
     def __str__(self):
         return self.name
@@ -89,6 +117,22 @@ def add_new_languages_to_default_region(sender, instance, created, **kwargs):
             default_region.languages.add(instance)
 
 
+class LocaleManager(models.Manager):
+    use_in_migrations = True
+
+    def default(self):
+        locale, created = self.get_or_create(
+            region_id=Region.objects.default_id(),
+            language_id=Language.objects.default_id(),
+            is_active=True,
+        )
+
+        return locale
+
+    def default_id(self):
+        return self.default().id
+
+
 # A locale gives an individual record to a region/language combination
 # I prefer this way as it allows you to easily reorganise your regions and languages
 # after there is already content entered.
@@ -99,19 +143,23 @@ class Locale(models.Model):
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='locales')
     is_active = models.BooleanField()
 
+    objects = LocaleManager()
+
+    class Meta:
+        unique_together = [
+            ('region', 'language'),
+        ]
+        ordering = ['-is_active', '-region__is_default', 'region__name', 'language__code']
+
+    # For backwards compatibility
     @classmethod
     def default(cls):
-        locale, created = cls.objects.get_or_create(
-            region=Region.default(),
-            language=Language.default(),
-            is_active=True,
-        )
+        return cls.objects.default()
 
-        return locale
-
+    # For backwards compatibility
     @classmethod
     def default_id(cls):
-        return cls.default().id
+        return cls.objects.default_id()
 
     def __str__(self):
         return f"{self.region.name} / {self.language.get_display_name()}"
@@ -124,13 +172,6 @@ class Locale(models.Model):
             return f'{self.region.slug}-{self.language.code}'
         else:
             return self.language.code
-
-    class Meta:
-        unique_together = [
-            ('region', 'language'),
-        ]
-        ordering = ['-is_active', '-region__is_default', 'region__name', 'language__code']
-
 
 # Update Locale.is_active when Language.is_active is changed
 @receiver(post_save, sender=Language)

@@ -10,7 +10,6 @@ def initial_data(apps, schema_editor):
     Language = apps.get_model('wagtail_i18n.Language')
     Region = apps.get_model('wagtail_i18n.Region')
 
-
     default_language, created = Language.objects.get_or_create(
         code=get_supported_language_variant(settings.LANGUAGE_CODE),
     )
