@@ -11,7 +11,7 @@ from django.utils import translation
 from wagtail.core.models import Page
 from wagtail.images.models import AbstractImage
 
-from .compat import get_supported_language_variant
+from .compat import get_languages, get_supported_language_variant
 from .utils import find_available_slug
 
 
@@ -56,7 +56,7 @@ class Language(models.Model):
         return language
 
     def get_display_name(self):
-        return dict(settings.LANGUAGES).get(self.code)
+        return get_languages().get(self.code)
 
     def __str__(self):
         display_name = self.get_display_name()
