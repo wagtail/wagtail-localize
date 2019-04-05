@@ -365,7 +365,7 @@ class TranslatablePageMixin(TranslatableMixin):
         return super().copy(**kwargs)
 
     @transaction.atomic
-    def copy_for_translation(self, locale, copy_parents=False):
+    def copy_for_translation(self, locale, copy_parents=False, exclude_fields=None):
         """
         Copies this page for the specified locale.
         """
@@ -402,6 +402,7 @@ class TranslatablePageMixin(TranslatableMixin):
             keep_live=False,
             reset_translation_key=False,
             process_child_object=process_child_object,
+            exclude_fields=exclude_fields,
         )
 
     def with_content_json(self, content_json):
