@@ -401,6 +401,12 @@ class TranslatablePageMixin(TranslatableMixin):
             process_child_object=process_child_object,
         )
 
+    def with_content_json(self, content_json):
+        page = super().with_content_json(content_json)
+        page.translation_key = self.translation_key
+        page.locale = self.locale
+        return page
+
     def get_translation_for_request(self, request):
         """
         Returns the translation of this page that should be used to route
