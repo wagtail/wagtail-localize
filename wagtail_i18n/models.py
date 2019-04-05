@@ -270,6 +270,8 @@ class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
     locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+')
 
+    translatable_fields = []
+
     def get_translations(self, inclusive=False):
         translations = self.__class__.objects.filter(translation_key=self.translation_key)
 
