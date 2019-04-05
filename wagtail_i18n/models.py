@@ -3,7 +3,7 @@ import uuid
 
 from django.apps import apps
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
@@ -362,6 +362,7 @@ class TranslatablePageMixin(TranslatableMixin):
 
         return super().copy(**kwargs)
 
+    @transaction.atomic
     def copy_for_translation(self, locale, copy_parents=False):
         """
         Copies this page for the specified locale.
