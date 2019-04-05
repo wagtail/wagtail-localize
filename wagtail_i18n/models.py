@@ -4,7 +4,7 @@ import uuid
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Q
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from django.utils import translation
@@ -172,6 +172,18 @@ class Locale(models.Model):
             return f'{self.region.slug}-{self.language.code}'
         else:
             return self.language.code
+
+    def get_all_pages(self):
+        """
+        Returns a queryset of all pages that have been translated into this locale.
+        """
+        q = Q()
+
+        for model in get_translatable_models():
+            q |= Q(id__in=model.objects.filter(locale=self).values_list('id', flat=True))
+
+        return Page.objects.filter(q)
+
 
 # Update Locale.is_active when Language.is_active is changed
 @receiver(post_save, sender=Language)
