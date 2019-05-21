@@ -1,0 +1,4 @@
+*.pyc
+/build
+/dist
+/wagtail_i18n.egg-info
