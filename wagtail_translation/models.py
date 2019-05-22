@@ -419,10 +419,10 @@ class TranslatablePageMixin(TranslatableMixin):
         language_code = translation.get_supported_language_variant(request.LANGUAGE_CODE)
 
         try:
-            language = Language.objects.get(code=language_code)
-            return self.get_translation(language)
+            locale = Locale.objects.get(language__code=language_code, region__is_default=True)
+            return self.get_translation(locale)
 
-        except Language.DoesNotExist:
+        except Locale.DoesNotExist:
             return
 
         except Page.DoesNotExist:
