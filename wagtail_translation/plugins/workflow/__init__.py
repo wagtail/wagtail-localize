@@ -1,0 +1,1 @@
+default_app_config = 'wagtail_translation.plugins.workflow.apps.WagtailTranslationWorkflowAppConfig'

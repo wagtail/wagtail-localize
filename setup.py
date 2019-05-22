@@ -14,7 +14,7 @@ except ImportError:
 
 
 setup(
-    name='wagtail-i18n',
+    name='wagtail-translation',
     version='0.1',
     description='Wagtail Internationalisation Framework',
     author='Karl Hobley',

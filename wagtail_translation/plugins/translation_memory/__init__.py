@@ -1,0 +1,1 @@
+default_app_config = 'wagtail_translation.plugins.translation_memory.apps.WagtailTranslationTranslationMemoryAppConfig'
