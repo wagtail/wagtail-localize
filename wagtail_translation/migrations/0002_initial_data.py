@@ -9,6 +9,7 @@ from wagtail_translation.compat import get_supported_language_variant
 def initial_data(apps, schema_editor):
     Language = apps.get_model('wagtail_translation.Language')
     Region = apps.get_model('wagtail_translation.Region')
+    Locale = apps.get_model('wagtail_translation.Locale')
 
     default_language, created = Language.objects.get_or_create(
         code=get_supported_language_variant(settings.LANGUAGE_CODE),
@@ -17,15 +18,22 @@ def initial_data(apps, schema_editor):
     default_region = Region.objects.create(
         name='Default',
         slug='default',
+        is_default=True,
     )
 
     default_region.languages.add(default_language)
+
+    Locale.objects.create(
+        language=default_language,
+        region=default_region,
+        is_active=True,
+    )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_translation', '0002_region'),
+        ('wagtail_translation', '0001_initial'),
     ]
 
     operations = [
