@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from wagtail.core.models import Page
 
 from wagtail_translation.models import get_translatable_models, Language, Locale, Region
-from wagtail_translation.plugins.translation_memory.models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
+from wagtail_translation.engines.memory.models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
 from wagtail_translation.segments import TemplateValue
 from wagtail_translation.segments.extract import extract_segments
 
