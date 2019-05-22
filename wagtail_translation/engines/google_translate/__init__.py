@@ -1,0 +1,1 @@
+default_app_config = 'wagtail_translation.engines.google_translate.apps.WagtailTranslationGoogleTranslateAppConfig'

@@ -1,1 +1,0 @@
-default_app_config = 'wagtail_translation.plugins.translation_engines.pofile.apps.WagtailTranslationPOFileAppConfig'
