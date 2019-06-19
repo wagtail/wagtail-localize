@@ -336,13 +336,13 @@ class TranslatablePageMixin(TranslatableMixin):
 
             original_process_child_object = kwargs.pop('process_child_object')
 
-            def process_child_object(child_relation, child_object):
+            def process_child_object(original_page, page_copy, child_relation, child_object):
                 # Change translation keys of translatable child objects
                 if isinstance(child_object, TranslatableMixin):
                     child_object.translation_key = uuid.uuid4()
 
                 if original_process_child_object is not None:
-                    original_process_child_object(child_relation, child_object)
+                    original_process_child_object(original_page, page_copy, child_relation, child_object)
 
             kwargs['process_child_object'] = process_child_object
 
@@ -375,7 +375,7 @@ class TranslatablePageMixin(TranslatableMixin):
         slug = find_available_slug(translated_parent, slug)
 
         # Update locale on translatable child objects as well
-        def process_child_object(child_relation, child_object):
+        def process_child_object(original_page, page_copy, child_relation, child_object):
             if isinstance(child_object, TranslatableMixin):
                 child_object.locale = locale
 
