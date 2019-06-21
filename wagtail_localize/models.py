@@ -91,7 +91,7 @@ class Region(models.Model):
 @receiver(post_save, sender=Language)
 def add_new_languages_to_default_region(sender, instance, created, **kwargs):
     if created:
-        default_region = Region.default()
+        default_region = Region.objects.default()
 
         if default_region is not None:
             default_region.languages.add(instance)
@@ -148,7 +148,7 @@ class Locale(models.Model):
     def slug(self):
         slug = self.language.code
 
-        if self.region != Region.default():
+        if self.region != Region.objects.default():
             return f'{self.region.slug}-{self.language.code}'
         else:
             return self.language.code

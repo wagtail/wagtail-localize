@@ -179,9 +179,13 @@ class Site(models.Model):
         return result
 
 
+def default_region_id():
+    return Region.objects.default_id()
+
+
 class SiteLanguage(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='languages')
-    region = models.ForeignKey(Region, verbose_name=_('region'), on_delete=models.CASCADE, related_name='+', default=Region.default_id)
+    region = models.ForeignKey(Region, verbose_name=_('region'), on_delete=models.CASCADE, related_name='+', default=default_region_id)
     language = models.ForeignKey(Language, verbose_name=_('language'), on_delete=models.CASCADE, related_name='+')
     root_page = models.ForeignKey('wagtailcore.Page', verbose_name=_('root page'), on_delete=models.CASCADE, related_name='+')
     is_active = models.BooleanField(_('is active'), default=True)
