@@ -141,7 +141,7 @@ class LocaleManager(models.Manager):
 class Locale(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='locales')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='locales')
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
 
     objects = LocaleManager()
 
@@ -266,9 +266,13 @@ def update_locales_on_region_languages_change(sender, instance, action, pk_set, 
             )
 
 
+def default_locale_id():
+    return Locale.objects.default_id()
+
+
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+')
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+', default=default_locale_id)
 
     translatable_fields = []
 
