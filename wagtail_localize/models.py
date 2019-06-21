@@ -35,16 +35,6 @@ class Language(models.Model):
     class Meta:
         ordering = ['-is_active', 'code']
 
-    # For backwards compatibility
-    @classmethod
-    def default(cls):
-        return cls.objects.default()
-
-    # For backwards compatibility
-    @classmethod
-    def default_id(cls):
-        return cls.objects.default_id()
-
     @classmethod
     def get_active(cls):
         default_code = get_supported_language_variant(translation.get_language())
@@ -91,16 +81,6 @@ class Region(models.Model):
 
     class Meta:
         ordering = ['-is_active', '-is_default', 'name']
-
-    # For backwards compatibility
-    @classmethod
-    def default(cls):
-        return cls.objects.default()
-
-    # For backwards compatibility
-    @classmethod
-    def default_id(cls):
-        return cls.objects.default_id()
 
     def __str__(self):
         return self.name
