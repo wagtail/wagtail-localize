@@ -1,0 +1,11 @@
+{% extends "wagtail_localize_workflow/action_modules/base.html" %}
+
+{% block content %}
+    <h3>Copy source language pages</h3>
+
+    <form action="{% url 'wagtail_localize_workflow_management:copy_pages' translation_request.id %}" method="post">
+        {% csrf_token %}
+
+        <button type="submit" class="button button-secondary">Copy pages</button>
+    </form>
+{% endblock %}

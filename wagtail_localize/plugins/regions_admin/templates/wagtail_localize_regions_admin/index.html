@@ -1,0 +1,28 @@
+{% extends "wagtailadmin/generic/index.html" %}
+{% load i18n %}
+
+{% block listing %}
+    <div class="nice-padding">
+        <div id="sites-list">
+            <table class="listing">
+                <thead>
+                    <tr>
+                        <th class="name">{% trans "Name" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for region in regions %}
+                        <tr>
+                            <td class="hostname title">
+                                <h2{% if not region.is_active %} style="color: #777;"{% endif %}>
+                                    <a href="{% url 'wagtail_localize_regions_admin:edit' region.id %}">{{ region.name }}{% if not region.is_active %} (inactive){% endif %}</a>
+                                </h2>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

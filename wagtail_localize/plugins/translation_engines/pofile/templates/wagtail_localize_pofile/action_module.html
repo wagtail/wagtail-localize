@@ -1,0 +1,17 @@
+{% extends "wagtail_localize_workflow/action_modules/base.html" %}
+
+{% block content %}
+    <h3>Download / Upload PO file</h3>
+
+    <a class="icon icon-download" href="{% url 'wagtail_localize_pofile:download' translation_request.id %}" download>Download PO file</a>
+
+    <hr>
+
+    <form action="{% url 'wagtail_localize_pofile:upload' translation_request.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input type="file" name="file">
+
+        <button type="submit" class="button button-secondary">Upload translated PO file</button>
+    </form>
+{% endblock %}

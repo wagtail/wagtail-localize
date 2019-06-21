@@ -1,0 +1,11 @@
+{% extends "wagtail_localize_workflow/action_modules/base.html" %}
+
+{% block content %}
+    <h3>Google Translate</h3>
+
+    <form action="{% url 'wagtail_localize_google_translate:translate' translation_request.id %}" method="post">
+        {% csrf_token %}
+
+        <button type="submit" class="button button-secondary">Translate with Google Translate</button>
+    </form>
+{% endblock %}

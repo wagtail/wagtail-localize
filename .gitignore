@@ -1,4 +1,4 @@
 *.pyc
 /build
 /dist
-/wagtail_i18n.egg-info
+/wagtail_localize.egg-info

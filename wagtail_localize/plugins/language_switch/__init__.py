@@ -1,0 +1,1 @@
+default_app_config = 'wagtail_localize.plugins.language_switch.apps.WagtailLocalizeLanguageSwitchAppConfig'
