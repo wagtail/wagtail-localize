@@ -6,10 +6,10 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.text import slugify
 
-from wagtail_localize.plugins.workflow.models import TranslationRequest
 from wagtail_localize.segments import SegmentValue, TemplateValue
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.segments.ingest import ingest_segments
+from wagtail_localize.workflow.models import TranslationRequest
 
 # TODO: Switch to official Google API client
 from googletrans import Translator
