@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail_localize.plugins.sites.models
+import wagtail_localize.experimental.sites.models
 
 
 class Migration(migrations.Migration):
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('is_active', models.BooleanField(default=True, verbose_name='is active')),
                 ('language', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtail_localize.Language', verbose_name='language')),
-                ('region', models.ForeignKey(default=wagtail_localize.plugins.sites.models.default_region_id, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtail_localize.Region', verbose_name='region')),
+                ('region', models.ForeignKey(default=wagtail_localize.experimental.sites.models.default_region_id, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtail_localize.Region', verbose_name='region')),
                 ('root_page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page', verbose_name='root page')),
                 ('site', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='languages', to='wagtail_localize_sites.Site')),
             ],
