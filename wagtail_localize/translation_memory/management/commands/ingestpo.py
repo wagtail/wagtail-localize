@@ -7,7 +7,7 @@ from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Locale, Region
 
-from wagtail_localize.plugins.translation_memory.translation_ingestor import ingest_translations
+from wagtail_localize.translation_memory.translation_ingestor import ingest_translations
 
 
 class Command(BaseCommand):
