@@ -12,7 +12,7 @@ from .views import RegionViewSet
 
 @hooks.register('register_admin_viewset')
 def register_viewset():
-    return RegionViewSet('wagtail_localize_regions_admin', url_prefix='i18nregions')
+    return RegionViewSet('wagtail_localize_regions_admin', url_prefix='localize/regions')
 
 
 class RegionsMenuItem(MenuItem):

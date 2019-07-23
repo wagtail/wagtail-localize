@@ -32,5 +32,5 @@ def register_admin_urls():
     ]
 
     return [
-        url('^i18ngoogletranslate/', include((urls, 'wagtail_localize_google_translate'), namespace='wagtail_localize_google_translate')),
+        url('^localize/engine/googletranslate/', include((urls, 'wagtail_localize_google_translate'), namespace='wagtail_localize_google_translate')),
     ]

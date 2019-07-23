@@ -32,13 +32,13 @@ def register_admin_urls():
     ]
 
     return [
-        url('^i18nworkflow/', include((urls, 'wagtail_localize_workflow'), namespace='wagtail_localize_workflow')),
+        url('^localize/workflow/', include((urls, 'wagtail_localize_workflow'), namespace='wagtail_localize_workflow')),
     ]
 
 
 @hooks.register('register_admin_viewset')
 def register_viewset():
-    return TranslationRequestViewSet('wagtail_localize_workflow_management', url_prefix='i18nworkflow/translations')
+    return TranslationRequestViewSet('wagtail_localize_workflow_management', url_prefix='localize/workflow/translations')
 
 
 class TranslationsMenuItem(MenuItem):

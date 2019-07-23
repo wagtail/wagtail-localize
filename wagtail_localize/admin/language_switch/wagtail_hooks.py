@@ -20,5 +20,5 @@ def insert_editor_js():
 @hooks.register('register_admin_urls')
 def register_admin_urls():
     return [
-        url(r'^i18n/translations/(\d+)/$', translations_list, name='translations_list'),
+        url(r'^localize/language_switch/(\d+)/$', translations_list, name='translations_list'),
     ]

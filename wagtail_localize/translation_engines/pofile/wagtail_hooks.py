@@ -26,5 +26,5 @@ def register_admin_urls():
     ]
 
     return [
-        url('^i18npofile/', include((urls, 'wagtail_localize_pofile'), namespace='wagtail_localize_pofile')),
+        url('^localize/engine/pofile/', include((urls, 'wagtail_localize_pofile'), namespace='wagtail_localize_pofile')),
     ]
