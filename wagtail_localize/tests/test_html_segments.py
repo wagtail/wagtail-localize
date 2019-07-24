@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from wagtail_localize.segments.html import extract_html_segments
+from wagtail_localize.segments.html import extract_html_segments, extract_html_elements, restore_html_elements
 
 
 class TestExtractHTMLSegment(TestCase):
@@ -58,3 +58,18 @@ class TestExtractHTMLSegment(TestCase):
             'List item one',
             '<b>List item two</b>'
         ])
+
+
+class TestExtractHTMLElements(TestCase):
+    def test_extract_html_elements(self):
+        text, elements = extract_html_elements("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
+
+        self.assertEqual(text, "This is a paragraph. This is some bold and now italic text")
+        self.assertEqual(elements, [(39, 53, 'i', {}), (21, 53, 'b', {})])
+
+
+class TestRestoreHTMLElements(TestCase):
+    def test_restore_html_elements(self):
+        html = restore_html_elements("This is a paragraph. This is some bold and now italic text", [(39, 53, 'i', {}), (21, 53, 'b', {})])
+
+        self.assertEqual(html, "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")

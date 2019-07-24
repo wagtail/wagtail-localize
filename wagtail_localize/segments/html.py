@@ -1,4 +1,8 @@
+from collections import Counter
+
 from bs4 import BeautifulSoup, NavigableString
+
+from . import SegmentValue
 
 
 INLINE_TAGS = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i', 'strong']
@@ -170,3 +174,133 @@ def restore_html_segments(template, texts):
         text_element.replaceWith(value.strip())
 
     return str(soup)
+
+
+def extract_html_elements(html):
+    """
+    Extracts HTML elements from a fragment. Returns the plain text representation
+    of the HTML document and an array of elements including their span, type and attributes.
+
+    For example:
+
+    text, elements = extract_html_elements("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
+
+    text == "This is a paragraph. This is some bold and now italic text"
+    elements == [(39, 53, 'i', {}), (21, 53, 'b', {})]
+    """
+    soup = BeautifulSoup(html, 'html.parser')
+
+    texts = []
+    cursor = {'current': 0}
+    elements = []
+
+    def walk(soup):
+        for element in soup.children:
+            if isinstance(element, NavigableString):
+               texts.append(element)
+               cursor['current'] += len(element)
+
+            else:
+                start = cursor['current']
+                walk(element)
+                end = cursor['current']
+
+                elements.append((start, end, element.name, element.attrs.copy()))
+
+    walk(soup)
+
+    return ''.join(texts), elements
+
+
+def restore_html_elements(text, elements):
+    """
+    Inserts elements into a plain text string returning a HTML document.
+    """
+    soup = BeautifulSoup('', 'html.parser')
+    stack = []
+    cursor = 0
+    current_element = soup
+
+    # Sort elements by start position
+    elements.sort(key=lambda element: element[0])
+
+    for i, element in enumerate(elements):
+        if cursor < element[0]:
+            # Output text and advance cursor
+            current_element.append(text[cursor:element[0]])
+            cursor = element[0]
+
+        stack.append((element[1], current_element))
+        new_element = soup.new_tag(element[2], **element[3])
+        current_element.append(new_element)
+        current_element = new_element
+
+        # Close existing elements before going to the next element
+        while stack:
+            if i < len(elements) - 1:
+                if stack[len(stack) - 1][0] > elements[i+1][0]:
+                    # New element created before this one closes.
+                    # Go to next element
+                    break
+
+            element_end, previous_element = stack.pop()
+
+            if cursor < element_end:
+                # Output text and advance cursor
+                current_element.append(text[cursor:element_end])
+                cursor = element_end
+
+            current_element = previous_element
+
+    if cursor < len(text):
+        current_element.append(text[cursor:])
+
+    return str(soup)
+
+
+class HTMLSegmentValue(SegmentValue):
+
+    class HTMLElement:
+        """
+        Represents the position of an inline element within an HTML segment value.
+
+        These are used to track how inline elements such as text formatting
+        and links should be moved in translated versions of a segment.
+
+        The parameters are as follows:
+
+        - start/end are the character offsets in the original text that this element appears
+        they may be equal but end must not be less than start.
+        For example, to select just the first character, the start and end offsets with be 0,1
+        respectively.
+        - identifier is a number that is generated from the segment extractor. It must be conserved
+        by translation engines as it is used to work out where elements have moved during translation.
+        """
+        def __init__(self, start, end, identifier, element=None):
+            self.start = start
+            self.end = end
+            self.identifier = identifier
+            self.element = element
+
+    def __init__(self, path, html):
+        self.path = path
+
+        text, elements = extract_html_elements(html)
+
+        html_elements = []
+        counter = Counter()
+        for start, end, element_type, element_attrs in elements:
+            counter[element_type] += 1
+            identifier = element_type + "-" + str(counter[element_type])
+
+            self.html_elements.append(self.HTMLElement(start, end, identifier, (element_type, element_attrs)))
+
+        self.text = text
+        self.html_elements = []
+
+    @property
+    def html(self):
+        return restore_html_elements(self.text, [
+            (e.start, e.end, e.element.element_type, e.element.element_attrs)
+            for e in self.html_elements
+        ])
