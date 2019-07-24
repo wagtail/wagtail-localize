@@ -291,16 +291,29 @@ class HTMLSegmentValue(SegmentValue):
         counter = Counter()
         for start, end, element_type, element_attrs in elements:
             counter[element_type] += 1
-            identifier = element_type + "-" + str(counter[element_type])
+            identifier = element_type + str(counter[element_type])
 
-            self.html_elements.append(self.HTMLElement(start, end, identifier, (element_type, element_attrs)))
+            html_elements.append(self.HTMLElement(start, end, identifier, (element_type, element_attrs)))
 
         self.text = text
-        self.html_elements = []
+        self.html_elements = html_elements
 
     @property
     def html(self):
         return restore_html_elements(self.text, [
-            (e.start, e.end, e.element.element_type, e.element.element_attrs)
+            (e.start, e.end, e.element[0], e.element[1])
+            for e in self.html_elements
+        ])
+
+    @property
+    def html_with_ids(self):
+        def cat_dict(a, b):
+            c = {}
+            c.update(a)
+            c.update(b)
+            return c
+
+        return restore_html_elements(self.text, [
+            (e.start, e.end, e.element[0], {'id': e.identifier} if e.element[1] else {})
             for e in self.html_elements
         ])
