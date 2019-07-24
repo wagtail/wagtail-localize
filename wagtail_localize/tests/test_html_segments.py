@@ -67,12 +67,23 @@ class TestExtractHTMLElements(TestCase):
         self.assertEqual(text, "This is a paragraph. This is some bold and now italic text")
         self.assertEqual(elements, [(39, 53, 'i', {}), (21, 53, 'b', {})])
 
+    def test_special_chars_unescaped(self):
+        text, elements = extract_html_elements("<b>foo</b><i> &amp; bar</i>")
+
+        self.assertEqual(text, "foo & bar")
+        self.assertEqual(elements, [(0, 3, 'b', {}), (3, 9, 'i', {})])
+
 
 class TestRestoreHTMLElements(TestCase):
     def test_restore_html_elements(self):
         html = restore_html_elements("This is a paragraph. This is some bold and now italic text", [(39, 53, 'i', {}), (21, 53, 'b', {})])
 
         self.assertEqual(html, "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
+
+    def test_special_chars_escaped(self):
+        html = restore_html_elements("foo & bar", [(0, 3, 'b', {}), (3, 9, 'i', {})])
+
+        self.assertEqual(html, "<b>foo</b><i> &amp; bar</i>")
 
 
 class TestHTMLSegmentValue(TestCase):
