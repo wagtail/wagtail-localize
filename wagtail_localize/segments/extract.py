@@ -9,7 +9,7 @@ from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail_localize.models import TranslatableMixin
 from wagtail_localize.segments import SegmentValue, TemplateValue
 
-from .html import extract_html_segment
+from .html import extract_html_segments
 
 
 class StreamFieldSegmentExtractor:
@@ -24,7 +24,7 @@ class StreamFieldSegmentExtractor:
             return [SegmentValue('', block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            template, texts = extract_html_segment(block_value.source)
+            template, texts = extract_html_segments(block_value.source)
             return [
                 TemplateValue('', 'html', template, len(texts))
             ] + [
@@ -86,7 +86,7 @@ def extract_segments(instance):
             segments.extend(segment.wrap(field.name) for segment in StreamFieldSegmentExtractor(field).handle_stream_block(field.value_from_object(instance)))
 
         elif isinstance(field, RichTextField):
-            template, texts = extract_html_segment(field.value_from_object(instance))
+            template, texts = extract_html_segments(field.value_from_object(instance))
 
             field_segments = [
                 TemplateValue('', 'html', template, len(texts))
