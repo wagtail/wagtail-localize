@@ -30,7 +30,7 @@ class TestExtractHTMLSegment(TestCase):
             """
             <h1>Foo bar baz</h1>
             <p>This is a paragraph. <b>This is some bold <i>and now italic</i></b> text</p>
-            <p>This is another paragraph.</p>
+            <p>&lt;script&gt; this should be interpreted as text.</p>
             <ul>
                 <li>List item one</li>
                 <li><b>List item two</li>
@@ -55,7 +55,7 @@ class TestExtractHTMLSegment(TestCase):
         self.assertEqual(segments, [
             'Foo bar baz',
             'This is a paragraph. <b>This is some bold <i>and now italic</i></b> text',
-            'This is another paragraph.',
+            '&lt;script&gt; this should be interpreted as text.',
             'List item one',
             '<b>List item two</b>'
         ])
