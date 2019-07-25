@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from wagtail_localize.segments.html import extract_html_segments, extract_html_elements, restore_html_elements, HTMLSegmentValue
+from wagtail_localize.segments import SegmentValue
+from wagtail_localize.segments.html import extract_html_segments, extract_html_elements, restore_html_elements
 
 
 class TestExtractHTMLSegment(TestCase):
@@ -88,13 +89,13 @@ class TestRestoreHTMLElements(TestCase):
 
 class TestHTMLSegmentValue(TestCase):
     def test_text(self):
-        segment = HTMLSegmentValue("foo", "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
+        segment = SegmentValue.from_html("foo", "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
         self.assertEqual(segment.text, "This is a paragraph. This is some bold and now italic text")
 
     def test_html(self):
-        segment = HTMLSegmentValue("foo", "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
+        segment = SegmentValue.from_html("foo", "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
         self.assertEqual(segment.html, "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
 
     def test_html_with_ids(self):
-        segment = HTMLSegmentValue("foo", '<b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.')
+        segment = SegmentValue.from_html("foo", '<b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.')
         self.assertEqual(segment.html_with_ids, '<b>Bread</b> is a <a id="a1">staple food</a> prepared from a <a id="a2">dough</a> of <a id="a3">flour</a> and <a id="a4">water</a>, usually by <a id="a5">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of <a id="a6">agriculture</a>.')
