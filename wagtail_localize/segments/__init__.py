@@ -1,8 +1,50 @@
+from collections import Counter
+
+from .html import extract_html_elements, restore_html_elements
+
+
 class SegmentValue:
-    def __init__(self, path, text, order=0):
+    class HTMLElement:
+        """
+        Represents the position of an inline element within an HTML segment value.
+
+        These are used to track how inline elements such as text formatting
+        and links should be moved in translated versions of a segment.
+
+        The parameters are as follows:
+
+        - start/end are the character offsets in the original text that this element appears
+        they may be equal but end must not be less than start.
+        For example, to select just the first character, the start and end offsets with be 0,1
+        respectively.
+        - identifier is a number that is generated from the segment extractor. It must be conserved
+        by translation engines as it is used to work out where elements have moved during translation.
+        """
+        def __init__(self, start, end, identifier, element=None):
+            self.start = start
+            self.end = end
+            self.identifier = identifier
+            self.element = element
+
+    def __init__(self, path, text, order=0, html_elements=None):
         self.path = path
         self.order = order
         self.text = text
+        self.html_elements = html_elements
+
+    @classmethod
+    def from_html(cls, path, html):
+        text, elements = extract_html_elements(html)
+
+        html_elements = []
+        counter = Counter()
+        for start, end, element_type, element_attrs in elements:
+            counter[element_type] += 1
+            identifier = element_type + str(counter[element_type])
+
+            html_elements.append(cls.HTMLElement(start, end, identifier, (element_type, element_attrs)))
+
+        return cls(path, text, html_elements)
 
     def with_order(self, order):
         """
@@ -25,7 +67,11 @@ class SegmentValue:
         if self.path:
             new_path += '.' + self.path
 
+<<<<<<< HEAD
         return SegmentValue(new_path, self.text, order=self.order)
+=======
+        return SegmentValue(new_path, self.text, self.html_elements)
+>>>>>>> Merged HTMLSegmentValue into SegmentValue and added some helpers
 
     def unwrap(self):
         """
@@ -39,13 +85,83 @@ class SegmentValue:
         """
         base_path, *remaining_components = self.path.split('.')
         new_path = '.'.join(remaining_components)
+<<<<<<< HEAD
         return base_path, SegmentValue(new_path, self.text, order=self.order)
+=======
+        return base_path, SegmentValue(new_path, self.text, self.html_elements)
+
+    @property
+    def html(self):
+        return restore_html_elements(self.text, [
+            (e.start, e.end, e.element[0], e.element[1])
+            for e in self.html_elements or []
+        ])
+
+    @property
+    def html_with_ids(self):
+        def cat_dict(a, b):
+            c = {}
+            c.update(a)
+            c.update(b)
+            return c
+
+        return restore_html_elements(self.text, [
+            (e.start, e.end, e.element[0], {'id': e.identifier} if e.element[1] else {})
+            for e in self.html_elements or []
+        ])
+
+    def get_html_element_attrs(self):
+        """
+        Returns a mapping of html element identifiers to their attributes.
+
+        For example, running this on the following segment:
+
+            <b>Foo <a id="a1" href="https://mysite.com">Bar</a></b>
+
+        Would return the following dictionary:
+
+            {
+                "a1": {"href": "https://mysite.com"}
+            }
+        """
+        return {
+            e.identifier: e.element[1]
+            for e in self.html_elements or []
+        }
+
+    def replace_html_element_attrs(self, attrs_map):
+        """
+        Replaces the attributes of the HTML elements in this segment with
+        attributes in the provided mapping.
+
+        This is used to overwrite any HTML attribute changes made to
+        translated segments so they are guarenteed to not be altered by
+        translators.
+
+        For example, running this on the following segment:
+
+            <b>Foo <a id="a1" href="https://badsite.com">Bar</a></b>
+
+        With the following attrs_map:
+
+            {
+                "a1": {"href": "https://mysite.com"}
+            }
+
+        Would return the following segment:
+
+            <b>Foo <a id="a1" href="https://mysite.com">Bar</a></b>
+        """
+        for e in html_elements:
+            if e.identifier in attrs_map:
+                e.element[1] = attrs_map[e.identifier]
+>>>>>>> Merged HTMLSegmentValue into SegmentValue and added some helpers
 
     def is_empty(self):
-        return self.text in ['', None]
+        return self.text in ['', None] and not self.html_elements
 
     def __eq__(self, other):
-        return isinstance(other, SegmentValue) and self.path == other.path and self.text == other.text
+        return isinstance(other, SegmentValue) and self.path == other.path and self.text == other.text and self.html_elements == other.html_elements
 
     def __repr__(self):
         return f'<SegmentValue {self.path} "{self.text}">'
