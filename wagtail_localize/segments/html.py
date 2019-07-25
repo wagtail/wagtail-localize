@@ -67,7 +67,7 @@ def extract_html_segments(html):
 
         The elements must be contiguous siblings or this might screw up the tree.
         """
-        value = ''.join(str(element) for element in elements)
+        value = ''.join(element.output_ready() if isinstance(element, NavigableString) else str(element) for element in elements)
 
         if value and not value.isspace():
             # Create <text> tag

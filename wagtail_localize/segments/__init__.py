@@ -1,5 +1,7 @@
 from collections import Counter
 
+from django.utils.html import escape
+
 from .html import extract_html_elements, restore_html_elements
 
 
@@ -92,13 +94,19 @@ class SegmentValue:
 
     @property
     def html(self):
+        if not self.html_elements:
+            return escape(self.text)
+
         return restore_html_elements(self.text, [
             (e.start, e.end, e.element[0], e.element[1])
-            for e in self.html_elements or []
+            for e in self.html_elements
         ])
 
     @property
     def html_with_ids(self):
+        if not self.html_elements:
+            return escape(self.text)
+
         def cat_dict(a, b):
             c = {}
             c.update(a)
@@ -107,7 +115,7 @@ class SegmentValue:
 
         return restore_html_elements(self.text, [
             (e.start, e.end, e.element[0], {'id': e.identifier} if e.element[1] else {})
-            for e in self.html_elements or []
+            for e in self.html_elements
         ])
 
     def get_html_element_attrs(self):
@@ -158,13 +166,13 @@ class SegmentValue:
 >>>>>>> Merged HTMLSegmentValue into SegmentValue and added some helpers
 
     def is_empty(self):
-        return self.text in ['', None] and not self.html_elements
+        return self.html in ['', None]
 
     def __eq__(self, other):
-        return isinstance(other, SegmentValue) and self.path == other.path and self.text == other.text and self.html_elements == other.html_elements
+        return isinstance(other, SegmentValue) and self.path == other.path and self.html == other.html
 
     def __repr__(self):
-        return f'<SegmentValue {self.path} "{self.text}">'
+        return f'<SegmentValue {self.path} "{self.html}">'
 
 
 class TemplateValue:
