@@ -1,6 +1,8 @@
 from django.db.models import Case, Count, Exists, IntegerField, OuterRef, Q, Sum, Value, When
 
-from .models import Segment, SegmentTranslation, SegmentPageLocation
+from wagtail_localize.segments import TemplateValue
+
+from .models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
 
 
 def get_translation_progress(page_revision_id, locale):
@@ -41,3 +43,14 @@ def get_translation_progress(page_revision_id, locale):
     )
 
     return aggs['total_segments'], aggs['translated_segments']
+
+
+def insert_segments(page_revision, locale, segments):
+    """
+    Inserts the list of untranslated segments into translation memory
+    """
+    for segment in segments:
+        if isinstance(segment, TemplateValue):
+            TemplatePageLocation.from_template_value(page_revision, segment)
+        else:
+            SegmentPageLocation.from_segment_value(page_revision, locale, segment)

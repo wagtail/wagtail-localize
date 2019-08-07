@@ -7,6 +7,7 @@ from wagtail.core.models import Page
 
 from wagtail_localize.models import get_translatable_models, Language, Locale, Region
 from wagtail_localize.translation_memory.models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
+from wagtail_localize.translation_memory.utils import insert_segments
 from wagtail_localize.segments import TemplateValue
 from wagtail_localize.segments.extract import extract_segments
 
@@ -15,7 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         src_locale = Locale.default()
-        tgt_locale = Locale.objects.get(language=Language.objects.filter(code='fr').first(), region=Region.objects.filter(slug='france').first())
+        tgt_locale = Locale.objects.get(language=Language.objects.filter(code='fr').first(), region=Region.objects.default())
         messages = OrderedDict()
 
         def get_page_revision(page):
@@ -28,13 +29,6 @@ class Command(BaseCommand):
 
             return page.save_revision(changed=False)
 
-        def add_segment(page, segment):
-            text = segment.text
-            if text not in messages:
-                messages[text] = []
-
-            messages[text].append((page.url_path, segment.path))
-
         for model in get_translatable_models():
             if not issubclass(model, Page):
                 continue
@@ -46,12 +40,15 @@ class Command(BaseCommand):
             pages = model.objects.live().filter(content_type=content_type, locale=src_locale)
 
             for page in pages:
-                for segment in extract_segments(page):
-                    if isinstance(segment, TemplateValue):
-                        TemplatePageLocation.from_template_value(get_page_revision(page), segment)
-                    else:
-                        SegmentPageLocation.from_segment_value(get_page_revision(page), segment)
-                        add_segment(page, segment)
+                segments = extract_segments(page)
+                insert_segments(get_page_revision(page), src_locale, segments)
+                for segment in segments:
+                    if not isinstance(segment, TemplateValue):
+                        text = segment.html
+                        if text not in messages:
+                            messages[text] = []
+
+                        messages[text].append((page.url_path, segment.path))
 
         po = polib.POFile()
         po.metadata = {

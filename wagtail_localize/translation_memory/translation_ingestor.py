@@ -34,14 +34,7 @@ def handle_completed_revision(revision_id, src_locale, tgt_locale):
     segment_page_locations = (
         SegmentPageLocation.objects
         .filter(page_revision_id=revision_id)
-        .annotate(
-            translation=Subquery(
-                SegmentTranslation.objects.filter(
-                    translation_of_id=OuterRef('segment_id'),
-                    locale=tgt_locale,
-                ).values('text')
-            )
-        )
+        .annotate_translation(tgt_locale)
     )
 
     template_page_locations = (
