@@ -28,7 +28,7 @@ class SegmentValue:
             self.identifier = identifier
             self.element = element
 
-    def __init__(self, path, text, order=0, html_elements=None):
+    def __init__(self, path, text, html_elements=None, order=0):
         self.path = path
         self.order = order
         self.text = text
@@ -69,7 +69,7 @@ class SegmentValue:
         if self.path:
             new_path += '.' + self.path
 
-        return SegmentValue(new_path, self.text, order=self.order, self.html_elements)
+        return SegmentValue(new_path, self.text, self.html_elements, order=self.order)
 
     def unwrap(self):
         """
@@ -83,7 +83,7 @@ class SegmentValue:
         """
         base_path, *remaining_components = self.path.split('.')
         new_path = '.'.join(remaining_components)
-        return base_path, SegmentValue(new_path, self.text, order=self.order, self.html_elements)
+        return base_path, SegmentValue(new_path, self.text, self.html_elements, order=self.order)
 
     @property
     def html(self):
