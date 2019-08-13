@@ -111,7 +111,7 @@ class SegmentPageLocation(BasePageLocation):
 
     @classmethod
     def from_segment_value(cls, page_revision, language, segment_value):
-        segment = Segment.from_text(language, segment_value.html)
+        segment = Segment.from_text(language, segment_value.html_with_ids)
 
         segment_page_loc, created = cls.objects.get_or_create(
             page_revision_id=pk(page_revision),
