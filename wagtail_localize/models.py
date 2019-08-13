@@ -45,6 +45,40 @@ class Language(models.Model):
 
         return language
 
+    def as_rfc5646_language_tag(self):
+        """
+        Returns the language code using the capitalisation as specified in RFC5646.
+
+        For example: en-GB (not en-gb or en_GB)
+
+        https://tools.ietf.org/html/rfc5646
+        """
+        # These are all the script codes used in Django's default LANGUAGES
+        # They exist instead of a country, but they need to be capitalised differently.
+        script_codes = ['latn', 'hans', 'hant']
+
+        components = self.code.split('-')
+
+        if len(components) == 1:
+            # en
+            return self.code.lower()
+        elif len(components) == 2:
+            # en-gb or zh-hans
+
+            if components[1] in script_codes:
+                # zh-hans => zh-Hans
+                return components[0].lower() + '-' + components[1].title()
+            else:
+                # en-gb => en-GB
+                return components[0].lower() + '-' + components[1].title()
+        else:
+            # Not sure what to do. Returning the existing code is the
+            return self.code
+
+    @classmethod
+    def get_by_rfc5646_language_tag(cls, language_tag):
+        return cls.objects.get(code=language_tag.lower())
+
     def get_display_name(self):
         return get_languages().get(self.code)
 
