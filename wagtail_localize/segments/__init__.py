@@ -1,7 +1,14 @@
 class SegmentValue:
-    def __init__(self, path, text):
+    def __init__(self, path, text, order=0):
         self.path = path
+        self.order = order
         self.text = text
+
+    def with_order(self, order):
+        """
+        Sets the order of this segment.
+        """
+        return SegmentValue(self.path, self.text, order=order)
 
     def wrap(self, base_path):
         """
@@ -18,7 +25,7 @@ class SegmentValue:
         if self.path:
             new_path += '.' + self.path
 
-        return SegmentValue(new_path, self.text)
+        return SegmentValue(new_path, self.text, order=self.order)
 
     def unwrap(self):
         """
@@ -32,7 +39,7 @@ class SegmentValue:
         """
         base_path, *remaining_components = self.path.split('.')
         new_path = '.'.join(remaining_components)
-        return base_path, SegmentValue(new_path, self.text)
+        return base_path, SegmentValue(new_path, self.text, order=self.order)
 
     def is_empty(self):
         return self.text in ['', None]
@@ -45,11 +52,18 @@ class SegmentValue:
 
 
 class TemplateValue:
-    def __init__(self, path, format, template, segment_count):
+    def __init__(self, path, format, template, segment_count, order=0):
         self.path = path
+        self.order = order
         self.format = format
         self.template = template
         self.segment_count = segment_count
+
+    def with_order(self, order):
+        """
+        Sets the order of this segment.
+        """
+        return TemplateValue(self.path, self.format, self.template, self.segment_count, order=order)
 
     def wrap(self, base_path):
         """
@@ -66,7 +80,7 @@ class TemplateValue:
         if self.path:
             new_path += '.' + self.path
 
-        return TemplateValue(new_path, self.format, self.template, self.segment_count)
+        return TemplateValue(new_path, self.format, self.template, self.segment_count, order=self.order)
 
     def unwrap(self):
         """
@@ -80,7 +94,7 @@ class TemplateValue:
         """
         base_path, *remaining_components = self.path.split('.')
         new_path = '.'.join(remaining_components)
-        return base_path, TemplateValue(new_path, self.format, self.template, self.segment_count)
+        return base_path, TemplateValue(new_path, self.format, self.template, self.segment_count, order=self.order)
 
     def is_empty(self):
         return self.template in ['', None]

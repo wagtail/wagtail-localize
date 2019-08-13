@@ -113,4 +113,15 @@ def extract_segments(instance):
             for child_instance in manager.all():
                 segments.extend(segment.wrap(f'{field.name}.{child_instance.translation_key}') for segment in extract_segments(child_instance))
 
-    return [segment for segment in segments if not segment.is_empty()]
+
+    class Counter:
+        def __init__(self):
+            self.value = 0
+
+        def next(self):
+            self.value += 1
+            return self.value
+
+    counter = Counter()
+
+    return [segment.with_order(counter.next()) for segment in segments if not segment.is_empty()]

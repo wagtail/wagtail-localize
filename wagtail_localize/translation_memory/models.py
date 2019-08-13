@@ -100,6 +100,7 @@ class Template(models.Model):
 class BasePageLocation(models.Model):
     page_revision = models.ForeignKey('wagtailcore.PageRevision', on_delete=models.CASCADE)
     path = models.TextField()
+    order = models.PositiveIntegerField()
 
     class Meta:
         abstract = True
@@ -115,6 +116,7 @@ class SegmentPageLocation(BasePageLocation):
         segment_page_loc, created = cls.objects.get_or_create(
             page_revision_id=pk(page_revision),
             path=segment_value.path,
+            order=segment_value.order,
             segment=segment,
         )
 
@@ -131,6 +133,7 @@ class TemplatePageLocation(BasePageLocation):
         template_page_loc, created = cls.objects.get_or_create(
             page_revision_id=pk(page_revision),
             path=template_value.path,
+            order=template_value.order,
             template=template,
         )
 
