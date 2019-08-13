@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models, transaction
+from django.db.models import Subquery, OuterRef
 
 
 def pk(obj):
@@ -11,17 +12,17 @@ def pk(obj):
 
 
 class SegmentQuerySet(models.QuerySet):
-    def annotate_translation(self, locale):
+    def annotate_translation(self, language):
         """
         Adds a 'translation' field to the segments containing the
         text content of the segment translated into the specified
-        locale.
+        language.
         """
         return self.annotate(
             translation=Subquery(
                 SegmentTranslation.objects.filter(
-                    translation_of_id=OuterRef('segment_id'),
-                    locale_id=pk(locale),
+                    translation_of_id=OuterRef('pk'),
+                    language_id=pk(language),
                 ).values('text')
             )
         )
@@ -30,16 +31,16 @@ class SegmentQuerySet(models.QuerySet):
 class Segment(models.Model):
     UUID_NAMESPACE = uuid.UUID('59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7')
 
-    locale = models.ForeignKey('wagtail_localize.Locale', on_delete=models.CASCADE)
+    language = models.ForeignKey('wagtail_localize.Language', on_delete=models.CASCADE)
     uuid = models.UUIDField(unique=True)
     text = models.TextField()
 
     objects = SegmentQuerySet.as_manager()
 
     @classmethod
-    def from_text(cls, locale, text):
+    def from_text(cls, language, text):
         segment, created = cls.objects.get_or_create(
-            locale_id=pk(locale),
+            language_id=pk(language),
             uuid=uuid.uuid5(cls.UUID_NAMESPACE, text),
             defaults={
                 'text': text,
@@ -51,19 +52,19 @@ class Segment(models.Model):
 
 class SegmentTranslation(models.Model):
     translation_of = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='translations')
-    locale = models.ForeignKey('wagtail_localize.Locale', on_delete=models.CASCADE)
+    language = models.ForeignKey('wagtail_localize.Language', on_delete=models.CASCADE)
     text = models.TextField()
 
     class Meta:
         unique_together = [
-            ('locale', 'translation_of'),
+            ('language', 'translation_of'),
         ]
 
     @classmethod
-    def from_text(cls, translation_of, locale, text):
+    def from_text(cls, translation_of, language, text):
         segment, created = cls.objects.get_or_create(
             translation_of=translation_of,
-            locale_id=pk(locale),
+            language_id=pk(language),
             defaults={
                 'text': text,
             }
@@ -108,8 +109,8 @@ class SegmentPageLocation(BasePageLocation):
     segment = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='page_locations')
 
     @classmethod
-    def from_segment_value(cls, page_revision, locale, segment_value):
-        segment = Segment.from_text(locale, segment_value.html)
+    def from_segment_value(cls, page_revision, language, segment_value):
+        segment = Segment.from_text(language, segment_value.html)
 
         segment_page_loc, created = cls.objects.get_or_create(
             page_revision_id=pk(page_revision),

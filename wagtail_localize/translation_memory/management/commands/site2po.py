@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.contrib.contenttypes.models import ContentType
 from wagtail.core.models import Page
 
-from wagtail_localize.models import get_translatable_models, Language, Locale, Region
+from wagtail_localize.models import get_translatable_models, Language
 from wagtail_localize.translation_memory.models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
 from wagtail_localize.translation_memory.utils import insert_segments
 from wagtail_localize.segments import TemplateValue
@@ -15,8 +15,8 @@ from wagtail_localize.segments.extract import extract_segments
 class Command(BaseCommand):
 
     def handle(self, **options):
-        src_locale = Locale.default()
-        tgt_locale = Locale.objects.get(language=Language.objects.filter(code='fr').first(), region=Region.objects.default())
+        src_lang = Language.default()
+        tgt_lang = Language.objects.filter(code='fr').first()
         messages = OrderedDict()
 
         def get_page_revision(page):
@@ -37,11 +37,11 @@ class Command(BaseCommand):
                 continue
 
             content_type = ContentType.objects.get_for_model(model)
-            pages = model.objects.live().filter(content_type=content_type, locale=src_locale)
+            pages = model.objects.live().filter(content_type=content_type, locale=src_lang)
 
             for page in pages:
                 segments = extract_segments(page)
-                insert_segments(get_page_revision(page), src_locale, segments)
+                insert_segments(get_page_revision(page), src_lang, segments)
                 for segment in segments:
                     if not isinstance(segment, TemplateValue):
                         text = segment.html
@@ -65,8 +65,8 @@ class Command(BaseCommand):
 
         for segment, occurances in messages.items():
             existing_translation = ''
-            if tgt_locale:
-                translation = SegmentTranslation.objects.filter(translation_of__text=segment, translation_of__locale=src_locale, locale=tgt_locale).first()
+            if tgt_lang:
+                translation = SegmentTranslation.objects.filter(translation_of__text=segment, translation_of__locale=src_lang, locale=tgt_lang).first()
 
                 if translation:
                     existing_translation = translation.text

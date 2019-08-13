@@ -5,14 +5,14 @@ from wagtail_localize.segments import TemplateValue
 from .models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
 
 
-def get_translation_progress(page_revision_id, locale):
+def get_translation_progress(page_revision_id, language):
     """
     For the specified page revision, get the current
-    translation progress into the specified locale.
+    translation progress into the specified language.
 
     Returns two integers:
      - The total number of segments in the revision to translate
-     - The number of segments that have been translated into the locale
+     - The number of segments that have been translated into the language
     """
     # Get QuerySet of Segments that need to be translated
     required_segments = Segment.objects.filter(
@@ -20,12 +20,12 @@ def get_translation_progress(page_revision_id, locale):
     )
 
     # Annotate each Segment with a flag that indicates whether the segment is translated
-    # into the specified locale
+    # into the specified language
     required_segments = required_segments.annotate(
         is_translated=Exists(
             SegmentTranslation.objects.filter(
                 translation_of_id=OuterRef('pk'),
-                locale=locale,
+                language=language,
             )
         )
     )
@@ -45,7 +45,7 @@ def get_translation_progress(page_revision_id, locale):
     return aggs['total_segments'], aggs['translated_segments']
 
 
-def insert_segments(page_revision, locale, segments):
+def insert_segments(page_revision, language, segments):
     """
     Inserts the list of untranslated segments into translation memory
     """
@@ -53,4 +53,4 @@ def insert_segments(page_revision, locale, segments):
         if isinstance(segment, TemplateValue):
             TemplatePageLocation.from_template_value(page_revision, segment)
         else:
-            SegmentPageLocation.from_segment_value(page_revision, locale, segment)
+            SegmentPageLocation.from_segment_value(page_revision, language, segment)
