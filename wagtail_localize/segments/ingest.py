@@ -11,7 +11,7 @@ from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail_localize.models import TranslatableMixin
 from wagtail_localize.segments import TemplateValue
 
-from .html import render_html_segment
+from .html import restore_html_segments
 
 
 def organise_template_segments(segments):
@@ -64,7 +64,7 @@ class StreamFieldSegmentsWriter:
         elif isinstance(block_type, blocks.RichTextBlock):
             format, template, texts = organise_template_segments(segments)
             assert format == 'html'
-            return RichText(render_html_segment(template, texts))
+            return RichText(restore_html_segments(template, texts))
 
         elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
             return self.handle_related_object_block(block_value, segments)
@@ -142,7 +142,7 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
         elif isinstance(field, RichTextField):
             format, template, texts = organise_template_segments(field_segments)
             assert format == 'html'
-            html = render_html_segment(template, texts)
+            html = restore_html_segments(template, texts)
             setattr(translated_obj, field_name, RichText(html))
 
         elif isinstance(field, (models.TextField, models.CharField)):
