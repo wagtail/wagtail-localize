@@ -69,11 +69,7 @@ class SegmentValue:
         if self.path:
             new_path += '.' + self.path
 
-<<<<<<< HEAD
-        return SegmentValue(new_path, self.text, order=self.order)
-=======
-        return SegmentValue(new_path, self.text, self.html_elements)
->>>>>>> Merged HTMLSegmentValue into SegmentValue and added some helpers
+        return SegmentValue(new_path, self.text, order=self.order, self.html_elements)
 
     def unwrap(self):
         """
@@ -87,10 +83,7 @@ class SegmentValue:
         """
         base_path, *remaining_components = self.path.split('.')
         new_path = '.'.join(remaining_components)
-<<<<<<< HEAD
-        return base_path, SegmentValue(new_path, self.text, order=self.order)
-=======
-        return base_path, SegmentValue(new_path, self.text, self.html_elements)
+        return base_path, SegmentValue(new_path, self.text, order=self.order, self.html_elements)
 
     @property
     def html(self):
@@ -163,7 +156,6 @@ class SegmentValue:
         for e in html_elements:
             if e.identifier in attrs_map:
                 e.element[1] = attrs_map[e.identifier]
->>>>>>> Merged HTMLSegmentValue into SegmentValue and added some helpers
 
     def is_empty(self):
         return self.html in ['', None]
