@@ -54,6 +54,8 @@ class SegmentTranslation(models.Model):
     translation_of = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='translations')
     language = models.ForeignKey('wagtail_localize.Language', on_delete=models.CASCADE)
     text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField()
 
     class Meta:
         unique_together = [
