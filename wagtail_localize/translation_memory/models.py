@@ -106,8 +106,27 @@ class BasePageLocation(models.Model):
         abstract = True
 
 
+class SegmentPageLocationQuerySet(models.QuerySet):
+    def annotate_translation(self, language):
+        """
+        Adds a 'translation' field to the segments containing the
+        text content of the segment translated into the specified
+        language.
+        """
+        return self.annotate(
+            translation=Subquery(
+                SegmentTranslation.objects.filter(
+                    translation_of_id=OuterRef('segment_id'),
+                    language_id=pk(language),
+                ).values('text')
+            )
+        )
+
+
 class SegmentPageLocation(BasePageLocation):
     segment = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='page_locations')
+
+    objects = SegmentPageLocationQuerySet.as_manager()
 
     @classmethod
     def from_segment_value(cls, page_revision, language, segment_value):
