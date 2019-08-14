@@ -352,6 +352,14 @@ class TranslatableMixin(models.Model):
         ]
 
 
+class ParentNotTranslatedError(Exception):
+    """
+    Raised when a call to Page.copy_for_translation is made but the
+    parent page is not translated and copy_parents is False.
+    """
+    pass
+
+
 class TranslatablePageMixin(TranslatableMixin):
 
     def copy(self, reset_translation_key=True, **kwargs):
@@ -395,7 +403,7 @@ class TranslatablePageMixin(TranslatableMixin):
                 translated_parent = parent.get_translation(locale)
             except parent.__class__.DoesNotExist:
                 if not copy_parents:
-                    return
+                    raise ParentNotTranslatedError
 
                 translated_parent = parent.copy_for_translation(locale, copy_parents=True)
         else:
