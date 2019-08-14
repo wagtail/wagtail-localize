@@ -130,12 +130,12 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
         field = translated_obj.__class__._meta.get_field(field_name)
 
         if hasattr(field, 'restore_translated_segments'):
-            value = field.value_from_object(translated_obj)
+            value = field.value_from_object(original_obj)
             new_value = field.restore_translated_segments(value, field_segments)
             setattr(translated_obj, field_name, new_value)
 
         elif isinstance(field, StreamField):
-            data = field.value_from_object(translated_obj)
+            data = field.value_from_object(original_obj)
             StreamFieldSegmentsWriter(field, src_locale, tgt_locale).handle_stream_block(data, field_segments)
             setattr(translated_obj, field_name, data)
 
