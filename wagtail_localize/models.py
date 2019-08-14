@@ -53,8 +53,8 @@ class Language(models.Model):
 
         https://tools.ietf.org/html/rfc5646
         """
-        # These are all the script codes used in Django's default LANGUAGES
-        # They exist instead of a country, but they need to be capitalised differently.
+        # These are all the script codes that are used in Django's default LANGUAGES
+        # They need to be capitalised differently from countries
         script_codes = ['latn', 'hans', 'hant']
 
         components = self.code.split('-')
@@ -70,9 +70,9 @@ class Language(models.Model):
                 return components[0].lower() + '-' + components[1].title()
             else:
                 # en-gb => en-GB
-                return components[0].lower() + '-' + components[1].title()
+                return components[0].lower() + '-' + components[1].upper()
         else:
-            # Not sure what to do. Returning the existing code is the
+            # Too many components. Not sure what to do.
             return self.code
 
     @classmethod
