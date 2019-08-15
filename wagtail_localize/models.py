@@ -431,6 +431,17 @@ class TranslatablePageMixin(TranslatableMixin):
             exclude_fields=exclude_fields,
         )
 
+    def can_move_to(self, parent):
+        if not super().can_move_to(parent):
+            return False
+
+        # Prevent pages being moved to different language sections
+        if issubclass(parent.specific_class, TranslatablePageMixin):
+            if parent.specific.locale_id != self.locale_id:
+                return False
+
+        return True
+
     def with_content_json(self, content_json):
         page = super().with_content_json(content_json)
         page.translation_key = self.translation_key
