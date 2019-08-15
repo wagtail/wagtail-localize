@@ -437,6 +437,14 @@ class TranslatablePageMixin(TranslatableMixin):
         page.locale = self.locale
         return page
 
+    class Meta:
+        abstract = True
+        unique_together = [
+            ('translation_key', 'locale'),
+        ]
+
+
+class TranslatablePageRoutingMixin:
     def get_translation_for_request(self, request):
         """
         Returns the translation of this page that should be used to route
@@ -451,7 +459,7 @@ class TranslatablePageMixin(TranslatableMixin):
         except Locale.DoesNotExist:
             return
 
-        except Page.DoesNotExist:
+        except self.DoesNotExist:
             return
 
     def route(self, request, path_components):
@@ -471,12 +479,6 @@ class TranslatablePageMixin(TranslatableMixin):
                 return page.route(request, path_components)
 
         return super().route(request, path_components)
-
-    class Meta:
-        abstract = True
-        unique_together = [
-            ('translation_key', 'locale'),
-        ]
 
 
 class BootstrapTranslatableMixin(TranslatableMixin):
