@@ -32,7 +32,7 @@ class Segment(models.Model):
     UUID_NAMESPACE = uuid.UUID('59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7')
 
     language = models.ForeignKey('wagtail_localize.Language', on_delete=models.CASCADE)
-    uuid = models.UUIDField(unique=True)
+    text_id = models.UUIDField()
     text = models.TextField()
 
     objects = SegmentQuerySet.as_manager()
@@ -41,13 +41,18 @@ class Segment(models.Model):
     def from_text(cls, language, text):
         segment, created = cls.objects.get_or_create(
             language_id=pk(language),
-            uuid=uuid.uuid5(cls.UUID_NAMESPACE, text),
+            text_id=uuid.uuid5(cls.UUID_NAMESPACE, text),
             defaults={
                 'text': text,
             }
         )
 
         return segment
+
+    class Meta:
+        unique_together = [
+            ('language', 'text_id'),
+        ]
 
 
 class SegmentTranslation(models.Model):
