@@ -31,7 +31,7 @@ class CustomStructBlock(blocks.StructBlock):
 
     def get_translatable_segments(self, value):
         return [
-            SegmentValue('foo', f"{value['field_a']} {value['field_b']}"),
+            SegmentValue('foo', f"{} {}".format(value['field_a'], value['field_b'])),
         ]
 
 
@@ -56,7 +56,7 @@ class TestCustomField(models.TextField):
             return []
 
         return [
-            SegmentValue('foo', f"{value} and some extra"),
+            SegmentValue('foo', f"{} and some extra".format(value)),
         ]
 
 

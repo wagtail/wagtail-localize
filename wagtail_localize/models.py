@@ -86,7 +86,7 @@ class Language(models.Model):
         display_name = self.get_display_name()
 
         if display_name:
-            return '{} ({})'format(display_name, self.code)
+            return '{} ({})'.format(display_name, self.code)
         else:
             return self.code
 
@@ -176,7 +176,7 @@ class Locale(models.Model):
         return cls.objects.default_id()
 
     def __str__(self):
-        return f"{self.region.name} / {self.language.get_display_name()}"
+        return "{} / {}".format(self.region.name, self.language.get_display_name())
 
     @property
     def slug(self):
