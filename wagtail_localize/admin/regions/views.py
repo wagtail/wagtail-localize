@@ -22,7 +22,7 @@ class RegionComponentManager:
             component_instance = component_model.objects.filter(region=instance).first()
             edit_handler = get_region_component_edit_handler(component_model).bind_to(model=component_model, instance=component_instance, request=request)
             form_class = edit_handler.get_form_class()
-            prefix = f'component_{component_model._meta.app_label}_{component_model.__name__}'
+            prefix = 'component_{}_{}'.format(component_model._meta.app_label, component_model.__name__)
 
             if request.method == 'POST':
                 form = form_class(request.POST, request.FILES, instance=component_instance, prefix=prefix)
