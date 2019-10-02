@@ -86,7 +86,7 @@ class Language(models.Model):
         display_name = self.get_display_name()
 
         if display_name:
-            return f'{display_name} ({self.code})'
+            return '{} ({})'.format(display_name, self.code)
         else:
             return self.code
 
@@ -176,14 +176,14 @@ class Locale(models.Model):
         return cls.objects.default_id()
 
     def __str__(self):
-        return f"{self.region.name} / {self.language.get_display_name()}"
+        return "{} / {}".format(self.region.name, self.language.get_display_name())
 
     @property
     def slug(self):
         slug = self.language.code
 
         if self.region != Region.objects.default():
-            return f'{self.region.slug}-{self.language.code}'
+            return '{}-{}'.format(self.region.slug, self.language.code)
         else:
             return self.language.code
 
@@ -323,7 +323,7 @@ class TranslatableMixin(models.Model):
             # This is in case either image record is changed or deleted, the other record will still
             # have its file.
             file_stem, file_ext = os.path.splitext(self.file.name)
-            new_name = f'{file_stem}-{locale.slug}{file_ext}'
+            new_name = '{}-{}{}'.format(file_stem, locale.slug, file_ext)
             translated.file = ContentFile(self.file.read(), name=new_name)
 
         return translated

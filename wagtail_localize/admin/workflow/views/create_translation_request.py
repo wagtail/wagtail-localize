@@ -22,7 +22,7 @@ class CreateTranslationRequestForm(forms.Form):
 
         page_descendant_count = page.get_descendants().type(tuple(get_translatable_models())).count()
         if page_descendant_count > 0:
-            self.fields['include_subtree'].help_text = f"This will add {page_descendant_count} additional pages to the request"
+            self.fields['include_subtree'].help_text = "This will add {} additional pages to the request".format(page_descendant_count)
         else:
             self.fields['include_subtree'].widget = forms.HiddenInput()
 

@@ -164,7 +164,7 @@ class SegmentValue:
         return isinstance(other, SegmentValue) and self.path == other.path and self.html == other.html
 
     def __repr__(self):
-        return f'<SegmentValue {self.path} "{self.html}">'
+        return '<SegmentValue {} "{}">'.format(self.path, self.html)
 
 
 class TemplateValue:
@@ -219,4 +219,4 @@ class TemplateValue:
         return isinstance(other, TemplateValue) and self.path == other.path and self.format == other.format and self.template == other.template and self.segment_count == other.segment_count
 
     def __repr__(self):
-        return f'<TemplateValue {self.path} format:{self.format} {self.segment_count} segments>'
+        return '<TemplateValue {} format:{} {} segments>'.format(self.path, self.format, self.segment_count)

@@ -112,7 +112,7 @@ def extract_segments(instance):
             manager = getattr(instance, field.name)
 
             for child_instance in manager.all():
-                segments.extend(segment.wrap(f'{field.name}.{child_instance.translation_key}') for segment in extract_segments(child_instance))
+                segments.extend(segment.wrap('{}.{}'.format(field.name, child_instance.translation_key)) for segment in extract_segments(child_instance))
 
 
     class Counter:
