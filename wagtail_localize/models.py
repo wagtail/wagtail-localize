@@ -287,6 +287,7 @@ def default_locale_id():
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
     locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+', default=default_locale_id)
+    is_source_translation = models.BooleanField(default=True)
 
     translatable_fields = []
 
@@ -307,6 +308,12 @@ class TranslatableMixin(models.Model):
         except self.__class__.DoesNotExist:
             return None
 
+    def get_source_translation(self):
+        if self.is_source_translation:
+            return self
+
+        return self.get_translations(inclusive=False).get(is_source_translation=True)
+
     def has_translation(self, locale):
         return self.get_translations(inclusive=True).filter(locale=locale).exists()
 
@@ -317,6 +324,7 @@ class TranslatableMixin(models.Model):
         translated = self.__class__.objects.get(id=self.id)
         translated.id = None
         translated.locale = locale
+        translated.is_source_translation = False
 
         if isinstance(self, AbstractImage):
             # As we've copied the image record we also need to copy the original image file itself.
@@ -370,10 +378,12 @@ class TranslatablePageMixin(TranslatableMixin):
             if 'update_attrs' in kwargs:
                 if 'translation_key' not in kwargs['update_attrs']:
                     kwargs['update_attrs']['translation_key'] = uuid.uuid4()
+                    kwargs['update_attrs']['is_source_translation'] = True
 
             else:
                 kwargs['update_attrs'] = {
                     'translation_key': uuid.uuid4(),
+                    'is_source_translation': True,
                 }
 
             original_process_child_object = kwargs.pop('process_child_object')
@@ -382,6 +392,7 @@ class TranslatablePageMixin(TranslatableMixin):
                 # Change translation keys of translatable child objects
                 if isinstance(child_object, TranslatableMixin):
                     child_object.translation_key = uuid.uuid4()
+                    child_object.is_source_translation = True
 
                 if original_process_child_object is not None:
                     original_process_child_object(original_page, page_copy, child_relation, child_object)
@@ -420,10 +431,11 @@ class TranslatablePageMixin(TranslatableMixin):
         def process_child_object(original_page, page_copy, child_relation, child_object):
             if isinstance(child_object, TranslatableMixin):
                 child_object.locale = locale
+                child_object.is_source_translation = False
 
         return self.copy(
             to=translated_parent,
-            update_attrs={'locale': locale, 'slug': slug},
+            update_attrs={'locale': locale, 'is_source_translation': False, 'slug': slug},
             copy_revisions=False,
             keep_live=False,
             reset_translation_key=False,
@@ -446,6 +458,8 @@ class TranslatablePageMixin(TranslatableMixin):
         page = super().with_content_json(content_json)
         page.translation_key = self.translation_key
         page.locale = self.locale
+        page.is_source_translation = self.is_source_translation
+
         return page
 
     class Meta:
