@@ -9,9 +9,11 @@ from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from django.utils import translation
 from wagtail.core.models import Page
+from wagtail.core.signals import page_published
 from wagtail.images.models import AbstractImage
 
 from .compat import get_languages, get_supported_language_variant
+from .fields import TranslatableField, SynchronizedField
 from .utils import find_available_slug
 
 
@@ -349,9 +351,17 @@ class TranslatableMixin(models.Model):
 
     @classmethod
     def get_translatable_fields(cls):
-        for field in cls._meta.get_fields():
-            if field.name in cls.translatable_fields:
-                yield field
+        return [
+            field for field in cls.translatable_fields
+            if isinstance(field, TranslatableField)
+        ]
+
+    @classmethod
+    def get_synchronized_fields(cls):
+        return [
+            field for field in cls.translatable_fields
+            if isinstance(field, SynchronizedField)
+        ]
 
     class Meta:
         abstract = True
@@ -460,6 +470,11 @@ class TranslatablePageMixin(TranslatableMixin):
         page.locale = self.locale
         page.is_source_translation = self.is_source_translation
 
+        # If this page is a translation, retrieve the values of all synchronised fields from the live version
+        if not self.is_source_translation:
+            for field in self.get_synchronized_fields():
+                setattr(page, field.field_name, getattr(self, field.field_name))
+
         return page
 
     class Meta:
@@ -552,3 +567,26 @@ def get_translatable_models(include_subclasses=False):
         ]
 
     return translatable_models
+
+
+@receiver(page_published)
+def update_synchronised_pages_on_publish(sender, instance, revision, **kwargs):
+    # This is called whenever a page is published.
+    # If the page class is translatable, the page itself is a translation source, and
+    # it has synchronised fields, here is where we update the synchronised fields on
+    # the translated pages.
+
+    # We only need to update the database version of the translated pages. When a revision
+    # of a translated page is retrieved as a page object, the synchronised fields will be
+    # copied from the database version (see TranslatablePageMixin.with_content_json)
+    if not isinstance(instance, TranslatablePageMixin):
+        return
+
+    update_fields = {}
+
+    for field in instance.translatable_fields:
+        if field.is_synchronized(instance):
+            update_fields[field.field_name] = field.get_value(instance)
+
+    if update_fields:
+        instance.get_translations(inclusive=False).update(**update_fields)

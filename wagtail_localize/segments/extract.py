@@ -79,7 +79,9 @@ class StreamFieldSegmentExtractor:
 def extract_segments(instance):
     segments = []
 
-    for field in instance.get_translatable_fields():
+    for translatable_field in instance.get_translatable_fields():
+        field = translatable_field.get_field(instance.__class__)
+
         if hasattr(field, 'get_translatable_segments'):
             segments.extend(segment.wrap(field.name) for segment in field.get_translatable_segments(field.value_from_object(instance)))
 
