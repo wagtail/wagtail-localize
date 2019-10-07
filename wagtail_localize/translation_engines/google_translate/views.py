@@ -30,6 +30,8 @@ def translate(request, translation_request_id):
     translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
     translator = Translator()
 
+    publish = request.POST.get('publish', '') == 'on'
+
     for page in translation_request.pages.filter(is_completed=False):
         instance = page.source_revision.as_page_object()
 
@@ -65,6 +67,9 @@ def translate(request, translation_request_id):
             ingest_segments(instance, translation, translation_request.source_locale, translation_request.target_locale, translated_segments)
             translation.slug = slugify(translation.slug)
             revision = translation.save_revision()
+
+            if publish:
+                revision.publish()
 
             # Update translation request
             page.is_completed = True
