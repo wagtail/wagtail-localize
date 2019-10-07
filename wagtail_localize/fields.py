@@ -23,7 +23,11 @@ class BaseTranslatableField:
 
 
 class TranslatableField(BaseTranslatableField):
-    pass
+    """
+    A field that should be translated whenever the original page changes
+    """
+    def is_editable(self, obj):
+        return obj.is_source_translation
 
 
 class SynchronizedField(BaseTranslatableField):

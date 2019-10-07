@@ -13,6 +13,7 @@ from wagtail.core.signals import page_published
 from wagtail.images.models import AbstractImage
 
 from .compat import get_languages, get_supported_language_variant
+from .edit_handlers import filter_edit_handler_on_instance_bound
 from .fields import TranslatableField, SynchronizedField
 from .utils import find_available_slug
 
@@ -476,6 +477,26 @@ class TranslatablePageMixin(TranslatableMixin):
                 setattr(page, field.field_name, getattr(self, field.field_name))
 
         return page
+
+    @classmethod
+    def get_edit_handler(cls):
+        # Translatable and Synchronised fields should not be editable
+        # on translations
+        translatable_fields_by_name = {
+            field.field_name: field
+            for field in cls.translatable_fields
+        }
+
+        def filter_editable_fields(edit_handler, instance):
+            if not hasattr(edit_handler, 'field_name'):
+                return True
+
+            if not edit_handler.field_name in translatable_fields_by_name:
+                return True
+
+            return translatable_fields_by_name[edit_handler.field_name].is_editable(instance)
+
+        return filter_edit_handler_on_instance_bound(super().get_edit_handler(), filter_editable_fields).bind_to(model=cls)
 
     class Meta:
         abstract = True
