@@ -38,16 +38,26 @@ class Segment(models.Model):
     objects = SegmentQuerySet.as_manager()
 
     @classmethod
+    def get_text_id(cls, text):
+        return uuid.uuid5(cls.UUID_NAMESPACE, text)
+
+    @classmethod
     def from_text(cls, language, text):
         segment, created = cls.objects.get_or_create(
             language_id=pk(language),
-            text_id=uuid.uuid5(cls.UUID_NAMESPACE, text),
+            text_id=cls.get_text_id(text),
             defaults={
                 'text': text,
             }
         )
 
         return segment
+
+    def save(self, *args, **kwargs):
+        if self.text and self.text_id is None:
+            self.text_id = self.get_text_id(self.text)
+
+        return super().save(*args, **kwargs)
 
     class Meta:
         unique_together = [
