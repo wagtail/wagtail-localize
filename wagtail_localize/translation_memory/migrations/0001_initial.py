@@ -9,65 +9,145 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('wagtail_localize', '0002_initial_data'),
-        ('wagtailcore', '0041_group_collection_permissions_verbose_name_plural'),
+        ("wagtail_localize", "0002_initial_data"),
+        ("wagtailcore", "0041_group_collection_permissions_verbose_name_plural"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Segment',
+            name="Segment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uuid', models.UUIDField(unique=True)),
-                ('text', models.TextField()),
-                ('language', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtail_localize.Language')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("uuid", models.UUIDField(unique=True)),
+                ("text", models.TextField()),
+                (
+                    "language",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtail_localize.Language",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SegmentPageLocation',
+            name="SegmentPageLocation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('path', models.TextField()),
-                ('page_revision', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.PageRevision')),
-                ('segment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_locations', to='wagtail_localize_translation_memory.Segment')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("path", models.TextField()),
+                (
+                    "page_revision",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.PageRevision",
+                    ),
+                ),
+                (
+                    "segment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="page_locations",
+                        to="wagtail_localize_translation_memory.Segment",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.CreateModel(
-            name='SegmentTranslation',
+            name="SegmentTranslation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField()),
-                ('language', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtail_localize.Language')),
-                ('translation_of', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translations', to='wagtail_localize_translation_memory.Segment')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField()),
+                (
+                    "language",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtail_localize.Language",
+                    ),
+                ),
+                (
+                    "translation_of",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="translations",
+                        to="wagtail_localize_translation_memory.Segment",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Template',
+            name="Template",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uuid', models.UUIDField(unique=True)),
-                ('template', models.TextField()),
-                ('template_format', models.CharField(max_length=100)),
-                ('segment_count', models.PositiveIntegerField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("uuid", models.UUIDField(unique=True)),
+                ("template", models.TextField()),
+                ("template_format", models.CharField(max_length=100)),
+                ("segment_count", models.PositiveIntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='TemplatePageLocation',
+            name="TemplatePageLocation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('path', models.TextField()),
-                ('page_revision', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.PageRevision')),
-                ('template', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_locations', to='wagtail_localize_translation_memory.Template')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("path", models.TextField()),
+                (
+                    "page_revision",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.PageRevision",
+                    ),
+                ),
+                (
+                    "template",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="page_locations",
+                        to="wagtail_localize_translation_memory.Template",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.AlterUniqueTogether(
-            name='segmenttranslation',
-            unique_together={('language', 'translation_of')},
+            name="segmenttranslation", unique_together={("language", "translation_of")}
         ),
     ]

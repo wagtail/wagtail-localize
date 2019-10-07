@@ -22,6 +22,7 @@ class SegmentValue:
         - identifier is a number that is generated from the segment extractor. It must be conserved
         by translation engines as it is used to work out where elements have moved during translation.
         """
+
         def __init__(self, start, end, identifier, element=None):
             self.start = start
             self.end = end
@@ -44,7 +45,9 @@ class SegmentValue:
             counter[element_type] += 1
             identifier = element_type + str(counter[element_type])
 
-            html_elements.append(cls.HTMLElement(start, end, identifier, (element_type, element_attrs)))
+            html_elements.append(
+                cls.HTMLElement(start, end, identifier, (element_type, element_attrs))
+            )
 
         return cls(path, text, html_elements)
 
@@ -67,7 +70,7 @@ class SegmentValue:
         new_path = base_path
 
         if self.path:
-            new_path += '.' + self.path
+            new_path += "." + self.path
 
         return SegmentValue(new_path, self.text, self.html_elements, order=self.order)
 
@@ -81,19 +84,22 @@ class SegmentValue:
         >>> s.unwrap()
         'relation', SegmentValue('field', "The text")
         """
-        base_path, *remaining_components = self.path.split('.')
-        new_path = '.'.join(remaining_components)
-        return base_path, SegmentValue(new_path, self.text, self.html_elements, order=self.order)
+        base_path, *remaining_components = self.path.split(".")
+        new_path = ".".join(remaining_components)
+        return (
+            base_path,
+            SegmentValue(new_path, self.text, self.html_elements, order=self.order),
+        )
 
     @property
     def html(self):
         if not self.html_elements:
             return escape(self.text)
 
-        return restore_html_elements(self.text, [
-            (e.start, e.end, e.element[0], e.element[1])
-            for e in self.html_elements
-        ])
+        return restore_html_elements(
+            self.text,
+            [(e.start, e.end, e.element[0], e.element[1]) for e in self.html_elements],
+        )
 
     @property
     def html_with_ids(self):
@@ -106,10 +112,18 @@ class SegmentValue:
             c.update(b)
             return c
 
-        return restore_html_elements(self.text, [
-            (e.start, e.end, e.element[0], {'id': e.identifier} if e.element[1] else {})
-            for e in self.html_elements
-        ])
+        return restore_html_elements(
+            self.text,
+            [
+                (
+                    e.start,
+                    e.end,
+                    e.element[0],
+                    {"id": e.identifier} if e.element[1] else {},
+                )
+                for e in self.html_elements
+            ],
+        )
 
     def get_html_element_attrs(self):
         """
@@ -125,10 +139,7 @@ class SegmentValue:
                 "a1": {"href": "https://mysite.com"}
             }
         """
-        return {
-            e.identifier: e.element[1]
-            for e in self.html_elements or []
-        }
+        return {e.identifier: e.element[1] for e in self.html_elements or []}
 
     def replace_html_element_attrs(self, attrs_map):
         """
@@ -158,10 +169,14 @@ class SegmentValue:
                 e.element[1] = attrs_map[e.identifier]
 
     def is_empty(self):
-        return self.html in ['', None]
+        return self.html in ["", None]
 
     def __eq__(self, other):
-        return isinstance(other, SegmentValue) and self.path == other.path and self.html == other.html
+        return (
+            isinstance(other, SegmentValue)
+            and self.path == other.path
+            and self.html == other.html
+        )
 
     def __repr__(self):
         return '<SegmentValue {} "{}">'.format(self.path, self.html)
@@ -179,7 +194,9 @@ class TemplateValue:
         """
         Sets the order of this segment.
         """
-        return TemplateValue(self.path, self.format, self.template, self.segment_count, order=order)
+        return TemplateValue(
+            self.path, self.format, self.template, self.segment_count, order=order
+        )
 
     def wrap(self, base_path):
         """
@@ -194,9 +211,11 @@ class TemplateValue:
         new_path = base_path
 
         if self.path:
-            new_path += '.' + self.path
+            new_path += "." + self.path
 
-        return TemplateValue(new_path, self.format, self.template, self.segment_count, order=self.order)
+        return TemplateValue(
+            new_path, self.format, self.template, self.segment_count, order=self.order
+        )
 
     def unwrap(self):
         """
@@ -208,15 +227,32 @@ class TemplateValue:
         >>> s.unwrap()
         'relation', TemplateValue('field', 'html', "<text position=\"0\">, 1)
         """
-        base_path, *remaining_components = self.path.split('.')
-        new_path = '.'.join(remaining_components)
-        return base_path, TemplateValue(new_path, self.format, self.template, self.segment_count, order=self.order)
+        base_path, *remaining_components = self.path.split(".")
+        new_path = ".".join(remaining_components)
+        return (
+            base_path,
+            TemplateValue(
+                new_path,
+                self.format,
+                self.template,
+                self.segment_count,
+                order=self.order,
+            ),
+        )
 
     def is_empty(self):
-        return self.template in ['', None]
+        return self.template in ["", None]
 
     def __eq__(self, other):
-        return isinstance(other, TemplateValue) and self.path == other.path and self.format == other.format and self.template == other.template and self.segment_count == other.segment_count
+        return (
+            isinstance(other, TemplateValue)
+            and self.path == other.path
+            and self.format == other.format
+            and self.template == other.template
+            and self.segment_count == other.segment_count
+        )
 
     def __repr__(self):
-        return '<TemplateValue {} format:{} {} segments>'.format(self.path, self.format, self.segment_count)
+        return "<TemplateValue {} format:{} {} segments>".format(
+            self.path, self.format, self.segment_count
+        )

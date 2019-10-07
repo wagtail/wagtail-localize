@@ -9,62 +9,90 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Language',
+            name="Language",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=100, unique=True)),
-                ('is_active', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=100, unique=True)),
+                ("is_active", models.BooleanField(default=True)),
             ],
-            options={
-                'ordering': ['-is_active', 'code'],
-            },
-            managers=[
-                ('objects', wagtail_localize.models.LanguageManager()),
-            ],
+            options={"ordering": ["-is_active", "code"]},
+            managers=[("objects", wagtail_localize.models.LanguageManager())],
         ),
         migrations.CreateModel(
-            name='Locale',
+            name="Locale",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_active', models.BooleanField(default=True)),
-                ('language', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='locales', to='wagtail_localize.Language')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True)),
+                (
+                    "language",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="locales",
+                        to="wagtail_localize.Language",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-is_active', '-region__is_default', 'region__name', 'language__code'],
+                "ordering": [
+                    "-is_active",
+                    "-region__is_default",
+                    "region__name",
+                    "language__code",
+                ]
             },
-            managers=[
-                ('objects', wagtail_localize.models.LocaleManager()),
-            ],
+            managers=[("objects", wagtail_localize.models.LocaleManager())],
         ),
         migrations.CreateModel(
-            name='Region',
+            name="Region",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('slug', models.SlugField(max_length=100, unique=True)),
-                ('is_default', models.BooleanField(default=False)),
-                ('is_active', models.BooleanField(default=True)),
-                ('languages', models.ManyToManyField(to='wagtail_localize.Language')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("slug", models.SlugField(max_length=100, unique=True)),
+                ("is_default", models.BooleanField(default=False)),
+                ("is_active", models.BooleanField(default=True)),
+                ("languages", models.ManyToManyField(to="wagtail_localize.Language")),
             ],
-            options={
-                'ordering': ['-is_active', '-is_default', 'name'],
-            },
-            managers=[
-                ('objects', wagtail_localize.models.RegionManager()),
-            ],
+            options={"ordering": ["-is_active", "-is_default", "name"]},
+            managers=[("objects", wagtail_localize.models.RegionManager())],
         ),
         migrations.AddField(
-            model_name='locale',
-            name='region',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='locales', to='wagtail_localize.Region'),
+            model_name="locale",
+            name="region",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="locales",
+                to="wagtail_localize.Region",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='locale',
-            unique_together={('region', 'language')},
+            name="locale", unique_together={("region", "language")}
         ),
     ]

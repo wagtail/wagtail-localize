@@ -18,7 +18,9 @@ from wagtail_localize.segments.ingest import ingest_segments
 
 @require_GET
 def download(request, translation_request_id):
-    translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
+    translation_request = get_object_or_404(
+        TranslationRequest, id=translation_request_id
+    )
 
     # Extract messages from pages
     messages = defaultdict(list)
@@ -28,7 +30,9 @@ def download(request, translation_request_id):
         segments = extract_segments(instance)
 
         # Filter out templates
-        text_segments = [segment for segment in segments if isinstance(segment, SegmentValue)]
+        text_segments = [
+            segment for segment in segments if isinstance(segment, SegmentValue)
+        ]
 
         for segment in text_segments:
             messages[segment.text].append((instance.url_path, segment.path))
@@ -36,23 +40,25 @@ def download(request, translation_request_id):
     # Build a PO file
     po = polib.POFile()
     po.metadata = {
-        'POT-Creation-Date': str(timezone.now()),
-        'MIME-Version': '1.0',
-        'Content-Type': 'text/plain; charset=utf-8',
+        "POT-Creation-Date": str(timezone.now()),
+        "MIME-Version": "1.0",
+        "Content-Type": "text/plain; charset=utf-8",
     }
 
     for text, occurances in messages.items():
         po.append(
             polib.POEntry(
                 msgid=text,
-                msgstr='',  # TODO: Fetch this from translation memory
-                occurrences=occurances
+                msgstr="",  # TODO: Fetch this from translation memory
+                occurrences=occurances,
             )
         )
 
     # Write response
-    response = HttpResponse(str(po), content_type='text/x-gettext-translation')
-    response['Content-Disposition'] = 'attachment; filename=translation-%d.po' % translation_request.id
+    response = HttpResponse(str(po), content_type="text/x-gettext-translation")
+    response["Content-Disposition"] = (
+        "attachment; filename=translation-%d.po" % translation_request.id
+    )
     return response
 
 
@@ -66,10 +72,12 @@ class MissingSegmentsException(Exception):
 
 @require_POST
 def upload(request, translation_request_id):
-    translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
+    translation_request = get_object_or_404(
+        TranslationRequest, id=translation_request_id
+    )
 
     with tempfile.NamedTemporaryFile() as f:
-        f.write(request.FILES['file'].read())
+        f.write(request.FILES["file"].read())
         f.flush()
         po = polib.pofile(f.name)
 
@@ -82,15 +90,23 @@ def upload(request, translation_request_id):
 
                 segments = extract_segments(instance)
 
-                text_segments = [segment for segment in segments if isinstance(segment, SegmentValue)]
-                template_segments = [segment for segment in segments if isinstance(segment, TemplateValue)]
+                text_segments = [
+                    segment for segment in segments if isinstance(segment, SegmentValue)
+                ]
+                template_segments = [
+                    segment
+                    for segment in segments
+                    if isinstance(segment, TemplateValue)
+                ]
 
                 translated_segments = template_segments.copy()
 
                 missing_segments = 0
                 for segment in text_segments:
                     if segment.text in translations:
-                        translated_segments.append(SegmentValue(segment.path, translations[segment.text]))
+                        translated_segments.append(
+                            SegmentValue(segment.path, translations[segment.text])
+                        )
                     else:
                         missing_segments += 1
 
@@ -98,25 +114,45 @@ def upload(request, translation_request_id):
                     raise MissingSegmentsException(instance, missing_segments)
 
                 try:
-                    translation = instance.get_translation(translation_request.target_locale)
+                    translation = instance.get_translation(
+                        translation_request.target_locale
+                    )
                 except instance.__class__.DoesNotExist:
-                    translation = instance.copy_for_translation(translation_request.target_locale)
+                    translation = instance.copy_for_translation(
+                        translation_request.target_locale
+                    )
 
-                ingest_segments(instance, translation, translation_request.source_locale, translation_request.target_locale, translated_segments)
+                ingest_segments(
+                    instance,
+                    translation,
+                    translation_request.source_locale,
+                    translation_request.target_locale,
+                    translated_segments,
+                )
                 translation.slug = slugify(translation.slug)
                 revision = translation.save_revision()
 
                 # Update translation request
                 page.is_completed = True
                 page.completed_revision = revision
-                page.save(update_fields=['is_completed', 'completed_revision'])
+                page.save(update_fields=["is_completed", "completed_revision"])
 
     except MissingSegmentsException as e:
         # TODO: Plural
-        messages.error(request, "Unable to translate %s. %s missing segments." % (e.instance.get_admin_display_title(), e.num_missing))
+        messages.error(
+            request,
+            "Unable to translate %s. %s missing segments."
+            % (e.instance.get_admin_display_title(), e.num_missing),
+        )
 
     else:
         # TODO: Plural
-        messages.success(request, "%d pages successfully translated with PO file" % translation_request.pages.count())
+        messages.success(
+            request,
+            "%d pages successfully translated with PO file"
+            % translation_request.pages.count(),
+        )
 
-    return redirect('wagtail_localize_workflow_management:detail', translation_request_id)
+    return redirect(
+        "wagtail_localize_workflow_management:detail", translation_request_id
+    )

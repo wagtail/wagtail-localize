@@ -21,17 +21,16 @@ class SegmentQuerySet(models.QuerySet):
         return self.annotate(
             translation=Subquery(
                 SegmentTranslation.objects.filter(
-                    translation_of_id=OuterRef('pk'),
-                    language_id=pk(language),
-                ).values('text')
+                    translation_of_id=OuterRef("pk"), language_id=pk(language)
+                ).values("text")
             )
         )
 
 
 class Segment(models.Model):
-    UUID_NAMESPACE = uuid.UUID('59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7')
+    UUID_NAMESPACE = uuid.UUID("59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7")
 
-    language = models.ForeignKey('wagtail_localize.Language', on_delete=models.CASCADE)
+    language = models.ForeignKey("wagtail_localize.Language", on_delete=models.CASCADE)
     text_id = models.UUIDField()
     text = models.TextField()
 
@@ -46,9 +45,7 @@ class Segment(models.Model):
         segment, created = cls.objects.get_or_create(
             language_id=pk(language),
             text_id=cls.get_text_id(text),
-            defaults={
-                'text': text,
-            }
+            defaults={"text": text},
         )
 
         return segment
@@ -60,38 +57,34 @@ class Segment(models.Model):
         return super().save(*args, **kwargs)
 
     class Meta:
-        unique_together = [
-            ('language', 'text_id'),
-        ]
+        unique_together = [("language", "text_id")]
 
 
 class SegmentTranslation(models.Model):
-    translation_of = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='translations')
-    language = models.ForeignKey('wagtail_localize.Language', on_delete=models.CASCADE)
+    translation_of = models.ForeignKey(
+        Segment, on_delete=models.CASCADE, related_name="translations"
+    )
+    language = models.ForeignKey("wagtail_localize.Language", on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [
-            ('language', 'translation_of'),
-        ]
+        unique_together = [("language", "translation_of")]
 
     @classmethod
     def from_text(cls, translation_of, language, text):
         segment, created = cls.objects.get_or_create(
             translation_of=translation_of,
             language_id=pk(language),
-            defaults={
-                'text': text,
-            }
+            defaults={"text": text},
         )
 
         return segment
 
 
 class Template(models.Model):
-    BASE_UUID_NAMESPACE = uuid.UUID('4599eabc-3f8e-41a9-be61-95417d26a8cd')
+    BASE_UUID_NAMESPACE = uuid.UUID("4599eabc-3f8e-41a9-be61-95417d26a8cd")
 
     uuid = models.UUIDField(unique=True)
     template = models.TextField()
@@ -105,17 +98,19 @@ class Template(models.Model):
         template, created = cls.objects.get_or_create(
             uuid=uuid.uuid5(uuid_namespace, template_value.template),
             defaults={
-                'template': template_value.template,
-                'template_format': template_value.format,
-                'segment_count': template_value.segment_count,
-            }
+                "template": template_value.template,
+                "template_format": template_value.format,
+                "segment_count": template_value.segment_count,
+            },
         )
 
         return template
 
 
 class BasePageLocation(models.Model):
-    page_revision = models.ForeignKey('wagtailcore.PageRevision', on_delete=models.CASCADE)
+    page_revision = models.ForeignKey(
+        "wagtailcore.PageRevision", on_delete=models.CASCADE
+    )
     path = models.TextField()
     order = models.PositiveIntegerField()
 
@@ -133,15 +128,16 @@ class SegmentPageLocationQuerySet(models.QuerySet):
         return self.annotate(
             translation=Subquery(
                 SegmentTranslation.objects.filter(
-                    translation_of_id=OuterRef('segment_id'),
-                    language_id=pk(language),
-                ).values('text')
+                    translation_of_id=OuterRef("segment_id"), language_id=pk(language)
+                ).values("text")
             )
         )
 
 
 class SegmentPageLocation(BasePageLocation):
-    segment = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='page_locations')
+    segment = models.ForeignKey(
+        Segment, on_delete=models.CASCADE, related_name="page_locations"
+    )
 
     objects = SegmentPageLocationQuerySet.as_manager()
 
@@ -160,7 +156,9 @@ class SegmentPageLocation(BasePageLocation):
 
 
 class TemplatePageLocation(BasePageLocation):
-    template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name='page_locations')
+    template = models.ForeignKey(
+        Template, on_delete=models.CASCADE, related_name="page_locations"
+    )
 
     @classmethod
     def from_template_value(cls, page_revision, template_value):

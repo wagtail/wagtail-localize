@@ -11,11 +11,10 @@ from wagtail_localize.translation_memory.translation_ingestor import ingest_tran
 
 
 class Command(BaseCommand):
-
     def handle(self, **options):
         src_lang = Language.default()
-        tgt_lang = Language.objects.filter(code='fr').first()
+        tgt_lang = Language.objects.filter(code="fr").first()
 
-        po = polib.pofile('site-fr.po')
+        po = polib.pofile("site-fr.po")
         translations = [(message.msgid, message.msgstr) for message in po]
         ingest_translations(src_lang, tgt_lang, translations)

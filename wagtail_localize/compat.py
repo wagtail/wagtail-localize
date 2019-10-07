@@ -29,10 +29,10 @@ def get_supported_language_variant(lang_code, strict=False):
         # If 'fr-ca' is not supported, try special fallback or language-only 'fr'.
         possible_lang_codes = [lang_code]
         try:
-            possible_lang_codes.extend(LANG_INFO[lang_code]['fallback'])
+            possible_lang_codes.extend(LANG_INFO[lang_code]["fallback"])
         except KeyError:
             pass
-        generic_lang_code = lang_code.split('-')[0]
+        generic_lang_code = lang_code.split("-")[0]
         possible_lang_codes.append(generic_lang_code)
         supported_lang_codes = get_languages()
 
@@ -42,6 +42,6 @@ def get_supported_language_variant(lang_code, strict=False):
         if not strict:
             # if fr-fr is not supported, try fr-ca.
             for supported_code in supported_lang_codes:
-                if supported_code.startswith(generic_lang_code + '-'):
+                if supported_code.startswith(generic_lang_code + "-"):
                     return supported_code
     raise LookupError(lang_code)

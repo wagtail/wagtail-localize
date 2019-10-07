@@ -6,20 +6,20 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('wagtail_localize_translation_memory', '0002_pagelocation_order'),
-    ]
+    dependencies = [("wagtail_localize_translation_memory", "0002_pagelocation_order")]
 
     operations = [
         migrations.AddField(
-            model_name='segmenttranslation',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="segmenttranslation",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='segmenttranslation',
-            name='updated_at',
+            model_name="segmenttranslation",
+            name="updated_at",
             field=models.DateTimeField(default=django.utils.timezone.now),
             preserve_default=False,
         ),

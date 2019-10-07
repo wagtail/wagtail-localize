@@ -43,7 +43,9 @@ def handle_related_object(related_object, src_locale, tgt_locale, segments):
         # Create translated version by copying the original version
         related_translated = related_original.copy_for_translation(tgt_locale)
 
-    ingest_segments(related_original, related_translated, src_locale, tgt_locale, segments)
+    ingest_segments(
+        related_original, related_translated, src_locale, tgt_locale, segments
+    )
     related_translated.save()
     return related_translated
 
@@ -55,7 +57,7 @@ class StreamFieldSegmentsWriter:
         self.tgt_locale = tgt_locale
 
     def handle_block(self, block_type, block_value, segments):
-        if hasattr(block_type, 'restore_translated_segments'):
+        if hasattr(block_type, "restore_translated_segments"):
             return block_type.restore_translated_segments(block_value, segments)
 
         elif isinstance(block_type, blocks.CharBlock):
@@ -63,7 +65,7 @@ class StreamFieldSegmentsWriter:
 
         elif isinstance(block_type, blocks.RichTextBlock):
             format, template, texts = organise_template_segments(segments)
-            assert format == 'html'
+            assert format == "html"
             return RichText(restore_html_segments(template, texts))
 
         elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
@@ -76,10 +78,16 @@ class StreamFieldSegmentsWriter:
             return self.handle_list_block(block_value, segments)
 
         else:
-            raise Exception("Unrecognised StreamField block type '{}'. Have you implemented restore_translated_segments() on this class?".format(block_type.__class__.__name__))
+            raise Exception(
+                "Unrecognised StreamField block type '{}'. Have you implemented restore_translated_segments() on this class?".format(
+                    block_type.__class__.__name__
+                )
+            )
 
     def handle_related_object_block(self, related_object, segments):
-        return handle_related_object(related_object, self.src_locale, self.tgt_locale, segments)
+        return handle_related_object(
+            related_object, self.src_locale, self.tgt_locale, segments
+        )
 
     def handle_struct_block(self, struct_block, segments):
         segments_by_field = defaultdict(list)
@@ -88,13 +96,15 @@ class StreamFieldSegmentsWriter:
             field_name, segment = segment.unwrap()
             segments_by_field[field_name].append(segment)
 
-        for field_name in getattr(struct_block.block.meta, 'translated_fields', []):
+        for field_name in getattr(struct_block.block.meta, "translated_fields", []):
             segments = segments_by_field[field_name]
 
             if segments:
                 block_type = struct_block.block.child_blocks[field_name]
                 block_value = struct_block[field_name]
-                struct_block[field_name] = self.handle_block(block_type, block_value, segments)
+                struct_block[field_name] = self.handle_block(
+                    block_type, block_value, segments
+                )
 
         return struct_block
 
@@ -129,19 +139,21 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
     for field_name, field_segments in segments_by_field_name.items():
         field = translated_obj.__class__._meta.get_field(field_name)
 
-        if hasattr(field, 'restore_translated_segments'):
+        if hasattr(field, "restore_translated_segments"):
             value = field.value_from_object(original_obj)
             new_value = field.restore_translated_segments(value, field_segments)
             setattr(translated_obj, field_name, new_value)
 
         elif isinstance(field, StreamField):
             data = field.value_from_object(original_obj)
-            StreamFieldSegmentsWriter(field, src_locale, tgt_locale).handle_stream_block(data, field_segments)
+            StreamFieldSegmentsWriter(
+                field, src_locale, tgt_locale
+            ).handle_stream_block(data, field_segments)
             setattr(translated_obj, field_name, data)
 
         elif isinstance(field, RichTextField):
             format, template, texts = organise_template_segments(field_segments)
-            assert format == 'html'
+            assert format == "html"
             html = restore_html_segments(template, texts)
             setattr(translated_obj, field_name, RichText(html))
 
@@ -150,7 +162,9 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
 
         elif isinstance(field, models.ForeignKey):
             related_original = getattr(original_obj, field_name)
-            related_translated = handle_related_object(related_original, src_locale, tgt_locale, field_segments)
+            related_translated = handle_related_object(
+                related_original, src_locale, tgt_locale, field_segments
+            )
             setattr(translated_obj, field_name, related_translated)
 
         elif isinstance(field, (models.ManyToOneRel)):
@@ -164,8 +178,12 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
                 segments_by_child[child_translation_key].append(segment)
 
             for child_translation_key, child_segments in segments_by_child.items():
-                original_child_object = original_manager.filter(translation_key=child_translation_key).first()
-                translated_child_object = translated_manager.filter(translation_key=child_translation_key).first()
+                original_child_object = original_manager.filter(
+                    translation_key=child_translation_key
+                ).first()
+                translated_child_object = translated_manager.filter(
+                    translation_key=child_translation_key
+                ).first()
 
                 if not translated_child_object:
                     # TODO: Here, we expect that the inline child to already exist as Wagtail copies it
@@ -173,5 +191,11 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
                     # adding new inline objects manually.
                     continue
 
-                ingest_segments(original_child_object, translated_child_object, src_locale, tgt_locale, child_segments)
+                ingest_segments(
+                    original_child_object,
+                    translated_child_object,
+                    src_locale,
+                    tgt_locale,
+                    child_segments,
+                )
                 translated_child_object.save()

@@ -8,13 +8,15 @@ from wagtail_localize.models import Region
 
 
 class RegionForm(forms.ModelForm):
-    required_css_class = 'required'
+    required_css_class = "required"
 
     class Meta:
         model = Region
-        fields = ['name', 'slug', 'languages', 'is_active']
+        fields = ["name", "slug", "languages", "is_active"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['languages'].queryset = self.fields['languages'].queryset.filter(is_active=True)
+        self.fields["languages"].queryset = self.fields["languages"].queryset.filter(
+            is_active=True
+        )

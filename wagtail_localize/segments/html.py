@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup, NavigableString
 
 
-INLINE_TAGS = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i', 'strong']
+INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong"]
 
 
 def lstrip_keep(text):
@@ -10,7 +10,7 @@ def lstrip_keep(text):
     """
     text_length = len(text)
     new_text = text.lstrip()
-    prefix = text[0:(text_length-len(new_text))]
+    prefix = text[0 : (text_length - len(new_text))]
     return new_text, prefix
 
 
@@ -21,9 +21,9 @@ def rstrip_keep(text):
     text_length = len(text)
     new_text = text.rstrip()
     if text_length != len(new_text):
-        suffix = text[-(text_length-len(new_text)):]
+        suffix = text[-(text_length - len(new_text)) :]
     else:
-        suffix = ''
+        suffix = ""
     return new_text, suffix
 
 
@@ -59,7 +59,7 @@ def extract_html_segments(html):
             "<b>Baz</b>",
         ]
     """
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
     def wrap(elements):
         """
@@ -67,15 +67,20 @@ def extract_html_segments(html):
 
         The elements must be contiguous siblings or this might screw up the tree.
         """
-        value = ''.join(element.output_ready() if isinstance(element, NavigableString) else str(element) for element in elements)
+        value = "".join(
+            element.output_ready()
+            if isinstance(element, NavigableString)
+            else str(element)
+            for element in elements
+        )
 
         if value and not value.isspace():
             # Create <text> tag
-            elements[0].insert_before(soup.new_tag('text', value=value))
+            elements[0].insert_before(soup.new_tag("text", value=value))
 
             # Remove elements
             for element in elements:
-                element.replaceWith('')
+                element.replaceWith("")
 
     def walk(element):
         """
@@ -130,7 +135,7 @@ def extract_html_segments(html):
 
         if element.name not in INLINE_TAGS:
             if buffer:
-               wrap(buffer)
+                wrap(buffer)
 
             return True
 
@@ -141,8 +146,8 @@ def extract_html_segments(html):
     # Now extract segments from the <text> tags
     segments = []
     for element in soup.descendants:
-        if element.name == 'text':
-            text = element.attrs.pop('value')
+        if element.name == "text":
+            text = element.attrs.pop("value")
 
             # Strip leading and trailing whitespace. We keep the values and reinsert them
             # into the template
@@ -150,7 +155,7 @@ def extract_html_segments(html):
             text, prefix = lstrip_keep(text)
             text, suffix = rstrip_keep(text)
 
-            element.attrs['position'] = len(segments)
+            element.attrs["position"] = len(segments)
             segments.append(text.strip())
 
             if prefix:
@@ -163,10 +168,10 @@ def extract_html_segments(html):
 
 
 def restore_html_segments(template, texts):
-    soup = BeautifulSoup(template, 'html.parser')
+    soup = BeautifulSoup(template, "html.parser")
 
-    for text_element in soup.findAll('text'):
-        value = texts[int(text_element.get('position'))]
+    for text_element in soup.findAll("text"):
+        value = texts[int(text_element.get("position"))]
         text_element.replaceWith(value.strip())
 
     return str(soup)
@@ -184,35 +189,35 @@ def extract_html_elements(html):
     text == "This is a paragraph. This is some bold and now italic text"
     elements == [(39, 53, 'i', {}), (21, 53, 'b', {})]
     """
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
     texts = []
-    cursor = {'current': 0}
+    cursor = {"current": 0}
     elements = []
 
     def walk(soup):
         for element in soup.children:
             if isinstance(element, NavigableString):
-               texts.append(element)
-               cursor['current'] += len(element)
+                texts.append(element)
+                cursor["current"] += len(element)
 
             else:
-                start = cursor['current']
+                start = cursor["current"]
                 walk(element)
-                end = cursor['current']
+                end = cursor["current"]
 
                 elements.append((start, end, element.name, element.attrs.copy()))
 
     walk(soup)
 
-    return ''.join(texts), elements
+    return "".join(texts), elements
 
 
 def restore_html_elements(text, elements):
     """
     Inserts elements into a plain text string returning a HTML document.
     """
-    soup = BeautifulSoup('', 'html.parser')
+    soup = BeautifulSoup("", "html.parser")
     stack = []
     cursor = 0
     current_element = soup
@@ -223,7 +228,7 @@ def restore_html_elements(text, elements):
     for i, element in enumerate(elements):
         if cursor < element[0]:
             # Output text and advance cursor
-            current_element.append(text[cursor:element[0]])
+            current_element.append(text[cursor : element[0]])
             cursor = element[0]
 
         stack.append((element[1], current_element))
@@ -234,7 +239,7 @@ def restore_html_elements(text, elements):
         # Close existing elements before going to the next element
         while stack:
             if i < len(elements) - 1:
-                if stack[len(stack) - 1][0] > elements[i+1][0]:
+                if stack[len(stack) - 1][0] > elements[i + 1][0]:
                     # New element created before this one closes.
                     # Go to next element
                     break

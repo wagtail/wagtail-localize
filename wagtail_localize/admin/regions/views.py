@@ -20,12 +20,21 @@ class RegionComponentManager:
 
         for component_model in get_region_components():
             component_instance = component_model.objects.filter(region=instance).first()
-            edit_handler = get_region_component_edit_handler(component_model).bind_to(model=component_model, instance=component_instance, request=request)
+            edit_handler = get_region_component_edit_handler(component_model).bind_to(
+                model=component_model, instance=component_instance, request=request
+            )
             form_class = edit_handler.get_form_class()
-            prefix = 'component_{}_{}'.format(component_model._meta.app_label, component_model.__name__)
+            prefix = "component_{}_{}".format(
+                component_model._meta.app_label, component_model.__name__
+            )
 
-            if request.method == 'POST':
-                form = form_class(request.POST, request.FILES, instance=component_instance, prefix=prefix)
+            if request.method == "POST":
+                form = form_class(
+                    request.POST,
+                    request.FILES,
+                    instance=component_instance,
+                    prefix=prefix,
+                )
             else:
                 form = form_class(instance=component_instance, prefix=prefix)
 
@@ -34,7 +43,10 @@ class RegionComponentManager:
         return cls(components)
 
     def is_valid(self):
-        return all(component_form.is_valid() for component_model, component_instance, component_form in self.components)
+        return all(
+            component_form.is_valid()
+            for component_model, component_instance, component_form in self.components
+        )
 
     def save(self, region):
         for component_model, component_instance, component_form in self.components:
@@ -47,16 +59,16 @@ class RegionComponentManager:
 
 
 class IndexView(generic.IndexView):
-    template_name = 'wagtail_localize_regions_admin/index.html'
+    template_name = "wagtail_localize_regions_admin/index.html"
     page_title = ugettext_lazy("Regions")
     add_item_label = ugettext_lazy("Add a region")
-    context_object_name = 'regions'
+    context_object_name = "regions"
 
 
 class CreateView(generic.CreateView):
     page_title = ugettext_lazy("Add region")
     success_message = ugettext_lazy("Region '{0}' created.")
-    template_name = 'wagtail_localize_regions_admin/create.html'
+    template_name = "wagtail_localize_regions_admin/create.html"
 
     def get_components(self):
         return RegionComponentManager.from_request(self.request)
@@ -78,7 +90,7 @@ class CreateView(generic.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['components'] = self.get_components()
+        context["components"] = self.get_components()
         return context
 
 
@@ -86,8 +98,8 @@ class EditView(generic.EditView):
     success_message = ugettext_lazy("Region '{0}' updated.")
     error_message = ugettext_lazy("The site could not be saved due to errors.")
     delete_item_label = ugettext_lazy("Delete region")
-    context_object_name = 'region'
-    template_name = 'wagtail_localize_regions_admin/edit.html'
+    context_object_name = "region"
+    template_name = "wagtail_localize_regions_admin/edit.html"
 
     def get_components(self):
         return RegionComponentManager.from_request(self.request, instance=self.object)
@@ -109,7 +121,7 @@ class EditView(generic.EditView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['components'] = self.get_components()
+        context["components"] = self.get_components()
         return context
 
 
@@ -120,7 +132,7 @@ class DeleteView(generic.DeleteView):
 
 
 class RegionViewSet(ModelViewSet):
-    icon = 'site'
+    icon = "site"
     model = Region
     permission_policy = ModelPermissionPolicy(Region)
 

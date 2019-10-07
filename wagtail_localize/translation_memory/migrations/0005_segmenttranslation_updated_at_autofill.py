@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize_translation_memory', '0004_rename_uuid_to_text_id'),
+        ("wagtail_localize_translation_memory", "0004_rename_uuid_to_text_id")
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='segmenttranslation',
-            name='updated_at',
+            model_name="segmenttranslation",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
-        ),
+        )
     ]

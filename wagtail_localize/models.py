@@ -36,15 +36,13 @@ class Language(models.Model):
     objects = LanguageManager()
 
     class Meta:
-        ordering = ['-is_active', 'code']
+        ordering = ["-is_active", "code"]
 
     @classmethod
     def get_active(cls):
         default_code = get_supported_language_variant(translation.get_language())
 
-        language, created = cls.objects.get_or_create(
-            code=default_code,
-        )
+        language, created = cls.objects.get_or_create(code=default_code)
 
         return language
 
@@ -58,9 +56,9 @@ class Language(models.Model):
         """
         # These are all the script codes that are used in Django's default LANGUAGES
         # They need to be capitalised differently from countries
-        script_codes = ['latn', 'hans', 'hant']
+        script_codes = ["latn", "hans", "hant"]
 
-        components = self.code.split('-')
+        components = self.code.split("-")
 
         if len(components) == 1:
             # en
@@ -70,10 +68,10 @@ class Language(models.Model):
 
             if components[1] in script_codes:
                 # zh-hans => zh-Hans
-                return components[0].lower() + '-' + components[1].title()
+                return components[0].lower() + "-" + components[1].title()
             else:
                 # en-gb => en-GB
-                return components[0].lower() + '-' + components[1].upper()
+                return components[0].lower() + "-" + components[1].upper()
         else:
             # Too many components. Not sure what to do.
             return self.code
@@ -89,7 +87,7 @@ class Language(models.Model):
         display_name = self.get_display_name()
 
         if display_name:
-            return '{} ({})'.format(display_name, self.code)
+            return "{} ({})".format(display_name, self.code)
         else:
             return self.code
 
@@ -117,7 +115,7 @@ class Region(models.Model):
     objects = RegionManager()
 
     class Meta:
-        ordering = ['-is_active', '-is_default', 'name']
+        ordering = ["-is_active", "-is_default", "name"]
 
     def __str__(self):
         return self.name
@@ -156,17 +154,22 @@ class LocaleManager(models.Manager):
 # Note: these are managed entirely through signal handlers so don't update them directly
 # without also updating the Language/Region models as well.
 class Locale(models.Model):
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='locales')
-    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='locales')
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name="locales")
+    language = models.ForeignKey(
+        Language, on_delete=models.CASCADE, related_name="locales"
+    )
     is_active = models.BooleanField(default=True)
 
     objects = LocaleManager()
 
     class Meta:
-        unique_together = [
-            ('region', 'language'),
+        unique_together = [("region", "language")]
+        ordering = [
+            "-is_active",
+            "-region__is_default",
+            "region__name",
+            "language__code",
         ]
-        ordering = ['-is_active', '-region__is_default', 'region__name', 'language__code']
 
     # For backwards compatibility
     @classmethod
@@ -186,7 +189,7 @@ class Locale(models.Model):
         slug = self.language.code
 
         if self.region != Region.objects.default():
-            return '{}-{}'.format(self.region.slug, self.language.code)
+            return "{}-{}".format(self.region.slug, self.language.code)
         else:
             return self.language.code
 
@@ -197,7 +200,9 @@ class Locale(models.Model):
         q = Q()
 
         for model in get_translatable_models():
-            q |= Q(id__in=model.objects.filter(locale=self).values_list('id', flat=True))
+            q |= Q(
+                id__in=model.objects.filter(locale=self).values_list("id", flat=True)
+            )
 
         return Page.objects.filter(q)
 
@@ -208,12 +213,10 @@ def update_locales_on_language_change(sender, instance, **kwargs):
     if instance.is_active:
         # Activate locales iff the language is selected on the region
         (
-            Locale.objects
-            .annotate(
+            Locale.objects.annotate(
                 is_active_on_region=Exists(
                     Region.languages.through.objects.filter(
-                        region_id=OuterRef('region_id'),
-                        language_id=instance.id,
+                        region_id=OuterRef("region_id"), language_id=instance.id
                     )
                 )
             )
@@ -237,20 +240,14 @@ def update_locales_on_region_change(sender, instance, **kwargs):
     if instance.is_active:
         # Activate locales with this region
         (
-            Locale.objects
-            .annotate(
+            Locale.objects.annotate(
                 is_active_on_region=Exists(
                     Region.languages.through.objects.filter(
-                        region_id=instance.id,
-                        language_id=OuterRef('language_id'),
+                        region_id=instance.id, language_id=OuterRef("language_id")
                     )
                 )
             )
-            .filter(
-                region=instance,
-                is_active_on_region=True,
-                is_active=False,
-            )
+            .filter(region=instance, is_active_on_region=True, is_active=False)
             .update(is_active=True)
         )
 
@@ -261,25 +258,25 @@ def update_locales_on_region_change(sender, instance, **kwargs):
 
 # Add/remove locales when languages are added/removed from regions
 @receiver(m2m_changed, sender=Region.languages.through)
-def update_locales_on_region_languages_change(sender, instance, action, pk_set, **kwargs):
-    if action == 'post_add':
+def update_locales_on_region_languages_change(
+    sender, instance, action, pk_set, **kwargs
+):
+    if action == "post_add":
         for language_id in pk_set:
             Locale.objects.update_or_create(
                 region=instance,
                 language_id=language_id,
                 defaults={
                     # Note: only activate locale if language is active
-                    'is_active': Language.objects.filter(id=language_id, is_active=True).exists(),
-                }
+                    "is_active": Language.objects.filter(
+                        id=language_id, is_active=True
+                    ).exists()
+                },
             )
-    elif action == 'post_remove':
+    elif action == "post_remove":
         for language_id in pk_set:
             Locale.objects.update_or_create(
-                region=instance,
-                language_id=language_id,
-                defaults={
-                    'is_active': False,
-                }
+                region=instance, language_id=language_id, defaults={"is_active": False}
             )
 
 
@@ -289,13 +286,17 @@ def default_locale_id():
 
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+', default=default_locale_id)
+    locale = models.ForeignKey(
+        Locale, on_delete=models.PROTECT, related_name="+", default=default_locale_id
+    )
     is_source_translation = models.BooleanField(default=True)
 
     translatable_fields = []
 
     def get_translations(self, inclusive=False):
-        translations = self.__class__.objects.filter(translation_key=self.translation_key)
+        translations = self.__class__.objects.filter(
+            translation_key=self.translation_key
+        )
 
         if inclusive is False:
             translations = translations.exclude(id=self.id)
@@ -334,7 +335,7 @@ class TranslatableMixin(models.Model):
             # This is in case either image record is changed or deleted, the other record will still
             # have its file.
             file_stem, file_ext = os.path.splitext(self.file.name)
-            new_name = '{}-{}{}'.format(file_stem, locale.slug, file_ext)
+            new_name = "{}-{}{}".format(file_stem, locale.slug, file_ext)
             translated.file = ContentFile(self.file.read(), name=new_name)
 
         return translated
@@ -348,27 +349,27 @@ class TranslatableMixin(models.Model):
         may have intermediate concrete models between wagtailcore.Page and
         the specfic page model.
         """
-        return self._meta.get_field('locale').model
+        return self._meta.get_field("locale").model
 
     @classmethod
     def get_translatable_fields(cls):
         return [
-            field for field in cls.translatable_fields
+            field
+            for field in cls.translatable_fields
             if isinstance(field, TranslatableField)
         ]
 
     @classmethod
     def get_synchronized_fields(cls):
         return [
-            field for field in cls.translatable_fields
+            field
+            for field in cls.translatable_fields
             if isinstance(field, SynchronizedField)
         ]
 
     class Meta:
         abstract = True
-        unique_together = [
-            ('translation_key', 'locale'),
-        ]
+        unique_together = [("translation_key", "locale")]
 
 
 class ParentNotTranslatedError(Exception):
@@ -376,39 +377,43 @@ class ParentNotTranslatedError(Exception):
     Raised when a call to Page.copy_for_translation is made but the
     parent page is not translated and copy_parents is False.
     """
+
     pass
 
 
 class TranslatablePageMixin(TranslatableMixin):
-
     def copy(self, reset_translation_key=True, **kwargs):
         # If this is a regular copy (not copy_for_translation) we should change the translation_key
         # of the page and all child objects so they don't clash with the original page
 
         if reset_translation_key:
-            if 'update_attrs' in kwargs:
-                if 'translation_key' not in kwargs['update_attrs']:
-                    kwargs['update_attrs']['translation_key'] = uuid.uuid4()
-                    kwargs['update_attrs']['is_source_translation'] = True
+            if "update_attrs" in kwargs:
+                if "translation_key" not in kwargs["update_attrs"]:
+                    kwargs["update_attrs"]["translation_key"] = uuid.uuid4()
+                    kwargs["update_attrs"]["is_source_translation"] = True
 
             else:
-                kwargs['update_attrs'] = {
-                    'translation_key': uuid.uuid4(),
-                    'is_source_translation': True,
+                kwargs["update_attrs"] = {
+                    "translation_key": uuid.uuid4(),
+                    "is_source_translation": True,
                 }
 
-            original_process_child_object = kwargs.pop('process_child_object')
+            original_process_child_object = kwargs.pop("process_child_object")
 
-            def process_child_object(original_page, page_copy, child_relation, child_object):
+            def process_child_object(
+                original_page, page_copy, child_relation, child_object
+            ):
                 # Change translation keys of translatable child objects
                 if isinstance(child_object, TranslatableMixin):
                     child_object.translation_key = uuid.uuid4()
                     child_object.is_source_translation = True
 
                 if original_process_child_object is not None:
-                    original_process_child_object(original_page, page_copy, child_relation, child_object)
+                    original_process_child_object(
+                        original_page, page_copy, child_relation, child_object
+                    )
 
-            kwargs['process_child_object'] = process_child_object
+            kwargs["process_child_object"] = process_child_object
 
         return super().copy(**kwargs)
 
@@ -427,26 +432,34 @@ class TranslatablePageMixin(TranslatableMixin):
                 if not copy_parents:
                     raise ParentNotTranslatedError
 
-                translated_parent = parent.copy_for_translation(locale, copy_parents=True)
+                translated_parent = parent.copy_for_translation(
+                    locale, copy_parents=True
+                )
         else:
             translated_parent = parent
 
             # Append locale code to slug as the new page
             # will be created in the same section as the existing one
-            slug += '-' + locale.slug
+            slug += "-" + locale.slug
 
         # Find available slug for new page
         slug = find_available_slug(translated_parent, slug)
 
         # Update locale on translatable child objects as well
-        def process_child_object(original_page, page_copy, child_relation, child_object):
+        def process_child_object(
+            original_page, page_copy, child_relation, child_object
+        ):
             if isinstance(child_object, TranslatableMixin):
                 child_object.locale = locale
                 child_object.is_source_translation = False
 
         return self.copy(
             to=translated_parent,
-            update_attrs={'locale': locale, 'is_source_translation': False, 'slug': slug},
+            update_attrs={
+                "locale": locale,
+                "is_source_translation": False,
+                "slug": slug,
+            },
             copy_revisions=False,
             keep_live=False,
             reset_translation_key=False,
@@ -483,26 +496,27 @@ class TranslatablePageMixin(TranslatableMixin):
         # Translatable and Synchronised fields should not be editable
         # on translations
         translatable_fields_by_name = {
-            field.field_name: field
-            for field in cls.translatable_fields
+            field.field_name: field for field in cls.translatable_fields
         }
 
         def filter_editable_fields(edit_handler, instance):
-            if not hasattr(edit_handler, 'field_name'):
+            if not hasattr(edit_handler, "field_name"):
                 return True
 
             if not edit_handler.field_name in translatable_fields_by_name:
                 return True
 
-            return translatable_fields_by_name[edit_handler.field_name].is_editable(instance)
+            return translatable_fields_by_name[edit_handler.field_name].is_editable(
+                instance
+            )
 
-        return filter_edit_handler_on_instance_bound(super().get_edit_handler(), filter_editable_fields).bind_to(model=cls)
+        return filter_edit_handler_on_instance_bound(
+            super().get_edit_handler(), filter_editable_fields
+        ).bind_to(model=cls)
 
     class Meta:
         abstract = True
-        unique_together = [
-            ('translation_key', 'locale'),
-        ]
+        unique_together = [("translation_key", "locale")]
 
 
 class TranslatablePageRoutingMixin:
@@ -511,10 +525,14 @@ class TranslatablePageRoutingMixin:
         Returns the translation of this page that should be used to route
         the specified request.
         """
-        language_code = translation.get_supported_language_variant(request.LANGUAGE_CODE)
+        language_code = translation.get_supported_language_variant(
+            request.LANGUAGE_CODE
+        )
 
         try:
-            locale = Locale.objects.get(language__code=language_code, region__is_default=True)
+            locale = Locale.objects.get(
+                language__code=language_code, region__is_default=True
+            )
             return self.get_translation(locale)
 
         except Locale.DoesNotExist:
@@ -531,7 +549,7 @@ class TranslatablePageRoutingMixin:
 
         # Check that an ancestor hasn't already routed the request into
         # a single-language section of the site.
-        if not getattr(request, '_wagtail_localize_routed', False):
+        if not getattr(request, "_wagtail_localize_routed", False):
             # If the site root is translatable, reroute based on language
             page = self.get_translation_for_request(request)
 
@@ -557,8 +575,11 @@ class BootstrapTranslatableMixin(TranslatableMixin):
      - Run makemigrations again
      - Migrate!
     """
+
     translation_key = models.UUIDField(null=True, editable=False)
-    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, null=True, related_name='+')
+    locale = models.ForeignKey(
+        Locale, on_delete=models.PROTECT, null=True, related_name="+"
+    )
 
     class Meta:
         abstract = True
@@ -571,7 +592,8 @@ def get_translatable_models(include_subclasses=False):
     to get all models, set the include_subclasses attribute to True.
     """
     translatable_models = [
-        model for model in apps.get_models()
+        model
+        for model in apps.get_models()
         if issubclass(model, TranslatableMixin) and not model._meta.abstract
     ]
 
@@ -583,8 +605,7 @@ def get_translatable_models(include_subclasses=False):
             root_translatable_models.add(model.get_translation_model())
 
         translatable_models = [
-            model for model in translatable_models
-            if model in root_translatable_models
+            model for model in translatable_models if model in root_translatable_models
         ]
 
     return translatable_models

@@ -8,25 +8,39 @@ from django.utils import timezone
 
 from wagtail.core.models import Page
 
-from wagtail_localize.models import get_translatable_models, Locale, TranslatablePageMixin
+from wagtail_localize.models import (
+    get_translatable_models,
+    Locale,
+    TranslatablePageMixin,
+)
 
 from ..models import TranslationRequest, TranslationRequestPage
 
 
 class CreateTranslationRequestForm(forms.Form):
-    locales = forms.ModelMultipleChoiceField(queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple)
+    locales = forms.ModelMultipleChoiceField(
+        queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple
+    )
     include_subtree = forms.BooleanField(required=False)
 
     def __init__(self, page, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        page_descendant_count = page.get_descendants().type(tuple(get_translatable_models())).count()
+        page_descendant_count = (
+            page.get_descendants().type(tuple(get_translatable_models())).count()
+        )
         if page_descendant_count > 0:
-            self.fields['include_subtree'].help_text = "This will add {} additional pages to the request".format(page_descendant_count)
+            self.fields[
+                "include_subtree"
+            ].help_text = "This will add {} additional pages to the request".format(
+                page_descendant_count
+            )
         else:
-            self.fields['include_subtree'].widget = forms.HiddenInput()
+            self.fields["include_subtree"].widget = forms.HiddenInput()
 
-        self.fields['locales'].queryset = Locale.objects.filter(is_active=True).exclude(id=page.locale_id)
+        self.fields["locales"].queryset = Locale.objects.filter(is_active=True).exclude(
+            id=page.locale_id
+        )
 
 
 def create_translation_request(request, page_id):
@@ -35,7 +49,7 @@ def create_translation_request(request, page_id):
     if not isinstance(page, TranslatablePageMixin):
         raise Http404
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CreateTranslationRequestForm(page, request.POST)
 
         if form.is_valid():
@@ -48,7 +62,7 @@ def create_translation_request(request, page_id):
                 if revision is None:
                     revision = page.save_revision(changed=False)
 
-                for target_locale in form.cleaned_data['locales']:
+                for target_locale in form.cleaned_data["locales"]:
                     # Work out target root. While we're at it, get list of any translatable
                     # ancestor pages that don't have translations yet as these will need to
                     # be translated too.
@@ -59,7 +73,9 @@ def create_translation_request(request, page_id):
                         current_page = current_page.get_parent()
 
                         if issubclass(current_page.specific_class, translatable_models):
-                            target_root = current_page.specific.get_translation_or_none(target_locale)
+                            target_root = current_page.specific.get_translation_or_none(
+                                target_locale
+                            )
 
                             if target_root is None:
                                 required_ancestors.append(current_page)
@@ -81,7 +97,9 @@ def create_translation_request(request, page_id):
                     for ancestor_page in required_ancestors:
                         source_revision = ancestor_page.get_latest_revision()
                         if source_revision is None:
-                            source_revision = ancestor_page.specific.save_revision(changed=False)
+                            source_revision = ancestor_page.specific.save_revision(
+                                changed=False
+                            )
 
                         parent_item = TranslationRequestPage.objects.create(
                             request=translation_request,
@@ -97,15 +115,20 @@ def create_translation_request(request, page_id):
                     )
 
                     # Now add the sub tree
-                    if form.cleaned_data['include_subtree']:
+                    if form.cleaned_data["include_subtree"]:
+
                         def _walk(current_page, parent_item):
                             for child_page in current_page.get_children():
-                                if not issubclass(child_page.specific_class, translatable_models):
+                                if not issubclass(
+                                    child_page.specific_class, translatable_models
+                                ):
                                     continue
 
                                 source_revision = child_page.get_latest_revision()
                                 if source_revision is None:
-                                    source_revision = child_page.specific.save_revision(changed=False)
+                                    source_revision = child_page.specific.save_revision(
+                                        changed=False
+                                    )
 
                                 child_item = TranslationRequestPage.objects.create(
                                     request=translation_request,
@@ -118,12 +141,15 @@ def create_translation_request(request, page_id):
 
                         _walk(page, parent_item)
 
-                messages.success(request, "The translation request was submitted successfully")
-                return redirect('wagtailadmin_explore', page.get_parent().id)
+                messages.success(
+                    request, "The translation request was submitted successfully"
+                )
+                return redirect("wagtailadmin_explore", page.get_parent().id)
     else:
         form = CreateTranslationRequestForm(page)
 
-    return render(request, 'wagtail_localize_workflow/create_translation_request.html', {
-        'page': page,
-        'form': form,
-    })
+    return render(
+        request,
+        "wagtail_localize_workflow/create_translation_request.html",
+        {"page": page, "form": form},
+    )

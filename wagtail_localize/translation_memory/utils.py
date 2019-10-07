@@ -1,8 +1,23 @@
-from django.db.models import Case, Count, Exists, IntegerField, OuterRef, Q, Sum, Value, When
+from django.db.models import (
+    Case,
+    Count,
+    Exists,
+    IntegerField,
+    OuterRef,
+    Q,
+    Sum,
+    Value,
+    When,
+)
 
 from wagtail_localize.segments import TemplateValue
 
-from .models import Segment, SegmentTranslation, SegmentPageLocation, TemplatePageLocation
+from .models import (
+    Segment,
+    SegmentTranslation,
+    SegmentPageLocation,
+    TemplatePageLocation,
+)
 
 
 def get_translation_progress(page_revision_id, language):
@@ -16,7 +31,9 @@ def get_translation_progress(page_revision_id, language):
     """
     # Get QuerySet of Segments that need to be translated
     required_segments = Segment.objects.filter(
-        id__in=SegmentPageLocation.objects.filter(page_revision_id=page_revision_id).values_list('segment_id')
+        id__in=SegmentPageLocation.objects.filter(
+            page_revision_id=page_revision_id
+        ).values_list("segment_id")
     )
 
     # Annotate each Segment with a flag that indicates whether the segment is translated
@@ -24,8 +41,7 @@ def get_translation_progress(page_revision_id, language):
     required_segments = required_segments.annotate(
         is_translated=Exists(
             SegmentTranslation.objects.filter(
-                translation_of_id=OuterRef('pk'),
-                language=language,
+                translation_of_id=OuterRef("pk"), language=language
             )
         )
     )
@@ -35,14 +51,11 @@ def get_translation_progress(page_revision_id, language):
         is_translated_i=Case(
             When(is_translated=True, then=Value(1)),
             default=Value(0),
-            output_field=IntegerField()
+            output_field=IntegerField(),
         )
-    ).aggregate(
-        total_segments=Count('pk'),
-        translated_segments=Sum('is_translated_i'),
-    )
+    ).aggregate(total_segments=Count("pk"), translated_segments=Sum("is_translated_i"))
 
-    return aggs['total_segments'], aggs['translated_segments']
+    return aggs["total_segments"], aggs["translated_segments"]
 
 
 def insert_segments(page_revision, language, segments):

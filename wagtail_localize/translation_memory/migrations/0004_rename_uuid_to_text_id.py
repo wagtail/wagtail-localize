@@ -6,23 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0002_initial_data'),
-        ('wagtail_localize_translation_memory', '0003_translation_created_at_updated_at'),
+        ("wagtail_localize", "0002_initial_data"),
+        (
+            "wagtail_localize_translation_memory",
+            "0003_translation_created_at_updated_at",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='segment',
-            name='uuid',
-            field=models.UUIDField(),
+            model_name="segment", name="uuid", field=models.UUIDField()
         ),
         migrations.RenameField(
-            model_name='segment',
-            old_name='uuid',
-            new_name='text_id',
+            model_name="segment", old_name="uuid", new_name="text_id"
         ),
         migrations.AlterUniqueTogether(
-            name='segment',
-            unique_together={('language', 'text_id')},
+            name="segment", unique_together={("language", "text_id")}
         ),
     ]

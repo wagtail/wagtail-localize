@@ -17,18 +17,16 @@ class StreamFieldSegmentExtractor:
         self.field = field
 
     def handle_block(self, block_type, block_value):
-        if hasattr(block_type, 'get_translatable_segments'):
+        if hasattr(block_type, "get_translatable_segments"):
             return block_type.get_translatable_segments(block_value)
 
         elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock)):
-            return [SegmentValue('', block_value)]
+            return [SegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
             template, texts = extract_html_segments(block_value.source)
 
-            return [
-                TemplateValue('', 'html', template, len(texts))
-            ] + [
+            return [TemplateValue("", "html", template, len(texts))] + [
                 SegmentValue.from_html(str(position), text)
                 for position, text in enumerate(texts)
             ]
@@ -46,7 +44,11 @@ class StreamFieldSegmentExtractor:
             return []
 
         else:
-            raise Exception("Unrecognised StreamField block type '{}'. Have you implemented get_translatable_segments on this class?".format(block_type.__class__.__name__))
+            raise Exception(
+                "Unrecognised StreamField block type '{}'. Have you implemented get_translatable_segments on this class?".format(
+                    block_type.__class__.__name__
+                )
+            )
 
     def handle_related_object_block(self, related_object):
         if related_object is None or not isinstance(related_object, TranslatableMixin):
@@ -59,7 +61,10 @@ class StreamFieldSegmentExtractor:
 
         for field_name, block_value in struct_block.items():
             block_type = struct_block.block.child_blocks[field_name]
-            segments.extend(segment.wrap(field_name) for segment in self.handle_block(block_type, block_value))
+            segments.extend(
+                segment.wrap(field_name)
+                for segment in self.handle_block(block_type, block_value)
+            )
 
         return segments
 
@@ -71,7 +76,10 @@ class StreamFieldSegmentExtractor:
         segments = []
 
         for block in stream_block:
-            segments.extend(segment.wrap(block.id) for segment in self.handle_block(block.block, block.value))
+            segments.extend(
+                segment.wrap(block.id)
+                for segment in self.handle_block(block.block, block.value)
+            )
 
         return segments
 
@@ -82,18 +90,26 @@ def extract_segments(instance):
     for translatable_field in instance.get_translatable_fields():
         field = translatable_field.get_field(instance.__class__)
 
-        if hasattr(field, 'get_translatable_segments'):
-            segments.extend(segment.wrap(field.name) for segment in field.get_translatable_segments(field.value_from_object(instance)))
+        if hasattr(field, "get_translatable_segments"):
+            segments.extend(
+                segment.wrap(field.name)
+                for segment in field.get_translatable_segments(
+                    field.value_from_object(instance)
+                )
+            )
 
         elif isinstance(field, StreamField):
-            segments.extend(segment.wrap(field.name) for segment in StreamFieldSegmentExtractor(field).handle_stream_block(field.value_from_object(instance)))
+            segments.extend(
+                segment.wrap(field.name)
+                for segment in StreamFieldSegmentExtractor(field).handle_stream_block(
+                    field.value_from_object(instance)
+                )
+            )
 
         elif isinstance(field, RichTextField):
             template, texts = extract_html_segments(field.value_from_object(instance))
 
-            field_segments = [
-                TemplateValue('', 'html', template, len(texts))
-            ] + [
+            field_segments = [TemplateValue("", "html", template, len(texts))] + [
                 SegmentValue.from_html(str(position), text)
                 for position, text in enumerate(texts)
             ]
@@ -102,20 +118,33 @@ def extract_segments(instance):
 
         elif isinstance(field, (models.TextField, models.CharField)):
             if not field.choices:
-                segments.append(SegmentValue(field.name, field.value_from_object(instance)))
+                segments.append(
+                    SegmentValue(field.name, field.value_from_object(instance))
+                )
 
-        elif isinstance(field, (models.ForeignKey)) and issubclass(field.related_model, TranslatableMixin):
+        elif isinstance(field, (models.ForeignKey)) and issubclass(
+            field.related_model, TranslatableMixin
+        ):
             related_instance = getattr(instance, field.name)
 
             if related_instance:
-                segments.extend(segment.wrap(field.name) for segment in extract_segments(related_instance))
+                segments.extend(
+                    segment.wrap(field.name)
+                    for segment in extract_segments(related_instance)
+                )
 
-        elif isinstance(field, (models.ManyToOneRel)) and issubclass(field.related_model, TranslatableMixin):
+        elif isinstance(field, (models.ManyToOneRel)) and issubclass(
+            field.related_model, TranslatableMixin
+        ):
             manager = getattr(instance, field.name)
 
             for child_instance in manager.all():
-                segments.extend(segment.wrap('{}.{}'.format(field.name, child_instance.translation_key)) for segment in extract_segments(child_instance))
-
+                segments.extend(
+                    segment.wrap(
+                        "{}.{}".format(field.name, child_instance.translation_key)
+                    )
+                    for segment in extract_segments(child_instance)
+                )
 
     class Counter:
         def __init__(self):
@@ -127,4 +156,8 @@ def extract_segments(instance):
 
     counter = Counter()
 
-    return [segment.with_order(counter.next()) for segment in segments if not segment.is_empty()]
+    return [
+        segment.with_order(counter.next())
+        for segment in segments
+        if not segment.is_empty()
+    ]

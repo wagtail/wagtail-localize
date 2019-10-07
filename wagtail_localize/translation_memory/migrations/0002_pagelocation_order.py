@@ -5,20 +5,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('wagtail_localize_translation_memory', '0001_initial'),
-    ]
+    dependencies = [("wagtail_localize_translation_memory", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='segmentpagelocation',
-            name='order',
+            model_name="segmentpagelocation",
+            name="order",
             field=models.PositiveIntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='templatepagelocation',
-            name='order',
+            model_name="templatepagelocation",
+            name="order",
             field=models.PositiveIntegerField(default=0),
             preserve_default=False,
         ),

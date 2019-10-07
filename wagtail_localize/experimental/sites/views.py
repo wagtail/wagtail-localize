@@ -10,24 +10,24 @@ from .models import Site
 
 
 class IndexView(generic.IndexView):
-    template_name = 'wagtail_localize_sites/index.html'
+    template_name = "wagtail_localize_sites/index.html"
     page_title = ugettext_lazy("Sites")
     add_item_label = ugettext_lazy("Add a site")
-    context_object_name = 'sites'
+    context_object_name = "sites"
 
 
 class CreateView(generic.CreateView):
     page_title = ugettext_lazy("Add site")
     success_message = ugettext_lazy("Site '{0}' created.")
-    template_name = 'wagtail_localize_sites/create.html'
+    template_name = "wagtail_localize_sites/create.html"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
         if self.request.POST:
-            data['languages_formset'] = SiteLanguageFormSet(self.request.POST)
+            data["languages_formset"] = SiteLanguageFormSet(self.request.POST)
         else:
-            data['languages_formset'] = SiteLanguageFormSet()
+            data["languages_formset"] = SiteLanguageFormSet()
 
         return data
 
@@ -36,16 +36,18 @@ class EditView(generic.EditView):
     success_message = ugettext_lazy("Site '{0}' updated.")
     error_message = ugettext_lazy("The site could not be saved due to errors.")
     delete_item_label = ugettext_lazy("Delete site")
-    context_object_name = 'site'
-    template_name = 'wagtail_localize_sites/edit.html'
+    context_object_name = "site"
+    template_name = "wagtail_localize_sites/edit.html"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
         if self.request.POST:
-            data['languages_formset'] = SiteLanguageFormSet(self.request.POST, instance=self.object)
+            data["languages_formset"] = SiteLanguageFormSet(
+                self.request.POST, instance=self.object
+            )
         else:
-            data['languages_formset'] = SiteLanguageFormSet(instance=self.object)
+            data["languages_formset"] = SiteLanguageFormSet(instance=self.object)
 
         return data
 
@@ -57,7 +59,7 @@ class DeleteView(generic.DeleteView):
 
 
 class SiteViewSet(ModelViewSet):
-    icon = 'site'
+    icon = "site"
     model = Site
     permission_policy = ModelPermissionPolicy(Site)
 

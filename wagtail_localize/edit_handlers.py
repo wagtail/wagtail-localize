@@ -32,20 +32,21 @@ def filter_edit_handler_on_instance_bound(edit_handler, filter_func):
     """
     Returns an edit handler class that will filter out fields once an instance is bound.
     """
+
     def bind_to(self, **kwargs):
         new = super(edit_handler.__class__, self).bind_to(**kwargs)
 
-        if 'instance' in kwargs:
-            new = filter_edit_handler(new, lambda edit_handler: filter_func(edit_handler, kwargs['instance']))
+        if "instance" in kwargs:
+            new = filter_edit_handler(
+                new, lambda edit_handler: filter_func(edit_handler, kwargs["instance"])
+            )
 
         return new
 
     edit_handler_class = type(
-        'WagtailLocalizeWrapped' + edit_handler.__class__.__name__,
-        (edit_handler.__class__, ),
-        {
-            'bind_to': bind_to,
-        }
+        "WagtailLocalizeWrapped" + edit_handler.__class__.__name__,
+        (edit_handler.__class__,),
+        {"bind_to": bind_to},
     )
 
     return edit_handler_class(**edit_handler.clone_kwargs())

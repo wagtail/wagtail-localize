@@ -15,20 +15,24 @@ def bootstrap_translatable_model(model, locale):
     management command.
     """
     # TODO: Optimise for databases that have a UUID4 function
-    for instance in model.objects.filter(translation_key__isnull=True).defer().iterator():
+    for instance in (
+        model.objects.filter(translation_key__isnull=True).defer().iterator()
+    ):
         instance.translation_key = uuid.uuid4()
         instance.locale = locale
-        instance.save(update_fields=['translation_key', 'locale'])
+        instance.save(update_fields=["translation_key", "locale"])
 
 
 class BootstrapTranslatableModel(migrations.RunPython):
-    def __init__(self, model_string, language_code=None, region_slug='default'):
+    def __init__(self, model_string, language_code=None, region_slug="default"):
         def forwards(apps, schema_editor):
             model = apps.get_model(model_string)
-            Locale = apps.get_model('wagtail_localize.Locale')
+            Locale = apps.get_model("wagtail_localize.Locale")
 
             if language_code is not None:
-                locale = Locale.objects.get(language__code=language_code, region__slug=region_slug)
+                locale = Locale.objects.get(
+                    language__code=language_code, region__slug=region_slug
+                )
             else:
                 locale = Locale.objects.default()
 

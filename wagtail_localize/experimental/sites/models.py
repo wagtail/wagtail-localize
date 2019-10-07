@@ -18,48 +18,47 @@ class SiteManager(models.Manager):
 
 
 class Site(models.Model):
-    hostname = models.CharField(verbose_name=_('hostname'), max_length=255, db_index=True)
+    hostname = models.CharField(
+        verbose_name=_("hostname"), max_length=255, db_index=True
+    )
     port = models.IntegerField(
-        verbose_name=_('port'),
+        verbose_name=_("port"),
         default=80,
         help_text=_(
             "Set this to something other than 80 if you need a specific port number to appear in URLs"
             " (e.g. development on port 8000). Does not affect request handling (so port forwarding still works)."
-        )
+        ),
     )
     site_name = models.CharField(
-        verbose_name=_('site name'),
+        verbose_name=_("site name"),
         max_length=255,
         null=True,
         blank=True,
-        help_text=_("Human-readable name for the site.")
+        help_text=_("Human-readable name for the site."),
     )
     is_default_site = models.BooleanField(
-        verbose_name=_('is default site'),
+        verbose_name=_("is default site"),
         default=False,
         help_text=_(
             "If true, this site will handle requests for all other hostnames that do not have a site entry of their own"
-        )
+        ),
     )
 
     objects = SiteManager()
 
     class Meta:
-        unique_together = ('hostname', 'port')
-        verbose_name = _('site')
-        verbose_name_plural = _('sites')
+        unique_together = ("hostname", "port")
+        verbose_name = _("site")
+        verbose_name_plural = _("sites")
 
     def natural_key(self):
         return (self.hostname, self.port)
 
     def __str__(self):
         if self.site_name:
-            return(
-                self.site_name
-                + (" [default]" if self.is_default_site else "")
-            )
+            return self.site_name + (" [default]" if self.is_default_site else "")
         else:
-            return(
+            return (
                 self.hostname
                 + ("" if self.port == 80 else (":%d" % self.port))
                 + (" [default]" if self.is_default_site else "")
@@ -81,34 +80,40 @@ class Site(models.Model):
         still be routed to a different hostname which is set as the default
         """
 
-        hostname = request.get_host().split(':')[0]
+        hostname = request.get_host().split(":")[0]
         port = request.get_port()
 
-        sites = list(cls.objects.annotate(match=Case(
-            # annotate the results by best choice descending
-
-            # put exact hostname+port match first
-            When(hostname=hostname, port=port, then=MATCH_HOSTNAME_PORT),
-
-            # then put hostname+default (better than just hostname or just default)
-            When(hostname=hostname, is_default_site=True, then=MATCH_HOSTNAME_DEFAULT),
-
-            # then match default with different hostname. there is only ever
-            # one default, so order it above (possibly multiple) hostname
-            # matches so we can use sites[0] below to access it
-            When(is_default_site=True, then=MATCH_DEFAULT),
-
-            # because of the filter below, if it's not default then its a hostname match
-            default=MATCH_HOSTNAME,
-
-            output_field=models.IntegerField(),
-        )).filter(Q(hostname=hostname) | Q(is_default_site=True)).order_by(
-            'match'
-        ))
+        sites = list(
+            cls.objects.annotate(
+                match=Case(
+                    # annotate the results by best choice descending
+                    # put exact hostname+port match first
+                    When(hostname=hostname, port=port, then=MATCH_HOSTNAME_PORT),
+                    # then put hostname+default (better than just hostname or just default)
+                    When(
+                        hostname=hostname,
+                        is_default_site=True,
+                        then=MATCH_HOSTNAME_DEFAULT,
+                    ),
+                    # then match default with different hostname. there is only ever
+                    # one default, so order it above (possibly multiple) hostname
+                    # matches so we can use sites[0] below to access it
+                    When(is_default_site=True, then=MATCH_DEFAULT),
+                    # because of the filter below, if it's not default then its a hostname match
+                    default=MATCH_HOSTNAME,
+                    output_field=models.IntegerField(),
+                )
+            )
+            .filter(Q(hostname=hostname) | Q(is_default_site=True))
+            .order_by("match")
+        )
 
         if sites:
             # if theres a unique match or hostname (with port or default) match
-            if len(sites) == 1 or sites[0].match in (MATCH_HOSTNAME_PORT, MATCH_HOSTNAME_DEFAULT):
+            if len(sites) == 1 or sites[0].match in (
+                MATCH_HOSTNAME_PORT,
+                MATCH_HOSTNAME_DEFAULT,
+            ):
                 return sites[0]
 
             # if there is a default match with a different hostname, see if
@@ -131,11 +136,11 @@ class Site(models.Model):
     @property
     def root_url(self):
         if self.port == 80:
-            return 'http://%s' % self.hostname
+            return "http://%s" % self.hostname
         elif self.port == 443:
-            return 'https://%s' % self.hostname
+            return "https://%s" % self.hostname
         else:
-            return 'http://%s:%d' % (self.hostname, self.port)
+            return "http://%s:%d" % (self.hostname, self.port)
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude)
@@ -149,13 +154,15 @@ class Site(models.Model):
         else:
             if self.is_default_site and self.pk != default.pk:
                 raise ValidationError(
-                    {'is_default_site': [
-                        _(
-                            "%(hostname)s is already configured as the default site."
-                            " You must unset that before you can save this site as default."
-                        )
-                        % {'hostname': default.hostname}
-                    ]}
+                    {
+                        "is_default_site": [
+                            _(
+                                "%(hostname)s is already configured as the default site."
+                                " You must unset that before you can save this site as default."
+                            )
+                            % {"hostname": default.hostname}
+                        ]
+                    }
                 )
 
     @staticmethod
@@ -164,17 +171,22 @@ class Site(models.Model):
         Return a list of (id, root_path, root_url) tuples, most specific path
         first - used to translate url_paths into actual URLs with hostnames
         """
-        result = cache.get('wagtail_site_root_paths')
+        result = cache.get("wagtail_site_root_paths")
 
         if result is None:
             result = []
-            for site in Site.objects.order_by( '-is_default_site', 'hostname'):
+            for site in Site.objects.order_by("-is_default_site", "hostname"):
                 result.extend(
-                    (site.id, site_language.root_page.url_path, site.root_url, site_language.language.code)
+                    (
+                        site.id,
+                        site_language.root_page.url_path,
+                        site.root_url,
+                        site_language.language.code,
+                    )
                     for site_language in site.languages.filter(is_active=True)
                 )
 
-            cache.set('wagtail_site_root_paths', result, 3600)
+            cache.set("wagtail_site_root_paths", result, 3600)
 
         return result
 
@@ -184,8 +196,21 @@ def default_region_id():
 
 
 class SiteLanguage(models.Model):
-    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='languages')
-    region = models.ForeignKey(Region, verbose_name=_('region'), on_delete=models.CASCADE, related_name='+', default=default_region_id)
-    language = models.ForeignKey(Language, verbose_name=_('language'), on_delete=models.CASCADE, related_name='+')
-    root_page = models.ForeignKey('wagtailcore.Page', verbose_name=_('root page'), on_delete=models.CASCADE, related_name='+')
-    is_active = models.BooleanField(_('is active'), default=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="languages")
+    region = models.ForeignKey(
+        Region,
+        verbose_name=_("region"),
+        on_delete=models.CASCADE,
+        related_name="+",
+        default=default_region_id,
+    )
+    language = models.ForeignKey(
+        Language, verbose_name=_("language"), on_delete=models.CASCADE, related_name="+"
+    )
+    root_page = models.ForeignKey(
+        "wagtailcore.Page",
+        verbose_name=_("root page"),
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+    is_active = models.BooleanField(_("is active"), default=True)

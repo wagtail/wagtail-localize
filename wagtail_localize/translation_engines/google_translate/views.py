@@ -16,29 +16,35 @@ from googletrans import Translator
 
 
 def language_code(code):
-    if code in ['zh-hans', 'zh-cn']:
-        return 'zh-cn'
+    if code in ["zh-hans", "zh-cn"]:
+        return "zh-cn"
 
-    if code in ['zh-hant', 'zh-tw']:
-        return 'zh-tw'
+    if code in ["zh-hant", "zh-tw"]:
+        return "zh-tw"
 
-    return code.split('-')[0]
+    return code.split("-")[0]
 
 
 @require_POST
 def translate(request, translation_request_id):
-    translation_request = get_object_or_404(TranslationRequest, id=translation_request_id)
+    translation_request = get_object_or_404(
+        TranslationRequest, id=translation_request_id
+    )
     translator = Translator()
 
-    publish = request.POST.get('publish', '') == 'on'
+    publish = request.POST.get("publish", "") == "on"
 
     for page in translation_request.pages.filter(is_completed=False):
         instance = page.source_revision.as_page_object()
 
         segments = extract_segments(instance)
 
-        text_segments = [segment for segment in segments if isinstance(segment, SegmentValue)]
-        template_segments = [segment for segment in segments if isinstance(segment, TemplateValue)]
+        text_segments = [
+            segment for segment in segments if isinstance(segment, SegmentValue)
+        ]
+        template_segments = [
+            segment for segment in segments if isinstance(segment, TemplateValue)
+        ]
 
         # Group segments by source text so we only submit them once
         text_segments_grouped = defaultdict(list)
@@ -53,18 +59,30 @@ def translate(request, translation_request_id):
 
         translated_segments = template_segments.copy()
         for translation in translations:
-            translated_segments.extend([
-                SegmentValue(path, translation.text)
-                for path in text_segments_grouped[translation.origin]
-            ])
+            translated_segments.extend(
+                [
+                    SegmentValue(path, translation.text)
+                    for path in text_segments_grouped[translation.origin]
+                ]
+            )
 
         with transaction.atomic():
             try:
-                translation = instance.get_translation(translation_request.target_locale)
+                translation = instance.get_translation(
+                    translation_request.target_locale
+                )
             except instance.__class__.DoesNotExist:
-                translation = instance.copy_for_translation(translation_request.target_locale)
+                translation = instance.copy_for_translation(
+                    translation_request.target_locale
+                )
 
-            ingest_segments(instance, translation, translation_request.source_locale, translation_request.target_locale, translated_segments)
+            ingest_segments(
+                instance,
+                translation,
+                translation_request.source_locale,
+                translation_request.target_locale,
+                translated_segments,
+            )
             translation.slug = slugify(translation.slug)
             revision = translation.save_revision()
 
@@ -74,9 +92,15 @@ def translate(request, translation_request_id):
             # Update translation request
             page.is_completed = True
             page.completed_revision = revision
-            page.save(update_fields=['is_completed', 'completed_revision'])
+            page.save(update_fields=["is_completed", "completed_revision"])
 
     # TODO: Plural
-    messages.success(request, "%d pages successfully translated with Google Translate" % translation_request.pages.count())
+    messages.success(
+        request,
+        "%d pages successfully translated with Google Translate"
+        % translation_request.pages.count(),
+    )
 
-    return redirect('wagtail_localize_workflow_management:detail', translation_request_id)
+    return redirect(
+        "wagtail_localize_workflow_management:detail", translation_request_id
+    )
