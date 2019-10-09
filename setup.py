@@ -35,5 +35,8 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     install_requires=[],
+    extras_require={
+        'testing': [],
+    },
     zip_safe=False,
 )

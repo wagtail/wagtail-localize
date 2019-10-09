@@ -2,3 +2,5 @@
 /build
 /dist
 /wagtail_localize.egg-info
+/.coverage
+/.tox

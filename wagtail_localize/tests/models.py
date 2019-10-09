@@ -5,6 +5,7 @@ from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable
 
+from wagtail_localize.fields import TranslatableField
 from wagtail_localize.models import TranslatableMixin, TranslatablePageMixin
 from wagtail_localize.segments import SegmentValue
 
@@ -12,7 +13,9 @@ from wagtail_localize.segments import SegmentValue
 class TestSnippet(TranslatableMixin, models.Model):
     field = models.TextField()
 
-    translatable_fields = ['field']
+    translatable_fields = [
+        TranslatableField('field'),
+    ]
 
 
 class TestStructBlock(blocks.StructBlock):
@@ -31,7 +34,7 @@ class CustomStructBlock(blocks.StructBlock):
 
     def get_translatable_segments(self, value):
         return [
-            SegmentValue('foo', f"{} {}".format(value['field_a'], value['field_b'])),
+            SegmentValue('foo', "{} {}".format(value['field_a'], value['field_b'])),
         ]
 
 
@@ -56,7 +59,7 @@ class TestCustomField(models.TextField):
             return []
 
         return [
-            SegmentValue('foo', f"{} and some extra".format(value)),
+            SegmentValue('foo', "{} and some extra".format(value)),
         ]
 
 
@@ -75,16 +78,16 @@ class TestPage(TranslatablePageMixin, Page):
     test_customfield = TestCustomField(blank=True)
 
     translatable_fields = [
-        'test_charfield',
-        'test_textfield',
-        'test_emailfield',
-        'test_slugfield',
-        'test_urlfield',
-        'test_richtextfield',
-        'test_streamfield',
-        'test_snippet',
-        'test_childobjects',
-        'test_customfield',
+        TranslatableField('test_charfield'),
+        TranslatableField('test_textfield'),
+        TranslatableField('test_emailfield'),
+        TranslatableField('test_slugfield'),
+        TranslatableField('test_urlfield'),
+        TranslatableField('test_richtextfield'),
+        TranslatableField('test_streamfield'),
+        TranslatableField('test_snippet'),
+        TranslatableField('test_childobjects'),
+        TranslatableField('test_customfield'),
     ]
 
 
