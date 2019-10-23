@@ -7,12 +7,9 @@ from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.core import urls as wagtail_urls
 
 urlpatterns = [
-    url(r'^django-admin/', admin.site.urls),
-
-    url(r'^admin/', include(wagtailadmin_urls)),
-    url(r'^documents/', include(wagtaildocs_urls)),
+    url(r"^django-admin/", admin.site.urls),
+    url(r"^admin/", include(wagtailadmin_urls)),
+    url(r"^documents/", include(wagtaildocs_urls)),
 ]
 
-urlpatterns += i18n_patterns(
-    url(r'', include(wagtail_urls)),
-)
+urlpatterns += i18n_patterns(url(r"", include(wagtail_urls)))

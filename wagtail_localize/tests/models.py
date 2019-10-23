@@ -13,9 +13,7 @@ from wagtail_localize.segments import SegmentValue
 class TestSnippet(TranslatableMixin, models.Model):
     field = models.TextField()
 
-    translatable_fields = [
-        TranslatableField('field'),
-    ]
+    translatable_fields = [TranslatableField("field")]
 
 
 class TestStructBlock(blocks.StructBlock):
@@ -33,9 +31,7 @@ class CustomStructBlock(blocks.StructBlock):
     field_b = blocks.TextBlock()
 
     def get_translatable_segments(self, value):
-        return [
-            SegmentValue('foo', "{} {}".format(value['field_a'], value['field_b'])),
-        ]
+        return [SegmentValue("foo", "{} {}".format(value["field_a"], value["field_b"]))]
 
 
 class TestStreamBlock(blocks.StreamBlock):
@@ -58,9 +54,7 @@ class TestCustomField(models.TextField):
             # Don't disrupt other tests
             return []
 
-        return [
-            SegmentValue('foo', "{} and some extra".format(value)),
-        ]
+        return [SegmentValue("foo", "{} and some extra".format(value))]
 
 
 class TestPage(TranslatablePageMixin, Page):
@@ -73,28 +67,28 @@ class TestPage(TranslatablePageMixin, Page):
     test_richtextfield = RichTextField(blank=True)
     test_streamfield = StreamField(TestStreamBlock, blank=True)
 
-    test_snippet = models.ForeignKey(TestSnippet, null=True, blank=True, on_delete=models.SET_NULL)
+    test_snippet = models.ForeignKey(
+        TestSnippet, null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     test_customfield = TestCustomField(blank=True)
 
     translatable_fields = [
-        TranslatableField('test_charfield'),
-        TranslatableField('test_textfield'),
-        TranslatableField('test_emailfield'),
-        TranslatableField('test_slugfield'),
-        TranslatableField('test_urlfield'),
-        TranslatableField('test_richtextfield'),
-        TranslatableField('test_streamfield'),
-        TranslatableField('test_snippet'),
-        TranslatableField('test_childobjects'),
-        TranslatableField('test_customfield'),
+        TranslatableField("test_charfield"),
+        TranslatableField("test_textfield"),
+        TranslatableField("test_emailfield"),
+        TranslatableField("test_slugfield"),
+        TranslatableField("test_urlfield"),
+        TranslatableField("test_richtextfield"),
+        TranslatableField("test_streamfield"),
+        TranslatableField("test_snippet"),
+        TranslatableField("test_childobjects"),
+        TranslatableField("test_customfield"),
     ]
 
 
 class TestChildObject(TranslatableMixin, Orderable):
-    page = ParentalKey(TestPage, related_name='test_childobjects')
+    page = ParentalKey(TestPage, related_name="test_childobjects")
     field = models.TextField()
 
-    translatable_fields = [
-        TranslatableField('field'),
-    ]
+    translatable_fields = [TranslatableField("field")]

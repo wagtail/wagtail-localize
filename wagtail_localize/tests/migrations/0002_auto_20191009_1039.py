@@ -5,24 +5,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('wagtail_localize_tests', '0001_initial'),
-    ]
+    dependencies = [("wagtail_localize_tests", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='testchildobject',
-            name='is_source_translation',
+            model_name="testchildobject",
+            name="is_source_translation",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='testpage',
-            name='is_source_translation',
+            model_name="testpage",
+            name="is_source_translation",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='testsnippet',
-            name='is_source_translation',
+            model_name="testsnippet",
+            name="is_source_translation",
             field=models.BooleanField(default=True),
         ),
     ]
