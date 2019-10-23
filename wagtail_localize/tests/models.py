@@ -95,4 +95,6 @@ class TestChildObject(TranslatableMixin, Orderable):
     page = ParentalKey(TestPage, related_name='test_childobjects')
     field = models.TextField()
 
-    translatable_fields = ['field']
+    translatable_fields = [
+        TranslatableField('field'),
+    ]

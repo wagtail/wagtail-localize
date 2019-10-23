@@ -55,7 +55,7 @@ class SegmentValue:
         """
         Sets the order of this segment.
         """
-        return SegmentValue(self.path, self.text, order=order)
+        return SegmentValue(self.path, self.text, self.html_elements, order=order)
 
     def wrap(self, base_path):
         """
