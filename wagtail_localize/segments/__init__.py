@@ -1,5 +1,6 @@
 from collections import Counter
 
+from django.forms.utils import flatatt
 from django.utils.html import escape
 
 from .html import extract_html_elements, restore_html_elements
@@ -28,6 +29,24 @@ class SegmentValue:
             self.end = end
             self.identifier = identifier
             self.element = element
+
+        @property
+        def element_tag(self):
+            return f"<{self.element[0]}{flatatt(self.element[1])}>"
+
+        def __eq__(self, other):
+            if not isinstance(other, SegmentValue.HTMLElement):
+                return False
+
+            return (
+                self.start == other.start
+                and self.end == other.end
+                and self.identifier == other.identifier
+                and self.element == other.element
+            )
+
+        def __repr__(self):
+            return f"<SegmentValue.HTMLElement {self.identifier} '{self.element_tag}' at [{self.start}:{self.end}]>"
 
     def __init__(self, path, text, html_elements=None, order=0):
         self.path = path
