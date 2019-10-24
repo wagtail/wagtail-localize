@@ -2,7 +2,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 from django.utils import translation
 
-from wagtail_localize.models import Language
+from wagtail_localize.models import Language, Region, Locale
 
 
 class TestLanguageModel(TestCase):
@@ -54,3 +54,32 @@ class TestLanguageModel(TestCase):
     def test_str(self):
         language = Language.objects.get(code="en")
         self.assertEqual(str(language), "English (en)")
+
+
+class TestRegionModel(TestCase):
+    def test_default(self):
+        region = Region.objects.default()
+        self.assertEqual(region.name, "Default")
+        self.assertEqual(region.slug, "default")
+        self.assertTrue(region.is_default)
+
+
+class TestLocaleModel(TestCase):
+    def setUp(self):
+        language_codes = dict(settings.LANGUAGES).keys()
+
+        for language_code in language_codes:
+            Language.objects.update_or_create(
+                code=language_code, defaults={"is_active": True}
+            )
+
+    def test_default(self):
+        locale = Locale.objects.default()
+        self.assertEqual(locale.region.name, "Default")
+        self.assertEqual(locale.language.code, "en")
+
+    @override_settings(LANGUAGE_CODE="fr-ca")
+    def test_default_doesnt_have_to_be_english(self):
+        locale = Locale.objects.default()
+        self.assertEqual(locale.region.name, "Default")
+        self.assertEqual(locale.language.code, "fr")
