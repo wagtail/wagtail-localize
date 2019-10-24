@@ -200,6 +200,9 @@ class Locale(models.Model):
         q = Q()
 
         for model in get_translatable_models():
+            if not issubclass(model, Page):
+                continue
+
             q |= Q(
                 id__in=model.objects.filter(locale=self).values_list("id", flat=True)
             )
