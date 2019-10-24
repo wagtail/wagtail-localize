@@ -83,3 +83,20 @@ class TestLocaleModel(TestCase):
         locale = Locale.objects.default()
         self.assertEqual(locale.region.name, "Default")
         self.assertEqual(locale.language.code, "fr")
+
+    def test_slug_default_region(self):
+        locale = Locale.objects.get(region__slug="default", language__code="en")
+        self.assertEqual(locale.slug, "en")
+
+    def test_slug_other_region(self):
+        region = Region.objects.create(name="European Union", slug="eu")
+        region.languages.set(
+            [Language.objects.get(code="en"), Language.objects.get(code="fr")]
+        )
+
+        locale = Locale.objects.get(region=region, language__code="en")
+        self.assertEqual(locale.slug, "eu-en")
+
+    def test_str(self):
+        locale = Locale.objects.get(region__slug="default", language__code="en")
+        self.assertEqual(str(locale), "Default / English")
