@@ -53,8 +53,6 @@ USE_I18N = True
 Add to following to your settings specifying any languages you would like to translate:
 
 ```python
-WAGTAIL_SITE_MODEL = "wagtail_localize_sites.Site"
-
 LANGUAGES = [
     ("en", "English"),
     ("fr", "French"),
