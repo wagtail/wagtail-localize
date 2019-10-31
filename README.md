@@ -31,7 +31,7 @@ Also remove the following from `INSTALLED_APPS`:
 "wagtail.contrib.redirects",
 ```
 
-Add the following to `MIDDLEWARE`:
+Add the following from `MIDDLEWARE`:
 
 ```python
 "django.middleware.locale.LocaleMiddleware",
