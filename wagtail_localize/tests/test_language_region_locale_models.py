@@ -1,8 +1,16 @@
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django.utils import translation
+from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Region, Locale
+from wagtail_localize.test.models import TestPage
+
+
+def make_test_page(**kwargs):
+    root_page = Page.objects.get(id=1)
+    kwargs.setdefault("title", "Test page")
+    return root_page.add_child(instance=TestPage(**kwargs))
 
 
 class TestLanguageModel(TestCase):
@@ -33,7 +41,12 @@ class TestLanguageModel(TestCase):
             self.assertEqual(Language.get_active().code, "fr")
 
     def test_as_rfc5646_language_tag(self):
-        tests = [("en", "en"), ("en-gb", "en-GB"), ("zh-hans", "zh-Hans")]
+        tests = [
+            ("en", "en"),
+            ("en-gb", "en-GB"),
+            ("zh-hans", "zh-Hans"),
+            ("something-weird-going-on", "something-weird-going-on"),
+        ]
 
         for code, expected in tests:
             with self.subTest(code=code):
@@ -51,9 +64,19 @@ class TestLanguageModel(TestCase):
         language = Language.objects.get(code="en")
         self.assertEqual(language.get_display_name(), "English")
 
+    def test_get_display_name_for_unconfigured_langauge(self):
+        # This language is not in LANGUAGES so it should just return the language code
+        language = Language.objects.create(code="foo")
+        self.assertIsNone(language.get_display_name())
+
     def test_str(self):
         language = Language.objects.get(code="en")
         self.assertEqual(str(language), "English (en)")
+
+    def test_str_for_unconfigured_langauge(self):
+        # This language is not in LANGUAGES so it should just return the language code
+        language = Language.objects.create(code="foo")
+        self.assertEqual(str(language), "foo")
 
 
 class TestRegionModel(TestCase):
@@ -62,6 +85,15 @@ class TestRegionModel(TestCase):
         self.assertEqual(region.name, "Default")
         self.assertEqual(region.slug, "default")
         self.assertTrue(region.is_default)
+
+    def test_default_when_no_default_exists(self):
+        Region.objects.all().update(is_default=False)
+        self.assertIsNone(Region.objects.default())
+        self.assertIsNone(Region.objects.default_id())
+
+    def test_str(self):
+        region = Region.objects.get(slug="default")
+        self.assertEqual(str(region), "Default")
 
 
 class TestLocaleModel(TestCase):
@@ -100,3 +132,16 @@ class TestLocaleModel(TestCase):
     def test_str(self):
         locale = Locale.objects.get(region__slug="default", language__code="en")
         self.assertEqual(str(locale), "Default / English")
+
+    def test_get_all_pages(self):
+        locale = Locale.objects.get(region__slug="default", language__code="en")
+        another_locale = Locale.objects.get(region__slug="default", language__code="fr")
+
+        # Create pages in different locales
+        page_default_locale = make_test_page(locale=locale)
+        page_another_locale = make_test_page(locale=another_locale)
+
+        self.assertEqual(list(locale.get_all_pages()), [page_default_locale.page_ptr])
+        self.assertEqual(
+            list(another_locale.get_all_pages()), [page_another_locale.page_ptr]
+        )
