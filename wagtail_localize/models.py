@@ -171,16 +171,6 @@ class Locale(models.Model):
             "language__code",
         ]
 
-    # For backwards compatibility
-    @classmethod
-    def default(cls):
-        return cls.objects.default()
-
-    # For backwards compatibility
-    @classmethod
-    def default_id(cls):
-        return cls.objects.default_id()
-
     def __str__(self):
         return "{} / {}".format(self.region.name, self.language.get_display_name())
 
