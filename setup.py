@@ -34,9 +34,14 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
-    install_requires=[],
+    install_requires=[
+        'Django>=2.2,<2.3',
+        'Wagtail>=2.6,<2.8',
+    ],
     extras_require={
-        'testing': [],
+        'testing': [
+            'psycopg2>=2.6',
+        ],
     },
     zip_safe=False,
 )
