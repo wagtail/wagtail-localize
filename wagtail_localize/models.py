@@ -260,10 +260,11 @@ def update_locales_on_region_languages_change(
                 region=instance,
                 language_id=language_id,
                 defaults={
-                    # Note: only activate locale if language is active
+                    # Note: only activate locale if language and region is active
                     "is_active": Language.objects.filter(
                         id=language_id, is_active=True
                     ).exists()
+                    and instance.is_active
                 },
             )
     elif action == "post_remove":
