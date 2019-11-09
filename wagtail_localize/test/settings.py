@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ["localhost", "testserver"]
 
 INSTALLED_APPS = [
     "wagtail_localize",
-    "wagtail_localize.tests",
+    "wagtail_localize.test",
     "wagtail_localize.admin.language_switch",
     "wagtail_localize.admin.regions",
     "wagtail_localize.admin.workflow",
@@ -76,7 +76,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-ROOT_URLCONF = "wagtail_localize.tests.urls"
+ROOT_URLCONF = "wagtail_localize.test.urls"
 
 TEMPLATES = [
     {

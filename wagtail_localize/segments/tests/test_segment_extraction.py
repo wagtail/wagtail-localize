@@ -6,7 +6,7 @@ from django.test import TestCase
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page
 
-from wagtail_localize.tests.models import TestPage, TestSnippet, TestChildObject
+from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
 from wagtail_localize.segments import SegmentValue, TemplateValue
 from wagtail_localize.segments.extract import extract_segments
 

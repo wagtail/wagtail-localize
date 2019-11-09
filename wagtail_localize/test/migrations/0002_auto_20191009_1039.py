@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("wagtail_localize_tests", "0001_initial")]
+    dependencies = [("wagtail_localize_test", "0001_initial")]
 
     operations = [
         migrations.AddField(

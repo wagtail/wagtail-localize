@@ -7,7 +7,7 @@ import uuid
 import wagtail.core.blocks
 import wagtail.core.fields
 import wagtail_localize.models
-import wagtail_localize.tests.models
+import wagtail_localize.test.models
 
 
 class Migration(migrations.Migration):
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "test_customfield",
-                    wagtail_localize.tests.models.TestCustomField(blank=True),
+                    wagtail_localize.test.models.TestCustomField(blank=True),
                 ),
                 (
                     "locale",
@@ -184,7 +184,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                to="wagtail_localize_tests.TestSnippet",
+                to="wagtail_localize_test.TestSnippet",
             ),
         ),
         migrations.AddField(
@@ -193,7 +193,7 @@ class Migration(migrations.Migration):
             field=modelcluster.fields.ParentalKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="test_childobjects",
-                to="wagtail_localize_tests.TestPage",
+                to="wagtail_localize_test.TestPage",
             ),
         ),
         migrations.AlterUniqueTogether(
