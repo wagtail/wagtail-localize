@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='testpage',
-            name='test_synchronized_field',
+            name='test_synchronizedfield',
             field=models.TextField(blank=True),
         ),
     ]

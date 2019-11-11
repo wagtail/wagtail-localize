@@ -73,7 +73,7 @@ class TestPage(TranslatablePageMixin, Page):
 
     test_customfield = TestCustomField(blank=True)
 
-    test_synchronized_field = models.TextField(blank=True)
+    test_synchronizedfield = models.TextField(blank=True)
 
     translatable_fields = [
         TranslatableField("test_charfield"),
@@ -86,7 +86,7 @@ class TestPage(TranslatablePageMixin, Page):
         TranslatableField("test_snippet"),
         TranslatableField("test_childobjects"),
         TranslatableField("test_customfield"),
-        SynchronizedField("test_synchronized_field"),
+        SynchronizedField("test_synchronizedfield"),
     ]
 
 
