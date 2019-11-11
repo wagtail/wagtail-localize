@@ -155,10 +155,13 @@ class SegmentValue:
         Would return the following dictionary:
 
             {
-                "a1": {"href": "https://mysite.com"}
+                "a#a1": {"href": "https://mysite.com"}
             }
         """
-        return {e.identifier: e.element[1] for e in self.html_elements or []}
+        return {
+            f"{e.element[0]}#{e.identifier}": e.element[1]
+            for e in self.html_elements or []
+        }
 
     def replace_html_element_attrs(self, attrs_map):
         """
@@ -176,16 +179,17 @@ class SegmentValue:
         With the following attrs_map:
 
             {
-                "a1": {"href": "https://mysite.com"}
+                "a#a1": {"href": "https://mysite.com"}
             }
 
         Would return the following segment:
 
             <b>Foo <a id="a1" href="https://mysite.com">Bar</a></b>
         """
-        for e in html_elements:
-            if e.identifier in attrs_map:
-                e.element[1] = attrs_map[e.identifier]
+        for e in self.html_elements:
+            key = f"{e.element[0]}#{e.identifier}"
+            if key in attrs_map:
+                e.element = (e.element[0], attrs_map[key])
 
     def is_empty(self):
         return self.html in ["", None]
