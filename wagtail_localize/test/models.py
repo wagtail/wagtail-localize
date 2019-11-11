@@ -5,7 +5,7 @@ from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable
 
-from wagtail_localize.fields import TranslatableField
+from wagtail_localize.fields import TranslatableField, SynchronizedField
 from wagtail_localize.models import TranslatableMixin, TranslatablePageMixin
 from wagtail_localize.segments import SegmentValue
 
@@ -73,6 +73,8 @@ class TestPage(TranslatablePageMixin, Page):
 
     test_customfield = TestCustomField(blank=True)
 
+    test_synchronized_field = models.TextField(blank=True)
+
     translatable_fields = [
         TranslatableField("test_charfield"),
         TranslatableField("test_textfield"),
@@ -84,6 +86,7 @@ class TestPage(TranslatablePageMixin, Page):
         TranslatableField("test_snippet"),
         TranslatableField("test_childobjects"),
         TranslatableField("test_customfield"),
+        SynchronizedField("test_synchronized_field"),
     ]
 
 
