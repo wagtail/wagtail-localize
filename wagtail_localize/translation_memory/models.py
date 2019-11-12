@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from django.db import models, transaction
@@ -139,6 +140,23 @@ class SegmentPageLocation(BasePageLocation):
         Segment, on_delete=models.CASCADE, related_name="page_locations"
     )
 
+    # When we extract the segment, we replace HTML attributes with id tags
+    # The attributes that were removed are stored here. These must be
+    # added into the translated strings.
+    # These are stored as a mapping of element ids to KV mappings of
+    # attributes in JSON format. For example:
+    #
+    #  For this segment: <a id="a1">Link to example.com</a>
+    #
+    #  The value of this field could be:
+    #
+    #  {
+    #      "a#a1": {
+    #          "href": "https://www.example.com"
+    #      }
+    #  }
+    html_attrs = models.TextField(blank=True)
+
     objects = SegmentPageLocationQuerySet.as_manager()
 
     @classmethod
@@ -150,6 +168,7 @@ class SegmentPageLocation(BasePageLocation):
             path=segment_value.path,
             order=segment_value.order,
             segment=segment,
+            html_attrs=json.dumps(segment_value.get_html_attrs()),
         )
 
         return segment_page_loc

@@ -144,7 +144,7 @@ class SegmentValue:
             ],
         )
 
-    def get_html_element_attrs(self):
+    def get_html_attrs(self):
         """
         Returns a mapping of html element identifiers to their attributes.
 
@@ -163,7 +163,7 @@ class SegmentValue:
             for e in self.html_elements or []
         }
 
-    def replace_html_element_attrs(self, attrs_map):
+    def replace_html_attrs(self, attrs_map):
         """
         Replaces the attributes of the HTML elements in this segment with
         attributes in the provided mapping.
