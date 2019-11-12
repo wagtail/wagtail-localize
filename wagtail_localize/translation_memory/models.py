@@ -155,7 +155,7 @@ class SegmentPageLocation(BasePageLocation):
     #          "href": "https://www.example.com"
     #      }
     #  }
-    html_attributes = models.TextField(blank=True)
+    html_attrs = models.TextField(blank=True)
 
     objects = SegmentPageLocationQuerySet.as_manager()
 
@@ -168,7 +168,7 @@ class SegmentPageLocation(BasePageLocation):
             path=segment_value.path,
             order=segment_value.order,
             segment=segment,
-            html_attributes=json.dumps(segment_value.get_html_element_attrs()),
+            html_attrs=json.dumps(segment_value.get_html_attrs()),
         )
 
         return segment_page_loc

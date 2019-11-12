@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="segmentpagelocation",
-            name="html_attributes",
+            name="html_attrs",
             field=models.TextField(blank=True),
         )
     ]
