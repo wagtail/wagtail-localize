@@ -2,6 +2,8 @@ import functools
 
 from django.conf import settings
 from django.conf.locale import LANG_INFO
+from django.core.signals import setting_changed
+from django.dispatch import receiver
 from django.utils.translation import check_for_language
 
 
@@ -45,3 +47,13 @@ def get_supported_language_variant(lang_code, strict=False):
                 if supported_code.startswith(generic_lang_code + "-"):
                     return supported_code
     raise LookupError(lang_code)
+
+
+@receiver(setting_changed)
+def reset_cache(**kwargs):
+    """
+    Clear cache when global LANGUAGES/LANGUAGE_CODE settings are changed
+    """
+    if kwargs["setting"] in ("LANGUAGES", "LANGUAGE_CODE"):
+        get_languages.cache_clear()
+        get_supported_language_variant.cache_clear()
