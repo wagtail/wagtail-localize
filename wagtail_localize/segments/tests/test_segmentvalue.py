@@ -34,6 +34,9 @@ class TestSegmentValue(TestCase):
             segment.html_with_ids,
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a id="a1">A link and some more <b>Bold text</b></a>',
         )
+        self.assertEqual(
+            segment.get_html_attrs(), {"a#a1": {"href": "http://example.com"}}
+        )
 
         # .with_order()
         orderred = segment.with_order(123)
@@ -65,3 +68,16 @@ class TestSegmentValue(TestCase):
         self.assertEqual(unwrapped.html_elements, segment.html_elements)
         self.assertEqual(unwrapped.html, segment.html)
         self.assertEqual(unwrapped.html_with_ids, segment.html_with_ids)
+
+    def test_replace_html_attrs(self):
+        segment = SegmentValue.from_html(
+            "foo.bar",
+            'This is some text. &lt;foo&gt; <b>Bold text</b> <a id="a1">A link and some more <b>Bold text</b></a>',
+        )
+
+        segment.replace_html_attrs({"a#a1": {"href": "http://changed-example.com"}})
+
+        self.assertEqual(
+            segment.html,
+            'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://changed-example.com">A link and some more <b>Bold text</b></a>',
+        )

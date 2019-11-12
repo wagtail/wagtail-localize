@@ -161,6 +161,7 @@ class SegmentValue:
         return {
             f"{e.element[0]}#{e.identifier}": e.element[1]
             for e in self.html_elements or []
+            if e.element[1]
         }
 
     def replace_html_attrs(self, attrs_map):
