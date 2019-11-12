@@ -7,6 +7,7 @@ from django.db import models, transaction
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
+from django.http import Http404
 from django.utils import translation
 from wagtail.core.models import Page
 from wagtail.core.signals import page_published
@@ -15,7 +16,7 @@ from wagtail.images.models import AbstractImage
 from .compat import get_languages, get_supported_language_variant
 from .edit_handlers import filter_edit_handler_on_instance_bound
 from .fields import TranslatableField, SynchronizedField
-from .utils import find_available_slug
+from .utils import find_available_slug, get_fallback_languages
 
 
 class LanguageManager(models.Manager):
@@ -312,6 +313,26 @@ class TranslatableMixin(models.Model):
 
         return self.get_translations(inclusive=False).get(is_source_translation=True)
 
+    def get_fallback_translations(self, region=None):
+        if isinstance(region, Region):
+            region = region.id
+
+        fallback_languages = get_fallback_languages(self.locale.language.code)
+
+        translations = self.get_translations().filter(locale__language__code__in=fallback_languages).select_related('locale', 'locale__language')
+        if region is not None:
+            translations = translations.filter(locale__region_id=region)
+
+        translations_by_language = {
+            translation.locale.language.code: translation
+            for translation in translations
+        }
+
+        return [
+            translations_by_language[fallback_language]
+            for fallback_language in fallback_languages
+        ]
+
     def has_translation(self, locale):
         return self.get_translations(inclusive=True).filter(locale=locale).exists()
 
@@ -507,6 +528,31 @@ class TranslatablePageMixin(TranslatableMixin):
         return filter_edit_handler_on_instance_bound(
             super().get_edit_handler(), filter_editable_fields
         ).bind_to(model=cls)
+
+    def route(self, request, path_components):
+        try:
+            return super().route(request, path_components)
+        except Http404:
+            # Find a fallback page to route to
+
+            # Try in own region first.
+            region_id = self.locale.region_id
+            for fallback_translation in self.get_fallback_translations(region_id):
+                try:
+                    return fallback_translation.route(request, path_components)
+                except Http404:
+                    pass
+
+            # Try default region
+            default_region_id = Region.objects.default_id()
+            if region_id != default_region_id:
+                for fallback_translation in self.get_fallback_translations(default_region_id):
+                    try:
+                        return fallback_translation.route(request, path_components)
+                    except Http404:
+                        pass
+
+            raise
 
     class Meta:
         abstract = True
