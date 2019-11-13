@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("wagtail_localize_test", "0002_auto_20191009_1039"),
-    ]
+    dependencies = [("wagtail_localize_test", "0002_auto_20191009_1039")]
 
     operations = [
         migrations.AddField(
             model_name="testpage",
             name="test_synchronizedfield",
             field=models.TextField(blank=True),
-        ),
+        )
     ]
