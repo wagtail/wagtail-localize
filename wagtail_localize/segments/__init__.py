@@ -125,12 +125,6 @@ class SegmentValue:
         if not self.html_elements:
             return escape(self.text)
 
-        def cat_dict(a, b):
-            c = {}
-            c.update(a)
-            c.update(b)
-            return c
-
         return restore_html_elements(
             self.text,
             [
