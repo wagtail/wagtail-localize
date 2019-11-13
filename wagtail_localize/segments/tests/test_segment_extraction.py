@@ -308,7 +308,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
             [
                 SegmentValue(
                     f"test_streamfield.{block_id}.foo",
-                    "Test content Some more test content",
+                    "Test content / Some more test content",
                 )
             ],
         )

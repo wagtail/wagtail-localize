@@ -31,7 +31,18 @@ class CustomStructBlock(blocks.StructBlock):
     field_b = blocks.TextBlock()
 
     def get_translatable_segments(self, value):
-        return [SegmentValue("foo", "{} {}".format(value["field_a"], value["field_b"]))]
+        return [
+            SegmentValue("foo", "{} / {}".format(value["field_a"], value["field_b"]))
+        ]
+
+    def restore_translated_segments(self, value, segments):
+        for segment in segments:
+            if segment.path == "foo":
+                field_a, field_b = segment.text.split("/")
+                value["field_a"] = field_a.strip()
+                value["field_b"] = field_b.strip()
+
+        return value
 
 
 class TestStreamBlock(blocks.StreamBlock):
