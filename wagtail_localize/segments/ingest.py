@@ -76,6 +76,9 @@ class StreamFieldSegmentsWriter:
         elif isinstance(block_type, blocks.ListBlock):
             return self.handle_list_block(block_value, segments)
 
+        elif isinstance(block_type, blocks.StreamBlock):
+            return self.handle_stream_block(block_value, segments)
+
         else:
             raise Exception(
                 "Unrecognised StreamField block type '{}'. Have you implemented restore_translated_segments() on this class?".format(
@@ -111,12 +114,12 @@ class StreamFieldSegmentsWriter:
         # TODO
         pass
 
-    def get_stream_block_child_data(self, data, block_uuid):
-        for stream_child in data:
+    def get_stream_block_child_data(self, stream_block, block_uuid):
+        for stream_child in stream_block:
             if stream_child.id == block_uuid:
                 return stream_child
 
-    def handle_stream_block(self, data, segments):
+    def handle_stream_block(self, stream_block, segments):
         segments_by_block = defaultdict(list)
 
         for segment in segments:
@@ -124,8 +127,10 @@ class StreamFieldSegmentsWriter:
             segments_by_block[block_uuid].append(segment)
 
         for block_uuid, segments in segments_by_block.items():
-            block = self.get_stream_block_child_data(data, block_uuid)
+            block = self.get_stream_block_child_data(stream_block, block_uuid)
             block.value = self.handle_block(block.block, block.value, segments)
+
+        return stream_block
 
 
 def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segments):

@@ -40,6 +40,9 @@ class StreamFieldSegmentExtractor:
         elif isinstance(block_type, blocks.ListBlock):
             return self.handle_list_block(block_value)
 
+        elif isinstance(block_type, blocks.StreamBlock):
+            return self.handle_stream_block(block_value)
+
         elif isinstance(block_type, blocks.ChoiceBlock):
             return []
 

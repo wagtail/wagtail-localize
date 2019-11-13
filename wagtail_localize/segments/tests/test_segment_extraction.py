@@ -273,7 +273,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.expectedFailure  # Not supported
     def test_nestedstreamblock(self):
         block_id = uuid.uuid4()
         nested_block_id = uuid.uuid4()
