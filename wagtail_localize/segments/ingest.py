@@ -4,6 +4,7 @@ from django.db import models
 
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.rich_text import RichText
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
@@ -59,13 +60,13 @@ class StreamFieldSegmentsWriter:
         if hasattr(block_type, "restore_translated_segments"):
             return block_type.restore_translated_segments(block_value, segments)
 
-        elif isinstance(block_type, blocks.CharBlock):
+        elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock)):
             return segments[0].text
 
         elif isinstance(block_type, blocks.RichTextBlock):
             format, template, segments = organise_template_segments(segments)
             assert format == "html"
-            return restore_html_segments(template, segments)
+            return RichText(restore_html_segments(template, segments))
 
         elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
             return self.handle_related_object_block(block_value, segments)
@@ -98,9 +99,7 @@ class StreamFieldSegmentsWriter:
             field_name, segment = segment.unwrap()
             segments_by_field[field_name].append(segment)
 
-        for field_name in getattr(struct_block.block.meta, "translated_fields", []):
-            segments = segments_by_field[field_name]
-
+        for field_name, segments in segments_by_field.items():
             if segments:
                 block_type = struct_block.block.child_blocks[field_name]
                 block_value = struct_block[field_name]
