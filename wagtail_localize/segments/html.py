@@ -85,13 +85,27 @@ def extract_html_segments(html):
             wrap(elements[0].children)
             return
 
-        # If there is a <br> tag at the beginning, ignore it
-        if not isinstance(elements[0], NavigableString) and elements[0].name == "br":
+        def ignore_if_at_end(element):
+            """
+            Returns True if the given element should be ignored if it is at one of the ends
+            """
+            if isinstance(element, NavigableString):
+                return False
+
+            # Ignore if there are no text nodes
+            # This will exclude both <br> tags and empty inline tags
+            if not any(
+                isinstance(desc, NavigableString) for desc in element.descendants
+            ):
+                return True
+
+            return False
+
+        if ignore_if_at_end(elements[0]):
             wrap(elements[1:])
             return
 
-        # If there is a <br> tag at the end, ignore it
-        if not isinstance(elements[-1], NavigableString) and elements[-1].name == "br":
+        if ignore_if_at_end(elements[-1]):
             wrap(elements[:-1])
             return
 
