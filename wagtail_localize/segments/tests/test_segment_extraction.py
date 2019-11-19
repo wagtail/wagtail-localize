@@ -17,7 +17,7 @@ def make_test_page(**kwargs):
     return root_page.add_child(instance=TestPage(**kwargs))
 
 
-RICH_TEXT_TEST_INPUT = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a></li></ul>'
+RICH_TEXT_TEST_INPUT = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a>.</li></ul>'
 
 RICH_TEXT_TEST_OUTPUT = [
     TemplateValue(
@@ -34,7 +34,7 @@ RICH_TEXT_TEST_OUTPUT = [
     ),
     SegmentValue(
         "2",
-        "This is a link",
+        "This is a link.",
         html_elements=[
             SegmentValue.HTMLElement(0, 14, "a1", ("a", {"href": "http://example.com"}))
         ],

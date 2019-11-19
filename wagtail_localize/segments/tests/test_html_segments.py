@@ -56,7 +56,7 @@ class TestExtractHTMLSegment(TestCase):
             <p><text position="2"></text></p>
             <ul>
                 <li><text position="3"></text></li>
-                <li><text position="4"></text></li>
+                <li><b><text position="4"></text></b></li>
             </ul>
             <img alt="This bit isn\'t translatable" src="foo">
             """,
@@ -69,7 +69,7 @@ class TestExtractHTMLSegment(TestCase):
                 "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text",
                 "&lt;script&gt; this should be interpreted as text.",
                 "List item one",
-                "<b>List item two</b>",
+                "List item two",
             ],
         )
 
