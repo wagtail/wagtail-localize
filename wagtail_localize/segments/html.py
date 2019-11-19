@@ -70,6 +70,11 @@ def extract_html_segments(html):
         """
         elements = list(elements)
 
+        # Skip if there are no tags to wrap
+        # We can get here after filters below have been applied
+        if len(elements) == 0:
+            return
+
         # If there is a single element and that is an inline tag, wrap just the contents.
         # We only care about inline tags that wrap only part of a segment
         if (

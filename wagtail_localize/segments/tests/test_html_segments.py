@@ -108,6 +108,14 @@ class TestExtractHTMLSegment(TestCase):
 
         self.assertEqual(segments, ["Foo"])
 
+    def test_empty_inline_tag(self):
+        # Make sure this doesn't crash
+        template, segments = extract_html_segments("<p><i></i></p>")
+
+        self.assertHTMLEqual(template, "<p><i></i></p>")
+
+        self.assertEqual(segments, [])
+
 
 class TestExtractHTMLElements(TestCase):
     def test_extract_html_elements(self):
