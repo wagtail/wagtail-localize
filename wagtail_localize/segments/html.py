@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup, NavigableString
 
 
-INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong"]
+# List of tags that are allowed in segments
+INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong", "br"]
 
 
 def lstrip_keep(text):

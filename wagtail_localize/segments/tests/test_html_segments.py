@@ -85,6 +85,15 @@ class TestExtractHTMLSegment(TestCase):
 
         self.assertEqual(segments, ["Foo", "Bar"])
 
+    def test_br_tag_is_treated_as_inline_tag(self):
+        template, segments = extract_html_segments(
+            "<p><b>Foo <i>Bar<br/>Baz</i></b></p>"
+        )
+
+        self.assertHTMLEqual(template, '<p><b><text position="0"></text></b></p>')
+
+        self.assertEqual(segments, ["Foo <i>Bar<br/>Baz</i>"])
+
 
 class TestExtractHTMLElements(TestCase):
     def test_extract_html_elements(self):
