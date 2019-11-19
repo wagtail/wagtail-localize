@@ -94,6 +94,20 @@ class TestExtractHTMLSegment(TestCase):
 
         self.assertEqual(segments, ["Foo <i>Bar<br/>Baz</i>"])
 
+    def test_br_tag_is_removed_when_it_appears_at_beginning_of_segment(self):
+        template, segments = extract_html_segments("<p><i><br/>Foo</i></p>")
+
+        self.assertHTMLEqual(template, '<p><i><br/><text position="0"></text></i></p>')
+
+        self.assertEqual(segments, ["Foo"])
+
+    def test_br_tag_is_removed_when_it_appears_at_end_of_segment(self):
+        template, segments = extract_html_segments("<p><i>Foo</i><br/></p>")
+
+        self.assertHTMLEqual(template, '<p><i><text position="0"></text></i><br/></p>')
+
+        self.assertEqual(segments, ["Foo"])
+
 
 class TestExtractHTMLElements(TestCase):
     def test_extract_html_elements(self):

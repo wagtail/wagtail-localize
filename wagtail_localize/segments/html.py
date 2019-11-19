@@ -68,15 +68,26 @@ def extract_html_segments(html):
 
         The elements must be contiguous siblings or this might screw up the tree.
         """
+        elements = list(elements)
+
         # If there is a single element and that is an inline tag, wrap just the contents.
         # We only care about inline tags that wrap only part of a segment
-        elements = list(elements)
         if (
             len(elements) == 1
             and not isinstance(elements[0], NavigableString)
             and elements[0].name in INLINE_TAGS
         ):
             wrap(elements[0].children)
+            return
+
+        # If there is a <br> tag at the beginning, ignore it
+        if not isinstance(elements[0], NavigableString) and elements[0].name == "br":
+            wrap(elements[1:])
+            return
+
+        # If there is a <br> tag at the end, ignore it
+        if not isinstance(elements[-1], NavigableString) and elements[-1].name == "br":
+            wrap(elements[:-1])
             return
 
         value = "".join(
