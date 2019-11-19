@@ -73,6 +73,18 @@ class TestExtractHTMLSegment(TestCase):
             ],
         )
 
+    def test_block_tag_in_inline_tag(self):
+        # If an inline tag contains a block tag. The inline tag must be in the template.
+        # Testing for issue https://github.com/mozilla/donate-wagtail/issues/586
+        template, segments = extract_html_segments("<p><i>Foo <p>Bar</p></i></p>")
+
+        self.assertHTMLEqual(
+            template,
+            '<p><i><text position="0"></text> <p><text position="1"></text></p></i></p>',
+        )
+
+        self.assertEqual(segments, ["Foo", "Bar"])
+
 
 class TestExtractHTMLElements(TestCase):
     def test_extract_html_elements(self):

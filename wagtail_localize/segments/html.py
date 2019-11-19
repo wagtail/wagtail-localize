@@ -111,13 +111,17 @@ def extract_html_segments(html):
         </p>
         """
         if isinstance(element, NavigableString):
-            return False
+            return False, False
 
         has_block = False
+        has_wrap = False
         buffer = []
 
         for child in element.children:
-            is_block = walk(child)
+            child_has_wrap, is_block = walk(child)
+
+            if child_has_wrap:
+                has_wrap = True
 
             if is_block:
                 has_block = True
@@ -125,21 +129,25 @@ def extract_html_segments(html):
                 if buffer:
                     wrap(buffer)
                     buffer = []
+                    has_wrap = True
 
             else:
-                buffer.append(child)
+                if not child_has_wrap:
+                    buffer.append(child)
 
         if buffer and has_block:
             wrap(buffer)
             buffer = []
+            has_wrap = True
 
         if element.name not in INLINE_TAGS:
             if buffer:
                 wrap(buffer)
+                has_wrap = True
 
-            return True
+            return has_wrap, True
 
-        return False
+        return has_wrap, False
 
     walk(soup)
 
