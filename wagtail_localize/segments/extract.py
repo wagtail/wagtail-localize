@@ -27,8 +27,7 @@ class StreamFieldSegmentExtractor:
             template, texts = extract_html_segments(block_value.source)
 
             return [TemplateValue("", "html", template, len(texts))] + [
-                SegmentValue.from_html(str(position), text)
-                for position, text in enumerate(texts)
+                SegmentValue.from_html("", text) for text in texts
             ]
 
         elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
@@ -113,8 +112,7 @@ def extract_segments(instance):
             template, texts = extract_html_segments(field.value_from_object(instance))
 
             field_segments = [TemplateValue("", "html", template, len(texts))] + [
-                SegmentValue.from_html(str(position), text)
-                for position, text in enumerate(texts)
+                SegmentValue.from_html("", text) for text in texts
             ]
 
             segments.extend(segment.wrap(field.name) for segment in field_segments)

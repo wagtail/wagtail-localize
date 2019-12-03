@@ -27,19 +27,22 @@ RICH_TEXT_TEST_FRENCH_SEGMENTS = [
         "html",
         '<h1><text position="0"></text></h1><p><text position="1"></text></p><ul><li><text position="2"></text></li></ul>',
         3,
+        order=9,
     ),
-    SegmentValue("0", "Ceci est une rubrique", html_elements=[]),
+    SegmentValue("", "Ceci est une rubrique", html_elements=[], order=10),
     SegmentValue(
-        "1",
+        "",
         "Ceci est un paragraphe. <foo> Texte en gras",
         html_elements=[SegmentValue.HTMLElement(30, 43, "b1", ("b", {}))],
+        order=11,
     ),
     SegmentValue(
-        "2",
+        "",
         "Ceci est un lien",
         html_elements=[
             SegmentValue.HTMLElement(0, 16, "a1", ("a", {"href": "http://example.com"}))
         ],
+        order=12,
     ),
 ]
 
@@ -510,9 +513,11 @@ class TestSegmentExtractionWithStreamField(TestCase):
             self.src_locale,
             self.locale,
             [
-                SegmentValue(f"test_streamfield.{block_id}.0", "Tester le contenu"),
                 SegmentValue(
-                    f"test_streamfield.{block_id}.1", "Encore du contenu de test"
+                    f"test_streamfield.{block_id}", "Tester le contenu", order=0
+                ),
+                SegmentValue(
+                    f"test_streamfield.{block_id}", "Encore du contenu de test", order=1
                 ),
             ],
         )

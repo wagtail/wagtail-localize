@@ -15,20 +15,14 @@ from .html import restore_html_segments
 
 
 def organise_template_segments(segments):
-    template = None
-    segments_by_position = {}
-
-    for segment in segments:
-        if isinstance(segment, TemplateValue):
-            template = segment
-        else:
-            segments_by_position[int(segment.path)] = segment
-
-    segments = []
-    for position in range(template.segment_count):
-        segments.append(segments_by_position[position].html)
-
-    return template.format, template.template, segments
+    # The first segment is always the template, followed by the texts in order of their position
+    segments.sort(key=lambda segment: segment.order)
+    template = segments[0]
+    return (
+        template.format,
+        template.template,
+        [segment.html for segment in segments[1:]],
+    )
 
 
 def handle_related_object(related_object, src_locale, tgt_locale, segments):
