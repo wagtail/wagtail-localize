@@ -1,16 +1,21 @@
 from collections import defaultdict
 
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from wagtail.admin.modal_workflow import render_modal_workflow
 from wagtail.core.models import Page
 
-from wagtail_localize.models import Region
+from wagtail_localize.models import Region, TranslatablePageMixin
 
 
 def translations_list(request, page_id):
     page = get_object_or_404(Page, id=page_id).specific
+
+    if not isinstance(page, TranslatablePageMixin):
+        raise Http404("Page is not translatable")
+
     regions = list(Region.objects.filter(is_active=True))
 
     # Get translations by region
