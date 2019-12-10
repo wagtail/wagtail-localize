@@ -4,7 +4,7 @@ from django.utils import translation
 from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Region, Locale
-from wagtail_localize.test.models import TestPage
+from wagtail_localize.test.models import TestPage, TestHomePage
 
 
 def make_test_page(**kwargs):
@@ -138,10 +138,14 @@ class TestLocaleModel(TestCase):
         another_locale = Locale.objects.get(region__slug="default", language__code="fr")
 
         # Create pages in different locales
+        home_page = TestHomePage.objects.get()
         page_default_locale = make_test_page(locale=locale)
         page_another_locale = make_test_page(locale=another_locale)
 
-        self.assertEqual(list(locale.get_all_pages()), [page_default_locale.page_ptr])
+        self.assertEqual(
+            list(locale.get_all_pages()),
+            [home_page.page_ptr, page_default_locale.page_ptr],
+        )
         self.assertEqual(
             list(another_locale.get_all_pages()), [page_another_locale.page_ptr]
         )

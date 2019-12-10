@@ -20,14 +20,15 @@ class TestSignals(TestCase):
         )
 
     def test_add_new_languages_to_default_region__when_no_default_region(self):
-        # Delete regions
-        Region.objects.all().delete()
+        # Remove default region
+        Region.objects.all().update(is_default=False)
+        region = Region.objects.get()
 
-        # No locales should exist despite there being another region and language
-        Region.objects.create(name="United Kingdom", slug="uk")
-        Language.objects.create(code="fr")
+        language = Language.objects.create(code="fr")
 
-        self.assertFalse(Locale.objects.exists())
+        self.assertFalse(
+            Locale.objects.filter(region=region, language=language).exists()
+        )
 
     # update_locales_on_language_change
 
