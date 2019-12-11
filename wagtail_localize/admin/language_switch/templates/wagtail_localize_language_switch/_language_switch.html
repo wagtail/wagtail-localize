@@ -3,7 +3,7 @@
 {% if is_translatable %}
     <div>
         {% trans "Translations" %}
-        <a href="{% url 'translations_list' page.id %}" class="status-tag primary action-switch-language">
+        <a href="{% url 'wagtail_localize_language_switch:translations_list' page.id %}" class="status-tag primary action-switch-language">
             {% blocktrans count counter=language_count %}
                 {{ counter }} language
             {% plural %}

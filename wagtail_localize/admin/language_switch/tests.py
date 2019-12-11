@@ -25,7 +25,10 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
 
     def test(self):
         response = self.client.get(
-            reverse("translations_list", args=[self.test_page.id])
+            reverse(
+                "wagtail_localize_language_switch:translations_list",
+                args=[self.test_page.id],
+            )
         )
         self.assertEqual(response.status_code, 200)
 
@@ -88,6 +91,10 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
 
     def test_for_non_translatable_page(self):
         response = self.client.get(
-            reverse("translations_list", args=[self.root_page.id]), follow=True
+            reverse(
+                "wagtail_localize_language_switch:translations_list",
+                args=[self.root_page.id],
+            ),
+            follow=True,
         )
         self.assertEqual(response.status_code, 404)
