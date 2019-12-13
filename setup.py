@@ -42,6 +42,10 @@ setup(
         'testing': [
             'psycopg2>=2.6',
         ],
+        'docs': [
+            'mkdocs>=1.0,<1.1',
+            'mkdocs-material==4.6.0',
+        ],
     },
     zip_safe=False,
 )

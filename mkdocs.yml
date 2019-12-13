@@ -11,5 +11,9 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started:
-      - Setup: setup.md
-      - Tutorial: tutorial.md
+    - Starting a new project: tutorial/1-starting-a-new-project.md
+    - Translatable page models: tutorial/2-translatable-page-models.md
+    - Translation workflow: tutorial/3-translation-workflow.md
+    - Routing: tutorial/4-routing.md
+    - Language switching: tutorial/5-language-switching.md
+    - Search: tutorial/6-search.md
