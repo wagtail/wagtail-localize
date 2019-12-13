@@ -1,0 +1,15 @@
+site_name: Wagtail Localize Documentation
+theme:
+  name: 'material'
+  logo:
+    icon: 'translate'
+  palette:
+    primary: 'teal'
+    accent: 'teal'
+markdown_extensions:
+  - codehilite
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Setup: setup.md
+      - Tutorial: tutorial.md
