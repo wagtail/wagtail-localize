@@ -171,6 +171,92 @@ class Template(models.Model):
         return template
 
 
+class BaseLocation(models.Model):
+    revision = models.ForeignKey(TranslatableRevision, on_delete=models.CASCADE)
+    path = models.TextField()
+    order = models.PositiveIntegerField()
+
+    class Meta:
+        abstract = True
+
+
+class SegmentLocationQuerySet(models.QuerySet):
+    def annotate_translation(self, language):
+        """
+        Adds a 'translation' field to the segments containing the
+        text content of the segment translated into the specified
+        language.
+        """
+        return self.annotate(
+            translation=Subquery(
+                SegmentTranslation.objects.filter(
+                    translation_of_id=OuterRef("segment_id"), language_id=pk(language)
+                ).values("text")
+            )
+        )
+
+
+class SegmentLocation(BaseLocation):
+    segment = models.ForeignKey(
+        Segment, on_delete=models.CASCADE, related_name="locations"
+    )
+
+    # When we extract the segment, we replace HTML attributes with id tags
+    # The attributes that were removed are stored here. These must be
+    # added into the translated strings.
+    # These are stored as a mapping of element ids to KV mappings of
+    # attributes in JSON format. For example:
+    #
+    #  For this segment: <a id="a1">Link to example.com</a>
+    #
+    #  The value of this field could be:
+    #
+    #  {
+    #      "a#a1": {
+    #          "href": "https://www.example.com"
+    #      }
+    #  }
+    html_attrs = models.TextField(blank=True)
+
+    objects = SegmentLocationQuerySet.as_manager()
+
+    @classmethod
+    def from_segment_value(cls, revision, language, segment_value):
+        segment = Segment.from_text(language, segment_value.html_with_ids)
+
+        segment_loc, created = cls.objects.get_or_create(
+            revision_id=pk(revision),
+            path=segment_value.path,
+            order=segment_value.order,
+            segment=segment,
+            html_attrs=json.dumps(segment_value.get_html_attrs()),
+        )
+
+        return segment_loc
+
+
+class TemplateLocation(BaseLocation):
+    template = models.ForeignKey(
+        Template, on_delete=models.CASCADE, related_name="locations"
+    )
+
+    @classmethod
+    def from_template_value(cls, revision, template_value):
+        template = Template.from_template_value(template_value)
+
+        template_loc, created = cls.objects.get_or_create(
+            revision_id=pk(revision),
+            path=template_value.path,
+            order=template_value.order,
+            template=template,
+        )
+
+        return template_loc
+
+
+# LEGACY PageLocation models
+
+
 class BasePageLocation(models.Model):
     page_revision = models.ForeignKey(
         "wagtailcore.PageRevision", on_delete=models.CASCADE
