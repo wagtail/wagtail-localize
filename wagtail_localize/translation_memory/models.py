@@ -1,6 +1,7 @@
 import json
 import uuid
 
+from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models import Subquery, OuterRef
 
@@ -10,6 +11,68 @@ def pk(obj):
         return obj.pk
     else:
         return obj
+
+
+class TranslatableObjectManager(models.Manager):
+    def get_or_create_from_instance(self, instance):
+        return self.get_or_create(
+            translation_key=instance.translation_key,
+            content_type=ContentType.objects.get_for_model(
+                instance.get_translation_model()
+            ),
+        )
+
+
+class TranslatableObject(models.Model):
+    """
+    Represents something that can be translated.
+
+    Note that one instance of this represents all translations for the object.
+    """
+
+    translation_key = models.UUIDField(primary_key=True)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="+"
+    )
+
+    objects = TranslatableObjectManager()
+
+    def get_instance(self, locale):
+        return self.content_type.get_object_for_this_type(
+            translation_key=self.translation_key, locale=locale
+        )
+
+    class Meta:
+        unique_together = [("content_type", "translation_key")]
+
+
+class TranslatableRevision(models.Model):
+    """
+    A piece of content that to be used as a source for translations.
+    """
+
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="revisions"
+    )
+    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+    content_json = models.TextField()
+    created_at = models.DateTimeField()
+
+    page_revision = models.OneToOneField(
+        "wagtailcore.PageRevision",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="wagtaillocalize_revision",
+    )
+
+    def as_instance(self):
+        if self.page_revision is not None:
+            return self.page_revision.as_page_object()
+
+        raise NotImplementedError(
+            "revisions of non-page objects not currently supported"
+        )
 
 
 class SegmentQuerySet(models.QuerySet):
