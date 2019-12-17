@@ -13,3 +13,4 @@ nav:
   - Getting Started:
       - Setup: setup.md
       - Tutorial: tutorial.md
+  - How to Guides: pontoon.md

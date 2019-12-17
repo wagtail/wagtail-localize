@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "wagtail_localize.admin.regions",
     "wagtail_localize.admin.workflow",
     "wagtail_localize.translation_memory",
+    "wagtail_localize.translation_engines.pontoon",
     "wagtail.contrib.search_promotions",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
