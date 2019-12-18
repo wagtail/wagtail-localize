@@ -39,7 +39,7 @@ class Importer:
             region_id=Region.objects.default_id(), language=language
         )
 
-        page = submission.revision.as_page_object()
+        page = submission.page_revision.as_page_object()
 
         try:
             translated_page = page.get_translation(locale)
@@ -51,11 +51,11 @@ class Importer:
 
         # Fetch all translated segments
         segment_page_locations = SegmentPageLocation.objects.filter(
-            page_revision=submission.revision
+            page_revision=submission.page_revision
         ).annotate_translation(language)
 
         template_page_locations = TemplatePageLocation.objects.filter(
-            page_revision=submission.revision
+            page_revision=submission.page_revision
         ).select_related("template")
 
         segments = []
@@ -90,7 +90,7 @@ class Importer:
         new_revision.publish()
 
         PontoonResourceTranslation.objects.create(
-            submission=submission, language=language, revision=new_revision
+            submission=submission, language=language, page_revision=new_revision
         )
 
         return new_revision, created

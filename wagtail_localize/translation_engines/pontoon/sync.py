@@ -72,7 +72,7 @@ def _push(repo, logger):
     pushed_submission_ids = []
     for submission in (
         PontoonResourceSubmission.objects.filter(
-            revision_id=F("resource__current_revision_id")
+            page_revision_id=F("resource__current_page_revision_id")
         )
         .select_related("resource")
         .order_by("resource__path")

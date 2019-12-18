@@ -21,16 +21,18 @@ class Command(BaseCommand):
                 print(
                     f"Warning: The page '{page.title}' does not have a live_revision. Using latest revision instead."
                 )
-                revision = page.live_revision
+                page_revision = page.live_revision
             else:
-                revision = page.get_latest_revision() or page.save_revision(
+                page_revision = page.get_latest_revision() or page.save_revision(
                     changed=False
                 )
 
             print(f"Submitting '{page.title}'")
 
-            if PontoonResourceSubmission.objects.filter(revision=revision).exists():
+            if PontoonResourceSubmission.objects.filter(
+                page_revision=page_revision
+            ).exists():
                 print("Already submitted!")
                 continue
 
-            submit_to_pontoon(page, revision)
+            submit_to_pontoon(page, page_revision)

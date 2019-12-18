@@ -36,9 +36,9 @@ class PontoonResource(models.Model):
     # This is initially the pages URL path but is not updated if the page is moved
     path = models.CharField(max_length=255, unique=True)
 
-    # The last revision to be submitted for translation
-    # This is denormalised from the revision field of the latest submission for this resource
-    current_revision = models.OneToOneField(
+    # The last page_revision to be submitted for translation
+    # This is denormalised from the page_revision field of the latest submission for this resource
+    current_page_revision = models.OneToOneField(
         "wagtailcore.PageRevision",
         on_delete=models.SET_NULL,
         null=True,
@@ -132,7 +132,7 @@ class PontoonResource(models.Model):
         Gets all segments that are in the latest submission to Pontoon.
         """
         return Segment.objects.filter(
-            page_locations__page_revision_id=self.current_revision_id
+            page_locations__page_revision_id=self.current_page_revision_id
         )
 
     def get_all_segments(self, annotate_obsolete=False):
@@ -148,7 +148,7 @@ class PontoonResource(models.Model):
                 is_obsolete=~Exists(
                     SegmentPageLocation.objects.filter(
                         segment=OuterRef("pk"),
-                        page_revision_id=self.current_revision_id,
+                        page_revision_id=self.current_page_revision_id,
                     )
                 )
             )
@@ -246,7 +246,7 @@ class PontoonResourceSubmission(models.Model):
     resource = models.ForeignKey(
         PontoonResource, on_delete=models.CASCADE, related_name="submissions"
     )
-    revision = models.OneToOneField(
+    page_revision = models.OneToOneField(
         "wagtailcore.PageRevision",
         on_delete=models.CASCADE,
         related_name="pontoon_submission",
@@ -272,7 +272,7 @@ class PontoonResourceSubmission(models.Model):
         - The total number of segments in the submission to translate
         - The number of segments that have been translated into the target language
         """
-        return get_translation_progress(self.revision_id, language)
+        return get_translation_progress(self.page_revision_id, language)
 
 
 class PontoonResourceTranslation(models.Model):
@@ -290,7 +290,7 @@ class PontoonResourceTranslation(models.Model):
     )
 
     # The revision of the page that was created when the translations were saved
-    revision = models.OneToOneField(
+    page_revision = models.OneToOneField(
         "wagtailcore.PageRevision",
         on_delete=models.CASCADE,
         related_name="pontoon_translation",
@@ -300,31 +300,31 @@ class PontoonResourceTranslation(models.Model):
 
 
 @transaction.atomic
-def submit_to_pontoon(page, revision):
+def submit_to_pontoon(page, page_revision):
     # Extract segments from page and save them to translation memory
-    insert_segments(revision, page.locale.language_id, extract_segments(page))
+    insert_segments(page_revision, page.locale.language_id, extract_segments(page))
 
     # Get/create resource
     try:
         resource = PontoonResource.objects.get(page=page)
-        resource.current_revision = revision
-        resource.save(update_fields=["current_revision"])
+        resource.current_page_revision = page_revision
+        resource.save(update_fields=["current_page_revision"])
     except PontoonResource.DoesNotExist:
         resource = PontoonResource.objects.create(
             page=page,
-            current_revision=revision,
+            current_page_revision=page_revision,
             path=PontoonResource.get_unique_path_from_urlpath(page.url_path),
         )
 
     # Create submission
-    resource.submissions.create(revision=revision)
+    resource.submissions.create(page_revision=page_revision)
 
 
 @receiver(page_published)
 def submit_page_to_pontoon(sender, **kwargs):
     if issubclass(sender, TranslatablePageMixin):
         page = kwargs["instance"]
-        revision = kwargs["revision"]
+        page_revision = kwargs["revision"]
 
         if page.locale_id == Locale.objects.default_id():
-            submit_to_pontoon(page, revision)
+            submit_to_pontoon(page, page_revision)
