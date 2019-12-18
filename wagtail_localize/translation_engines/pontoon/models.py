@@ -32,6 +32,13 @@ class PontoonResource(models.Model):
         "wagtailcore.Page", on_delete=models.CASCADE, primary_key=True, related_name="+"
     )
 
+    object = models.OneToOneField(
+        "wagtail_localize_translation_memory.TranslatableObject",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="+",
+    )
+
     # The path within the locale folder in the git repository to push the PO file to
     # This is initially the pages URL path but is not updated if the page is moved
     path = models.CharField(max_length=255, unique=True)
@@ -40,6 +47,13 @@ class PontoonResource(models.Model):
     # This is denormalised from the page_revision field of the latest submission for this resource
     current_page_revision = models.OneToOneField(
         "wagtailcore.PageRevision",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="+",
+    )
+
+    current_revision = models.OneToOneField(
+        "wagtail_localize_translation_memory.TranslatableRevision",
         on_delete=models.SET_NULL,
         null=True,
         related_name="+",
@@ -251,6 +265,12 @@ class PontoonResourceSubmission(models.Model):
         on_delete=models.CASCADE,
         related_name="pontoon_submission",
     )
+    revision = models.OneToOneField(
+        "wagtail_localize_translation_memory.TranslatableRevision",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="pontoon_submission",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     # created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
 
@@ -290,6 +310,7 @@ class PontoonResourceTranslation(models.Model):
     )
 
     # The revision of the page that was created when the translations were saved
+    # Note: This field is not used anywhere
     page_revision = models.OneToOneField(
         "wagtailcore.PageRevision",
         on_delete=models.CASCADE,
