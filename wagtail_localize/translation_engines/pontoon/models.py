@@ -33,13 +33,10 @@ class PontoonSyncLog(models.Model):
 
 
 class PontoonResource(models.Model):
-    page = models.OneToOneField(
-        "wagtailcore.Page", on_delete=models.CASCADE, primary_key=True, related_name="+"
-    )
-
     object = models.OneToOneField(
         "wagtail_localize_translation_memory.TranslatableObject",
         on_delete=models.CASCADE,
+        primary_key=True,
         related_name="+",
     )
 
