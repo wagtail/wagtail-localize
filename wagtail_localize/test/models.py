@@ -112,5 +112,14 @@ class TestChildObject(TranslatableMixin, Orderable):
     translatable_fields = [TranslatableField("field")]
 
 
+class TestNonParentalChildObject(TranslatableMixin, Orderable):
+    page = models.ForeignKey(
+        TestPage, on_delete=models.CASCADE, related_name="test_nonparentalchildobjects"
+    )
+    field = models.TextField()
+
+    translatable_fields = [TranslatableField("field")]
+
+
 class TestHomePage(TranslatablePageMixin, TranslatablePageRoutingMixin, Page):
     pass
