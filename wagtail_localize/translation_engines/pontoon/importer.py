@@ -6,13 +6,18 @@ from django.utils.text import slugify
 import polib
 
 from wagtail.core.models import Page
-from wagtail_localize.models import Locale, Region, ParentNotTranslatedError
+from wagtail_localize.models import (
+    Locale,
+    Region,
+    ParentNotTranslatedError,
+    TranslatablePageMixin,
+)
 from wagtail_localize.segments import SegmentValue, TemplateValue
 from wagtail_localize.segments.ingest import ingest_segments
 from wagtail_localize.translation_memory.models import (
     Segment,
-    SegmentPageLocation,
-    TemplatePageLocation,
+    SegmentLocation,
+    TemplateLocation,
 )
 
 from .models import (
@@ -39,7 +44,7 @@ class Importer:
             region_id=Region.objects.default_id(), language=language
         )
 
-        page = submission.page_revision.as_page_object()
+        page = submission.revision.page_revision.as_page_object()
 
         try:
             translated_page = page.get_translation(locale)
@@ -50,17 +55,17 @@ class Importer:
             created = True
 
         # Fetch all translated segments
-        segment_page_locations = SegmentPageLocation.objects.filter(
-            page_revision=submission.page_revision
+        segment_locations = SegmentLocation.objects.filter(
+            revision=submission.revision
         ).annotate_translation(language)
 
-        template_page_locations = TemplatePageLocation.objects.filter(
-            page_revision=submission.page_revision
+        template_locations = TemplateLocation.objects.filter(
+            revision=submission.revision
         ).select_related("template")
 
         segments = []
 
-        for page_location in segment_page_locations:
+        for page_location in segment_locations:
             segment = SegmentValue.from_html(
                 page_location.path, page_location.translation
             )
@@ -69,7 +74,7 @@ class Importer:
 
             segments.append(segment)
 
-        for page_location in template_page_locations:
+        for page_location in template_locations:
             template = page_location.template
             segment = TemplateValue(
                 page_location.path,
@@ -90,7 +95,7 @@ class Importer:
         new_revision.publish()
 
         PontoonResourceTranslation.objects.create(
-            submission=submission, language=language, page_revision=new_revision
+            submission=submission, language=language
         )
 
         return new_revision, created
@@ -125,7 +130,7 @@ class Importer:
 
         if translatable_submission:
             self.logger.info(
-                f"Saving translated page for '{resource.page.title}' in {language.get_display_name()}"
+                f"Saving translation for '{resource.path}' in {language.get_display_name()}"
             )
 
             try:
@@ -135,14 +140,20 @@ class Importer:
             except ParentNotTranslatedError:
                 # These pages will be handled when the parent is created in the code below
                 self.logger.info(
-                    f"Cannot save translated page for '{resource.page.title}' in {language.get_display_name()} yet as its parent must be translated first"
+                    f"Cannot save translation for '{resource.path}' in {language.get_display_name()} yet as its parent must be translated first"
                 )
                 return
 
-            if created:
+            if created and translatable_submission.revision.page_revision is not None:
+                source_page = translatable_submission.revision.page_revision.page
+
                 # Check if this page has any children that may be ready to translate
                 child_page_resources = PontoonResource.objects.filter(
-                    page__in=resource.page.get_children()
+                    object__translation_key__in=[
+                        child.translation_key
+                        for child in source_page.get_children().specific()
+                        if isinstance(child, TranslatablePageMixin)
+                    ]
                 )
 
                 for resource in child_page_resources:

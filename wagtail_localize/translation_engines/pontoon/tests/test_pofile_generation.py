@@ -10,7 +10,7 @@ from wagtail_localize.test.models import TestPage
 from wagtail_localize.translation_memory.models import (
     Segment,
     SegmentTranslation,
-    SegmentPageLocation,
+    SegmentLocation,
 )
 
 from ..models import PontoonResource
@@ -33,7 +33,9 @@ class TestGenerateSourcePOFile(TestCase):
             test_charfield="The test translatable field",
             test_synchronizedfield="The test synchronized field",
         )
-        self.resource = PontoonResource.objects.get(page=self.page)
+        self.resource = PontoonResource.objects.get(
+            object__translation_key=self.page.translation_key
+        )
 
     def test_generate_source_pofile(self):
         pofile = generate_source_pofile(self.resource)
@@ -50,7 +52,8 @@ class TestGenerateSourcePOFile(TestCase):
 
         new_revision = self.page.save_revision()
         new_revision.publish()
-        SegmentPageLocation.objects.filter(page_revision=new_revision).update(
+
+        SegmentLocation.objects.filter(revision__page_revision=new_revision).update(
             order=F("order") + 1
         )
 
@@ -70,7 +73,9 @@ class TestGenerateLanguagePOFile(TestCase):
             test_charfield="The test translatable field",
             test_synchronizedfield="The test synchronized field",
         )
-        self.resource = PontoonResource.objects.get(page=self.page)
+        self.resource = PontoonResource.objects.get(
+            object__translation_key=self.page.translation_key
+        )
         self.language = Language.objects.create(code="fr")
 
     def test_generate_language_pofile(self):
@@ -129,7 +134,7 @@ class TestGenerateLanguagePOFile(TestCase):
 
         new_revision = self.page.save_revision()
         new_revision.publish()
-        SegmentPageLocation.objects.filter(page_revision=new_revision).update(
+        SegmentLocation.objects.filter(revision__page_revision=new_revision).update(
             order=F("order") + 1
         )
 

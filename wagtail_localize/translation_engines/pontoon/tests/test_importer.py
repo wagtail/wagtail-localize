@@ -42,11 +42,15 @@ class TestImporter(TestCase):
             test_charfield="The test translatable field",
             test_synchronizedfield="The test synchronized field",
         )
-        self.resource = PontoonResource.objects.get(page=self.page)
+        self.resource = PontoonResource.objects.get(
+            object__translation_key=self.page.translation_key
+        )
 
         self.language = Language.objects.create(code="fr-FR")
 
     def test_importer(self):
+        new_page_succeeded = False
+
         with self.subTest(stage="New page"):
             po_v1 = create_test_po([("The test translatable field", "")]).encode(
                 "utf-8"
@@ -80,6 +84,13 @@ class TestImporter(TestCase):
             log_resource = log.resources.get()
             self.assertEqual(log_resource.resource, self.resource)
             self.assertEqual(log_resource.language, self.language)
+
+            new_page_succeeded = True
+
+        # subTest swallows errors, but we don't want to proceed if there was an error
+        # I know we're not exactly using them as intended
+        if not new_page_succeeded:
+            return
 
         # Perform another import updating the page
         # Much easier to do it this way than trying to construct all the models manually to match the result of the last test
@@ -126,7 +137,11 @@ class TestImporter(TestCase):
             test_synchronizedfield="The test synchronized field",
             parent=self.page,
         )
-        child_resource = PontoonResource.objects.get(page=child_page)
+        child_resource = PontoonResource.objects.get(
+            object__translation_key=child_page.translation_key
+        )
+
+        create_child_page_succeeded = False
 
         with self.subTest(stage="Create child page"):
             # Translate
@@ -163,6 +178,13 @@ class TestImporter(TestCase):
             log_resource = log.resources.get()
             self.assertEqual(log_resource.resource, child_resource)
             self.assertEqual(log_resource.language, self.language)
+
+            create_child_page_succeeded = True
+
+        # subTest swallows errors, but we don't want to proceed if there was an error
+        # I know we're not exactly using them as intended
+        if not create_child_page_succeeded:
+            return
 
         with self.subTest(stage="Create parent page"):
             po_v1 = create_test_po([("The test translatable field", "")]).encode(
@@ -224,7 +246,9 @@ class TestImporterRichText(TestCase):
             slug="test-page",
             test_richtextfield='<p><a href="https://www.example.com">The <b>test</b> translatable field</a>.</p>',
         )
-        self.resource = PontoonResource.objects.get(page=self.page)
+        self.resource = PontoonResource.objects.get(
+            object__translation_key=self.page.translation_key
+        )
 
         self.language = Language.objects.create(code="fr-FR")
 

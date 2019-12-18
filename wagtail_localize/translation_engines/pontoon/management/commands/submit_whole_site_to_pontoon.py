@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 from wagtail.core.models import Page
 from wagtail_localize.models import TranslatablePageMixin, Locale
 
-from ...models import submit_to_pontoon, PontoonResourceSubmission
+from ...models import submit_page_to_pontoon, PontoonResourceSubmission
 
 
 class Command(BaseCommand):
@@ -30,9 +30,9 @@ class Command(BaseCommand):
             print(f"Submitting '{page.title}'")
 
             if PontoonResourceSubmission.objects.filter(
-                page_revision=page_revision
+                revision__page_revision=page_revision
             ).exists():
                 print("Already submitted!")
                 continue
 
-            submit_to_pontoon(page, page_revision)
+            submit_page_to_pontoon(page_revision)
