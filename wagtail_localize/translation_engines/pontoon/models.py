@@ -299,26 +299,16 @@ class PontoonResourceTranslation(models.Model):
 
 
 def submit_page_to_pontoon(page_revision):
-    object, created = TranslatableObject.objects.get_or_create_from_instance(
-        page_revision.page
+    revision, created = TranslatableRevision.get_or_create_from_page_revision(
+        page_revision
     )
 
     resource, created = PontoonResource.objects.get_or_create(
-        object=object,
+        object=revision.object,
         defaults={
             "path": PontoonResource.get_unique_path_from_urlpath(
                 page_revision.page.url_path
             ),
-        },
-    )
-
-    revision, created = TranslatableRevision.objects.get_or_create(
-        object=object,
-        page_revision=page_revision,
-        defaults={
-            "locale_id": page_revision.page.locale_id,
-            "content_json": page_revision.content_json,
-            "created_at": page_revision.created_at,
         },
     )
 
