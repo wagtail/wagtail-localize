@@ -2,8 +2,16 @@ import json
 import uuid
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.db.models import Subquery, OuterRef
+from django.utils import timezone
+from modelcluster.models import (
+    ClusterableModel,
+    get_serializable_data_for_fields,
+    model_from_serializable_data,
+)
+from wagtail.core.models import Page
 
 
 def pk(obj):
@@ -66,13 +74,64 @@ class TranslatableRevision(models.Model):
         related_name="wagtaillocalize_revision",
     )
 
-    def as_instance(self):
-        if self.page_revision is not None:
-            return self.page_revision.as_page_object()
-
-        raise NotImplementedError(
-            "revisions of non-page objects not currently supported"
+    @classmethod
+    def get_or_create_from_page_revision(cls, page_revision):
+        object, created = TranslatableObject.objects.get_or_create_from_instance(
+            page_revision.page
         )
+
+        return TranslatableRevision.objects.get_or_create(
+            object=object,
+            page_revision=page_revision,
+            defaults={
+                "locale_id": page_revision.page.locale_id,
+                "content_json": page_revision.content_json,
+                "created_at": page_revision.created_at,
+            },
+        )
+
+    @classmethod
+    def from_instance(cls, instance):
+        object, created = TranslatableObject.objects.get_or_create_from_instance(
+            instance
+        )
+
+        if isinstance(instance, ClusterableModel):
+            content_json = instance.to_json()
+        else:
+            serializable_data = get_serializable_data_for_fields(instance)
+            content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
+
+        return cls.objects.create(
+            object=object,
+            locale=instance.locale,
+            content_json=content_json,
+            created_at=timezone.now(),
+        )
+
+    def as_instance(self):
+        """
+        Builds an instance of the object with the content at this revision.
+        """
+        instance = self.object.get_instance(self.locale)
+
+        if isinstance(instance, Page):
+            return instance.with_content_json(self.content_json)
+
+        elif isinstance(instance, ClusterableModel):
+            new_instance = instance.__class__.from_json(self.content_json)
+
+        else:
+            new_instance = model_from_serializable_data(
+                instance.__class__, json.loads(self.content_json)
+            )
+
+        new_instance.pk = instance.pk
+        new_instance.locale = instance.locale
+        new_instance.translation_key = instance.translation_key
+        new_instance.is_source_translation = instance.is_source_translation
+
+        return new_instance
 
 
 class SegmentQuerySet(models.QuerySet):
