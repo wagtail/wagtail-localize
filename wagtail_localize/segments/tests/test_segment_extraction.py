@@ -12,7 +12,7 @@ from wagtail_localize.test.models import (
     TestChildObject,
     TestNonParentalChildObject,
 )
-from wagtail_localize.segments import SegmentValue, TemplateValue
+from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
 from wagtail_localize.segments.extract import extract_segments
 
 
@@ -96,7 +96,9 @@ class TestSegmentExtraction(TestCase):
         page = make_test_page(test_snippet=test_snippet)
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [SegmentValue("test_snippet.field", "Test content")])
+        self.assertEqual(
+            segments, [RelatedObjectValue.from_instance("test_snippet", test_snippet)]
+        )
 
     def test_childobjects(self):
         page = make_test_page()

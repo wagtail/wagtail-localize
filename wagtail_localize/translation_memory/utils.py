@@ -10,13 +10,16 @@ from django.db.models import (
     When,
 )
 
-from wagtail_localize.segments import TemplateValue
+from wagtail_localize.segments import TemplateValue, RelatedObjectValue
+from wagtail_localize.segments.extract import extract_segments
 
 from .models import (
     Segment,
     SegmentTranslation,
     SegmentLocation,
     TemplateLocation,
+    RelatedObjectLocation,
+    TranslatableRevision,
 )
 
 
@@ -65,5 +68,7 @@ def insert_segments(revision, language, segments):
     for segment in segments:
         if isinstance(segment, TemplateValue):
             TemplateLocation.from_template_value(revision, segment)
+        elif isinstance(segment, RelatedObjectValue):
+            RelatedObjectLocation.from_related_object_value(revision, segment)
         else:
             SegmentLocation.from_segment_value(revision, language, segment)

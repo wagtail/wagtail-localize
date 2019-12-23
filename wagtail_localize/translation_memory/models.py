@@ -14,7 +14,7 @@ from modelcluster.models import (
 )
 from wagtail.core.models import Page
 
-from wagtail_localize.segments import SegmentValue, TemplateValue
+from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
 from wagtail_localize.segments.ingest import ingest_segments
 
 
@@ -100,7 +100,7 @@ class TranslatableRevision(models.Model):
         )
 
     @classmethod
-    def from_instance(cls, instance):
+    def from_instance(cls, instance, force=False):
         object, created = TranslatableObject.objects.get_or_create_from_instance(
             instance
         )
@@ -111,11 +111,21 @@ class TranslatableRevision(models.Model):
             serializable_data = get_serializable_data_for_fields(instance)
             content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
 
-        return cls.objects.create(
-            object=object,
-            locale=instance.locale,
-            content_json=content_json,
-            created_at=timezone.now(),
+        if not force:
+            # Check if the instance has changed at all since the previous revision
+            previous_revision = object.revisions.order_by("created_at").last()
+            if previous_revision:
+                if content_json == previous_revision.content_json:
+                    return previous_revision, False
+
+        return (
+            cls.objects.create(
+                object=object,
+                locale=instance.locale,
+                content_json=content_json,
+                created_at=timezone.now(),
+            ),
+            True,
         )
 
     def as_instance(self):
@@ -171,6 +181,10 @@ class TranslatableRevision(models.Model):
             revision=self
         ).select_related("template")
 
+        related_object_locations = RelatedObjectLocation.objects.filter(
+            revision=self
+        ).select_related("object")
+
         segments = []
 
         for location in segment_locations:
@@ -187,6 +201,15 @@ class TranslatableRevision(models.Model):
                 template.template_format,
                 template.template,
                 template.segment_count,
+                order=location.order,
+            )
+            segments.append(segment)
+
+        for location in related_object_locations:
+            segment = RelatedObjectValue(
+                location.path,
+                location.object.content_type,
+                location.object.translation_key,
                 order=location.order,
             )
             segments.append(segment)
@@ -387,3 +410,23 @@ class TemplateLocation(BaseLocation):
         )
 
         return template_loc
+
+
+class RelatedObjectLocation(BaseLocation):
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="references"
+    )
+
+    @classmethod
+    def from_related_object_value(cls, revision, related_object_value):
+        related_object_loc, created = cls.objects.get_or_create(
+            revision_id=pk(revision),
+            path=related_object_value.path,
+            order=related_object_value.order,
+            object=TranslatableObject.objects.get_or_create(
+                content_type=related_object_value.content_type,
+                translation_key=related_object_value.translation_key,
+            )[0],
+        )
+
+        return related_object_loc
