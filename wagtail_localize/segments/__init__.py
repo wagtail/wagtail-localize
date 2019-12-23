@@ -1,5 +1,6 @@
 from collections import Counter
 
+from django.contrib.contenttypes.models import ContentType
 from django.forms.utils import flatatt
 from django.utils.html import escape
 
@@ -249,4 +250,45 @@ class TemplateValue(BaseValue):
     def __repr__(self):
         return "<TemplateValue {} format:{} {} segments>".format(
             self.path, self.format, self.segment_count
+        )
+
+
+class RelatedObjectValue(BaseValue):
+    def __init__(self, path, content_type, translation_key, **kwargs):
+        self.content_type = content_type
+        self.translation_key = translation_key
+
+        super().__init__(path, **kwargs)
+
+    @classmethod
+    def from_instance(cls, path, instance):
+        model = instance.get_translation_model()
+        return cls(
+            path, ContentType.objects.get_for_model(model), instance.translation_key
+        )
+
+    def get_instance(self, locale):
+        return self.content_type.get_object_for_this_type(
+            translation_key=self.translation_key, locale=locale
+        )
+
+    def clone(self):
+        return RelatedObjectValue(
+            self.path, self.content_type, self.translation_key, order=self.order
+        )
+
+    def is_empty(self):
+        return self.content_type is None and self.translation_key is None
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, RelatedObjectValue)
+            and self.path == other.path
+            and self.content_type == other.content_type
+            and self.translation_key == other.translation_key
+        )
+
+    def __repr__(self):
+        return "<RelatedObjectValue {} {} {}>".format(
+            self.path, self.content_type, self.translation_key
         )

@@ -67,6 +67,13 @@ class Importer:
                 region_id=Region.objects.default_id(), language=language
             )
 
+            for dependency in translatable_submission.get_dependencies():
+                if not dependency.object.has_translation(locale):
+                    self.logger.info(
+                        f"Can't translate '{resource.path}' into {language.get_display_name()} because its dependency '{dependency.path}' hasn't been translated yet"
+                    )
+                    return
+
             self.logger.info(
                 f"Saving translation for '{resource.path}' in {language.get_display_name()}"
             )
@@ -89,20 +96,45 @@ class Importer:
                 )
                 return
 
-            if created and translatable_submission.revision.page_revision is not None:
-                source_page = translatable_submission.revision.page_revision.page
+            if created:
+                # The translation was created.
 
-                # Check if this page has any children that may be ready to translate
-                child_page_resources = PontoonResource.objects.filter(
-                    object__translation_key__in=[
-                        child.translation_key
-                        for child in source_page.get_children().specific()
-                        if isinstance(child, TranslatablePageMixin)
-                    ]
-                )
+                # The logic in this part checks to find any other submissions that were waiting
+                # for this object to be translated first and triggers them to be translated as
+                # well.
 
-                for resource in child_page_resources:
-                    self.try_update_resource_translation(resource, language)
+                # Look for any submissions that were waiting for this object to be translated.
+                # For example, any linked snippets, images, etc must be translated before
+                # the page. So if a page (the dependee) is ready to be translated and its last
+                # linked item has just been translated, we can translate that page now.
+                for dependee in resource.get_dependees():
+                    # Check that the next translatable submission of the dependee resource is
+                    # the dependee submission that's linked to this resource.
+                    # This prevents us from translating an old submission that's been replaced.
+                    if (
+                        dependee.resource.find_translatable_submission(language)
+                        != dependee
+                    ):
+                        continue
+
+                    # FIXME: Could we pass in the translatable submission instead?
+                    self.try_update_resource_translation(dependee.resource, language)
+
+                # If a page was created, check to see if it has any children that are
+                # now ready to translate.
+                if translatable_submission.revision.page_revision is not None:
+                    source_page = translatable_submission.revision.page_revision.page
+
+                    child_page_resources = PontoonResource.objects.filter(
+                        object__translation_key__in=[
+                            child.translation_key
+                            for child in source_page.get_children().specific()
+                            if isinstance(child, TranslatablePageMixin)
+                        ]
+                    )
+
+                    for resource in child_page_resources:
+                        self.try_update_resource_translation(resource, language)
 
     def start_import(self, commit_id):
         self.log = PontoonSyncLog.objects.create(

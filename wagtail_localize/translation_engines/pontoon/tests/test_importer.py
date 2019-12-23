@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from wagtail.core.models import Page
 from wagtail_localize.models import Language
-from wagtail_localize.test.models import TestPage
+from wagtail_localize.test.models import TestPage, TestSnippet
 
 from ..importer import Importer
 from ..models import PontoonResource, PontoonSyncLog
@@ -236,6 +236,85 @@ class TestImporter(TestCase):
             self.assertEqual(log.commit_id, "0" * 39 + "1")
             log_resource = log.resources.get()
             self.assertEqual(log_resource.resource, self.resource)
+            self.assertEqual(log_resource.language, self.language)
+
+    def test_importer_doesnt_import_if_dependency_not_translated(self):
+        self.page.test_snippet = TestSnippet.objects.create(field="Test content")
+        self.page.save_revision().publish()
+
+        snippet_resource = PontoonResource.objects.get(
+            object__translation_key=self.page.test_snippet.translation_key
+        )
+
+        with self.subTest(stage="New page"):
+            po_v1 = create_test_po([("The test translatable field", "")]).encode(
+                "utf-8"
+            )
+
+            po_v2 = create_test_po(
+                [("The test translatable field", "Le champ traduisible de test")]
+            ).encode("utf-8")
+
+            importer = Importer(Language.objects.default(), logging.getLogger("dummy"))
+            importer.start_import("0" * 40)
+            importer.import_file(
+                self.resource.get_po_filename(language=self.language), po_v1, po_v2
+            )
+
+            # Check translated page was not created
+            self.assertFalse(
+                self.page.get_translations()
+                .filter(locale__language=self.language)
+                .exists()
+            )
+
+            # Check log
+            log = PontoonSyncLog.objects.get()
+            self.assertEqual(log.action, PontoonSyncLog.ACTION_PULL)
+            self.assertEqual(log.commit_id, "0" * 40)
+            log_resource = log.resources.get()
+            self.assertEqual(log_resource.resource, self.resource)
+            self.assertEqual(log_resource.language, self.language)
+
+            new_page_succeeded = True
+
+        # subTest swallows errors, but we don't want to proceed if there was an error
+        # I know we're not exactly using them as intended
+        if not new_page_succeeded:
+            return
+
+        with self.subTest(stage="Create snippet"):
+            po_v1 = create_test_po([("Test content", "")]).encode("utf-8")
+
+            po_v2 = create_test_po([("Test content", "Tester le contenu")]).encode(
+                "utf-8"
+            )
+
+            importer = Importer(Language.objects.default(), logging.getLogger("dummy"))
+            importer.start_import("0" * 39 + "1")
+            importer.import_file(
+                snippet_resource.get_po_filename(language=self.language), po_v1, po_v2
+            )
+
+            # Check translated snippet was created
+            translated_snippet = TestSnippet.objects.get(locale__language=self.language)
+            self.assertEqual(
+                translated_snippet.translation_key,
+                self.page.test_snippet.translation_key,
+            )
+            self.assertFalse(translated_snippet.is_source_translation)
+            self.assertEqual(translated_snippet.field, "Tester le contenu")
+
+            # Check the translated page was created and linked to the translated snippet
+            translated_page = TestPage.objects.get(locale__language=self.language)
+            self.assertEqual(translated_page.test_snippet, translated_snippet)
+
+            # Check log
+            log = PontoonSyncLog.objects.exclude(id=log.id).get()
+            self.assertEqual(log.action, PontoonSyncLog.ACTION_PULL)
+            self.assertEqual(log.commit_id, "0" * 39 + "1")
+            log_resource = log.resources.get()
+            self.assertEqual(log_resource.resource, snippet_resource)
             self.assertEqual(log_resource.language, self.language)
 
 

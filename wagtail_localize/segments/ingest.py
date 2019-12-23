@@ -32,22 +32,9 @@ def organise_template_segments(segments):
 
 
 def handle_related_object(related_object, src_locale, tgt_locale, segments):
-    if related_object is None or not isinstance(related_object, TranslatableMixin):
-        return related_object
-
-    # Note: when called from streamfield, we may be given the translated object
-    related_original = related_object.get_translation(src_locale)
-    related_translated = related_object.get_translation_or_none(tgt_locale)
-
-    if related_translated is None:
-        # Create translated version by copying the original version
-        related_translated = related_original.copy_for_translation(tgt_locale)
-
-    ingest_segments(
-        related_original, related_translated, src_locale, tgt_locale, segments
-    )
-    related_translated.save()
-    return related_translated
+    # FIXME: Check that segments is a single item list
+    related_object_value = segments[0]
+    return related_object_value.get_instance(tgt_locale)
 
 
 class StreamFieldSegmentsWriter:

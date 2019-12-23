@@ -5,15 +5,18 @@ from django.db import models, transaction
 from django.db.models import Exists, OuterRef
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.text import slugify
 
 from wagtail.core.signals import page_published
 from wagtail_localize.models import TranslatablePageMixin, Locale, Language
+from wagtail_localize.segments import RelatedObjectValue
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.translation_memory.models import (
     Segment,
     SegmentLocation,
     TranslatableObject,
     TranslatableRevision,
+    RelatedObjectLocation,
 )
 from wagtail_localize.translation_memory.utils import (
     insert_segments,
@@ -198,6 +201,20 @@ class PontoonResource(models.Model):
     def latest_pushed_submission(self):
         return self.submissions.filter(pushed_at__isnull=False).latest("created_at")
 
+    def get_dependees(self):
+        """
+        Gets a QuerySet of PontoonResourceSubmissions that depend on this Resource.
+
+        This is where this resource reprensents a reusable snippet or images that
+        other resources link to and can't be translated until this resource is
+        translated.
+
+        This is the opposite of PontoonResourceSubmission.get_dependencies
+        """
+        return PontoonResourceSubmission.objects.filter(
+            revision_id__in=self.object.references.values_list("revision_id", flat=True)
+        )
+
     def __repr__(self):
         return f"<PontoonResource '{self.get_po_filename()}'>"
 
@@ -280,6 +297,21 @@ class PontoonResourceSubmission(models.Model):
         """
         return get_translation_progress(self.revision_id, language)
 
+    def get_dependencies(self):
+        """
+        Gets a QuerySet of resources that this submission depends on.
+
+        These are any linked objects (eg, snippets, images) that must
+        be translated before this resource can be translated.
+
+        This is the opposite of PontoonResource.get_dependees
+        """
+        return PontoonResource.objects.filter(
+            object_id__in=RelatedObjectLocation.objects.filter(
+                revision_id=self.revision_id
+            ).values_list("object_id", flat=True)
+        )
+
 
 class PontoonResourceTranslation(models.Model):
     """
@@ -298,28 +330,73 @@ class PontoonResourceTranslation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-def submit_page_to_pontoon(page_revision):
-    revision, created = TranslatableRevision.get_or_create_from_page_revision(
-        page_revision
-    )
+@transaction.atomic
+def submit_to_pontoon(instance):
+    revision, created = TranslatableRevision.from_instance(instance)
+
+    if not created:
+        # Check if there is already a submission for this revision
+        if PontoonResourceSubmission.objects.filter(revision=revision).exists():
+            return
+
+    # Extract segments from revision and save them to translation memory
+    segments = extract_segments(instance)
+    insert_segments(revision, revision.locale.language_id, segments)
+
+    # Recurse into any related objects
+    for segment in segments:
+        if not isinstance(segment, RelatedObjectValue):
+            continue
+
+        submit_to_pontoon(segment.get_instance(revision.locale))
+
+    base_model = instance.get_translation_model()
 
     resource, created = PontoonResource.objects.get_or_create(
         object=revision.object,
         defaults={
             "path": PontoonResource.get_unique_path_from_urlpath(
-                page_revision.page.url_path
+                f"{slugify(base_model._meta.verbose_name_plural)}/{instance.pk}"
             ),
         },
     )
 
-    submit_to_pontoon(resource, revision)
+    resource.current_revision = revision
+    resource.save(update_fields=["current_revision"])
+
+    # Create submission
+    resource.submissions.create(revision=revision)
 
 
 @transaction.atomic
-def submit_to_pontoon(resource, revision):
-    # Extract segments from revision and save them to translation memory
-    insert_segments(
-        revision, revision.locale.language_id, extract_segments(revision.as_instance())
+def submit_page_to_pontoon(page_revision):
+    revision, created = TranslatableRevision.get_or_create_from_page_revision(
+        page_revision
+    )
+
+    if not created:
+        # Check if there is already a submission for this revision
+        if PontoonResourceSubmission.objects.filter(revision=revision).exists():
+            return
+
+    # Extract segments from revision and save them into translation memory
+    segments = extract_segments(page_revision.as_page_object())
+    insert_segments(revision, revision.locale.language_id, segments)
+
+    # Recurse into any related objects
+    for segment in segments:
+        if not isinstance(segment, RelatedObjectValue):
+            continue
+
+        submit_to_pontoon(segment.get_instance(revision.locale))
+
+    resource, created = PontoonResource.objects.get_or_create(
+        object=revision.object,
+        defaults={
+            "path": PontoonResource.get_unique_path_from_urlpath(
+                "pages" + page_revision.page.url_path
+            ),
+        },
     )
 
     resource.current_revision = revision

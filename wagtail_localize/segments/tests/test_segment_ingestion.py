@@ -8,7 +8,7 @@ from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Locale
 from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
-from wagtail_localize.segments import SegmentValue, TemplateValue
+from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.segments.ingest import ingest_segments
 
@@ -141,6 +141,23 @@ class TestSegmentExtraction(TestCase):
 
     def test_snippet(self):
         test_snippet = TestSnippet.objects.create(field="Test content")
+        translated_snippet = test_snippet.copy_for_translation(self.locale)
+        translated_snippet.save()
+
+        # Ingest segments into the snippet
+        ingest_segments(
+            test_snippet,
+            translated_snippet,
+            self.src_locale,
+            self.locale,
+            [SegmentValue("field", "Tester le contenu")],
+        )
+
+        translated_snippet.save()
+
+        self.assertEqual(translated_snippet.field, "Tester le contenu")
+
+        # Now ingest a RelatedObjectValue into the page
         page = make_test_page(test_snippet=test_snippet)
         translated_page = page.copy_for_translation(self.locale)
 
@@ -149,10 +166,10 @@ class TestSegmentExtraction(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue("test_snippet.field", "Tester le contenu")],
+            [RelatedObjectValue.from_instance("test_snippet", test_snippet)],
         )
 
-        # Check the snippet was duplicated
+        # Check the translated snippet was linked to the translated page
         self.assertNotEqual(page.test_snippet_id, translated_page.test_snippet_id)
         self.assertEqual(page.test_snippet.locale, self.src_locale)
         self.assertEqual(translated_page.test_snippet.locale, self.locale)

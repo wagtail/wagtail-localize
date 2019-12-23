@@ -10,6 +10,8 @@ class Migration(migrations.Migration):
         ("wagtail_localize_pontoon", "0012_populate_new_resource_model"),
     ]
 
+    atomic = False
+
     operations = [
         migrations.RemoveField(
             model_name="pontoonresourcesubmission", name="old_resource",
