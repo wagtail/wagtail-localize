@@ -6,12 +6,16 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.db.models import Subquery, OuterRef
 from django.utils import timezone
+from django.utils.text import slugify
 from modelcluster.models import (
     ClusterableModel,
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
 from wagtail.core.models import Page
+
+from wagtail_localize.segments import SegmentValue, TemplateValue
+from wagtail_localize.segments.ingest import ingest_segments
 
 
 def pk(obj):
@@ -44,6 +48,11 @@ class TranslatableObject(models.Model):
     )
 
     objects = TranslatableObjectManager()
+
+    def has_translation(self, locale):
+        return self.content_type.get_all_objects_for_this_type(
+            translation_key=self.translation_key, locale=locale
+        ).exists()
 
     def get_instance(self, locale):
         return self.content_type.get_object_for_this_type(
@@ -132,6 +141,73 @@ class TranslatableRevision(models.Model):
         new_instance.is_source_translation = instance.is_source_translation
 
         return new_instance
+
+    def create_or_update_translation(self, locale, translation=None):
+        """
+        Creates/updates a translation of the object into the specified locale
+        based on the content of this source and the translated strings
+        currently in translation memory.
+
+        If the translation already exists, you can pass the object in with the
+        `translation` keyword argument. Otherwise, this object will be fetched
+        or created by this method.
+        """
+        original = self.as_instance()
+        created = False
+
+        if translation is None:
+            try:
+                translation = self.object.get_instance(locale)
+            except models.ObjectDoesNotExist:
+                translation = original.copy_for_translation(locale)
+                created = True
+
+        # Fetch all translated segments
+        segment_locations = SegmentLocation.objects.filter(
+            revision=self
+        ).annotate_translation(locale.language)
+
+        template_locations = TemplateLocation.objects.filter(
+            revision=self
+        ).select_related("template")
+
+        segments = []
+
+        for location in segment_locations:
+            segment = SegmentValue.from_html(location.path, location.translation).with_order(location.order)
+            if location.html_attrs:
+                segment.replace_html_attrs(json.loads(location.html_attrs))
+
+            segments.append(segment)
+
+        for location in template_locations:
+            template = location.template
+            segment = TemplateValue(
+                location.path,
+                template.template_format,
+                template.template,
+                template.segment_count,
+                order=location.order,
+            )
+            segments.append(segment)
+
+        # Ingest all translated segments
+        ingest_segments(original, translation, self.locale, locale, segments)
+
+        # TODO: Copy synchronised fields
+
+        if isinstance(translation, Page):
+            # Make sure the slug is valid
+            translation.slug = slugify(translation.slug)
+            translation.save()
+
+            # Create a new revision
+            new_revision = translation.save_revision()
+            new_revision.publish()
+        else:
+            translation.save()
+
+        return translation, created
 
 
 class SegmentQuerySet(models.QuerySet):

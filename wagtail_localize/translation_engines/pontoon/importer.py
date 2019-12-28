@@ -34,72 +34,6 @@ class Importer:
         self.logger = logger
         self.log = None
 
-    def create_or_update_translated_page(self, submission, language):
-        """
-        Creates/updates the translated page to reflect the translations in translation memory.
-
-        Note, all strings in the submission must be translated into the target language!
-        """
-        locale = Locale.objects.get(
-            region_id=Region.objects.default_id(), language=language
-        )
-
-        page = submission.revision.page_revision.as_page_object()
-
-        try:
-            translated_page = page.get_translation(locale)
-            created = False
-        except page.specific_class.DoesNotExist:
-            # May raise ParentNotTranslatedError
-            translated_page = page.copy_for_translation(locale)
-            created = True
-
-        # Fetch all translated segments
-        segment_locations = SegmentLocation.objects.filter(
-            revision=submission.revision
-        ).annotate_translation(language)
-
-        template_locations = TemplateLocation.objects.filter(
-            revision=submission.revision
-        ).select_related("template")
-
-        segments = []
-
-        for page_location in segment_locations:
-            segment = SegmentValue.from_html(
-                page_location.path, page_location.translation
-            )
-            if page_location.html_attrs:
-                segment.replace_html_attrs(json.loads(page_location.html_attrs))
-
-            segments.append(segment)
-
-        for page_location in template_locations:
-            template = page_location.template
-            segment = TemplateValue(
-                page_location.path,
-                template.template_format,
-                template.template,
-                template.segment_count,
-            )
-            segments.append(segment)
-
-        # Ingest all translated segments into page
-        ingest_segments(page, translated_page, page.locale.language, language, segments)
-
-        # Make sure the slug is valid
-        translated_page.slug = slugify(translated_page.slug)
-        translated_page.save()
-
-        new_revision = translated_page.save_revision()
-        new_revision.publish()
-
-        PontoonResourceTranslation.objects.create(
-            submission=submission, language=language
-        )
-
-        return new_revision, created
-
     def import_resource(self, resource, language, old_po, new_po):
         for changed_entry in set(new_po) - set(old_po):
             try:
@@ -129,13 +63,24 @@ class Importer:
         translatable_submission = resource.find_translatable_submission(language)
 
         if translatable_submission:
+            locale = Locale.objects.get(
+                region_id=Region.objects.default_id(), language=language
+            )
+
             self.logger.info(
                 f"Saving translation for '{resource.path}' in {language.get_display_name()}"
             )
 
             try:
-                revision, created = self.create_or_update_translated_page(
-                    translatable_submission, language
+                (
+                    translation,
+                    created,
+                ) = translatable_submission.revision.create_or_update_translation(
+                    locale
+                )
+
+                PontoonResourceTranslation.objects.create(
+                    submission=translatable_submission, language=language
                 )
             except ParentNotTranslatedError:
                 # These pages will be handled when the parent is created in the code below
