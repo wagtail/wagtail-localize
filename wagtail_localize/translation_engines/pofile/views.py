@@ -9,11 +9,39 @@ from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.text import slugify
+from wagtail.core.models import Page
 
 from wagtail_localize.admin.workflow.models import TranslationRequest
-from wagtail_localize.segments import SegmentValue, TemplateValue
+from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.segments.ingest import ingest_segments
+
+
+class MessageExtractor:
+    def __init__(self, locale):
+        self.locale = locale
+        self.seen_objects = set()
+        self.messages = defaultdict(list)
+
+    def get_path(self, instance):
+        if isinstance(instance, Page):
+            return "pages" + instance.url_path
+        else:
+            base_model = instance.get_translation_model()
+            return f"{slugify(base_model._meta.verbose_name_plural)}/{instance.pk}"
+
+    def extract_messages(self, instance):
+        if instance.translation_key in self.seen_objects:
+            return
+        self.seen_objects.add(instance.translation_key)
+
+        for segment in extract_segments(instance):
+            if isinstance(segment, SegmentValue):
+                self.messages[segment.text].append(
+                    (self.get_path(instance), segment.path)
+                )
+            elif isinstance(segment, RelatedObjectValue):
+                self.extract_messages(segment.get_instance(self.locale))
 
 
 @require_GET
@@ -23,19 +51,10 @@ def download(request, translation_request_id):
     )
 
     # Extract messages from pages
-    messages = defaultdict(list)
+    message_extractor = MessageExtractor(translation_request.source_locale)
     for page in translation_request.pages.all():
         instance = page.source_revision.as_page_object()
-
-        segments = extract_segments(instance)
-
-        # Filter out templates
-        text_segments = [
-            segment for segment in segments if isinstance(segment, SegmentValue)
-        ]
-
-        for segment in text_segments:
-            messages[segment.text].append((instance.url_path, segment.path))
+        message_extractor.extract_messages(instance)
 
     # Build a PO file
     po = polib.POFile()
@@ -45,7 +64,7 @@ def download(request, translation_request_id):
         "Content-Type": "text/plain; charset=utf-8",
     }
 
-    for text, occurances in messages.items():
+    for text, occurances in message_extractor.messages.items():
         po.append(
             polib.POEntry(
                 msgid=text,
@@ -70,6 +89,70 @@ class MissingSegmentsException(Exception):
         super().__init__()
 
 
+class MessageIngestor:
+    def __init__(self, source_locale, target_locale, translations):
+        self.source_locale = source_locale
+        self.target_locale = target_locale
+        self.translations = translations
+        self.seen_objects = set()
+
+    def ingest_messages(self, instance):
+        if instance.translation_key in self.seen_objects:
+            return
+        self.seen_objects.add(instance.translation_key)
+
+        segments = extract_segments(instance)
+
+        # Ingest segments for dependencies first
+        for segment in segments:
+            if isinstance(segment, RelatedObjectValue):
+                self.ingest_messages(segment.get_instance(self.source_locale))
+
+        text_segments = [
+            segment for segment in segments if isinstance(segment, SegmentValue)
+        ]
+
+        # Initialise translated segments by copying templates and related objects
+        translated_segments = [
+            segment
+            for segment in segments
+            if isinstance(segment, (TemplateValue, RelatedObjectValue))
+        ]
+
+        missing_segments = 0
+        for segment in text_segments:
+            if segment.text in self.translations:
+                translated_segments.append(
+                    SegmentValue(segment.path, self.translations[segment.text])
+                )
+            else:
+                missing_segments += 1
+
+        if missing_segments:
+            raise MissingSegmentsException(instance, missing_segments)
+
+        try:
+            translation = instance.get_translation(self.target_locale)
+        except instance.__class__.DoesNotExist:
+            translation = instance.copy_for_translation(self.target_locale)
+
+        ingest_segments(
+            instance,
+            translation,
+            self.source_locale,
+            self.target_locale,
+            translated_segments,
+        )
+
+        if isinstance(translation, Page):
+            translation.slug = slugify(translation.slug)
+            revision = translation.save_revision()
+        else:
+            translation.save()
+
+        return translation
+
+
 @require_POST
 def upload(request, translation_request_id):
     translation_request = get_object_or_404(
@@ -85,56 +168,19 @@ def upload(request, translation_request_id):
 
     try:
         with transaction.atomic():
+            message_ingestor = MessageIngestor(
+                translation_request.source_locale,
+                translation_request.target_locale,
+                translations,
+            )
+
             for page in translation_request.pages.filter(is_completed=False):
                 instance = page.source_revision.as_page_object()
-
-                segments = extract_segments(instance)
-
-                text_segments = [
-                    segment for segment in segments if isinstance(segment, SegmentValue)
-                ]
-                template_segments = [
-                    segment
-                    for segment in segments
-                    if isinstance(segment, TemplateValue)
-                ]
-
-                translated_segments = template_segments.copy()
-
-                missing_segments = 0
-                for segment in text_segments:
-                    if segment.text in translations:
-                        translated_segments.append(
-                            SegmentValue(segment.path, translations[segment.text])
-                        )
-                    else:
-                        missing_segments += 1
-
-                if missing_segments:
-                    raise MissingSegmentsException(instance, missing_segments)
-
-                try:
-                    translation = instance.get_translation(
-                        translation_request.target_locale
-                    )
-                except instance.__class__.DoesNotExist:
-                    translation = instance.copy_for_translation(
-                        translation_request.target_locale
-                    )
-
-                ingest_segments(
-                    instance,
-                    translation,
-                    translation_request.source_locale,
-                    translation_request.target_locale,
-                    translated_segments,
-                )
-                translation.slug = slugify(translation.slug)
-                revision = translation.save_revision()
+                translation = message_ingestor.ingest_messages(instance)
 
                 # Update translation request
                 page.is_completed = True
-                page.completed_revision = revision
+                page.completed_revision = translation.get_latest_revision()
                 page.save(update_fields=["is_completed", "completed_revision"])
 
     except MissingSegmentsException as e:

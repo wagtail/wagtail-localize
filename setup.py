@@ -42,6 +42,9 @@ setup(
         'testing': [
             'dj-database-url==0.5.0',
         ],
+        'pofile': [
+            'polib>=1.1,<2.0',
+        ],
     },
     zip_safe=False,
 )
