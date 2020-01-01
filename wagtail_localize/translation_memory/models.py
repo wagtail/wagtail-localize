@@ -188,7 +188,9 @@ class TranslatableRevision(models.Model):
         segments = []
 
         for location in segment_locations:
-            segment = SegmentValue.from_html(location.path, location.translation).with_order(location.order)
+            segment = SegmentValue.from_html(
+                location.path, location.translation
+            ).with_order(location.order)
             if location.html_attrs:
                 segment.replace_html_attrs(json.loads(location.html_attrs))
 
