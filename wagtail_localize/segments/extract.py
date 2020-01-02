@@ -1,5 +1,6 @@
 from django.db import models
 
+from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
@@ -136,8 +137,10 @@ def extract_segments(instance):
                     for segment in extract_segments(related_instance)
                 )
 
-        elif isinstance(field, (models.ManyToOneRel)) and issubclass(
-            field.related_model, TranslatableMixin
+        elif (
+            isinstance(field, (models.ManyToOneRel))
+            and isinstance(field.remote_field, ParentalKey)
+            and issubclass(field.related_model, TranslatableMixin)
         ):
             manager = getattr(instance, field.name)
 
