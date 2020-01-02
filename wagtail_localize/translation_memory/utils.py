@@ -33,18 +33,16 @@ def get_translation_progress(revision_id, language):
      - The number of segments that have been translated into the language
     """
     # Get QuerySet of Segments that need to be translated
-    required_segments = Segment.objects.filter(
-        id__in=SegmentLocation.objects.filter(revision_id=revision_id).values_list(
-            "segment_id"
-        )
-    )
+    required_segments = SegmentLocation.objects.filter(revision_id=revision_id)
 
     # Annotate each Segment with a flag that indicates whether the segment is translated
     # into the specified language
     required_segments = required_segments.annotate(
         is_translated=Exists(
             SegmentTranslation.objects.filter(
-                translation_of_id=OuterRef("pk"), language=language
+                translation_of_id=OuterRef("segment_id"),
+                context_id=OuterRef("context_id"),
+                language=language,
             )
         )
     )

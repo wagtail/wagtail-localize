@@ -206,17 +206,23 @@ class TranslatableRevision(models.Model):
                 )
 
         # Fetch all translated segments
-        segment_locations = SegmentLocation.objects.filter(
-            revision=self
-        ).annotate_translation(locale.language)
+        segment_locations = (
+            SegmentLocation.objects.filter(revision=self)
+            .annotate_translation(locale.language)
+            .select_related("context")
+        )
 
-        template_locations = TemplateLocation.objects.filter(
-            revision=self
-        ).select_related("template")
+        template_locations = (
+            TemplateLocation.objects.filter(revision=self)
+            .select_related("template")
+            .select_related("context")
+        )
 
-        related_object_locations = RelatedObjectLocation.objects.filter(
-            revision=self
-        ).select_related("object")
+        related_object_locations = (
+            RelatedObjectLocation.objects.filter(revision=self)
+            .select_related("object")
+            .select_related("context")
+        )
 
         segments = []
 
@@ -225,7 +231,7 @@ class TranslatableRevision(models.Model):
                 raise MissingTranslationError(location, locale)
 
             segment = SegmentValue.from_html(
-                location.path, location.translation
+                location.context.path, location.translation
             ).with_order(location.order)
             if location.html_attrs:
                 segment.replace_html_attrs(json.loads(location.html_attrs))
@@ -235,7 +241,7 @@ class TranslatableRevision(models.Model):
         for location in template_locations:
             template = location.template
             segment = TemplateValue(
-                location.path,
+                location.context.path,
                 template.template_format,
                 template.template,
                 template.segment_count,
@@ -248,7 +254,7 @@ class TranslatableRevision(models.Model):
                 raise MissingRelatedObjectError(location, locale)
 
             segment = RelatedObjectValue(
-                location.path,
+                location.context.path,
                 location.object.content_type,
                 location.object.translation_key,
                 order=location.order,
@@ -304,30 +310,12 @@ class TranslationLog(models.Model):
         return revision.object.get_instance(self.locale)
 
 
-class SegmentQuerySet(models.QuerySet):
-    def annotate_translation(self, language):
-        """
-        Adds a 'translation' field to the segments containing the
-        text content of the segment translated into the specified
-        language.
-        """
-        return self.annotate(
-            translation=Subquery(
-                SegmentTranslation.objects.filter(
-                    translation_of_id=OuterRef("pk"), language_id=pk(language)
-                ).values("text")
-            )
-        )
-
-
 class Segment(models.Model):
     UUID_NAMESPACE = uuid.UUID("59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7")
 
     language = models.ForeignKey("wagtail_localize.Language", on_delete=models.CASCADE)
     text_id = models.UUIDField()
     text = models.TextField()
-
-    objects = SegmentQuerySet.as_manager()
 
     @classmethod
     def get_text_id(cls, text):
@@ -353,23 +341,69 @@ class Segment(models.Model):
         unique_together = [("language", "text_id")]
 
 
+class SegmentTranslationContext(models.Model):
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="+"
+    )
+    path_id = models.UUIDField()
+    path = models.TextField()
+
+    class Meta:
+        unique_together = [
+            ("object", "path_id"),
+        ]
+
+    @classmethod
+    def get_path_id(cls, path):
+        return uuid.uuid5(uuid.UUID("fcab004a-2b50-11ea-978f-2e728ce88125"), path)
+
+    def save(self, *args, **kwargs):
+        if self.path and self.path_id is None:
+            self.path_id = self.get_path_id(self.path)
+
+        return super().save(*args, **kwargs)
+
+    def as_string(self):
+        """
+        Creates a string that can be used in the "msgctxt" field of PO files.
+        """
+        return str(self.object_id) + ":" + self.path
+
+    @classmethod
+    def get_from_string(cls, msgctxt):
+        """
+        Looks for the SegmentTranslationContext that the given string represents.
+        """
+        object_id, path = msgctxt.split(":")
+        path_id = cls.get_path_id(path)
+        return cls.objects.get(object_id=object_id, path_id=path_id)
+
+
 class SegmentTranslation(models.Model):
     translation_of = models.ForeignKey(
         Segment, on_delete=models.CASCADE, related_name="translations"
     )
     language = models.ForeignKey("wagtail_localize.Language", on_delete=models.CASCADE)
+    context = models.ForeignKey(
+        SegmentTranslationContext,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="translations",
+    )
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [("language", "translation_of")]
+        unique_together = [("language", "translation_of", "context")]
 
     @classmethod
-    def from_text(cls, translation_of, language, text):
+    def from_text(cls, translation_of, language, context, text):
         segment, created = cls.objects.get_or_create(
             translation_of=translation_of,
             language_id=pk(language),
+            context_id=pk(context),
             defaults={"text": text},
         )
 
@@ -402,7 +436,7 @@ class Template(models.Model):
 
 class BaseLocation(models.Model):
     revision = models.ForeignKey(TranslatableRevision, on_delete=models.CASCADE)
-    path = models.TextField()
+    context = models.ForeignKey(SegmentTranslationContext, on_delete=models.PROTECT,)
     order = models.PositiveIntegerField()
 
     class Meta:
@@ -419,7 +453,9 @@ class SegmentLocationQuerySet(models.QuerySet):
         return self.annotate(
             translation=Subquery(
                 SegmentTranslation.objects.filter(
-                    translation_of_id=OuterRef("segment_id"), language_id=pk(language)
+                    translation_of_id=OuterRef("segment_id"),
+                    language_id=pk(language),
+                    context_id=OuterRef("context_id"),
                 ).values("text")
             )
         )
@@ -452,10 +488,13 @@ class SegmentLocation(BaseLocation):
     @classmethod
     def from_segment_value(cls, revision, language, segment_value):
         segment = Segment.from_text(language, segment_value.html_with_ids)
+        context, context_created = SegmentTranslationContext.objects.get_or_create(
+            object_id=revision.object_id, path=segment_value.path,
+        )
 
         segment_loc, created = cls.objects.get_or_create(
-            revision_id=pk(revision),
-            path=segment_value.path,
+            revision=revision,
+            context=context,
             order=segment_value.order,
             segment=segment,
             html_attrs=json.dumps(segment_value.get_html_attrs()),
@@ -472,10 +511,13 @@ class TemplateLocation(BaseLocation):
     @classmethod
     def from_template_value(cls, revision, template_value):
         template = Template.from_template_value(template_value)
+        context, context_created = SegmentTranslationContext.objects.get_or_create(
+            object_id=revision.object_id, path=template_value.path,
+        )
 
         template_loc, created = cls.objects.get_or_create(
-            revision_id=pk(revision),
-            path=template_value.path,
+            revision=revision,
+            context=context,
             order=template_value.order,
             template=template,
         )
@@ -490,9 +532,13 @@ class RelatedObjectLocation(BaseLocation):
 
     @classmethod
     def from_related_object_value(cls, revision, related_object_value):
+        context, context_created = SegmentTranslationContext.objects.get_or_create(
+            object_id=revision.object_id, path=related_object_value.path,
+        )
+
         related_object_loc, created = cls.objects.get_or_create(
-            revision_id=pk(revision),
-            path=related_object_value.path,
+            revision=revision,
+            context=context,
             order=related_object_value.order,
             object=TranslatableObject.objects.get_or_create(
                 content_type=related_object_value.content_type,

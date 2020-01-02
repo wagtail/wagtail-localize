@@ -13,6 +13,7 @@ from wagtail_localize.translation_memory.models import (
     Segment,
     MissingTranslationError,
     MissingRelatedObjectError,
+    SegmentTranslationContext,
 )
 from wagtail_localize.translation_memory.utils import insert_segments
 from wagtail_localize.segments import RelatedObjectValue
@@ -254,6 +255,9 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.translation = SegmentTranslation.objects.create(
             translation_of=self.segment,
             language=self.dest_locale.language,
+            context=SegmentTranslationContext.objects.get(
+                object_id=self.page.translation_key, path="test_charfield"
+            ),
             text="Ceci est du contenu de test",
         )
 
@@ -282,6 +286,16 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         )[0]
 
         translated_parent = self.page.copy_for_translation(self.dest_locale)
+
+        # Create a translation for the new context
+        SegmentTranslation.objects.create(
+            translation_of=self.segment,
+            language=self.dest_locale.language,
+            context=SegmentTranslationContext.objects.get(
+                object_id=child_page.translation_key, path="test_charfield"
+            ),
+            text="Ceci est du contenu de test",
+        )
 
         new_page, created = child_revision.create_or_update_translation(
             self.dest_locale
@@ -411,6 +425,16 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         ]
         revision_with_streamfield.extract_segments()
 
+        # Create a translation for the new context
+        SegmentTranslation.objects.create(
+            translation_of=self.segment,
+            language=self.dest_locale.language,
+            context=SegmentTranslationContext.objects.get(
+                object_id=self.page.translation_key, path="test_streamfield.id"
+            ),
+            text="Ceci est du contenu de test",
+        )
+
         new_page, created = revision_with_streamfield.create_or_update_translation(
             self.dest_locale
         )
@@ -431,7 +455,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             self.revision.create_or_update_translation(self.dest_locale)
 
         self.assertEqual(e.exception.location.revision, self.revision)
-        self.assertEqual(e.exception.location.path, "test_charfield")
+        self.assertEqual(e.exception.location.context.path, "test_charfield")
         self.assertEqual(e.exception.location.segment, self.segment)
         self.assertEqual(e.exception.locale, self.dest_locale)
 
@@ -442,6 +466,6 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             self.revision.create_or_update_translation(self.dest_locale)
 
         self.assertEqual(e.exception.location.revision, self.revision)
-        self.assertEqual(e.exception.location.path, "test_snippet")
+        self.assertEqual(e.exception.location.context.path, "test_snippet")
         self.assertEqual(e.exception.location.object_id, self.snippet.translation_key)
         self.assertEqual(e.exception.locale, self.dest_locale)
