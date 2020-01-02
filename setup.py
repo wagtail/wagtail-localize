@@ -45,6 +45,9 @@ setup(
         'pofile': [
             'polib>=1.1,<2.0',
         ],
+        'google_translate': [
+            'googletrans>=2.4,<3.0',
+        ],
     },
     zip_safe=False,
 )

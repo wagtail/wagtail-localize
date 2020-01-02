@@ -11,8 +11,14 @@ from wagtail_localize.segments import SegmentValue, TemplateValue
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.segments.ingest import ingest_segments
 
+from wagtail_localize.translation_engines.pofile.views import (
+    MessageExtractor,
+    MessageIngestor,
+    MissingSegmentsException,
+)
+
 # TODO: Switch to official Google API client
-from googletrans import Translator
+import googletrans
 
 
 def language_code(code):
@@ -30,69 +36,61 @@ def translate(request, translation_request_id):
     translation_request = get_object_or_404(
         TranslationRequest, id=translation_request_id
     )
-    translator = Translator()
+
+    message_extractor = MessageExtractor(translation_request.source_locale)
+    for page in translation_request.pages.filter(is_completed=False):
+        instance = page.source_revision.as_page_object()
+        message_extractor.extract_messages(instance)
+
+    translator = googletrans.Translator()
+    google_translations = translator.translate(
+        list(message_extractor.messages.keys()),
+        src=language_code(translation_request.source_locale.language.code),
+        dest=language_code(translation_request.target_locale.language.code),
+    )
+
+    translations = {
+        translation.origin: translation.text for translation in google_translations
+    }
 
     publish = request.POST.get("publish", "") == "on"
 
-    for page in translation_request.pages.filter(is_completed=False):
-        instance = page.source_revision.as_page_object()
-
-        segments = extract_segments(instance)
-
-        text_segments = [
-            segment for segment in segments if isinstance(segment, SegmentValue)
-        ]
-        template_segments = [
-            segment for segment in segments if isinstance(segment, TemplateValue)
-        ]
-
-        # Group segments by source text so we only submit them once
-        text_segments_grouped = defaultdict(list)
-        for segment in text_segments:
-            text_segments_grouped[segment.text].append(segment.path)
-
-        translations = translator.translate(
-            list(text_segments_grouped.keys()),
-            src=language_code(translation_request.source_locale.language.code),
-            dest=language_code(translation_request.target_locale.language.code),
-        )
-
-        translated_segments = template_segments.copy()
-        for translation in translations:
-            translated_segments.extend(
-                [
-                    SegmentValue(path, translation.text)
-                    for path in text_segments_grouped[translation.origin]
-                ]
-            )
-
+    try:
         with transaction.atomic():
-            try:
-                translation = instance.get_translation(
-                    translation_request.target_locale
-                )
-            except instance.__class__.DoesNotExist:
-                translation = instance.copy_for_translation(
-                    translation_request.target_locale
-                )
-
-            ingest_segments(
-                instance,
-                translation,
+            message_ingestor = MessageIngestor(
                 translation_request.source_locale,
                 translation_request.target_locale,
-                translated_segments,
+                translations,
             )
-            translation.slug = slugify(translation.slug)
-            revision = translation.save_revision()
 
-            if publish:
-                revision.publish()
+            for page in translation_request.pages.filter(is_completed=False):
+                instance = page.source_revision.as_page_object()
+                translation = message_ingestor.ingest_messages(instance)
+                revision = translation.get_latest_revision()
 
-            # Update translation request
-            page.is_completed = True
-            page.completed_revision = revision
-            page.save(update_fields=["is_completed", "completed_revision"])
+                if publish:
+                    revision.publish()
+
+                # Update translation request
+                page.is_completed = True
+                page.completed_revision = revision
+                page.save(update_fields=["is_completed", "completed_revision"])
+
+    except MissingSegmentsException as e:
+        # TODO: Plural
+        messages.error(
+            request,
+            "Unable to translate %s. %s missing segments."
+            % (e.instance.get_admin_display_title(), e.num_missing),
+        )
+
+    else:
+        # TODO: Plural
+        messages.success(
+            request,
+            "%d pages successfully translated with PO file"
+            % translation_request.pages.count(),
+        )
 
     # TODO: Plural
     messages.success(
