@@ -29,7 +29,7 @@ def create_test_po(entries):
     }
 
     for entry in entries:
-        po.append(polib.POEntry(msgid=entry[0], msgstr=entry[1]))
+        po.append(polib.POEntry(msgctxt=entry[0], msgid=entry[1], msgstr=entry[2]))
 
     return str(po)
 
@@ -52,12 +52,24 @@ class TestImporter(TestCase):
         new_page_succeeded = False
 
         with self.subTest(stage="New page"):
-            po_v1 = create_test_po([("The test translatable field", "")]).encode(
-                "utf-8"
-            )
+            po_v1 = create_test_po(
+                [
+                    (
+                        f"{self.page.translation_key}:test_charfield",
+                        "The test translatable field",
+                        "",
+                    )
+                ]
+            ).encode("utf-8")
 
             po_v2 = create_test_po(
-                [("The test translatable field", "Le champ traduisible de test")]
+                [
+                    (
+                        f"{self.page.translation_key}:test_charfield",
+                        "The test translatable field",
+                        "Le champ traduisible de test",
+                    )
+                ]
             ).encode("utf-8")
 
             importer = Importer(Language.objects.default(), logging.getLogger("dummy"))
@@ -98,6 +110,7 @@ class TestImporter(TestCase):
             po_v3 = create_test_po(
                 [
                     (
+                        f"{self.page.translation_key}:test_charfield",
                         "The test translatable field",
                         "Le champ testable à traduire avec un contenu mis à jour",
                     )
@@ -146,12 +159,19 @@ class TestImporter(TestCase):
         with self.subTest(stage="Create child page"):
             # Translate
             po_v1 = create_test_po(
-                [("The test child&#39;s translatable field", "")]
+                [
+                    (
+                        f"{child_page.translation_key}:test_charfield",
+                        "The test child&#39;s translatable field",
+                        "",
+                    )
+                ]
             ).encode("utf-8")
 
             po_v2 = create_test_po(
                 [
                     (
+                        f"{child_page.translation_key}:test_charfield",
                         "The test child&#39;s translatable field",
                         "Le champ traduisible de test",
                     )
@@ -187,12 +207,24 @@ class TestImporter(TestCase):
             return
 
         with self.subTest(stage="Create parent page"):
-            po_v1 = create_test_po([("The test translatable field", "")]).encode(
-                "utf-8"
-            )
+            po_v1 = create_test_po(
+                [
+                    (
+                        f"{self.page.translation_key}:test_charfield",
+                        "The test translatable field",
+                        "",
+                    )
+                ]
+            ).encode("utf-8")
 
             po_v2 = create_test_po(
-                [("The test translatable field", "Le champ traduisible de test")]
+                [
+                    (
+                        f"{self.page.translation_key}:test_charfield",
+                        "The test translatable field",
+                        "Le champ traduisible de test",
+                    )
+                ]
             ).encode("utf-8")
 
             importer = Importer(Language.objects.default(), logging.getLogger("dummy"))
@@ -247,12 +279,24 @@ class TestImporter(TestCase):
         )
 
         with self.subTest(stage="New page"):
-            po_v1 = create_test_po([("The test translatable field", "")]).encode(
-                "utf-8"
-            )
+            po_v1 = create_test_po(
+                [
+                    (
+                        f"{self.page.translation_key}:test_charfield",
+                        "The test translatable field",
+                        "",
+                    )
+                ]
+            ).encode("utf-8")
 
             po_v2 = create_test_po(
-                [("The test translatable field", "Le champ traduisible de test")]
+                [
+                    (
+                        f"{self.page.translation_key}:test_charfield",
+                        "The test translatable field",
+                        "Le champ traduisible de test",
+                    )
+                ]
             ).encode("utf-8")
 
             importer = Importer(Language.objects.default(), logging.getLogger("dummy"))
@@ -284,11 +328,25 @@ class TestImporter(TestCase):
             return
 
         with self.subTest(stage="Create snippet"):
-            po_v1 = create_test_po([("Test content", "")]).encode("utf-8")
+            po_v1 = create_test_po(
+                [
+                    (
+                        f"{self.page.test_snippet.translation_key}:field",
+                        "Test content",
+                        "",
+                    )
+                ]
+            ).encode("utf-8")
 
-            po_v2 = create_test_po([("Test content", "Tester le contenu")]).encode(
-                "utf-8"
-            )
+            po_v2 = create_test_po(
+                [
+                    (
+                        f"{self.page.test_snippet.translation_key}:field",
+                        "Test content",
+                        "Tester le contenu",
+                    )
+                ]
+            ).encode("utf-8")
 
             importer = Importer(Language.objects.default(), logging.getLogger("dummy"))
             importer.start_import("0" * 39 + "1")
@@ -333,12 +391,19 @@ class TestImporterRichText(TestCase):
 
     def test_importer_rich_text(self):
         po_v1 = create_test_po(
-            [('<a id="a1">The <b>test</b> translatable field</a>.', "")]
+            [
+                (
+                    f"{self.page.translation_key}:test_richtextfield",
+                    '<a id="a1">The <b>test</b> translatable field</a>.',
+                    "",
+                )
+            ]
         ).encode("utf-8")
 
         po_v2 = create_test_po(
             [
                 (
+                    f"{self.page.translation_key}:test_richtextfield",
                     '<a id="a1">The <b>test</b> translatable field</a>.',
                     '<a id="a1">Le champ traduisible de <b>test</b></a>.',
                 )

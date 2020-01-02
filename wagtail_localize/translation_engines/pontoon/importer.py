@@ -18,6 +18,7 @@ from wagtail_localize.translation_memory.models import (
     Segment,
     SegmentLocation,
     TemplateLocation,
+    SegmentTranslationContext,
 )
 
 from .models import (
@@ -34,14 +35,39 @@ class Importer:
         self.logger = logger
         self.log = None
 
+    def changed_entries(self, old_po, new_po):
+        """
+        Iterator of all entries that exists in new_po but not
+        old_po.
+
+        This retrieves any strings that have been added or changed.
+        """
+        old_entry_keys = set(str(entry) for entry in old_po)
+        new_entry_keys = set(str(entry) for entry in new_po)
+        new_entries = {
+            str(entry): entry for entry in new_po
+        }
+
+        for changed_key in new_entry_keys - old_entry_keys:
+            yield new_entries[changed_key]
+
     def import_resource(self, resource, language, old_po, new_po):
-        for changed_entry in set(new_po) - set(old_po):
+        for changed_entry in self.changed_entries(old_po, new_po):
+            # Don't import black strings
+            if not changed_entry.msgstr:
+                continue
+
             try:
                 segment = Segment.objects.get(
                     language=self.source_language, text=changed_entry.msgid
                 )
                 translation, created = segment.translations.get_or_create(
                     language=language,
+                    context=SegmentTranslationContext.get_from_string(
+                        changed_entry.msgctxt
+                    )
+                    if changed_entry.msgctxt
+                    else None,
                     defaults={
                         "text": changed_entry.msgstr,
                         "updated_at": timezone.now(),

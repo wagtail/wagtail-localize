@@ -13,8 +13,16 @@ def generate_source_pofile(resource):
         "Content-Type": "text/html; charset=utf-8",
     }
 
-    for segment in resource.get_segments().iterator():
-        po.append(polib.POEntry(msgid=segment.text, msgstr=""))
+    for segment in (
+        resource.get_segments().select_related("segment", "context").iterator()
+    ):
+        po.append(
+            polib.POEntry(
+                msgid=segment.segment.text,
+                msgstr="",
+                msgctxt=segment.context.as_string(),
+            )
+        )
 
     return str(po)
 
@@ -32,19 +40,36 @@ def generate_language_pofile(resource, language):
     }
 
     # Live segments
-    for segment in resource.get_segments().annotate_translation(language).iterator():
-        po.append(polib.POEntry(msgid=segment.text, msgstr=segment.translation or ""))
-
-    # Add any obsolete segments that have translations for future referene
     for segment in (
-        resource.get_all_segments(annotate_obsolete=True)
+        resource.get_segments()
+        .select_related("segment", "context")
         .annotate_translation(language)
-        .filter(is_obsolete=True, translation__isnull=False)
         .iterator()
     ):
         po.append(
             polib.POEntry(
-                msgid=segment.text, msgstr=segment.translation or "", obsolete=True
+                msgid=segment.segment.text,
+                msgstr=segment.translation or "",
+                msgctxt=segment.context.as_string(),
+            )
+        )
+
+    # Add any obsolete segments that have translations for future reference
+    # We find this by looking for obsolete contexts and annotate the latest
+    # translation for each one. Contexts that were never translated are
+    # excluded
+    for translation in (
+        resource.get_obsolete_translations(language)
+        .select_related("translation_of", "context")
+        .filter(context__isnull=False)
+        .iterator()
+    ):
+        po.append(
+            polib.POEntry(
+                msgid=translation.translation_of.text,
+                msgstr=translation.text or "",
+                msgctxt=translation.context.as_string(),
+                obsolete=True,
             )
         )
 

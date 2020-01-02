@@ -17,6 +17,7 @@ from wagtail_localize.translation_memory.models import (
     TranslatableObject,
     TranslatableRevision,
     RelatedObjectLocation,
+    SegmentTranslation,
 )
 from wagtail_localize.translation_memory.utils import (
     insert_segments,
@@ -142,26 +143,22 @@ class PontoonResource(models.Model):
         """
         Gets all segments that are in the latest submission to Pontoon.
         """
-        return Segment.objects.filter(locations__revision_id=self.current_revision_id)
+        return SegmentLocation.objects.filter(revision_id=self.current_revision_id)
 
-    def get_all_segments(self, annotate_obsolete=False):
+    def get_obsolete_translations(self, language):
         """
-        Gets all segments that have ever been submitted to Pontoon.
+        Gets all past translations for this resource that are not used in
+        the latest submission.
         """
-        segments = Segment.objects.filter(
-            locations__revision__pontoon_submission__resource_id=self.pk
-        )
-
-        if annotate_obsolete:
-            segments = segments.annotate(
-                is_obsolete=~Exists(
-                    SegmentLocation.objects.filter(
-                        segment=OuterRef("pk"), revision_id=self.current_revision_id,
-                    )
+        return SegmentTranslation.objects.annotate(
+            is_in_latest_submission=Exists(
+                SegmentLocation.objects.filter(
+                    revision_id=self.current_revision_id,
+                    segment_id=OuterRef("translation_of_id"),
+                    context_id=OuterRef("context_id"),
                 )
             )
-
-        return segments.distinct()
+        ).filter(language=language, is_in_latest_submission=False,)
 
     def find_translatable_submission(self, language):
         """

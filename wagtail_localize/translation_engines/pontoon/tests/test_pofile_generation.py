@@ -9,6 +9,7 @@ from wagtail_localize.models import Language
 from wagtail_localize.test.models import TestPage
 from wagtail_localize.translation_memory.models import (
     Segment,
+    SegmentTranslationContext,
     SegmentTranslation,
     SegmentLocation,
 )
@@ -88,9 +89,13 @@ class TestGenerateLanguagePOFile(TestCase):
 
     def test_generate_language_pofile_with_existing_translation(self):
         segment = Segment.objects.get(text="The test translatable field")
+        context = SegmentTranslationContext.objects.get(
+            object_id=self.page.translation_key, path="test_charfield"
+        )
         SegmentTranslation.objects.create(
             translation_of=segment,
             language=self.language,
+            context=context,
             text="Le champ traduisible de test",
         )
 
@@ -108,8 +113,14 @@ class TestGenerateLanguagePOFile(TestCase):
         segment.text_id = Segment.get_text_id(segment.text)
         segment.save()
 
+        context = SegmentTranslationContext.objects.get(
+            object_id=self.page.translation_key, path="test_charfield"
+        )
         SegmentTranslation.objects.create(
-            translation_of=segment, language=self.language, text="Du texte obsolète"
+            translation_of=segment,
+            context=context,
+            language=self.language,
+            text="Du texte obsolète",
         )
 
         # Create a new revision. This will create a new segment like how the current segment was before I changed it
