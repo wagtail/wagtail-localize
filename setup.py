@@ -42,6 +42,15 @@ setup(
         'testing': [
             'psycopg2>=2.6',
         ],
+        'pontoon': [
+            'polib>=1.1,<2.0',
+            'pygit2>=0.28,<0.29',
+            'gitpython>=3.0,<4.0',
+            'toml>=0.10,<0.11',
+        ],
+        'google_translate': [
+            'googletrans>=2.4,<3.0',
+        ],
     },
     zip_safe=False,
 )

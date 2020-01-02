@@ -10,17 +10,20 @@ from django.db.models import (
     When,
 )
 
-from wagtail_localize.segments import TemplateValue
+from wagtail_localize.segments import TemplateValue, RelatedObjectValue
+from wagtail_localize.segments.extract import extract_segments
 
 from .models import (
     Segment,
     SegmentTranslation,
-    SegmentPageLocation,
-    TemplatePageLocation,
+    SegmentLocation,
+    TemplateLocation,
+    RelatedObjectLocation,
+    TranslatableRevision,
 )
 
 
-def get_translation_progress(page_revision_id, language):
+def get_translation_progress(revision_id, language):
     """
     For the specified page revision, get the current
     translation progress into the specified language.
@@ -31,9 +34,9 @@ def get_translation_progress(page_revision_id, language):
     """
     # Get QuerySet of Segments that need to be translated
     required_segments = Segment.objects.filter(
-        id__in=SegmentPageLocation.objects.filter(
-            page_revision_id=page_revision_id
-        ).values_list("segment_id")
+        id__in=SegmentLocation.objects.filter(revision_id=revision_id).values_list(
+            "segment_id"
+        )
     )
 
     # Annotate each Segment with a flag that indicates whether the segment is translated
@@ -58,12 +61,14 @@ def get_translation_progress(page_revision_id, language):
     return aggs["total_segments"], aggs["translated_segments"]
 
 
-def insert_segments(page_revision, language, segments):
+def insert_segments(revision, language, segments):
     """
     Inserts the list of untranslated segments into translation memory
     """
     for segment in segments:
         if isinstance(segment, TemplateValue):
-            TemplatePageLocation.from_template_value(page_revision, segment)
+            TemplateLocation.from_template_value(revision, segment)
+        elif isinstance(segment, RelatedObjectValue):
+            RelatedObjectLocation.from_related_object_value(revision, segment)
         else:
-            SegmentPageLocation.from_segment_value(page_revision, language, segment)
+            SegmentLocation.from_segment_value(revision, language, segment)

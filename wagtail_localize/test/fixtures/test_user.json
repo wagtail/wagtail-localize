@@ -1,0 +1,20 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "md5$seasalt$1e9bf2bf5606aa5c39852cc30f0f6f22",
+      "last_login": "2017-04-23T19:58:19.460Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "Admin",
+      "last_name": "User",
+      "email": "admin@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2017-02-17T07:37:53.700Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

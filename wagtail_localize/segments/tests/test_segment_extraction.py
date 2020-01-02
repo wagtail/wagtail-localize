@@ -6,8 +6,13 @@ from django.test import TestCase
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page
 
-from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
-from wagtail_localize.segments import SegmentValue, TemplateValue
+from wagtail_localize.test.models import (
+    TestPage,
+    TestSnippet,
+    TestChildObject,
+    TestNonParentalChildObject,
+)
+from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
 from wagtail_localize.segments.extract import extract_segments
 
 
@@ -91,7 +96,9 @@ class TestSegmentExtraction(TestCase):
         page = make_test_page(test_snippet=test_snippet)
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [SegmentValue("test_snippet.field", "Test content")])
+        self.assertEqual(
+            segments, [RelatedObjectValue.from_instance("test_snippet", test_snippet)]
+        )
 
     def test_childobjects(self):
         page = make_test_page()
@@ -110,6 +117,16 @@ class TestSegmentExtraction(TestCase):
                 )
             ],
         )
+
+    def test_nonparentalchildobjects(self):
+        page = make_test_page()
+        page.save()
+        TestNonParentalChildObject.objects.create(page=page, field="Test content")
+
+        segments = extract_segments(page)
+
+        # No segments this time as we don't extract ManyToOneRel's that don't use ParentalKeys
+        self.assertEqual(segments, [])
 
     def test_customfield(self):
         page = make_test_page(test_customfield="Test content")

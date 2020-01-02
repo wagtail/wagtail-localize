@@ -1,0 +1,69 @@
+{% extends "wagtailadmin/base.html" %}
+{% load static i18n wagtailadmin_tags %}
+{% block titletag %}Pontoon{% endblock %}
+
+{% block content %}
+    {% include "wagtailadmin/shared/header.html" with title="Pontoon" icon="doc-empty-inverse" %}
+
+    <div class="nice-padding">
+        {% if sync_running %}
+            Synchronising with Pontoon now!
+        {% elif sync_queued %}
+            Synchronisation with Pontoon queued
+        {% else %}
+            <form method="post" action="{% url 'wagtail_localize_pontoon:force_sync' %}">
+                {% csrf_token %}
+                <button type="submit" class="button button-primary">Force Sync</button>
+            </form>
+        {% endif %}
+
+        <h3>Resources</h3>
+        <table style="width: 100%;">
+            <thead>
+                <th>Filename</th>
+                <th>Source Page</th>
+                <th>Last updated</th>
+                <th>Last pushed</th>
+                <th>Requires sync</th>
+            </thead>
+            <tbody>
+                {% for resource in resources %}
+                {% with resource.latest_submission as latest_submission %}
+                    <tr>
+                        <td>{{ resource.path }}.pot</td>
+                        <td><a href="{% url 'wagtailadmin_pages:edit' resource.page_id %}">{{ resource.page.get_admin_display_title }}</a></td>
+                        <td>{{ resource.latest_submission.created_at }}</td>
+                        <td>{{ resource.latest_pushed_submission.pushed_at }}</td>
+                        <td>
+                            {% if resource.latest_pushed_submission != resource.latest_submission %}
+                                Yes
+                            {% else %}
+                                No
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Log</h3>
+        <ul>
+            {% for log in logs %}
+                {% if log.resources.exists %}
+                    <li>
+                        {{ log.time }}
+
+                        {% if log.action == log.ACTION_PUSH %}
+                            Pushed {{ log.resources.unique_resources.count }} resources
+                        {% elif log.action == log.ACTION_PULL %}
+                            Pulled
+                            {{ log.resources.unique_resources.count }} resources
+                            in {{ log.resources.unique_languages.count }} languages
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

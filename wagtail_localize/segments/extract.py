@@ -1,5 +1,6 @@
 from django.db import models
 
+from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
@@ -7,7 +8,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from wagtail_localize.models import TranslatableMixin
-from wagtail_localize.segments import SegmentValue, TemplateValue
+from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
 
 from .html import extract_html_segments
 
@@ -57,7 +58,7 @@ class StreamFieldSegmentExtractor:
         if related_object is None or not isinstance(related_object, TranslatableMixin):
             return []
 
-        return extract_segments(related_object)
+        return RelatedObjectValue.from_instance("", related_object)
 
     def handle_struct_block(self, struct_block):
         segments = []
@@ -131,21 +132,20 @@ def extract_segments(instance):
             related_instance = getattr(instance, field.name)
 
             if related_instance:
-                segments.extend(
-                    segment.wrap(field.name)
-                    for segment in extract_segments(related_instance)
+                segments.append(
+                    RelatedObjectValue.from_instance(field.name, related_instance)
                 )
 
-        elif isinstance(field, (models.ManyToOneRel)) and issubclass(
-            field.related_model, TranslatableMixin
+        elif (
+            isinstance(field, (models.ManyToOneRel))
+            and isinstance(field.remote_field, ParentalKey)
+            and issubclass(field.related_model, TranslatableMixin)
         ):
             manager = getattr(instance, field.name)
 
             for child_instance in manager.all():
                 segments.extend(
-                    segment.wrap(
-                        "{}.{}".format(field.name, child_instance.translation_key)
-                    )
+                    segment.wrap(str(child_instance.translation_key)).wrap(field.name)
                     for segment in extract_segments(child_instance)
                 )
 
