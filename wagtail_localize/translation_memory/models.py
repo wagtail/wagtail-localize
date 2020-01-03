@@ -63,6 +63,22 @@ class TranslatableObject(models.Model):
         unique_together = [("content_type", "translation_key")]
 
 
+class MissingTranslationError(Exception):
+    def __init__(self, location, locale):
+        self.location = location
+        self.locale = locale
+
+        super().__init__()
+
+
+class MissingRelatedObjectError(Exception):
+    def __init__(self, location, locale):
+        self.location = location
+        self.locale = locale
+
+        super().__init__()
+
+
 class TranslatableRevision(models.Model):
     """
     A piece of content that to be used as a source for translations.
@@ -115,7 +131,9 @@ class TranslatableRevision(models.Model):
             # Check if the instance has changed at all since the previous revision
             previous_revision = object.revisions.order_by("created_at").last()
             if previous_revision:
-                if content_json == previous_revision.content_json:
+                if json.loads(content_json) == json.loads(
+                    previous_revision.content_json
+                ):
                     return previous_revision, False
 
         return (
@@ -152,25 +170,22 @@ class TranslatableRevision(models.Model):
 
         return new_instance
 
-    def create_or_update_translation(self, locale, translation=None):
+    def create_or_update_translation(self, locale):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
         currently in translation memory.
-
-        If the translation already exists, you can pass the object in with the
-        `translation` keyword argument. Otherwise, this object will be fetched
-        or created by this method.
         """
         original = self.as_instance()
         created = False
 
-        if translation is None:
-            try:
-                translation = self.object.get_instance(locale)
-            except models.ObjectDoesNotExist:
-                translation = original.copy_for_translation(locale)
-                created = True
+        try:
+            translation = self.object.get_instance(locale)
+        except models.ObjectDoesNotExist:
+            translation = original.copy_for_translation(locale)
+            created = True
+
+        # TODO: Copy synchronised fields
 
         # Fetch all translated segments
         segment_locations = SegmentLocation.objects.filter(
@@ -188,6 +203,9 @@ class TranslatableRevision(models.Model):
         segments = []
 
         for location in segment_locations:
+            if not location.translation:
+                raise MissingTranslationError(location, locale)
+
             segment = SegmentValue.from_html(
                 location.path, location.translation
             ).with_order(location.order)
@@ -208,6 +226,9 @@ class TranslatableRevision(models.Model):
             segments.append(segment)
 
         for location in related_object_locations:
+            if not location.object.has_translation(locale):
+                raise MissingRelatedObjectError(location, locale)
+
             segment = RelatedObjectValue(
                 location.path,
                 location.object.content_type,
@@ -218,8 +239,6 @@ class TranslatableRevision(models.Model):
 
         # Ingest all translated segments
         ingest_segments(original, translation, self.locale, locale, segments)
-
-        # TODO: Copy synchronised fields
 
         if isinstance(translation, Page):
             # Make sure the slug is valid
