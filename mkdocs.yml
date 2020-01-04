@@ -13,3 +13,5 @@ nav:
   - Getting Started:
       - Setup: setup.md
       - Tutorial: tutorial.md
+  - Reference:
+      - Translation Memory: reference/translation_memory.md
