@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(PROJECT_DIR, ...)
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -114,16 +115,8 @@ PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DATABASE_NAME", "wagtaillocalize"),
-        "USER": os.environ.get("DATABASE_USER", None),
-        "PASSWORD": os.environ.get("DATABASE_PASS", None),
-        "HOST": os.environ.get("DATABASE_HOST", None),
-        "TEST": {"NAME": os.environ.get("DATABASE_NAME", None)},
-    }
+    "default": dj_database_url.config(default="sqlite:///test_wagtaillocalize.db")
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

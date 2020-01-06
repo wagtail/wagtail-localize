@@ -40,7 +40,7 @@ setup(
     ],
     extras_require={
         'testing': [
-            'psycopg2>=2.6',
+            'dj-database-url==0.5.0',
         ],
     },
     zip_safe=False,
