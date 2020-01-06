@@ -15,6 +15,7 @@ from modelcluster.models import (
 from wagtail.core.models import Page
 
 from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
+from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.segments.ingest import ingest_segments
 
 
@@ -169,6 +170,17 @@ class TranslatableRevision(models.Model):
         new_instance.is_source_translation = instance.is_source_translation
 
         return new_instance
+
+    def extract_segments(self):
+        for segment in extract_segments(self.as_instance()):
+            if isinstance(segment, TemplateValue):
+                TemplateLocation.from_template_value(self, segment)
+            elif isinstance(segment, RelatedObjectValue):
+                RelatedObjectLocation.from_related_object_value(self, segment)
+            else:
+                SegmentLocation.from_segment_value(
+                    self, self.locale.language_id, segment
+                )
 
     @transaction.atomic
     def create_or_update_translation(self, locale):
