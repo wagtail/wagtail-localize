@@ -2,6 +2,7 @@ import json
 
 from django.test import TestCase
 from django.utils import timezone
+from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Locale
@@ -378,6 +379,49 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.test_synchronized_snippet, synchronized_snippet)
         self.assertEqual(
             new_page.test_synchronized_customfield, "Test synchronised content"
+        )
+
+    def test_update_streamfields(self):
+        # Streamfields are special in that they contain content that needs to be synchronised as well as
+        # translatable content.
+
+        # Copy page for translation, this will have a blank streamfield
+        translated = self.page.copy_for_translation(self.dest_locale)
+
+        # Set streamfield value on original
+        self.page.test_streamfield = StreamValue(
+            TestPage.test_streamfield.field.stream_block,
+            [
+                {
+                    "id": "id",
+                    "type": "test_charblock",
+                    "value": "This is some test content",
+                }
+            ],
+            is_lazy=True,
+        )
+
+        # Save the page
+        revision = self.page.save_revision()
+        revision.publish()
+        revision_with_streamfield = TranslatableRevision.get_or_create_from_page_revision(
+            revision
+        )[
+            0
+        ]
+        revision_with_streamfield.extract_segments()
+
+        new_page, created = revision_with_streamfield.create_or_update_translation(
+            self.dest_locale
+        )
+
+        self.assertFalse(created)
+        self.assertEqual(new_page, translated)
+
+        # Check the block was copied into translation
+        self.assertEqual(new_page.test_streamfield[0].id, "id")
+        self.assertEqual(
+            new_page.test_streamfield[0].value, "Ceci est du contenu de test"
         )
 
     def test_create_translations_not_ready(self):

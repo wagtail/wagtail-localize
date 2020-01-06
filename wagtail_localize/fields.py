@@ -1,3 +1,6 @@
+from wagtail.core.fields import StreamField
+
+
 class BaseTranslatableField:
     def __init__(self, field_name):
         self.field_name = field_name
@@ -29,6 +32,10 @@ class TranslatableField(BaseTranslatableField):
 
     def is_editable(self, obj):
         return obj.is_source_translation
+
+    def is_synchronized(self, obj):
+        # Streamfields need to be re-synchronised before translation so the structure and non-translatable content is copied over
+        return isinstance(self.get_field(obj.__class__), StreamField)
 
 
 class SynchronizedField(BaseTranslatableField):
