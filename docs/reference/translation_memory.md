@@ -40,7 +40,8 @@ For example:
 
 # Segments
 
-A segment is a piece of text that can be translated; they are stored in the `Segment` table. The `Segment` model only stores each unique segment of text once.
+A segment is a piece of text that has been extracted from a page for translation; they are stored in the `Segment` model.
+The `Segment` model only stores each unique segment of text once.
 
 All segments are stored in HTML format even if they came from a text field. if they came from a plain text field, any special characters are escaped before storing them.
 
@@ -48,11 +49,11 @@ Segments can only contain inline HTML tags (such as `<a>`, `<b>`, `<span>`). The
 
 # Translations
 
-The `SegmentTranslation` table stores the translation of a segment for a given language and context. These can be updated.
+The `SegmentTranslation` table stores all previous translations of a segment for each language and context. We store translations so that we can pre-fill translation requests if the page is changed, so only the parts of the page that have been updated need to be translated. We also use previous translations to pre-fill translations on new pages as well (fuzzy matching).
 
 # Templates
 
-Templates are used when translating rich text fields. Not all of the content within a rich text field is translatable (such as block tags, images, etc). The template contains a snippet of HTML that contains only the untranslatable content. The translatable content is extracted and replaced with `<text>` tags. When the translated version of the page is built, the template is retrieved and the `<text>` tags are replaced with the translated strings.
+Templates are used when translating rich text fields. Not all of the content within a rich text field is translatable (such as block tags, images, etc), so the template contains the untranslatable content with the translatable parts replaced with `<text>` tags. When the translated version of the page is built, the template is retrieved from the database and the `<text>` tags are replaced with the translated strings.
 
 For example, when the following HTML field is processed for translation:
 
