@@ -88,7 +88,20 @@ class TestPage(TranslatablePageMixin, Page):
 
     test_customfield = TestCustomField(blank=True)
 
-    test_synchronizedfield = models.TextField(blank=True)
+    test_synchronized_charfield = models.CharField(max_length=255, blank=True)
+    test_synchronized_textfield = models.TextField(blank=True)
+    test_synchronized_emailfield = models.EmailField(blank=True)
+    test_synchronized_slugfield = models.SlugField(blank=True)
+    test_synchronized_urlfield = models.URLField(blank=True)
+
+    test_synchronized_richtextfield = RichTextField(blank=True)
+    test_synchronized_streamfield = StreamField(TestStreamBlock, blank=True)
+
+    test_synchronized_snippet = models.ForeignKey(
+        TestSnippet, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    test_synchronized_customfield = TestCustomField(blank=True)
 
     translatable_fields = [
         TranslatableField("test_charfield"),
@@ -101,12 +114,29 @@ class TestPage(TranslatablePageMixin, Page):
         TranslatableField("test_snippet"),
         TranslatableField("test_childobjects"),
         TranslatableField("test_customfield"),
-        SynchronizedField("test_synchronizedfield"),
+        SynchronizedField("test_synchronized_charfield"),
+        SynchronizedField("test_synchronized_textfield"),
+        SynchronizedField("test_synchronized_emailfield"),
+        SynchronizedField("test_synchronized_slugfield"),
+        SynchronizedField("test_synchronized_urlfield"),
+        SynchronizedField("test_synchronized_richtextfield"),
+        SynchronizedField("test_synchronized_streamfield"),
+        SynchronizedField("test_synchronized_snippet"),
+        # FIXME SynchronizedField("test_synchronized_childobjects"),
+        SynchronizedField("test_synchronized_customfield"),
     ]
 
 
 class TestChildObject(TranslatableMixin, Orderable):
     page = ParentalKey(TestPage, related_name="test_childobjects")
+    field = models.TextField()
+
+    translatable_fields = [TranslatableField("field")]
+
+
+# TODO: System check for TranslatableMixin here
+class TestSynchronizedChildObject(Orderable):
+    page = ParentalKey(TestPage, related_name="test_synchronized_childobjects")
     field = models.TextField()
 
     translatable_fields = [TranslatableField("field")]
