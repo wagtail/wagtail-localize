@@ -312,6 +312,74 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             self.revision.translation_logs.filter(locale=self.dest_locale).exists()
         )
 
+    def test_update_synchronised_fields(self):
+        translated = self.page.copy_for_translation(self.dest_locale)
+
+        self.page.test_synchronized_charfield = "Test synchronised content"
+        self.page.test_synchronized_textfield = "Test synchronised content"
+        self.page.test_synchronized_emailfield = "test@synchronised.content"
+        self.page.test_synchronized_slugfield = "test-synchronised-content"
+        self.page.test_synchronized_urlfield = "https://test.synchronised/content"
+        self.page.test_synchronized_richtextfield = "<p>Test synchronised content</p>"
+        # self.page.test_synchronized_streamfield = ""
+        synchronized_snippet = TestSnippet.objects.create(field="Synchronised snippet")
+        self.page.test_synchronized_snippet = synchronized_snippet
+        self.page.test_synchronized_customfield = "Test synchronised content"
+
+        # Save the page
+        revision = self.page.save_revision()
+        revision.publish()
+        revision_with_synchronised_content = TranslatableRevision.get_or_create_from_page_revision(
+            revision
+        )[
+            0
+        ]
+
+        # Check translation hasn't been updated yet
+        translated.refresh_from_db()
+        self.assertEqual(translated.test_synchronized_charfield, "")
+
+        # Update the original page again. This will make sure it's taking the content from the revision and not the live version
+        self.page.test_synchronized_charfield = (
+            "Test synchronised content updated again"
+        )
+        self.page.save_revision().publish()
+
+        (
+            new_page,
+            created,
+        ) = revision_with_synchronised_content.create_or_update_translation(
+            self.dest_locale
+        )
+
+        self.assertFalse(created)
+        self.assertEqual(new_page, translated)
+        self.assertEqual(
+            new_page.test_synchronized_charfield, "Test synchronised content"
+        )
+        self.assertEqual(
+            new_page.test_synchronized_charfield, "Test synchronised content"
+        )
+        self.assertEqual(
+            new_page.test_synchronized_textfield, "Test synchronised content"
+        )
+        self.assertEqual(
+            new_page.test_synchronized_emailfield, "test@synchronised.content"
+        )
+        self.assertEqual(
+            new_page.test_synchronized_slugfield, "test-synchronised-content"
+        )
+        self.assertEqual(
+            new_page.test_synchronized_urlfield, "https://test.synchronised/content"
+        )
+        self.assertEqual(
+            new_page.test_synchronized_richtextfield, "<p>Test synchronised content</p>"
+        )
+        self.assertEqual(new_page.test_synchronized_snippet, synchronized_snippet)
+        self.assertEqual(
+            new_page.test_synchronized_customfield, "Test synchronised content"
+        )
+
     def test_create_translations_not_ready(self):
         self.translation.delete()
 
