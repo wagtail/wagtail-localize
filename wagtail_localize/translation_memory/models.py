@@ -186,7 +186,12 @@ class TranslatableRevision(models.Model):
             translation = original.copy_for_translation(locale)
             created = True
 
-        # TODO: Copy synchronised fields
+        # Copy synchronised fields
+        for field in translation.translatable_fields:
+            if field.is_synchronized(original):
+                setattr(
+                    translation, field.field_name, getattr(original, field.field_name)
+                )
 
         # Fetch all translated segments
         segment_locations = SegmentLocation.objects.filter(
