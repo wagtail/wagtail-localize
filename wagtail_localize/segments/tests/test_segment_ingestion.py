@@ -46,7 +46,7 @@ RICH_TEXT_TEST_FRENCH_SEGMENTS = [
 RICH_TEXT_TEST_OUTPUT = '<h1>Ceci est une rubrique</h1><p>Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b></p><ul><li><a href="http://example.com">Ceci est un lien</a></li></ul>'
 
 
-class TestSegmentExtraction(TestCase):
+class TestSegmentIngestion(TestCase):
     def setUp(self):
         self.src_locale = Locale.objects.default()
         self.language = Language.objects.create(code="fr")
