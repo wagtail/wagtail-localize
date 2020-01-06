@@ -17,7 +17,7 @@ class BaseTranslatableField:
     def is_synchronized(self, obj):
         """
         Returns True if the value of this field on the given object should be
-        pushed to other translations.
+        copied when translations are created/updated
         """
         return False
 
