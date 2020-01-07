@@ -204,3 +204,66 @@ class TestUpload(BasePoFileTestCase):
         self.assertEqual(
             completed_page.test_snippet.field, "Du contenu d'extrait de test"
         )
+
+    def test_upload_to_placeholder(self):
+        page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="Some translatable content",
+            test_richtextfield="<p>Translatable <b>rich text</b></p>",
+        )
+
+        translated_page = page.copy_for_translation(
+            self.translation_request.target_locale, placeholder=True
+        )
+
+        self.assertEqual(translated_page.locale, self.translation_request.target_locale)
+        self.assertEqual(
+            translated_page.placeholder_locale, self.translation_request.source_locale
+        )
+
+        request_page = self.add_page_to_request(page)
+
+        po = polib.POFile()
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+        }
+
+        po.extend(
+            [
+                polib.POEntry(
+                    msgid="Some translatable content",
+                    msgstr="Du contenu traduisible",
+                    occurrences="",
+                ),
+                polib.POEntry(
+                    msgid="Translatable rich text",
+                    msgstr="Texte riche traduisible",
+                    occurrences="",
+                ),
+            ]
+        )
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_pofile:upload", args=[self.translation_request.id]
+            ),
+            {"file": SimpleUploadedFile("test.po", str(po).encode("utf-8")),},
+        )
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_workflow_management:detail",
+                args=[self.translation_request.id],
+            ),
+        )
+
+        request_page.refresh_from_db()
+        self.assertTrue(request_page.is_completed)
+
+        completed_revision = request_page.completed_revision
+        completed_page = completed_revision.as_page_object()
+        self.assertEqual(completed_page, translated_page)
+        self.assertIsNone(completed_page.placeholder_locale)

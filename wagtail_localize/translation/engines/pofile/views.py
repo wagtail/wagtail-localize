@@ -143,6 +143,9 @@ class MessageIngestor:
 
         try:
             translation = instance.get_translation(self.target_locale)
+
+            # Unset placeholder_locale if it's set
+            translation.placeholder_locale = None
         except instance.__class__.DoesNotExist:
             translation = instance.copy_for_translation(self.target_locale)
 

@@ -16,7 +16,14 @@ from wagtail.images.models import AbstractImage
 from .compat import get_languages, get_supported_language_variant
 from .edit_handlers import filter_edit_handler_on_instance_bound
 from .fields import TranslatableField, SynchronizedField
-from .utils import find_available_slug
+from .utils import find_available_slug, get_fallback_languages
+
+
+def pk(obj):
+    if isinstance(obj, models.Model):
+        return obj.pk
+    else:
+        return obj
 
 
 class LocaleManager(models.Manager):
@@ -64,6 +71,34 @@ class Locale(models.Model):
     @property
     def slug(self):
         return self.language_code
+
+    def get_fallbacks(self):
+        """
+        Returns a queryset of locales that this locale can fall back to if there
+        isn't a translation.
+
+        For example, es-MX can fall back to es, es-ES, etc.
+        """
+        fallback_languages = get_fallback_languages(self.language.code)
+        fallback_locale_map = {
+            locale.language.code: locale
+            for locale in Locale.objects.filter(
+                language_code__in=fallback_languages
+            )
+        }
+        return [fallback_locale_map[lang_code] for lang_code in fallback_languages]
+
+    def get_best_fallback(self, locales):
+        """
+        Chooses the best fallback locale from the available list of locales.
+
+        The locales must be an iterable of locale instances or ids. This always
+        returns a Locale instance.
+        """
+        locale_ids = set(pk(locale) for locale in locales)
+        for locale in self.get_fallbacks():
+            if locale.id in locale_ids:
+                return locale
 
     def get_all_pages(self):
         """
@@ -236,7 +271,12 @@ class TranslatablePageMixin(TranslatableMixin):
 
     @transaction.atomic
     def copy_for_translation(
-        self, locale, placeholder=False, copy_parents=False, exclude_fields=None,
+        self,
+        locale,
+        placeholder=False,
+        copy_parents=False,
+        exclude_fields=None,
+        keep_live=False,
     ):
         """
         Copies this page for the specified locale.
@@ -273,7 +313,7 @@ class TranslatablePageMixin(TranslatableMixin):
                 child_object.locale = locale
                 child_object.is_source_translation = False
 
-        return self.copy(
+        page = self.copy(
             to=translated_parent,
             update_attrs={
                 "locale": locale,
@@ -282,11 +322,19 @@ class TranslatablePageMixin(TranslatableMixin):
                 "slug": slug,
             },
             copy_revisions=False,
-            keep_live=False,
+            keep_live=keep_live,
             reset_translation_key=False,
             process_child_object=process_child_object,
             exclude_fields=exclude_fields,
         )
+
+        # If it's a placeholder, make sure it hasn't got any revisions
+        # TODO: Prevent Wagtail from creating a revision in the first place
+        if placeholder:
+            page.revisions.all().delete()
+            page.live_revision = None
+
+        return page
 
     def get_default_locale_id(self):
         """
