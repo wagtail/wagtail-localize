@@ -11,7 +11,7 @@ from wagtail_localize.segments import SegmentValue, TemplateValue
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.segments.ingest import ingest_segments
 
-from wagtail_localize.translation_engines.pofile.views import (
+from wagtail_localize.translation.engines.pofile.views import (
     MessageExtractor,
     MessageIngestor,
     MissingSegmentsException,
