@@ -25,7 +25,7 @@ def find_available_slug(parent, requested_slug):
 
 
 @functools.lru_cache(maxsize=1000)
-def get_language_fallbacks(lang_code):
+def get_fallback_languages(lang_code):
     """
     Returns a list of language codes that can be used as a fallback to the given language
     """
@@ -68,4 +68,4 @@ def reset_cache(**kwargs):
     Clear cache when global LANGUAGES/LANGUAGE_CODE settings are changed
     """
     if kwargs["setting"] in ("LANGUAGES", "LANGUAGE_CODE"):
-        get_language_fallbacks.cache_clear()
+        get_fallback_languages.cache_clear()
