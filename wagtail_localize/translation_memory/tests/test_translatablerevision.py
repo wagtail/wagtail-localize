@@ -265,6 +265,9 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
         self.assertFalse(new_page.is_source_translation)
+        self.assertTrue(
+            self.revision.translation_logs.filter(locale=self.dest_locale).exists()
+        )
 
     def test_create_child(self):
         child_page = create_test_page(
@@ -290,6 +293,9 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.translation_key, child_page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
         self.assertFalse(new_page.is_source_translation)
+        self.assertTrue(
+            child_revision.translation_logs.filter(locale=self.dest_locale).exists()
+        )
 
     def test_update(self):
         translated = self.page.copy_for_translation(self.dest_locale)
@@ -302,6 +308,9 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
         self.assertFalse(new_page.is_source_translation)
+        self.assertTrue(
+            self.revision.translation_logs.filter(locale=self.dest_locale).exists()
+        )
 
     def test_create_translations_not_ready(self):
         self.translation.delete()

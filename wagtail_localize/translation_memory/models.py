@@ -170,6 +170,7 @@ class TranslatableRevision(models.Model):
 
         return new_instance
 
+    @transaction.atomic
     def create_or_update_translation(self, locale):
         """
         Creates/updates a translation of the object into the specified locale
@@ -246,12 +247,44 @@ class TranslatableRevision(models.Model):
             translation.save()
 
             # Create a new revision
-            new_revision = translation.save_revision()
-            new_revision.publish()
+            page_revision = translation.save_revision()
+            page_revision.publish()
         else:
             translation.save()
+            page_revision = None
+
+        # Log that the translation was made
+        TranslationLog.objects.create(revision=self, locale=locale, page_revision=page_revision)
 
         return translation, created
+
+
+class TranslationLog(models.Model):
+    """
+    This model logs when we make a translation.
+    """
+
+    revision = models.ForeignKey(
+        TranslatableRevision, on_delete=models.CASCADE, related_name="translation_logs"
+    )
+    locale = models.ForeignKey(
+        "wagtail_localize.Locale",
+        on_delete=models.CASCADE,
+        related_name="translation_logs",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    page_revision = models.ForeignKey("wagtailcore.PageRevision", on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
+
+    class Meta:
+        unique_together = [
+            ("revision", "locale"),
+        ]
+
+    def get_instance(self):
+        """
+        Gets the instance of the translated object, if it still exists.
+        """
+        return revision.object.get_instance(self.locale)
 
 
 class SegmentQuerySet(models.QuerySet):
