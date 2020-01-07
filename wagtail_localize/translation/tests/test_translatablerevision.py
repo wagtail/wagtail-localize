@@ -7,7 +7,7 @@ from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Locale
 from wagtail_localize.test.models import TestPage, TestSnippet
-from wagtail_localize.translation_memory.models import (
+from wagtail_localize.translation.models import (
     TranslatableRevision,
     SegmentTranslation,
     Segment,
@@ -15,7 +15,7 @@ from wagtail_localize.translation_memory.models import (
     MissingRelatedObjectError,
     SegmentTranslationContext,
 )
-from wagtail_localize.translation_memory.utils import insert_segments
+from wagtail_localize.translation.utils import insert_segments
 from wagtail_localize.segments import RelatedObjectValue
 from wagtail_localize.segments.extract import extract_segments
 
