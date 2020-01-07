@@ -8,9 +8,9 @@ from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Locale
 from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
-from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
-from wagtail_localize.segments.extract import extract_segments
-from wagtail_localize.segments.ingest import ingest_segments
+from wagtail_localize.translation.segments import SegmentValue, TemplateValue, RelatedObjectValue
+from wagtail_localize.translation.segments.extract import extract_segments
+from wagtail_localize.translation.segments.ingest import ingest_segments
 
 
 def make_test_page(**kwargs):

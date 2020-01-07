@@ -12,9 +12,9 @@ from django.utils.text import slugify
 from wagtail.core.models import Page
 
 from wagtail_localize.admin.workflow.models import TranslationRequest
-from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
-from wagtail_localize.segments.extract import extract_segments
-from wagtail_localize.segments.ingest import ingest_segments
+from wagtail_localize.translation.segments import SegmentValue, TemplateValue, RelatedObjectValue
+from wagtail_localize.translation.segments.extract import extract_segments
+from wagtail_localize.translation.segments.ingest import ingest_segments
 
 
 class MessageExtractor:
