@@ -14,9 +14,9 @@ from modelcluster.models import (
 )
 from wagtail.core.models import Page
 
-from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
-from wagtail_localize.segments.extract import extract_segments
-from wagtail_localize.segments.ingest import ingest_segments
+from .segments import SegmentValue, TemplateValue, RelatedObjectValue
+from .segments.extract import extract_segments
+from .segments.ingest import ingest_segments
 
 
 def pk(obj):

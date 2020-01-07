@@ -11,7 +11,7 @@ from wagtail_localize.models import (
     TranslatablePageMixin,
     TranslatablePageRoutingMixin,
 )
-from wagtail_localize.segments import SegmentValue
+from wagtail_localize.translation.segments import SegmentValue
 
 
 class TestSnippet(TranslatableMixin, models.Model):

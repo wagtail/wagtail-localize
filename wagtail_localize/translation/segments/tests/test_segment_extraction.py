@@ -12,8 +12,8 @@ from wagtail_localize.test.models import (
     TestChildObject,
     TestNonParentalChildObject,
 )
-from wagtail_localize.segments import SegmentValue, TemplateValue, RelatedObjectValue
-from wagtail_localize.segments.extract import extract_segments
+from wagtail_localize.translation.segments import SegmentValue, TemplateValue, RelatedObjectValue
+from wagtail_localize.translation.segments.extract import extract_segments
 
 
 def make_test_page(**kwargs):

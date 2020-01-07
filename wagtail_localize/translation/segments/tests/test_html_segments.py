@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from wagtail_localize.segments import SegmentValue
-from wagtail_localize.segments.html import (
+from wagtail_localize.translation.segments import SegmentValue
+from wagtail_localize.translation.segments.html import (
     extract_html_segments,
     restore_html_segments,
     extract_html_elements,
