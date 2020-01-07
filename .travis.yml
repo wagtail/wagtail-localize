@@ -15,6 +15,9 @@ matrix:
    - env: TOXENV=py37-dj22-wa26-postgres
      python: 3.7
 
+   - env: TOXENV=py37-dj30-wa28-postgres
+     python: 3.7
+
    - env: TOXENV=py38-dj22-wa27-postgres
      python: 3.8
 
@@ -26,7 +29,7 @@ before_install:
   - sudo apt-get --yes remove postgresql\*
   - sudo apt-get install -y postgresql-11 postgresql-client-11
   - sudo cp /etc/postgresql/{9.6,11}/main/pg_hba.conf
-  - sudo service postgresql restart 11  
+  - sudo service postgresql restart 11
 
 install:
   - pip install tox
