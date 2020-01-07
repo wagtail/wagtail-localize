@@ -21,7 +21,7 @@ INSTALLED_APPS = [
     "wagtail_localize.admin.regions",
     "wagtail_localize.admin.workflow",
     "wagtail_localize.translation",
-    "wagtail_localize.translation_engines.google_translate",
+    "wagtail_localize.translation.engines.google_translate",
 ]
 ```
 
@@ -159,6 +159,6 @@ description of submodules
 'wagtail_localize.admin.regions',
 'wagtail_localize.admin.workflow',
 'wagtail_localize.translation',
-'wagtail_localize.translation_engines.google_translate',
+'wagtail_localize.translation.engines.google_translate',
 
 ### Translating snippets
