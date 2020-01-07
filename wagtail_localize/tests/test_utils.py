@@ -1,24 +1,24 @@
 from django.test import TestCase, override_settings
 
-from wagtail_localize.utils import get_language_fallbacks
+from wagtail_localize.utils import get_fallback_languages
 
 
-class TestGetLanguageFallbacks(TestCase):
+class TestGetFallbackLanguages(TestCase):
     @override_settings(
         LANGUAGE_CODE="en-gb", LANGUAGES=[("en", "English"), ("fr", "French")]
     )
     def test_basic(self):
-        self.assertEqual(get_language_fallbacks("en"), [])
-        self.assertEqual(get_language_fallbacks("fr"), ["en"])
-        self.assertEqual(get_language_fallbacks("fr-ca"), ["fr", "en"])
+        self.assertEqual(get_fallback_languages("en"), [])
+        self.assertEqual(get_fallback_languages("fr"), ["en"])
+        self.assertEqual(get_fallback_languages("fr-ca"), ["fr", "en"])
 
     @override_settings(
         LANGUAGE_CODE="fr", LANGUAGES=[("en", "English"), ("fr", "French")]
     )
     def test_french_default_language(self):
-        self.assertEqual(get_language_fallbacks("en"), ["fr"])
-        self.assertEqual(get_language_fallbacks("fr"), [])
-        self.assertEqual(get_language_fallbacks("fr-ca"), ["fr"])
+        self.assertEqual(get_fallback_languages("en"), ["fr"])
+        self.assertEqual(get_fallback_languages("fr"), [])
+        self.assertEqual(get_fallback_languages("fr-ca"), ["fr"])
 
     @override_settings(
         LANGUAGE_CODE="en",
@@ -30,9 +30,9 @@ class TestGetLanguageFallbacks(TestCase):
         ],
     )
     def test_other_regions_available(self):
-        self.assertEqual(get_language_fallbacks("en"), [])
-        self.assertEqual(get_language_fallbacks("fr"), ["fr-ca", "fr-be", "en"])
-        self.assertEqual(get_language_fallbacks("fr-ca"), ["fr", "fr-be", "en"])
+        self.assertEqual(get_fallback_languages("en"), [])
+        self.assertEqual(get_fallback_languages("fr"), ["fr-ca", "fr-be", "en"])
+        self.assertEqual(get_fallback_languages("fr-ca"), ["fr", "fr-be", "en"])
 
     @override_settings(
         LANGUAGE_CODE="en",
@@ -45,10 +45,10 @@ class TestGetLanguageFallbacks(TestCase):
         ],
     )
     def test_special_cases(self):
-        self.assertEqual(get_language_fallbacks("zh"), ["zh-hant", "zh-hans", "en"])
+        self.assertEqual(get_fallback_languages("zh"), ["zh-hant", "zh-hans", "en"])
         self.assertEqual(
-            get_language_fallbacks("zh-cn"), ["zh-hans", "zh", "zh-hant", "en"]
+            get_fallback_languages("zh-cn"), ["zh-hans", "zh", "zh-hant", "en"]
         )
         self.assertEqual(
-            get_language_fallbacks("zh-hk"), ["zh-hant", "zh", "zh-hans", "en"]
+            get_fallback_languages("zh-hk"), ["zh-hant", "zh", "zh-hans", "en"]
         )
