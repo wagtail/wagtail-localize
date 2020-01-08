@@ -7,23 +7,52 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '0041_group_collection_permissions_verbose_name_plural'),
-        ('wagtail_localize', '0002_initial_data'),
-        ('wagtail_localize_translation_memory', '0011_relatedobjectlocation'),
+        ("wagtailcore", "0041_group_collection_permissions_verbose_name_plural"),
+        ("wagtail_localize", "0002_initial_data"),
+        ("wagtail_localize_translation_memory", "0011_relatedobjectlocation"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TranslationLog',
+            name="TranslationLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('locale', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translation_logs', to='wagtail_localize.Locale')),
-                ('page_revision', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailcore.PageRevision')),
-                ('revision', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translation_logs', to='wagtail_localize_translation_memory.TranslatableRevision')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="translation_logs",
+                        to="wagtail_localize.Locale",
+                    ),
+                ),
+                (
+                    "page_revision",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="wagtailcore.PageRevision",
+                    ),
+                ),
+                (
+                    "revision",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="translation_logs",
+                        to="wagtail_localize_translation_memory.TranslatableRevision",
+                    ),
+                ),
             ],
-            options={
-                'unique_together': {('revision', 'locale')},
-            },
+            options={"unique_together": {("revision", "locale")},},
         ),
     ]

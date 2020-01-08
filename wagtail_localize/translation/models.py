@@ -277,7 +277,9 @@ class TranslatableRevision(models.Model):
             page_revision = None
 
         # Log that the translation was made
-        TranslationLog.objects.create(revision=self, locale=locale, page_revision=page_revision)
+        TranslationLog.objects.create(
+            revision=self, locale=locale, page_revision=page_revision
+        )
 
         return translation, created
 
@@ -296,7 +298,13 @@ class TranslationLog(models.Model):
         related_name="translation_logs",
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    page_revision = models.ForeignKey("wagtailcore.PageRevision", on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
+    page_revision = models.ForeignKey(
+        "wagtailcore.PageRevision",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
 
     class Meta:
         unique_together = [

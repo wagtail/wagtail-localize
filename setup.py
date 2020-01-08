@@ -34,20 +34,11 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
-    install_requires=[
-        'Django>=2.2,<2.3',
-        'Wagtail>=2.6,<2.8',
-    ],
+    install_requires=["Django>=2.2,<2.3", "Wagtail>=2.6,<2.8",],
     extras_require={
-        'testing': [
-            'dj-database-url==0.5.0',
-        ],
-        'pofile': [
-            'polib>=1.1,<2.0',
-        ],
-        'google_translate': [
-            'googletrans>=2.4,<3.0',
-        ],
+        "testing": ["dj-database-url==0.5.0",],
+        "pofile": ["polib>=1.1,<2.0",],
+        "google_translate": ["googletrans>=2.4,<3.0",],
     },
     zip_safe=False,
 )

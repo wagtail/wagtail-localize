@@ -8,7 +8,11 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from wagtail_localize.models import TranslatableMixin
-from wagtail_localize.translation.segments import SegmentValue, TemplateValue, RelatedObjectValue
+from wagtail_localize.translation.segments import (
+    SegmentValue,
+    TemplateValue,
+    RelatedObjectValue,
+)
 
 from .html import extract_html_segments
 

@@ -12,7 +12,11 @@ from wagtail_localize.test.models import (
     TestChildObject,
     TestNonParentalChildObject,
 )
-from wagtail_localize.translation.segments import SegmentValue, TemplateValue, RelatedObjectValue
+from wagtail_localize.translation.segments import (
+    SegmentValue,
+    TemplateValue,
+    RelatedObjectValue,
+)
 from wagtail_localize.translation.segments.extract import extract_segments
 
 
