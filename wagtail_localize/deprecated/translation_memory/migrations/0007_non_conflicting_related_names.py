@@ -7,29 +7,45 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0002_initial_data'),
-        ('wagtail_localize_translation_memory', '0006_segmentpagelocation_html_attrs'),
+        ("wagtail_localize", "0002_initial_data"),
+        ("wagtail_localize_translation_memory", "0006_segmentpagelocation_html_attrs"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='segment',
-            name='language',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtail_localize.Language'),
+            model_name="segment",
+            name="language",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtail_localize.Language",
+            ),
         ),
         migrations.AlterField(
-            model_name='segmentpagelocation',
-            name='page_revision',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.PageRevision'),
+            model_name="segmentpagelocation",
+            name="page_revision",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.PageRevision",
+            ),
         ),
         migrations.AlterField(
-            model_name='segmenttranslation',
-            name='language',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtail_localize.Language'),
+            model_name="segmenttranslation",
+            name="language",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtail_localize.Language",
+            ),
         ),
         migrations.AlterField(
-            model_name='templatepagelocation',
-            name='page_revision',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.PageRevision'),
+            model_name="templatepagelocation",
+            name="page_revision",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.PageRevision",
+            ),
         ),
     ]
