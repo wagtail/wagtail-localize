@@ -67,14 +67,15 @@ def migrate_to_translation_app(apps, schema_editor):
             context,
             context_created,
         ) = NewSegmentTranslationContext.objects.get_or_create(
-            object=object, path_id=get_path_id(segment_page_location.path),
-            defaults={
-                'path': segment_page_location.path,
-            }
+            object=object,
+            path_id=get_path_id(segment_page_location.path),
+            defaults={"path": segment_page_location.path,},
         )
 
         # Copy translations
-        for translation in SegmentTranslation.objects.filter(translation_of_id=segment_page_location.segment_id).iterator():
+        for translation in SegmentTranslation.objects.filter(
+            translation_of_id=segment_page_location.segment_id
+        ).iterator():
             NewSegmentTranslation.objects.get_or_create(
                 translation_of_id=new_segment_id,
                 language_id=translation.language_id,
@@ -91,6 +92,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("wagtail_localize_translation_memory", "0007_non_conflicting_related_names"),
+        ("wagtail_localize_translation", "0001_initial"),
     ]
 
     operations = [
