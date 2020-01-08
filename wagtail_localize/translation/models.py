@@ -306,11 +306,6 @@ class TranslationLog(models.Model):
         related_name="+",
     )
 
-    class Meta:
-        unique_together = [
-            ("revision", "locale"),
-        ]
-
     def get_instance(self):
         """
         Gets the instance of the translated object, if it still exists.
