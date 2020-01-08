@@ -52,6 +52,7 @@ class TestDownload(BasePoFileTestCase):
             title="Test page",
             slug="test-page",
             test_charfield="Some translatable content",
+            test_richtextfield="<p>Translatable <b>rich text</b></p>",
         )
         self.add_page_to_request(page)
 
@@ -66,6 +67,11 @@ class TestDownload(BasePoFileTestCase):
 
         self.assertIn(
             b'#: pages/test-page/:test_charfield\nmsgid "Some translatable content"\nmsgstr ""\n',
+            response.content,
+        )
+
+        self.assertIn(
+            b'#: pages/test-page/:test_richtextfield\nmsgid "Translatable rich text"\nmsgstr ""\n',
             response.content,
         )
 
@@ -97,6 +103,7 @@ class TestUpload(BasePoFileTestCase):
             title="Test page",
             slug="test-page",
             test_charfield="Some translatable content",
+            test_richtextfield="<p>Translatable <b>rich text</b></p>",
         )
         request_page = self.add_page_to_request(page)
 
@@ -107,12 +114,19 @@ class TestUpload(BasePoFileTestCase):
             "Content-Type": "text/plain; charset=utf-8",
         }
 
-        po.append(
-            polib.POEntry(
-                msgid="Some translatable content",
-                msgstr="Du contenu traduisible",
-                occurrences="",
-            )
+        po.extend(
+            [
+                polib.POEntry(
+                    msgid="Some translatable content",
+                    msgstr="Du contenu traduisible",
+                    occurrences="",
+                ),
+                polib.POEntry(
+                    msgid="Translatable rich text",
+                    msgstr="Texte riche traduisible",
+                    occurrences="",
+                ),
+            ]
         )
 
         response = self.client.post(
@@ -137,6 +151,9 @@ class TestUpload(BasePoFileTestCase):
         self.assertEqual(completed_page.locale, self.translation_request.target_locale)
         self.assertEqual(completed_page.translation_key, page.translation_key)
         self.assertEqual(completed_page.test_charfield, "Du contenu traduisible")
+        self.assertEqual(
+            completed_page.test_richtextfield, "<p>Texte riche traduisible</p>"
+        )
 
     def test_upload_with_nested_snippet(self):
         snippet = TestSnippet.objects.create(field="Some test snippet content")

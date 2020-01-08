@@ -52,6 +52,7 @@ class TestTranslate(TestCase):
             title="Test page",
             slug="test-page",
             test_charfield="Some translatable content",
+            test_richtextfield="<p>Translatable <b>rich text</b></p>",
         )
         request_page = self.add_page_to_request(page)
 
@@ -63,7 +64,14 @@ class TestTranslate(TestCase):
                 "Some translatable content",
                 "Certains contenus traduisibles",
                 "Certains contenus traduisibles",
-            )
+            ),
+            Translated(
+                "en",
+                "fr",
+                "Translatable rich text",
+                "Texte riche traduisible",
+                "Texte riche traduisible",
+            ),
         ]
 
         response = self.client.post(
@@ -83,7 +91,7 @@ class TestTranslate(TestCase):
         )
 
         Translator().translate.assert_called_with(
-            ["Some translatable content"], dest="fr", src="en"
+            ["Some translatable content", "Translatable rich text"], dest="fr", src="en"
         )
 
         request_page.refresh_from_db()
@@ -93,6 +101,9 @@ class TestTranslate(TestCase):
         self.assertTrue(translated_page.live)
         self.assertEqual(
             translated_page.test_charfield, "Certains contenus traduisibles"
+        )
+        self.assertEqual(
+            translated_page.test_richtextfield, "<p>Texte riche traduisible</p>"
         )
 
     def test_translate_without_publishing(self, Translator):

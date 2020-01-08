@@ -127,13 +127,19 @@ class MessageIngestor:
         for segment in text_segments:
             if segment.text in self.translations:
                 translated_segments.append(
-                    SegmentValue(segment.path, self.translations[segment.text])
+                    SegmentValue(
+                        segment.path,
+                        self.translations[segment.text],
+                        order=segment.order,
+                    )
                 )
             else:
                 missing_segments += 1
 
         if missing_segments:
             raise MissingSegmentsException(instance, missing_segments)
+
+        translated_segments.sort(key=lambda segment: segment.order)
 
         try:
             translation = instance.get_translation(self.target_locale)
