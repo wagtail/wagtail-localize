@@ -1,0 +1,1 @@
+default_app_config = "wagtail_localize.deprecated.translation_memory.apps.WagtailLocalizeTranslationMemoryAppConfig"
