@@ -102,15 +102,15 @@ class TranslatableRevision(models.Model):
 
     @classmethod
     def get_or_create_from_page_revision(cls, page_revision):
-        object, created = TranslatableObject.objects.get_or_create_from_instance(
-            page_revision.page
-        )
+        page = page_revision.page.specific
+
+        object, created = TranslatableObject.objects.get_or_create_from_instance(page)
 
         return TranslatableRevision.objects.get_or_create(
             object=object,
             page_revision=page_revision,
             defaults={
-                "locale_id": page_revision.page.locale_id,
+                "locale_id": page.locale_id,
                 "content_json": page_revision.content_json,
                 "created_at": page_revision.created_at,
             },

@@ -60,6 +60,10 @@ class TestGetOrCreateFromPageRevision(TestCase):
         TranslatableRevision.objects.all().delete()
 
         page_revision = self.page.get_latest_revision()
+
+        # Refetch the page revision so that it has the generic Page object associated
+        page_revision.refresh_from_db()
+
         revision, created = TranslatableRevision.get_or_create_from_page_revision(
             page_revision
         )
