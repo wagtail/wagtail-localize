@@ -15,7 +15,7 @@ except ImportError:
 
 setup(
     name="wagtail-localize",
-    version="0.3.3",
+    version="0.4",
     description="Wagtail Internationalisation Framework",
     author="Karl Hobley",
     author_email="karl@kaed.uk",
