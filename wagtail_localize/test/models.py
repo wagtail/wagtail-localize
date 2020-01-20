@@ -127,7 +127,7 @@ class TestPage(TranslatablePageMixin, Page):
     ]
 
 
-class TestModel(TranslatableMixin, models.Model):
+class TestModel(TranslatableMixin):
     title = models.CharField(max_length=255)
     test_charfield = models.CharField(max_length=255, blank=True)
     test_textfield = models.TextField(blank=True)
