@@ -101,8 +101,11 @@ class TestTranslatableMixin(TestCase):
         self.assertEqual(inherited_model.get_translation_model(), TestModel)
 
     def test_get_translatable_fields(self):
-        # TODO: test specific fields?
-        self.assertEqual(len(TestModel.get_translatable_fields()), 3)
+        field_names = ("test_charfield", "test_textfield", "test_emailfield")
+        fields = TestModel.get_translatable_fields()
+        self.assertEqual(len(fields), 3)
+        for field in fields:
+            self.assertIn(field.field_name, field_names)
 
 
 class TestTranslatablePageMixin(TestCase):
