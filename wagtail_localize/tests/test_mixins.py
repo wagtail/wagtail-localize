@@ -106,11 +106,3 @@ class TestTranslatableMixin(TestCase):
         self.assertEqual(len(fields), 3)
         for field in fields:
             self.assertIn(field.field_name, field_names)
-
-
-class TestTranslatablePageMixin(TestCase):
-    pass
-
-
-class TestTranslatablePageRoutingMixin(TestCase):
-    pass
