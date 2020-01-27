@@ -141,7 +141,6 @@ class TestModel(TranslatableMixin):
 
 
 class InheritedTestModel(TestModel):
-
     class Meta:
         unique_together = None
 
