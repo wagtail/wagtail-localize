@@ -5,9 +5,10 @@ from django.apps import apps
 from django.conf import settings
 from django.db import models, transaction
 from django.db.models import Exists, OuterRef, Q
-from django.db.models.signals import post_save, m2m_changed
+from django.db.models.signals import pre_save, post_save, m2m_changed
 from django.dispatch import receiver
 from django.utils import translation
+from modelcluster.fields import ParentalKey
 from wagtail.core.models import Page
 from wagtail.core.signals import page_published
 from wagtail.images.models import AbstractImage
@@ -280,9 +281,7 @@ def default_locale_id():
 
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    locale = models.ForeignKey(
-        Locale, on_delete=models.PROTECT, related_name="+", default=default_locale_id
-    )
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name="+")
     is_source_translation = models.BooleanField(default=True)
 
     translatable_fields = []
@@ -333,6 +332,32 @@ class TranslatableMixin(models.Model):
             translated.file = ContentFile(self.file.read(), name=new_name)
 
         return translated
+
+    def get_default_locale_id(self):
+        """
+        Finds the default locale to use for this object.
+
+        Intended to be run before save.
+        """
+        # Check if the object has any parental keys to another translatable model
+        # If so, take the locale from the object referenced in that parental key
+        parental_keys = [
+            field
+            for field in self._meta.get_fields()
+            if isinstance(field, ParentalKey)
+            and issubclass(field.related_model, TranslatableMixin)
+        ]
+
+        if parental_keys:
+            parent_id = parental_keys[0].value_from_object(self)
+            return (
+                parental_keys[0]
+                .related_model.objects.only("locale_id")
+                .get(id=parent_id)
+                .locale_id
+            )
+
+        return Locale.objects.default_id()
 
     @classmethod
     def get_translation_model(self):
@@ -452,6 +477,31 @@ class TranslatablePageMixin(TranslatableMixin):
             process_child_object=process_child_object,
             exclude_fields=exclude_fields,
         )
+
+    def get_default_locale_id(self):
+        """
+        Finds the default locale to use for this page.
+
+        Intended to be run before save.
+        """
+        parent = self.get_parent()
+        if parent is not None:
+            if issubclass(parent.specific_class, TranslatablePageMixin):
+                return (
+                    parent.specific_class.objects.only("locale_id")
+                    .get(id=parent.id)
+                    .locale_id
+                )
+
+        return super().get_default_locale_id()
+
+    def full_clean(self, **kwargs):
+        # We need to override this as the locale ID needs to be set before validation
+        # (normally we would set this on the pre_save signal but Wagtail does model level validation)
+        if self.locale_id is None:
+            self.locale_id = self.get_default_locale_id()
+
+        return super().full_clean(**kwargs)
 
     def can_move_to(self, parent):
         if not super().can_move_to(parent):
@@ -590,3 +640,14 @@ def get_translatable_models(include_subclasses=False):
         ]
 
     return translatable_models
+
+
+@receiver(pre_save)
+def set_locale_on_new_instance(sender, instance, **kwargs):
+    if not isinstance(instance, TranslatableMixin):
+        return
+
+    if instance.locale_id is not None:
+        return
+
+    instance.locale_id = instance.get_default_locale_id()
