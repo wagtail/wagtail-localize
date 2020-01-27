@@ -128,22 +128,48 @@ class TranslatableMixin(models.Model):
 
     translatable_fields = []
 
-    def get_translations(self, inclusive=False):
-        translations = self.__class__.objects.filter(
-            translation_key=self.translation_key
-        )
+    def get_translations(self, inclusive=False, queryset=None):
+        if queryset is not None and not issubclass(queryset.model, self.__class__):
+            raise TypeError(
+                "queryset.model ({}) is not a sub-class of {}".format(
+                    queryset.model, self.__class__
+                )
+            )
+
+        if queryset is None:
+            queryset = self.__class__.objects.all()
+
+        translations = queryset.filter(translation_key=self.translation_key)
 
         if inclusive is False:
             translations = translations.exclude(id=self.id)
 
         return translations
 
-    def get_translation(self, locale):
-        return self.get_translations(inclusive=True).get(locale=locale)
-
-    def get_translation_or_none(self, locale):
+    def get_translation(self, locale, fallback=False, queryset=None):
         try:
-            return self.get_translation(locale)
+            return self.get_translations(inclusive=True, queryset=queryset).get(
+                locale=locale
+            )
+        except self.__class__.DoesNotExist:
+            if not fallback:
+                raise
+
+            # Find a locale we can fallback to
+            # For example: Say, 'es-mx' was requested. If it doesn't exist, we could fall back to 'es' or 'es-ES'
+            available_locales = self.__class__.objects.filter(
+                translation_key=self.translation_key
+            ).values_list("locale_id", flat=True)
+            fallback_locale = locale.get_best_fallback(available_locales)
+
+            if fallback_locale is None:
+                raise
+
+            return self.get_translation(fallback_locale, queryset=queryset)
+
+    def get_translation_or_none(self, locale, fallback=False, queryset=None):
+        try:
+            return self.get_translation(locale, fallback=fallback, queryset=queryset)
         except self.__class__.DoesNotExist:
             return None
 
@@ -420,7 +446,9 @@ class TranslatablePageRoutingMixin:
 
         try:
             locale = Locale.objects.get(language_code=language_code)
-            return self.get_translation(locale)
+            return self.get_translation(
+                locale, fallback=True, queryset=self.__class__.objects.live()
+            )
 
         except Locale.DoesNotExist:
             return
