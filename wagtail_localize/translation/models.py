@@ -178,9 +178,7 @@ class TranslatableRevision(models.Model):
             elif isinstance(segment, RelatedObjectValue):
                 RelatedObjectLocation.from_related_object_value(self, segment)
             else:
-                SegmentLocation.from_segment_value(
-                    self, self.locale.language_id, segment
-                )
+                SegmentLocation.from_segment_value(self, self.locale, segment)
 
     @transaction.atomic
     def create_or_update_translation(self, locale):
@@ -208,7 +206,7 @@ class TranslatableRevision(models.Model):
         # Fetch all translated segments
         segment_locations = (
             SegmentLocation.objects.filter(revision=self)
-            .annotate_translation(locale.language)
+            .annotate_translation(locale)
             .select_related("context")
         )
 
@@ -316,7 +314,8 @@ class TranslationLog(models.Model):
 class Segment(models.Model):
     UUID_NAMESPACE = uuid.UUID("59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7")
 
-    language = models.ForeignKey("wagtail_localize.Language", on_delete=models.CASCADE)
+    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+
     text_id = models.UUIDField()
     text = models.TextField()
 
@@ -325,9 +324,9 @@ class Segment(models.Model):
         return uuid.uuid5(cls.UUID_NAMESPACE, text)
 
     @classmethod
-    def from_text(cls, language, text):
+    def from_text(cls, locale, text):
         segment, created = cls.objects.get_or_create(
-            language_id=pk(language),
+            locale_id=pk(locale),
             text_id=cls.get_text_id(text),
             defaults={"text": text},
         )
@@ -341,7 +340,7 @@ class Segment(models.Model):
         return super().save(*args, **kwargs)
 
     class Meta:
-        unique_together = [("language", "text_id")]
+        unique_together = [("locale", "text_id")]
 
 
 class SegmentTranslationContext(models.Model):
@@ -386,7 +385,7 @@ class SegmentTranslation(models.Model):
     translation_of = models.ForeignKey(
         Segment, on_delete=models.CASCADE, related_name="translations"
     )
-    language = models.ForeignKey("wagtail_localize.Language", on_delete=models.CASCADE)
+    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
     context = models.ForeignKey(
         SegmentTranslationContext,
         on_delete=models.SET_NULL,
@@ -399,13 +398,13 @@ class SegmentTranslation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [("language", "translation_of", "context")]
+        unique_together = [("locale", "translation_of", "context")]
 
     @classmethod
-    def from_text(cls, translation_of, language, context, text):
+    def from_text(cls, translation_of, locale, context, text):
         segment, created = cls.objects.get_or_create(
             translation_of=translation_of,
-            language_id=pk(language),
+            locale_id=pk(locale),
             context_id=pk(context),
             defaults={"text": text},
         )
@@ -447,17 +446,17 @@ class BaseLocation(models.Model):
 
 
 class SegmentLocationQuerySet(models.QuerySet):
-    def annotate_translation(self, language):
+    def annotate_translation(self, locale):
         """
         Adds a 'translation' field to the segments containing the
         text content of the segment translated into the specified
-        language.
+        locale.
         """
         return self.annotate(
             translation=Subquery(
                 SegmentTranslation.objects.filter(
                     translation_of_id=OuterRef("segment_id"),
-                    language_id=pk(language),
+                    locale_id=pk(locale),
                     context_id=OuterRef("context_id"),
                 ).values("text")
             )

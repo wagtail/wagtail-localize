@@ -38,7 +38,7 @@ def create_test_page(**kwargs):
 def prepare_revision(revision):
     # Extract segments from revision and save them into translation memory
     segments = extract_segments(revision.as_instance())
-    insert_segments(revision, revision.locale.language_id, segments)
+    insert_segments(revision, revision.locale_id, segments)
 
     # Recurse into any related objects
     for segment in segments:
@@ -254,11 +254,11 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         # Add translation for test_charfield
         self.segment = Segment.from_text(
-            self.source_locale.language, "This is some test content"
+            self.source_locale, "This is some test content"
         )
         self.translation = SegmentTranslation.objects.create(
             translation_of=self.segment,
-            language=self.dest_locale.language,
+            locale=self.dest_locale,
             context=SegmentTranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_charfield"
             ),
@@ -294,7 +294,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         # Create a translation for the new context
         SegmentTranslation.objects.create(
             translation_of=self.segment,
-            language=self.dest_locale.language,
+            locale=self.dest_locale,
             context=SegmentTranslationContext.objects.get(
                 object_id=child_page.translation_key, path="test_charfield"
             ),
@@ -432,7 +432,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         # Create a translation for the new context
         SegmentTranslation.objects.create(
             translation_of=self.segment,
-            language=self.dest_locale.language,
+            locale=self.dest_locale,
             context=SegmentTranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_streamfield.id"
             ),
