@@ -19,98 +19,19 @@ from .fields import TranslatableField, SynchronizedField
 from .utils import find_available_slug
 
 
-class LanguageManager(models.Manager):
-    use_in_migrations = True
-
-    def default(self):
-        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
-        return self.get(code=default_code)
-
-    def default_id(self):
-        return self.default().id
-
-
-class Language(models.Model):
-    code = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-
-    objects = LanguageManager()
-
-    class Meta:
-        ordering = ["-is_active", "code"]
-
-    @classmethod
-    def get_active(cls):
-        default_code = get_supported_language_variant(translation.get_language())
-
-        language, created = cls.objects.get_or_create(code=default_code)
-
-        return language
-
-    def as_rfc5646_language_tag(self):
-        """
-        Returns the language code using the capitalisation as specified in RFC5646.
-
-        For example: en-GB (not en-gb or en_GB)
-
-        https://tools.ietf.org/html/rfc5646
-        """
-        # These are all the script codes that are used in Django's default LANGUAGES
-        # They need to be capitalised differently from countries
-        script_codes = ["latn", "hans", "hant"]
-
-        components = self.code.split("-")
-
-        if len(components) == 1:
-            # en
-            return self.code.lower()
-        elif len(components) == 2:
-            # en-gb or zh-hans
-
-            if components[1] in script_codes:
-                # zh-hans => zh-Hans
-                return components[0].lower() + "-" + components[1].title()
-            else:
-                # en-gb => en-GB
-                return components[0].lower() + "-" + components[1].upper()
-        else:
-            # Too many components. Not sure what to do.
-            return self.code
-
-    @classmethod
-    def get_by_rfc5646_language_tag(cls, language_tag):
-        return cls.objects.get(code=language_tag.lower())
-
-    def get_display_name(self):
-        return get_languages().get(self.code)
-
-    def __str__(self):
-        display_name = self.get_display_name()
-
-        if display_name:
-            return "{} ({})".format(display_name, self.code)
-        else:
-            return self.code
-
-
 class LocaleManager(models.Manager):
     use_in_migrations = True
 
     def default(self):
-        locale, created = self.get_or_create(
-            language_id=Language.objects.default_id(), defaults={"is_active": True,}
-        )
-
-        return locale
+        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
+        return self.get(language_code=default_code)
 
     def default_id(self):
         return self.default().id
 
 
 class Locale(models.Model):
-    language = models.ForeignKey(
-        Language, on_delete=models.CASCADE, related_name="locales", unique=True
-    )
+    language_code = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
 
     objects = LocaleManager()
@@ -118,15 +39,31 @@ class Locale(models.Model):
     class Meta:
         ordering = [
             "-is_active",
-            "language__code",
+            "language_code",
         ]
 
+    def get_display_name(self):
+        return get_languages().get(self.language_code)
+
     def __str__(self):
-        return self.language.get_display_name()
+        display_name = self.get_display_name()
+
+        if display_name:
+            return "{} ({})".format(display_name, self.language_code)
+        else:
+            return self.language_code
+
+    @classmethod
+    def get_active(cls):
+        active_code = get_supported_language_variant(translation.get_language())
+
+        locale, created = cls.objects.get_or_create(language_code=active_code)
+
+        return locale
 
     @property
     def slug(self):
-        return self.language.code
+        return self.language_code
 
     def get_all_pages(self):
         """
@@ -431,9 +368,7 @@ class TranslatablePageRoutingMixin:
         )
 
         try:
-            locale = Locale.objects.get(
-                language__code=language_code,
-            )
+            locale = Locale.objects.get(language__code=language_code,)
             return self.get_translation(locale)
 
         except Locale.DoesNotExist:

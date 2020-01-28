@@ -24,8 +24,7 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(name="locale", unique_together=set(),),
         migrations.RemoveField(model_name="locale", name="region",),
         migrations.AlterModelOptions(
-            name='locale',
-            options={'ordering': ['-is_active', 'language__code']},
+            name="locale", options={"ordering": ["-is_active", "language__code"]},
         ),
         migrations.DeleteModel(name="Region",),
     ]
