@@ -122,17 +122,6 @@ class Region(models.Model):
         return self.name
 
 
-# Add new languages to default region automatically
-# This allows sites that don't care about regions to still work
-@receiver(post_save, sender=Language)
-def add_new_languages_to_default_region(sender, instance, created, **kwargs):
-    if created:
-        default_region = Region.objects.default()
-
-        if default_region is not None:
-            default_region.languages.add(instance)
-
-
 class LocaleManager(models.Manager):
     use_in_migrations = True
 
@@ -199,80 +188,6 @@ class Locale(models.Model):
             )
 
         return Page.objects.filter(q)
-
-
-# Update Locale.is_active when Language.is_active is changed
-@receiver(post_save, sender=Language)
-def update_locales_on_language_change(sender, instance, **kwargs):
-    if instance.is_active:
-        # Activate locales iff the language is selected on the region
-        (
-            Locale.objects.annotate(
-                is_active_on_region=Exists(
-                    Region.languages.through.objects.filter(
-                        region_id=OuterRef("region_id"), language_id=instance.id
-                    )
-                )
-            )
-            .filter(
-                language=instance,
-                region__is_active=True,
-                is_active_on_region=True,
-                is_active=False,
-            )
-            .update(is_active=True)
-        )
-
-    else:
-        # Deactivate locales with this language
-        Locale.objects.filter(language=instance, is_active=True).update(is_active=False)
-
-
-# Update Locale.is_active when Region.is_active is changed
-@receiver(post_save, sender=Region)
-def update_locales_on_region_change(sender, instance, **kwargs):
-    if instance.is_active:
-        # Activate locales with this region
-        (
-            Locale.objects.annotate(
-                is_active_on_region=Exists(
-                    Region.languages.through.objects.filter(
-                        region_id=instance.id, language_id=OuterRef("language_id")
-                    )
-                )
-            )
-            .filter(region=instance, is_active_on_region=True, is_active=False)
-            .update(is_active=True)
-        )
-
-    else:
-        # Deactivate locales with this region
-        Locale.objects.filter(region=instance, is_active=True).update(is_active=False)
-
-
-# Add/remove locales when languages are added/removed from regions
-@receiver(m2m_changed, sender=Region.languages.through)
-def update_locales_on_region_languages_change(
-    sender, instance, action, pk_set, **kwargs
-):
-    if action == "post_add":
-        for language_id in pk_set:
-            Locale.objects.update_or_create(
-                region=instance,
-                language_id=language_id,
-                defaults={
-                    # Note: only activate locale if language and region is active
-                    "is_active": Language.objects.filter(
-                        id=language_id, is_active=True
-                    ).exists()
-                    and instance.is_active
-                },
-            )
-    elif action == "post_remove":
-        for language_id in pk_set:
-            Locale.objects.update_or_create(
-                region=instance, language_id=language_id, defaults={"is_active": False}
-            )
 
 
 def default_locale_id():

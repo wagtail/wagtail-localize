@@ -40,26 +40,6 @@ class TestLanguageModel(TestCase):
         with translation.override("fr"):
             self.assertEqual(Language.get_active().code, "fr")
 
-    def test_as_rfc5646_language_tag(self):
-        tests = [
-            ("en", "en"),
-            ("en-gb", "en-GB"),
-            ("zh-hans", "zh-Hans"),
-            ("something-weird-going-on", "something-weird-going-on"),
-        ]
-
-        for code, expected in tests:
-            with self.subTest(code=code):
-                result = Language(code=code).as_rfc5646_language_tag()
-                self.assertEqual(result, expected)
-
-    def test_get_by_rfc5646_language_tag(self):
-        language = Language.objects.create(code="en-gb")
-
-        got_language = Language.get_by_rfc5646_language_tag("en-GB")
-
-        self.assertEqual(language, got_language)
-
     def test_get_display_name(self):
         language = Language.objects.get(code="en")
         self.assertEqual(language.get_display_name(), "English")
@@ -77,23 +57,6 @@ class TestLanguageModel(TestCase):
         # This language is not in LANGUAGES so it should just return the language code
         language = Language.objects.create(code="foo")
         self.assertEqual(str(language), "foo")
-
-
-class TestRegionModel(TestCase):
-    def test_default(self):
-        region = Region.objects.default()
-        self.assertEqual(region.name, "Default")
-        self.assertEqual(region.slug, "default")
-        self.assertTrue(region.is_default)
-
-    def test_default_when_no_default_exists(self):
-        Region.objects.all().update(is_default=False)
-        self.assertIsNone(Region.objects.default())
-        self.assertIsNone(Region.objects.default_id())
-
-    def test_str(self):
-        region = Region.objects.get(slug="default")
-        self.assertEqual(str(region), "Default")
 
 
 class TestLocaleModel(TestCase):
@@ -115,19 +78,6 @@ class TestLocaleModel(TestCase):
         locale = Locale.objects.default()
         self.assertEqual(locale.region.name, "Default")
         self.assertEqual(locale.language.code, "fr")
-
-    def test_slug_default_region(self):
-        locale = Locale.objects.get(region__slug="default", language__code="en")
-        self.assertEqual(locale.slug, "en")
-
-    def test_slug_other_region(self):
-        region = Region.objects.create(name="European Union", slug="eu")
-        region.languages.set(
-            [Language.objects.get(code="en"), Language.objects.get(code="fr")]
-        )
-
-        locale = Locale.objects.get(region=region, language__code="en")
-        self.assertEqual(locale.slug, "eu-en")
 
     def test_str(self):
         locale = Locale.objects.get(region__slug="default", language__code="en")
