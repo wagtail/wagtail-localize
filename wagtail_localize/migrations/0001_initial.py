@@ -28,7 +28,6 @@ class Migration(migrations.Migration):
                 ("is_active", models.BooleanField(default=True)),
             ],
             options={"ordering": ["-is_active", "code"]},
-            managers=[("objects", wagtail_localize.models.LanguageManager())],
         ),
         migrations.CreateModel(
             name="Locale",
