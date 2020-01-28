@@ -3,41 +3,35 @@
 {% include "wagtailadmin/shared/header.html" with title=title_str subtitle=page.title %}
 
 <div class="nice-padding">
-    {% for region, translations in translations_by_region %}
-        {% if multi_region %}
-            <h2>{{ region.name }}</h2>
-        {% endif %}
-
-        <table class="listing">
-            <thead>
-                <tr class="table-headers">
-                    <th>{% trans "Language" %}</th>
-                    <th>{% trans "Page" %}</th>
-                    <th></th>
+    <table class="listing">
+        <thead>
+            <tr class="table-headers">
+                <th>{% trans "Language" %}</th>
+                <th>{% trans "Page" %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for translated_page in translations %}
+                <tr>
+                    <td>{{ translated_page.locale.language.get_display_name }}</td>
+                    <td class="title">{{ translated_page.get_admin_display_title }}</td>
+                    <td class="listing__item--active">
+                        {% if translated_page == page %}
+                            <b>Current page</b>
+                        {% else %}
+                            <ul class="actions">
+                                <li>
+                                    <a href="{% url 'wagtailadmin_pages:edit' translated_page.id %}" class="button button-small button-secondary">{% trans "Edit" %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'wagtailadmin_pages:view_draft' translated_page.id %}" class="button button-small button-secondary" target="_blank" rel="noopener noreferrer">{% trans "View draft" %}</a>
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for translated_page in translations %}
-                    <tr>
-                        <td>{{ translated_page.locale.language.get_display_name }}</td>
-                        <td class="title">{{ translated_page.get_admin_display_title }}</td>
-                        <td class="listing__item--active">
-                            {% if translated_page == page %}
-                                <b>Current page</b>
-                            {% else %}
-                                <ul class="actions">
-                                    <li>
-                                        <a href="{% url 'wagtailadmin_pages:edit' translated_page.id %}" class="button button-small button-secondary">{% trans "Edit" %}</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'wagtailadmin_pages:view_draft' translated_page.id %}" class="button button-small button-secondary" target="_blank" rel="noopener noreferrer">{% trans "View draft" %}</a>
-                                    </li>
-                                </ul>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
 </div>

@@ -3,7 +3,7 @@ from django.test import TestCase, override_settings
 from django.utils import translation
 from wagtail.core.models import Page
 
-from wagtail_localize.models import Language, Region, Locale
+from wagtail_localize.models import Language, Locale
 from wagtail_localize.test.models import TestPage, TestHomePage
 
 
