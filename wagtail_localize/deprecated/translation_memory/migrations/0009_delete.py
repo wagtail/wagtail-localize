@@ -9,6 +9,10 @@ class Migration(migrations.Migration):
         ("wagtail_localize_translation_memory", "0008_migrate_to_translation_app"),
     ]
 
+    run_before = [
+        ("wagtail_localize", "0006_delete_language_model"),
+    ]
+
     operations = [
         migrations.RemoveField(model_name="segmentpagelocation", name="page_revision",),
         migrations.RemoveField(model_name="segmentpagelocation", name="segment",),

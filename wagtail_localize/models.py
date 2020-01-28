@@ -368,7 +368,7 @@ class TranslatablePageRoutingMixin:
         )
 
         try:
-            locale = Locale.objects.get(language__code=language_code,)
+            locale = Locale.objects.get(language_code=language_code)
             return self.get_translation(locale)
 
         except Locale.DoesNotExist:

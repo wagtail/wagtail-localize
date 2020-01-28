@@ -5,7 +5,7 @@ from django.utils import timezone
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page
 
-from wagtail_localize.models import Language, Locale
+from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestSnippet
 from wagtail_localize.translation.models import (
     TranslatableRevision,
@@ -243,9 +243,8 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.revision = TranslatableRevision.get_or_create_from_page_revision(
             self.page.get_latest_revision()
         )[0]
-        Language.objects.create(code="fr")
-        self.source_locale = Locale.objects.get(language__code="en")
-        self.dest_locale = Locale.objects.get(language__code="fr")
+        self.source_locale = Locale.objects.get(language_code="en")
+        self.dest_locale = Locale.objects.create(language_code="fr")
 
         # Translate the snippet
         self.translated_snippet = self.snippet.copy_for_translation(self.dest_locale)

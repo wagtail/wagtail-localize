@@ -10,7 +10,7 @@ from wagtail_localize.admin.workflow.models import (
     TranslationRequest,
     TranslationRequestPage,
 )
-from wagtail_localize.models import Language, Locale
+from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestSnippet
 
 
@@ -28,11 +28,10 @@ class BasePoFileTestCase(TestCase):
     def setUp(self):
         self.client.login(username="admin", password="password")
 
-        Language.objects.create(code="fr")
         self.user = User.objects.get(username="admin")
         self.translation_request = TranslationRequest.objects.create(
             source_locale=Locale.objects.default(),
-            target_locale=Locale.objects.get(language__code="fr"),
+            target_locale=Locale.objects.create(language_code="fr"),
             target_root=Page.objects.get(id=1),
             created_at=timezone.now(),
             created_by=self.user,

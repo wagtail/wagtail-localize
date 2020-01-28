@@ -11,6 +11,10 @@ class Migration(migrations.Migration):
         ("wagtail_localize_translation", "0003_change_language_to_locale_2"),
     ]
 
+    run_before = [
+        ("wagtail_localize", "0006_delete_language_model"),
+    ]
+
     operations = [
         migrations.AlterField(
             model_name="segment",

@@ -13,10 +13,10 @@ class SubmitToGoogleTranslateActionModule(BaseActionModule):
     def is_shown(self):
         # Hide if the language is not different between the locales
         source_lang = language_code(
-            self.translation_request.source_locale.language.code
+            self.translation_request.source_locale.language_code
         )
         target_lang = language_code(
-            self.translation_request.target_locale.language.code
+            self.translation_request.target_locale.language_code
         )
 
         return source_lang != target_lang
