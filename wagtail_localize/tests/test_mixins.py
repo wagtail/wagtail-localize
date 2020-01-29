@@ -5,9 +5,9 @@ from django.test import TestCase
 
 from wagtail.core.models import Page
 
-from wagtail_localize.models import Language, Region, Locale
+from wagtail_localize.models import Locale
 from wagtail_localize.test.models import InheritedTestModel, TestModel
-from wagtail_localize.tests.test_language_region_locale_models import make_test_page
+from wagtail_localize.tests.test_locale_model import make_test_page
 
 
 def make_test_instance(model=None, **kwargs):
@@ -22,15 +22,13 @@ class TestTranslatableMixin(TestCase):
         language_codes = dict(settings.LANGUAGES).keys()
 
         for language_code in language_codes:
-            Language.objects.update_or_create(
-                code=language_code, defaults={"is_active": True}
+            Locale.objects.update_or_create(
+                language_code=language_code, defaults={"is_active": True}
             )
 
         # create the locales
-        self.locale = Locale.objects.get(region__slug="default", language__code="en")
-        self.another_locale = Locale.objects.get(
-            region__slug="default", language__code="fr"
-        )
+        self.locale = Locale.objects.get(language_code="en")
+        self.another_locale = Locale.objects.get(language_code="fr")
 
         # add the main model
         self.main_instance = make_test_instance(
