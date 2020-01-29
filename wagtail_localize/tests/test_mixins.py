@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.test import TestCase
@@ -6,7 +6,12 @@ from django.test import TestCase
 from wagtail.core.models import Page
 
 from wagtail_localize.models import Locale
-from wagtail_localize.test.models import InheritedTestModel, TestModel
+from wagtail_localize.test.models import (
+    InheritedTestModel,
+    TestChildObject,
+    TestModel,
+    TestPage,
+)
 from wagtail_localize.tests.test_locale_model import make_test_page
 
 
@@ -114,40 +119,60 @@ class TestTranslatableMixin(TestCase):
 
 
 class TestTranslatablePageMixin(TestCase):
-    # def setUp(self):
-    #     language_codes = dict(settings.LANGUAGES).keys()
-
-    #     for language_code in language_codes:
-    #         Language.objects.update_or_create(
-    #             code=language_code, defaults={"is_active": True}
-    #         )
-
-    #     # create the locales
-    #     self.locale = Locale.objects.get(region__slug="default", language__code="en")
-    #     self.another_locale = Locale.objects.get(
-    #         region__slug="default", language__code="fr"
-    #     )
-
-    #     # add the main model
-    #     self.main_page = make_test_instance(
-    #         locale=self.locale, title="Main Model", test_charfield="Some text"
-    #     )
-
-    @patch('wagtail_localize.models.uuid.uuid4')
-    @patch('wagtail.core.models.Page.copy')
-    def test_copy_reset_translation_key_true_no_update_attrs(self, mock_super, mock_uuid4):
-        mock_uuid4.return_value = '123456'
+    @patch("wagtail_localize.models.uuid.uuid4")
+    @patch("wagtail.core.models.Page.copy")
+    def test_copy_reset_translation_key_true_no_update_attrs(
+        self, mock_super, mock_uuid4
+    ):
+        mock_uuid4.return_value = "123456"
         page = make_test_page()
         page.copy()
         mock_super.assert_called_once()
         _, kwargs = mock_super.call_args_list[0]
-        self.assertEqual(kwargs['update_attrs']['translation_key'], '123456')
-        self.assertTrue(kwargs['update_attrs']['is_source_translation'])
-    
-    @patch('wagtail.core.models.Page.copy')
+        self.assertEqual(kwargs["update_attrs"]["translation_key"], "123456")
+        self.assertTrue(kwargs["update_attrs"]["is_source_translation"])
+
+    @patch("wagtail.core.models.Page.copy")
+    def test_copy_reset_translation_key_true_with_update_attrs_translation_key(
+        self, mock_super
+    ):
+        page = make_test_page()
+        update_attrs = {"translation_key": "123456"}
+        page.copy(update_attrs=update_attrs)
+        mock_super.assert_called_once()
+        _, kwargs = mock_super.call_args_list[0]
+        self.assertEqual(kwargs["update_attrs"]["translation_key"], "123456")
+
+    @patch("wagtail_localize.models.uuid.uuid4")
+    @patch("wagtail.core.models.Page.copy")
+    def test_copy_reset_translation_key_true_with_update_attrs_no_translation_key(
+        self, mock_super, mock_uuid4
+    ):
+        mock_uuid4.return_value = "123456"
+        page = make_test_page()
+        page.copy(update_attrs={})
+        mock_super.assert_called_once()
+        _, kwargs = mock_super.call_args_list[0]
+        self.assertEqual(kwargs["update_attrs"]["translation_key"], "123456")
+        self.assertTrue(kwargs["update_attrs"]["is_source_translation"])
+
+    @patch("wagtail.core.models.Page.copy")
     def test_copy_reset_translation_key_false(self, mock_super):
         page = make_test_page()
         # these would normally need to be changed to avoid integrity errors
-        update_attrs = {'slug': 'new-slug', 'translation_key': '123456'}
+        update_attrs = {"slug": "new-slug", "translation_key": "123456"}
         page.copy(reset_translation_key=False, update_attrs=update_attrs)
         mock_super.assert_called_once_with(update_attrs=update_attrs)
+
+    def test_process_child_object_called(self):
+        """
+        Test that the `process_child_object` callable passed to `copy()` still gets
+        called.
+        """
+        process_child_object = Mock()
+        page = make_test_page()
+        page.test_childobjects.add(TestChildObject(field="Test content"))
+        page.save()
+        update_attrs = {"slug": "new-slug"}
+        page.copy(update_attrs=update_attrs, process_child_object=process_child_object)
+        process_child_object.assert_called_once()
