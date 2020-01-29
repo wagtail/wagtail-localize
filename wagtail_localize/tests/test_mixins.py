@@ -7,6 +7,7 @@ from wagtail.core.models import Page
 
 from wagtail_localize.models import Language, Region, Locale
 from wagtail_localize.test.models import InheritedTestModel, TestModel
+from wagtail_localize.tests.test_language_region_locale_models import make_test_page
 
 
 def make_test_instance(model=None, **kwargs):
@@ -112,3 +113,43 @@ class TestTranslatableMixin(TestCase):
         self.assertEqual(len(fields), 3)
         for field in fields:
             self.assertIn(field.field_name, field_names)
+
+
+class TestTranslatablePageMixin(TestCase):
+    # def setUp(self):
+    #     language_codes = dict(settings.LANGUAGES).keys()
+
+    #     for language_code in language_codes:
+    #         Language.objects.update_or_create(
+    #             code=language_code, defaults={"is_active": True}
+    #         )
+
+    #     # create the locales
+    #     self.locale = Locale.objects.get(region__slug="default", language__code="en")
+    #     self.another_locale = Locale.objects.get(
+    #         region__slug="default", language__code="fr"
+    #     )
+
+    #     # add the main model
+    #     self.main_page = make_test_instance(
+    #         locale=self.locale, title="Main Model", test_charfield="Some text"
+    #     )
+
+    @patch('wagtail_localize.models.uuid.uuid4')
+    @patch('wagtail.core.models.Page.copy')
+    def test_copy_reset_translation_key_true_no_update_attrs(self, mock_super, mock_uuid4):
+        mock_uuid4.return_value = '123456'
+        page = make_test_page()
+        page.copy()
+        mock_super.assert_called_once()
+        _, kwargs = mock_super.call_args_list[0]
+        self.assertEqual(kwargs['update_attrs']['translation_key'], '123456')
+        self.assertTrue(kwargs['update_attrs']['is_source_translation'])
+    
+    @patch('wagtail.core.models.Page.copy')
+    def test_copy_reset_translation_key_false(self, mock_super):
+        page = make_test_page()
+        # these would normally need to be changed to avoid integrity errors
+        update_attrs = {'slug': 'new-slug', 'translation_key': '123456'}
+        page.copy(reset_translation_key=False, update_attrs=update_attrs)
+        mock_super.assert_called_once_with(update_attrs=update_attrs)
