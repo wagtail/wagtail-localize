@@ -6,7 +6,7 @@ from django.test import TestCase
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page
 
-from wagtail_localize.models import Language, Locale
+from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
 from wagtail_localize.translation.segments import (
     SegmentValue,
@@ -56,8 +56,7 @@ RICH_TEXT_TEST_OUTPUT = '<h1>Ceci est une rubrique</h1><p>Ceci est un paragraphe
 class TestSegmentIngestion(TestCase):
     def setUp(self):
         self.src_locale = Locale.objects.default()
-        self.language = Language.objects.create(code="fr")
-        self.locale = Locale.objects.get(language=self.language)
+        self.locale = Locale.objects.create(language_code="fr")
 
     def test_charfield(self):
         page = make_test_page(test_charfield="Test content")
@@ -251,8 +250,7 @@ def make_test_page_with_streamfield_block(block_id, block_type, block_value, **k
 class TestSegmentExtractionWithStreamField(TestCase):
     def setUp(self):
         self.src_locale = Locale.objects.default()
-        self.language = Language.objects.create(code="fr")
-        self.locale = Locale.objects.get(language=self.language)
+        self.locale = Locale.objects.create(language_code="fr")
 
     def test_charblock(self):
         block_id = uuid.uuid4()

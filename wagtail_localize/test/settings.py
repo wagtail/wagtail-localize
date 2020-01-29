@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     "wagtail_localize",
     "wagtail_localize.test",
     "wagtail_localize.admin.language_switch",
-    "wagtail_localize.admin.regions",
     "wagtail_localize.admin.workflow",
     "wagtail_localize.translation",
     "wagtail_localize.translation.engines.google_translate",

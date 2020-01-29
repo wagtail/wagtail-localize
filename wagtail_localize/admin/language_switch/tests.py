@@ -5,7 +5,7 @@ from django.urls import reverse
 from wagtail.core.models import Page
 from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_localize.models import Language, Region, Locale
+from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage
 
 
@@ -13,10 +13,7 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
     def setUp(self):
         self.login()
 
-        french_language = Language.objects.create(code="fr")
-        french_locale = Locale.objects.get(
-            language=french_language, region=Region.objects.default()
-        )
+        french_locale = Locale.objects.create(language_code="fr")
 
         self.root_page = Page.objects.get(depth=1)
 

@@ -5,9 +5,10 @@ from django.apps import apps
 from django.conf import settings
 from django.db import models, transaction
 from django.db.models import Exists, OuterRef, Q
-from django.db.models.signals import post_save, m2m_changed
+from django.db.models.signals import pre_save, post_save, m2m_changed
 from django.dispatch import receiver
 from django.utils import translation
+from modelcluster.fields import ParentalKey
 from wagtail.core.models import Page
 from wagtail.core.signals import page_published
 from wagtail.images.models import AbstractImage
@@ -18,170 +19,51 @@ from .fields import TranslatableField, SynchronizedField
 from .utils import find_available_slug
 
 
-class LanguageManager(models.Manager):
-    use_in_migrations = True
-
-    def default(self):
-        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
-        return self.get(code=default_code)
-
-    def default_id(self):
-        return self.default().id
-
-
-class Language(models.Model):
-    code = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-
-    objects = LanguageManager()
-
-    class Meta:
-        ordering = ["-is_active", "code"]
-
-    @classmethod
-    def get_active(cls):
-        default_code = get_supported_language_variant(translation.get_language())
-
-        language, created = cls.objects.get_or_create(code=default_code)
-
-        return language
-
-    def as_rfc5646_language_tag(self):
-        """
-        Returns the language code using the capitalisation as specified in RFC5646.
-
-        For example: en-GB (not en-gb or en_GB)
-
-        https://tools.ietf.org/html/rfc5646
-        """
-        # These are all the script codes that are used in Django's default LANGUAGES
-        # They need to be capitalised differently from countries
-        script_codes = ["latn", "hans", "hant"]
-
-        components = self.code.split("-")
-
-        if len(components) == 1:
-            # en
-            return self.code.lower()
-        elif len(components) == 2:
-            # en-gb or zh-hans
-
-            if components[1] in script_codes:
-                # zh-hans => zh-Hans
-                return components[0].lower() + "-" + components[1].title()
-            else:
-                # en-gb => en-GB
-                return components[0].lower() + "-" + components[1].upper()
-        else:
-            # Too many components. Not sure what to do.
-            return self.code
-
-    @classmethod
-    def get_by_rfc5646_language_tag(cls, language_tag):
-        return cls.objects.get(code=language_tag.lower())
-
-    def get_display_name(self):
-        return get_languages().get(self.code)
-
-    def __str__(self):
-        display_name = self.get_display_name()
-
-        if display_name:
-            return "{} ({})".format(display_name, self.code)
-        else:
-            return self.code
-
-
-class RegionManager(models.Manager):
-    use_in_migrations = True
-
-    def default(self):
-        return self.filter(is_default=True).first()
-
-    def default_id(self):
-        default = self.default()
-
-        if default:
-            return default.id
-
-
-class Region(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
-    languages = models.ManyToManyField(Language)
-    is_default = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-
-    objects = RegionManager()
-
-    class Meta:
-        ordering = ["-is_active", "-is_default", "name"]
-
-    def __str__(self):
-        return self.name
-
-
-# Add new languages to default region automatically
-# This allows sites that don't care about regions to still work
-@receiver(post_save, sender=Language)
-def add_new_languages_to_default_region(sender, instance, created, **kwargs):
-    if created:
-        default_region = Region.objects.default()
-
-        if default_region is not None:
-            default_region.languages.add(instance)
-
-
 class LocaleManager(models.Manager):
     use_in_migrations = True
 
     def default(self):
-        locale, created = self.get_or_create(
-            region_id=Region.objects.default_id(),
-            language_id=Language.objects.default_id(),
-            is_active=True,
-        )
-
-        return locale
+        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
+        return self.get(language_code=default_code)
 
     def default_id(self):
         return self.default().id
 
 
-# A locale gives an individual record to a region/language combination
-# I prefer this way as it allows you to easily reorganise your regions and languages
-# after there is already content entered.
-# Note: these are managed entirely through signal handlers so don't update them directly
-# without also updating the Language/Region models as well.
 class Locale(models.Model):
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name="locales")
-    language = models.ForeignKey(
-        Language, on_delete=models.CASCADE, related_name="locales"
-    )
+    language_code = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
 
     objects = LocaleManager()
 
     class Meta:
-        unique_together = [("region", "language")]
         ordering = [
             "-is_active",
-            "-region__is_default",
-            "region__name",
-            "language__code",
+            "language_code",
         ]
 
+    def get_display_name(self):
+        return get_languages().get(self.language_code)
+
     def __str__(self):
-        return "{} / {}".format(self.region.name, self.language.get_display_name())
+        display_name = self.get_display_name()
+
+        if display_name:
+            return "{} ({})".format(display_name, self.language_code)
+        else:
+            return self.language_code
+
+    @classmethod
+    def get_active(cls):
+        active_code = get_supported_language_variant(translation.get_language())
+
+        locale, created = cls.objects.get_or_create(language_code=active_code)
+
+        return locale
 
     @property
     def slug(self):
-        slug = self.language.code
-
-        if self.region != Region.objects.default():
-            return "{}-{}".format(self.region.slug, self.language.code)
-        else:
-            return self.language.code
+        return self.language_code
 
     def get_all_pages(self):
         """
@@ -200,89 +82,13 @@ class Locale(models.Model):
         return Page.objects.filter(q)
 
 
-# Update Locale.is_active when Language.is_active is changed
-@receiver(post_save, sender=Language)
-def update_locales_on_language_change(sender, instance, **kwargs):
-    if instance.is_active:
-        # Activate locales iff the language is selected on the region
-        (
-            Locale.objects.annotate(
-                is_active_on_region=Exists(
-                    Region.languages.through.objects.filter(
-                        region_id=OuterRef("region_id"), language_id=instance.id
-                    )
-                )
-            )
-            .filter(
-                language=instance,
-                region__is_active=True,
-                is_active_on_region=True,
-                is_active=False,
-            )
-            .update(is_active=True)
-        )
-
-    else:
-        # Deactivate locales with this language
-        Locale.objects.filter(language=instance, is_active=True).update(is_active=False)
-
-
-# Update Locale.is_active when Region.is_active is changed
-@receiver(post_save, sender=Region)
-def update_locales_on_region_change(sender, instance, **kwargs):
-    if instance.is_active:
-        # Activate locales with this region
-        (
-            Locale.objects.annotate(
-                is_active_on_region=Exists(
-                    Region.languages.through.objects.filter(
-                        region_id=instance.id, language_id=OuterRef("language_id")
-                    )
-                )
-            )
-            .filter(region=instance, is_active_on_region=True, is_active=False)
-            .update(is_active=True)
-        )
-
-    else:
-        # Deactivate locales with this region
-        Locale.objects.filter(region=instance, is_active=True).update(is_active=False)
-
-
-# Add/remove locales when languages are added/removed from regions
-@receiver(m2m_changed, sender=Region.languages.through)
-def update_locales_on_region_languages_change(
-    sender, instance, action, pk_set, **kwargs
-):
-    if action == "post_add":
-        for language_id in pk_set:
-            Locale.objects.update_or_create(
-                region=instance,
-                language_id=language_id,
-                defaults={
-                    # Note: only activate locale if language and region is active
-                    "is_active": Language.objects.filter(
-                        id=language_id, is_active=True
-                    ).exists()
-                    and instance.is_active
-                },
-            )
-    elif action == "post_remove":
-        for language_id in pk_set:
-            Locale.objects.update_or_create(
-                region=instance, language_id=language_id, defaults={"is_active": False}
-            )
-
-
 def default_locale_id():
     return Locale.objects.default_id()
 
 
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    locale = models.ForeignKey(
-        Locale, on_delete=models.PROTECT, related_name="+", default=default_locale_id
-    )
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name="+")
     is_source_translation = models.BooleanField(default=True)
 
     translatable_fields = []
@@ -333,6 +139,32 @@ class TranslatableMixin(models.Model):
             translated.file = ContentFile(self.file.read(), name=new_name)
 
         return translated
+
+    def get_default_locale_id(self):
+        """
+        Finds the default locale to use for this object.
+
+        Intended to be run before save.
+        """
+        # Check if the object has any parental keys to another translatable model
+        # If so, take the locale from the object referenced in that parental key
+        parental_keys = [
+            field
+            for field in self._meta.get_fields()
+            if isinstance(field, ParentalKey)
+            and issubclass(field.related_model, TranslatableMixin)
+        ]
+
+        if parental_keys:
+            parent_id = parental_keys[0].value_from_object(self)
+            return (
+                parental_keys[0]
+                .related_model.objects.only("locale_id")
+                .get(id=parent_id)
+                .locale_id
+            )
+
+        return Locale.objects.default_id()
 
     @classmethod
     def get_translation_model(self):
@@ -452,6 +284,31 @@ class TranslatablePageMixin(TranslatableMixin):
             exclude_fields=exclude_fields,
         )
 
+    def get_default_locale_id(self):
+        """
+        Finds the default locale to use for this page.
+
+        Intended to be run before save.
+        """
+        parent = self.get_parent()
+        if parent is not None:
+            if issubclass(parent.specific_class, TranslatablePageMixin):
+                return (
+                    parent.specific_class.objects.only("locale_id")
+                    .get(id=parent.id)
+                    .locale_id
+                )
+
+        return super().get_default_locale_id()
+
+    def full_clean(self, **kwargs):
+        # We need to override this as the locale ID needs to be set before validation
+        # (normally we would set this on the pre_save signal but Wagtail does model level validation)
+        if self.locale_id is None:
+            self.locale_id = self.get_default_locale_id()
+
+        return super().full_clean(**kwargs)
+
     def can_move_to(self, parent):
         if not super().can_move_to(parent):
             return False
@@ -510,9 +367,7 @@ class TranslatablePageRoutingMixin:
         )
 
         try:
-            locale = Locale.objects.get(
-                language__code=language_code, region__is_default=True
-            )
+            locale = Locale.objects.get(language_code=language_code)
             return self.get_translation(locale)
 
         except Locale.DoesNotExist:
@@ -589,3 +444,20 @@ def get_translatable_models(include_subclasses=False):
         ]
 
     return translatable_models
+
+
+@receiver(pre_save)
+def set_locale_on_new_instance(sender, instance, **kwargs):
+    if not isinstance(instance, TranslatableMixin):
+        return
+
+    if instance.locale_id is not None:
+        return
+
+    # If this is a fixture load, use the global default Locale
+    # as the page tree is probably in an flux
+    if kwargs["raw"]:
+        instance.locale_id = Locale.objects.default_id()
+        return
+
+    instance.locale_id = instance.get_default_locale_id()

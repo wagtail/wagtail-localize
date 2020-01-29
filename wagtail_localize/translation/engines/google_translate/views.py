@@ -45,8 +45,8 @@ def translate(request, translation_request_id):
     translator = googletrans.Translator()
     google_translations = translator.translate(
         list(message_extractor.messages.keys()),
-        src=language_code(translation_request.source_locale.language.code),
-        dest=language_code(translation_request.target_locale.language.code),
+        src=language_code(translation_request.source_locale.language_code),
+        dest=language_code(translation_request.target_locale.language_code),
     )
 
     translations = {

@@ -23,26 +23,26 @@ from .models import (
 )
 
 
-def get_translation_progress(revision_id, language):
+def get_translation_progress(revision_id, locale):
     """
     For the specified page revision, get the current
-    translation progress into the specified language.
+    translation progress into the specified locale.
 
     Returns two integers:
      - The total number of segments in the revision to translate
-     - The number of segments that have been translated into the language
+     - The number of segments that have been translated into the locale
     """
     # Get QuerySet of Segments that need to be translated
     required_segments = SegmentLocation.objects.filter(revision_id=revision_id)
 
     # Annotate each Segment with a flag that indicates whether the segment is translated
-    # into the specified language
+    # into the specified locale
     required_segments = required_segments.annotate(
         is_translated=Exists(
             SegmentTranslation.objects.filter(
                 translation_of_id=OuterRef("segment_id"),
                 context_id=OuterRef("context_id"),
-                language=language,
+                locale=locale,
             )
         )
     )
@@ -59,7 +59,7 @@ def get_translation_progress(revision_id, language):
     return aggs["total_segments"], aggs["translated_segments"]
 
 
-def insert_segments(revision, language, segments):
+def insert_segments(revision, locale, segments):
     """
     Inserts the list of untranslated segments into translation memory
     """
@@ -69,4 +69,4 @@ def insert_segments(revision, language, segments):
         elif isinstance(segment, RelatedObjectValue):
             RelatedObjectLocation.from_related_object_value(revision, segment)
         else:
-            SegmentLocation.from_segment_value(revision, language, segment)
+            SegmentLocation.from_segment_value(revision, locale, segment)

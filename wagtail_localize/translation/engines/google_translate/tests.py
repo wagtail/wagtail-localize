@@ -11,7 +11,7 @@ from wagtail_localize.admin.workflow.models import (
     TranslationRequest,
     TranslationRequestPage,
 )
-from wagtail_localize.models import Language, Locale
+from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestSnippet
 
 
@@ -30,11 +30,10 @@ class TestTranslate(TestCase):
     def setUp(self):
         self.client.login(username="admin", password="password")
 
-        Language.objects.create(code="fr")
         self.user = User.objects.get(username="admin")
         self.translation_request = TranslationRequest.objects.create(
             source_locale=Locale.objects.default(),
-            target_locale=Locale.objects.get(language__code="fr"),
+            target_locale=Locale.objects.create(language_code="fr"),
             target_root=Page.objects.get(id=1),
             created_at=timezone.now(),
             created_by=self.user,
@@ -97,7 +96,7 @@ class TestTranslate(TestCase):
         request_page.refresh_from_db()
         self.assertTrue(request_page.is_completed)
 
-        translated_page = page.get_translation(Locale.objects.get(language__code="fr"))
+        translated_page = page.get_translation(Locale.objects.get(language_code="fr"))
         self.assertTrue(translated_page.live)
         self.assertEqual(
             translated_page.test_charfield, "Certains contenus traduisibles"
@@ -147,7 +146,7 @@ class TestTranslate(TestCase):
         request_page.refresh_from_db()
         self.assertTrue(request_page.is_completed)
 
-        translated_page = page.get_translation(Locale.objects.get(language__code="fr"))
+        translated_page = page.get_translation(Locale.objects.get(language_code="fr"))
         self.assertFalse(translated_page.live)
         self.assertEqual(
             translated_page.get_latest_revision_as_page().test_charfield,
@@ -195,7 +194,7 @@ class TestTranslate(TestCase):
         request_page.refresh_from_db()
         self.assertTrue(request_page.is_completed)
 
-        translated_page = page.get_translation(Locale.objects.get(language__code="fr"))
+        translated_page = page.get_translation(Locale.objects.get(language_code="fr"))
         self.assertEqual(
             translated_page.test_snippet.field, "Du contenu d'extrait de test"
         )
