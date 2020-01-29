@@ -650,4 +650,10 @@ def set_locale_on_new_instance(sender, instance, **kwargs):
     if instance.locale_id is not None:
         return
 
+    # If this is a fixture load, use the global default Locale
+    # as the page tree is probably in an flux
+    if kwargs["raw"]:
+        instance.locale_id = Locale.objects.default_id()
+        return
+
     instance.locale_id = instance.get_default_locale_id()
