@@ -7,7 +7,7 @@ register = template.Library()
 
 
 @register.inclusion_tag(
-    "wagtail_localize_language_switch/_language_switch.html", takes_context=True
+    "wagtail_localize/admin/_language_switch.html", takes_context=True
 )
 def admin_language_switch(context):
     page = context["page"]

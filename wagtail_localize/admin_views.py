@@ -10,7 +10,7 @@ from wagtail.core.models import Page
 from wagtail_localize.models import TranslatablePageMixin
 
 
-def translations_list(request, page_id):
+def translations_list_modal(request, page_id):
     page = get_object_or_404(Page, id=page_id).specific
 
     if not isinstance(page, TranslatablePageMixin):
@@ -18,7 +18,7 @@ def translations_list(request, page_id):
 
     return render_modal_workflow(
         request,
-        "wagtail_localize_language_switch/translation_list.html",
+        "wagtail_localize/admin/translations_list_modal.html",
         None,
         {
             "page": page,
