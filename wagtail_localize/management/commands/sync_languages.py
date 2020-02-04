@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from wagtail_localize.models import Language
+from wagtail_localize.models import Locale
 
 
 class Command(BaseCommand):
