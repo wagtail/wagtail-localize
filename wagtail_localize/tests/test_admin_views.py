@@ -23,7 +23,7 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
     def test(self):
         response = self.client.get(
             reverse(
-                "wagtail_localize_language_switch:translations_list",
+                "wagtail_localize:translations_list_modal",
                 args=[self.test_page.id],
             )
         )
@@ -89,7 +89,7 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
     def test_for_non_translatable_page(self):
         response = self.client.get(
             reverse(
-                "wagtail_localize_language_switch:translations_list",
+                "wagtail_localize:translations_list_modal",
                 args=[self.root_page.id],
             ),
             follow=True,

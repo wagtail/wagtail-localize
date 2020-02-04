@@ -4,12 +4,12 @@ from django.utils.html import format_html_join
 
 from wagtail.core import hooks
 
-from .views import translations_list
+from . import admin_views
 
 
 @hooks.register("insert_editor_js")
 def insert_editor_js():
-    js_files = ["wagtail_localize_language_switch/js/language-switch.js"]
+    js_files = ["wagtail_localize/js/page-editor.js"]
     return format_html_join(
         "\n",
         '<script src="{0}"></script>',
@@ -19,14 +19,14 @@ def insert_editor_js():
 
 @hooks.register("register_admin_urls")
 def register_admin_urls():
-    urls = [url(r"^(\d+)/$", translations_list, name="translations_list")]
+    urls = [url(r"^translations_list/(\d+)/$", admin_views.translations_list_modal, name="translations_list_modal")]
 
     return [
         url(
-            r"^localize/language_switch/",
+            r"^localize/",
             include(
-                (urls, "wagtail_localize_language_switch"),
-                namespace="wagtail_localize_language_switch",
+                (urls, "wagtail_localize"),
+                namespace="wagtail_localize",
             ),
         )
     ]
