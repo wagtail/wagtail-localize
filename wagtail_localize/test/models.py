@@ -127,6 +127,24 @@ class TestPage(TranslatablePageMixin, Page):
     ]
 
 
+class TestModel(TranslatableMixin):
+    title = models.CharField(max_length=255)
+    test_charfield = models.CharField(max_length=255, blank=True)
+    test_textfield = models.TextField(blank=True)
+    test_emailfield = models.EmailField(blank=True)
+
+    translatable_fields = [
+        TranslatableField("test_charfield"),
+        TranslatableField("test_textfield"),
+        TranslatableField("test_emailfield"),
+    ]
+
+
+class InheritedTestModel(TestModel):
+    class Meta:
+        unique_together = None
+
+
 class TestChildObject(TranslatableMixin, Orderable):
     page = ParentalKey(TestPage, related_name="test_childobjects")
     field = models.TextField()

@@ -203,7 +203,6 @@ class TranslatablePageMixin(TranslatableMixin):
     def copy(self, reset_translation_key=True, **kwargs):
         # If this is a regular copy (not copy_for_translation) we should change the translation_key
         # of the page and all child objects so they don't clash with the original page
-
         if reset_translation_key:
             if "update_attrs" in kwargs:
                 if "translation_key" not in kwargs["update_attrs"]:
@@ -216,7 +215,7 @@ class TranslatablePageMixin(TranslatableMixin):
                     "is_source_translation": True,
                 }
 
-            original_process_child_object = kwargs.pop("process_child_object")
+            original_process_child_object = kwargs.pop("process_child_object", None)
 
             def process_child_object(
                 original_page, page_copy, child_relation, child_object
