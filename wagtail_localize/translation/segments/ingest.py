@@ -175,6 +175,9 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
                     # adding new inline objects manually.
                     continue
 
+                # Unset placeholder_locale
+                translated_child_object.placeholder_locale = None
+
                 ingest_segments(
                     original_child_object,
                     translated_child_object,

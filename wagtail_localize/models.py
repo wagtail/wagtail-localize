@@ -200,20 +200,20 @@ class ParentNotTranslatedError(Exception):
 
 
 class TranslatablePageMixin(TranslatableMixin):
+    placeholder_locale = models.ForeignKey(
+        Locale, on_delete=models.PROTECT, null=True, blank=True, related_name="+"
+    )
+
     def copy(self, reset_translation_key=True, **kwargs):
         # If this is a regular copy (not copy_for_translation) we should change the translation_key
         # of the page and all child objects so they don't clash with the original page
         if reset_translation_key:
-            if "update_attrs" in kwargs:
-                if "translation_key" not in kwargs["update_attrs"]:
-                    kwargs["update_attrs"]["translation_key"] = uuid.uuid4()
-                    kwargs["update_attrs"]["is_source_translation"] = True
+            if "update_attrs" not in kwargs:
+                kwargs["update_attrs"] = {}
 
-            else:
-                kwargs["update_attrs"] = {
-                    "translation_key": uuid.uuid4(),
-                    "is_source_translation": True,
-                }
+            kwargs["update_attrs"].setdefault("translation_key", uuid.uuid4())
+            kwargs["update_attrs"].setdefault("is_source_translation", True)
+            kwargs["update_attrs"].setdefault("placeholder_locale", None)
 
             original_process_child_object = kwargs.pop("process_child_object", None)
 
@@ -235,7 +235,9 @@ class TranslatablePageMixin(TranslatableMixin):
         return super().copy(**kwargs)
 
     @transaction.atomic
-    def copy_for_translation(self, locale, copy_parents=False, exclude_fields=None):
+    def copy_for_translation(
+        self, locale, placeholder=False, copy_parents=False, exclude_fields=None,
+    ):
         """
         Copies this page for the specified locale.
         """
@@ -249,8 +251,9 @@ class TranslatablePageMixin(TranslatableMixin):
                 if not copy_parents:
                     raise ParentNotTranslatedError
 
+                # TODO: Use fallback languages to find the best placeholder_locale
                 translated_parent = parent.copy_for_translation(
-                    locale, copy_parents=True
+                    locale, placeholder=True, copy_parents=True
                 )
         else:
             translated_parent = parent
@@ -275,6 +278,7 @@ class TranslatablePageMixin(TranslatableMixin):
             update_attrs={
                 "locale": locale,
                 "is_source_translation": False,
+                "placeholder_locale": self.locale if placeholder else None,
                 "slug": slug,
             },
             copy_revisions=False,

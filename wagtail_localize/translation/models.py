@@ -192,6 +192,9 @@ class TranslatableRevision(models.Model):
 
         try:
             translation = self.object.get_instance(locale)
+
+            # Unset placeholder_locale if it's set
+            translation.placeholder_locale = None
         except models.ObjectDoesNotExist:
             translation = original.copy_for_translation(locale)
             created = True
