@@ -151,6 +151,9 @@ class TestChildObject(TranslatableMixin, Orderable):
 
     translatable_fields = [TranslatableField("field")]
 
+    class Meta(TranslatableMixin.Meta, Orderable.Meta):
+        pass
+
 
 # TODO: System check for TranslatableMixin here
 class TestSynchronizedChildObject(Orderable):
