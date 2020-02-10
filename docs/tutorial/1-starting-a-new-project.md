@@ -29,7 +29,7 @@ You can install the `wagtail-localize` package with pip using the following comm
 
     pip install wagtail-localize
 
-Now we need to configure it TODO
+Now we need to configure it.
 
 In `mysite/settings/base.py`, add `wagtail_localize` into `INSTALLED_APPS` above the Wagtail apps:
 
@@ -39,14 +39,15 @@ In `mysite/settings/base.py`, add `wagtail_localize` into `INSTALLED_APPS` above
         'search',
 
         'wagtail_localize',
+        'wagtail_localize.translation',
 
         'wagtail.contrib.forms',
         ...
     ]
 
-In the same file make sure `LANGUAGE_CODE` is set to `'en-us'`, this would be our blog’s default language.
+In the same file make sure `LANGUAGE_CODE` is set to `'en-us'`. This will be our blog’s default language.
 
-Also, set Our blog will only support US English and French, so let’s set `LANGUAGES` as well:
+Our blog will only support US English and French, so let’s set `LANGUAGES` as well:
 
 
     LANGUAGES = [

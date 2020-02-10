@@ -21,4 +21,4 @@ This mixin gets applied to the `HomePage` and routes the request through the rel
 
 
 
-At the end of this section, the user should be able to see content in mutltiple languages on the frontend.
+At the end of this section, the user should be able to see content in multiple languages on the frontend.
