@@ -5,7 +5,7 @@ from django.apps import apps
 from django.conf import settings
 from django.db import models, transaction
 from django.db.models import Exists, OuterRef, Q
-from django.db.models.signals import pre_save, post_save, m2m_changed
+from django.db.models.signals import m2m_changed, post_save, pre_save
 from django.dispatch import receiver
 from django.utils import translation
 from modelcluster.fields import ParentalKey
@@ -15,7 +15,8 @@ from wagtail.images.models import AbstractImage
 
 from .compat import get_languages, get_supported_language_variant
 from .edit_handlers import filter_edit_handler_on_instance_bound
-from .fields import TranslatableField, SynchronizedField
+from .fields import SynchronizedField, TranslatableField
+from .signals import language_activated, language_deactivated
 from .utils import find_available_slug
 
 
@@ -37,10 +38,7 @@ class Locale(models.Model):
     objects = LocaleManager()
 
     class Meta:
-        ordering = [
-            "-is_active",
-            "language_code",
-        ]
+        ordering = ["-is_active", "language_code"]
 
     def get_display_name(self):
         return get_languages().get(self.language_code)
@@ -461,3 +459,11 @@ def set_locale_on_new_instance(sender, instance, **kwargs):
         return
 
     instance.locale_id = instance.get_default_locale_id()
+
+
+@receiver(post_save, sender=Locale)
+def send_locale_signals(sender, instance, **kwargs):
+    if instance.is_active:
+        language_activated.send(instance)
+    else:
+        language_deactivated.send(instance)
