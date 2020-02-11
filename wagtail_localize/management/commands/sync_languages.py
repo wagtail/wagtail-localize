@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import signals
 
 from wagtail_localize.models import Locale
 
@@ -11,12 +12,14 @@ class Command(BaseCommand):
         language_codes = dict(settings.LANGUAGES).keys()
 
         for language_code in language_codes:
-            Locale.objects.update_or_create(
+            obj, created = Locale.objects.update_or_create(
                 language_code=language_code, defaults={"is_active": True}
             )
+            self.stdout.write("Activated locale: " + obj)
 
         for deactivated_languages in Locale.objects.exclude(
             language_code__in=language_codes
         ).filter(is_active=True):
             deactivated_languages.is_active = False
             deactivated_languages.save()
+            self.stdout.write("Deactivated locale: " + deactivated_languages)
