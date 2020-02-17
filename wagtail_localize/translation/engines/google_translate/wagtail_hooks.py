@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 
 from wagtail.core import hooks
 
-from wagtail_localize.admin.workflow.action_modules import BaseActionModule
+from wagtail_localize.workflow.action_modules import BaseActionModule
 
 from .views import language_code, translate
 

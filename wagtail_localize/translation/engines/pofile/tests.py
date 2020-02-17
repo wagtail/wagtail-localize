@@ -6,13 +6,12 @@ from django.urls import reverse
 from django.utils import timezone
 from wagtail.core.models import Page
 
-from wagtail_localize.admin.workflow.models import (
+from wagtail_localize.models import Locale
+from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.workflow.models import (
     TranslationRequest,
     TranslationRequestPage,
 )
-from wagtail_localize.models import Locale
-from wagtail_localize.test.models import TestPage, TestSnippet
-
 
 def create_test_page(**kwargs):
     parent = kwargs.pop("parent", None) or Page.objects.get(id=1)
