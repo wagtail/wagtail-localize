@@ -6,10 +6,10 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.text import slugify
 
-from wagtail_localize.admin.workflow.models import TranslationRequest
 from wagtail_localize.translation.segments import SegmentValue, TemplateValue
 from wagtail_localize.translation.segments.extract import extract_segments
 from wagtail_localize.translation.segments.ingest import ingest_segments
+from wagtail_localize.workflow.models import TranslationRequest
 
 from wagtail_localize.translation.engines.pofile.views import (
     MessageExtractor,

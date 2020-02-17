@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.utils.text import slugify
 from wagtail.core.models import Page
 
-from wagtail_localize.admin.workflow.models import TranslationRequest
 from wagtail_localize.translation.segments import (
     SegmentValue,
     TemplateValue,
@@ -19,6 +18,7 @@ from wagtail_localize.translation.segments import (
 )
 from wagtail_localize.translation.segments.extract import extract_segments
 from wagtail_localize.translation.segments.ingest import ingest_segments
+from wagtail_localize.workflow.models import TranslationRequest
 
 
 class MessageExtractor:
