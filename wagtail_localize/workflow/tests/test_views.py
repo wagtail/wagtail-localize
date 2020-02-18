@@ -1,11 +1,14 @@
+import unittest
+
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from wagtail.core.models import Page
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestHomePage
-from wagtail_localize.workflow.models import TranslationRequest
+from wagtail_localize.workflow.models import TranslationRequest, TranslationRequestPage
 
 
 def make_test_page(parent, cls=None, **kwargs):
@@ -14,31 +17,38 @@ def make_test_page(parent, cls=None, **kwargs):
     return parent.add_child(instance=cls(**kwargs))
 
 
+def create_test_locales(test):
+    test.en_locale = Locale.objects.get()
+    test.fr_locale = Locale.objects.create(language_code="fr")
+    test.de_locale = Locale.objects.create(language_code="de")
+
+
+def create_test_pages(test):
+    test.en_homepage = TestHomePage.objects.get()
+    test.fr_homepage = test.en_homepage.copy_for_translation(test.fr_locale)
+    test.de_homepage = test.en_homepage.copy_for_translation(test.de_locale)
+
+    test.en_blog_index = make_test_page(test.en_homepage, title="Blog", slug="blog")
+    test.en_blog_post = make_test_page(
+        test.en_blog_index, title="Blog post", slug="blog-post"
+    )
+    test.en_blog_post_child = make_test_page(
+        test.en_blog_post, title="A deep page", slug="deep-page"
+    )
+    test.not_translatable_blog_post = make_test_page(
+        test.en_blog_index,
+        title="Not traslatable blog post",
+        slug="not-translatable-blog-post",
+        cls=Page,
+    )
+
+
 class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
     def setUp(self):
         self.login()
 
-        self.en_locale = Locale.objects.get()
-        self.fr_locale = Locale.objects.create(language_code="fr")
-        self.de_locale = Locale.objects.create(language_code="de")
-
-        self.en_homepage = TestHomePage.objects.get()
-        self.fr_homepage = self.en_homepage.copy_for_translation(self.fr_locale)
-        self.de_homepage = self.en_homepage.copy_for_translation(self.de_locale)
-
-        self.en_blog_index = make_test_page(self.en_homepage, title="Blog", slug="blog")
-        self.en_blog_post = make_test_page(
-            self.en_blog_index, title="Blog post", slug="blog-post"
-        )
-        self.en_blog_post_child = make_test_page(
-            self.en_blog_post, title="A deep page", slug="deep-page"
-        )
-        self.not_translatable_blog_post = make_test_page(
-            self.en_blog_index,
-            title="Not traslatable blog post",
-            slug="not-translatable-blog-post",
-            cls=Page,
-        )
+        create_test_locales(self)
+        create_test_pages(self)
 
     def test_get_create_translation_request(self):
         response = self.client.get(
@@ -246,3 +256,245 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 404)
         self.assertFalse(TranslationRequest.objects.exists())
+
+
+def create_test_translation_request(test):
+    test.translation_request = TranslationRequest.objects.create(
+        source_locale=test.en_locale,
+        target_locale=test.fr_locale,
+        target_root=test.fr_homepage.page_ptr,
+        created_at=timezone.now(),
+        created_by=test.user,
+    )
+
+    test.blog_index_translation_request_page = TranslationRequestPage.objects.create(
+        request=test.translation_request,
+        source_revision=test.en_blog_index.save_revision(),
+        parent=None,
+        is_completed=False,
+        completed_revision=None,
+    )
+
+    test.blog_post_translation_request_page = TranslationRequestPage.objects.create(
+        request=test.translation_request,
+        source_revision=test.en_blog_post.save_revision(),
+        parent=test.blog_index_translation_request_page,
+        is_completed=False,
+        completed_revision=None,
+    )
+
+
+class TestTranslationRequestListing(TestCase, WagtailTestUtils):
+    def setUp(self):
+        self.user = self.create_test_user()
+        self.login(self.user)
+
+        create_test_locales(self)
+        create_test_pages(self)
+        create_test_translation_request(self)
+
+    def test_get(self):
+        response = self.client.get(reverse("wagtail_localize_workflow_management:list"))
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(
+            response,
+            reverse(
+                "wagtail_localize_workflow_management:detail",
+                args=[self.translation_request.id],
+            ),
+        )
+
+
+class TestTranslationRequestDetail(TestCase, WagtailTestUtils):
+    def setUp(self):
+        self.user = self.create_test_user()
+        self.login(self.user)
+
+        create_test_locales(self)
+        create_test_pages(self)
+        create_test_translation_request(self)
+
+    def test_get(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_workflow_management:detail",
+                args=[self.translation_request.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+
+class TestCopyPages(TestCase, WagtailTestUtils):
+    def setUp(self):
+        self.user = self.create_test_user()
+        self.login(self.user)
+
+        create_test_locales(self)
+        create_test_pages(self)
+        create_test_translation_request(self)
+
+    def test_post(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_workflow_management:copy_pages",
+                args=[self.translation_request.id],
+            )
+        )
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_workflow_management:detail",
+                args=[self.translation_request.id],
+            ),
+        )
+
+        self.assertTrue(self.en_blog_index.has_translation(self.fr_locale))
+        self.assertTrue(self.en_blog_post.has_translation(self.fr_locale))
+
+        self.blog_index_translation_request_page.refresh_from_db()
+        self.blog_post_translation_request_page.refresh_from_db()
+
+        self.assertTrue(self.blog_index_translation_request_page.is_completed)
+        self.assertEqual(
+            self.blog_index_translation_request_page.completed_revision,
+            self.en_blog_index.get_translation(self.fr_locale).get_latest_revision(),
+        )
+        self.assertTrue(self.blog_post_translation_request_page.is_completed)
+        self.assertEqual(
+            self.blog_post_translation_request_page.completed_revision,
+            self.en_blog_post.get_translation(self.fr_locale).get_latest_revision(),
+        )
+
+    @unittest.expectedFailure
+    def test_post_page_already_translated(self):
+        self.en_blog_index.copy_for_translation(self.fr_locale)
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_workflow_management:copy_pages",
+                args=[self.translation_request.id],
+            )
+        )
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_workflow_management:detail",
+                args=[self.translation_request.id],
+            ),
+        )
+
+        self.assertTrue(self.en_blog_post.has_translation(self.fr_locale))
+
+        self.blog_index_translation_request_page.refresh_from_db()
+        self.blog_post_translation_request_page.refresh_from_db()
+
+        self.assertTrue(self.blog_index_translation_request_page.is_completed)
+        self.assertEqual(
+            self.blog_index_translation_request_page.completed_revision,
+            self.en_blog_index.get_translation(self.fr_locale).get_latest_revision(),
+        )
+        self.assertTrue(self.blog_post_translation_request_page.is_completed)
+        self.assertEqual(
+            self.blog_post_translation_request_page.completed_revision,
+            self.en_blog_post.get_translation(self.fr_locale).get_latest_revision(),
+        )
+
+
+class TestCopyForTranslation(TestCase, WagtailTestUtils):
+    def setUp(self):
+        self.user = self.create_test_user()
+        self.login(self.user)
+
+        create_test_locales(self)
+        create_test_pages(self)
+        create_test_translation_request(self)
+
+    def test_get(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_workflow_management:copy_for_translation",
+                args=[
+                    self.translation_request.id,
+                    self.blog_index_translation_request_page.id,
+                ],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    @unittest.expectedFailure
+    def test_get_when_parent_not_translated(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_workflow_management:copy_for_translation",
+                args=[
+                    self.translation_request.id,
+                    self.blog_post_translation_request_page.id,
+                ],
+            )
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_post(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_workflow_management:copy_for_translation",
+                args=[
+                    self.translation_request.id,
+                    self.blog_index_translation_request_page.id,
+                ],
+            )
+        )
+
+        fr_blog_index = self.en_blog_index.get_translation(self.fr_locale)
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[fr_blog_index.id])
+        )
+
+        self.blog_index_translation_request_page.refresh_from_db()
+        self.blog_post_translation_request_page.refresh_from_db()
+
+        self.assertTrue(self.blog_index_translation_request_page.is_completed)
+        self.assertEqual(
+            self.blog_index_translation_request_page.completed_revision,
+            fr_blog_index.get_latest_revision(),
+        )
+        self.assertFalse(self.blog_post_translation_request_page.is_completed)
+        self.assertIsNone(self.blog_post_translation_request_page.completed_revision)
+
+    @unittest.expectedFailure
+    def test_post_when_parent_not_translated(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_workflow_management:copy_for_translation",
+                args=[
+                    self.translation_request.id,
+                    self.blog_post_translation_request_page.id,
+                ],
+            )
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    @unittest.expectedFailure
+    def test_post_when_already_translated(self):
+        self.en_blog_index.copy_for_translation(self.fr_locale)
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_workflow_management:copy_for_translation",
+                args=[
+                    self.translation_request.id,
+                    self.blog_index_translation_request_page.id,
+                ],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
