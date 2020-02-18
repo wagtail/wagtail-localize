@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "wagtail_localize.translation.engines.google_translate",
     "wagtail_localize.translation.engines.pofile",
     "wagtail_localize.workflow",
-    "wagtail_localize.deprecated.translation_memory",
     "wagtail.contrib.search_promotions",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
