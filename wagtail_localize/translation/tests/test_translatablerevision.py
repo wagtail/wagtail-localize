@@ -11,6 +11,7 @@ from wagtail_localize.translation.models import (
     TranslatableRevision,
     SegmentTranslation,
     Segment,
+    SourceDeletedError,
     MissingTranslationError,
     MissingRelatedObjectError,
     SegmentTranslationContext,
@@ -208,6 +209,12 @@ class TestAsInstanceForPage(TestCase):
         self.assertIsInstance(new_instance, TestPage)
         self.assertEqual(new_instance.id, self.page.id)
         self.assertEqual(new_instance.title, "Changed title")
+
+    def test_raises_error_if_source_deleted(self):
+        self.page.delete()
+
+        with self.assertRaises(SourceDeletedError):
+            self.revision.as_instance()
 
 
 class TestAsInstanceForSnippet(TestCase):

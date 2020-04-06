@@ -64,6 +64,10 @@ class TranslatableObject(models.Model):
         unique_together = [("content_type", "translation_key")]
 
 
+class SourceDeletedError(Exception):
+    pass
+
+
 class MissingTranslationError(Exception):
     def __init__(self, location, locale):
         self.location = location
@@ -151,7 +155,10 @@ class TranslatableRevision(models.Model):
         """
         Builds an instance of the object with the content at this revision.
         """
-        instance = self.object.get_instance(self.locale)
+        try:
+            instance = self.object.get_instance(self.locale)
+        except models.ObjectDoesNotExist:
+            raise SourceDeletedError
 
         if isinstance(instance, Page):
             return instance.with_content_json(self.content_json)
