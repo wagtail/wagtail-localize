@@ -52,12 +52,12 @@ class TranslatableObject(models.Model):
 
     def has_translation(self, locale):
         return self.content_type.get_all_objects_for_this_type(
-            translation_key=self.translation_key, locale=locale
+            translation_key=self.translation_key, locale_id=pk(locale)
         ).exists()
 
     def get_instance(self, locale):
         return self.content_type.get_object_for_this_type(
-            translation_key=self.translation_key, locale=locale
+            translation_key=self.translation_key, locale_id=pk(locale)
         )
 
     class Meta:

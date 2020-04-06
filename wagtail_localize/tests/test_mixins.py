@@ -66,6 +66,11 @@ class TestTranslatableMixin(TestCase):
             self.main_instance.get_translation(self.locale), self.main_instance
         )
 
+    def test_get_translation_using_locale_id(self):
+        self.assertEqual(
+            self.main_instance.get_translation(self.locale.id), self.main_instance
+        )
+
     def test_get_translation_or_none_return_translation(self):
         with patch.object(
             self.main_instance, "get_translation"
@@ -88,6 +93,9 @@ class TestTranslatableMixin(TestCase):
 
     def test_has_translation_when_exists(self):
         self.assertTrue(self.main_instance.has_translation(self.locale))
+
+    def test_has_translation_when_exists_using_locale_id(self):
+        self.assertTrue(self.main_instance.has_translation(self.locale.id))
 
     def test_has_translation_when_none_exists(self):
         self.translated_model.delete()

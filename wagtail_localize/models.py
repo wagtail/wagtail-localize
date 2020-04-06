@@ -19,6 +19,13 @@ from .fields import TranslatableField, SynchronizedField
 from .utils import find_available_slug
 
 
+def pk(obj):
+    if isinstance(obj, models.Model):
+        return obj.pk
+    else:
+        return obj
+
+
 class LocaleManager(models.Manager):
     use_in_migrations = True
 
@@ -104,7 +111,7 @@ class TranslatableMixin(models.Model):
         return translations
 
     def get_translation(self, locale):
-        return self.get_translations(inclusive=True).get(locale=locale)
+        return self.get_translations(inclusive=True).get(locale_id=pk(locale))
 
     def get_translation_or_none(self, locale):
         try:
@@ -119,7 +126,7 @@ class TranslatableMixin(models.Model):
         return self.get_translations(inclusive=False).get(is_source_translation=True)
 
     def has_translation(self, locale):
-        return self.get_translations(inclusive=True).filter(locale=locale).exists()
+        return self.get_translations(inclusive=True).filter(locale_id=pk(locale)).exists()
 
     def copy_for_translation(self, locale):
         """
