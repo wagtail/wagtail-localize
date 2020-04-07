@@ -1,12 +1,6 @@
 language: python
 cache: pip
 
-addons:
-  postgresql: "11.2"
-
-services:
-  - postgresql
-
 matrix:
   include:
    - env: TOXENV=py37-dj22-wa27-postgres
