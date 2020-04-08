@@ -7,6 +7,10 @@ addons:
 services:
   - postgresql
 
+env:
+  global:
+    - PGPORT=5433
+
 matrix:
   include:
    - env: TOXENV=py37-dj22-wa27-postgres
