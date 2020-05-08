@@ -83,7 +83,7 @@ class StreamFieldSegmentExtractor:
 
         for block in stream_block:
             segments.extend(
-                segment.wrap(block.id)
+                segment.wrap(block.id or 'noid')
                 for segment in self.handle_block(block.block, block.value)
             )
 
