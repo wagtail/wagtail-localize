@@ -4,8 +4,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
-from wagtail.images.blocks import ImageChooserBlock
-from wagtail.snippets.blocks import SnippetChooserBlock
+from wagtail.embeds.blocks import EmbedBlock
 
 from wagtail_localize.models import TranslatableMixin
 from wagtail_localize.translation.segments import (
@@ -35,7 +34,7 @@ class StreamFieldSegmentExtractor:
                 SegmentValue.from_html("", text) for text in texts
             ]
 
-        elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
+        elif isinstance(block_type, blocks.ChooserBlock):
             return self.handle_related_object_block(block_value)
 
         elif isinstance(block_type, blocks.StructBlock):
@@ -47,7 +46,7 @@ class StreamFieldSegmentExtractor:
         elif isinstance(block_type, blocks.StreamBlock):
             return self.handle_stream_block(block_value)
 
-        elif isinstance(block_type, blocks.ChoiceBlock):
+        elif isinstance(block_type, (blocks.ChoiceBlock, EmbedBlock)):
             return []
 
         else:

@@ -5,8 +5,6 @@ from django.db import models
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
-from wagtail.images.blocks import ImageChooserBlock
-from wagtail.snippets.blocks import SnippetChooserBlock
 
 from wagtail_localize.models import TranslatableMixin
 from wagtail_localize.translation.segments import TemplateValue
@@ -49,7 +47,7 @@ class StreamFieldSegmentsWriter:
             assert format == "html"
             return RichText(restore_html_segments(template, segments))
 
-        elif isinstance(block_type, (ImageChooserBlock, SnippetChooserBlock)):
+        elif isinstance(block_type, blocks.ChooserBlock):
             return self.handle_related_object_block(block_value, segments)
 
         elif isinstance(block_type, blocks.StructBlock):
