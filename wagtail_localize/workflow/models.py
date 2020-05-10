@@ -49,12 +49,6 @@ class TranslationRequest(models.Model):
         Locale, on_delete=models.PROTECT, related_name="+"
     )
 
-    # A foreign key to the page in destination tree where the translated pages will be created
-    # If this is deleted before this translation request is complete, any remaining translations will be cancelled
-    target_root = models.ForeignKey(
-        Page, null=True, on_delete=models.SET_NULL, related_name="+"
-    )
-
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -66,14 +60,12 @@ class TranslationRequest(models.Model):
 
     @property
     def is_cancelled(self):
-        return self.target_root_id is None
+        return False
 
     def get_status(self):
         # Are there any pages awaiting translation?
         if self.pages.in_progress().exists():
-            if self.target_root_id is None:
-                return "Cancelled (target page deleted)"
-            else:
+
                 return "In progress"
 
         else:
@@ -126,8 +118,7 @@ class TranslationRequestPage(models.Model):
 
     # When a whole tree is submitted for translation, this allows that tree to be represented in translation requests.
     # When the translated pages are created, this is used to structure those pages in the same way as the source tree.
-    # If this is null, the translated page must be created directly under request.target_root. All transation request
-    # must have at least one page that has parent=null.
+    # All transation request must have at least one page that has parent=null.
     parent = models.ForeignKey(
         "self", on_delete=models.PROTECT, null=True, related_name="child_pages"
     )

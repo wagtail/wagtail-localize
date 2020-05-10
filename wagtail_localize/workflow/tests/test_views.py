@@ -76,7 +76,6 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
         translation_request = TranslationRequest.objects.get()
         self.assertEqual(translation_request.source_locale, self.en_locale)
         self.assertEqual(translation_request.target_locale, self.fr_locale)
-        self.assertEqual(translation_request.target_root, self.fr_homepage.page_ptr)
         self.assertTrue(translation_request.created_at)
         self.assertEqual(translation_request.created_by.username, "test@email.com")
 
@@ -107,7 +106,6 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
             target_locale=self.fr_locale
         )
         self.assertEqual(fr_translation_request.source_locale, self.en_locale)
-        self.assertEqual(fr_translation_request.target_root, self.fr_homepage.page_ptr)
         self.assertTrue(fr_translation_request.created_at)
         self.assertEqual(fr_translation_request.created_by.username, "test@email.com")
 
@@ -125,7 +123,6 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
             target_locale=self.de_locale
         )
         self.assertEqual(de_translation_request.source_locale, self.en_locale)
-        self.assertEqual(de_translation_request.target_root, self.de_homepage.page_ptr)
         self.assertTrue(de_translation_request.created_at)
         self.assertEqual(de_translation_request.created_by.username, "test@email.com")
 
@@ -154,7 +151,6 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
         translation_request = TranslationRequest.objects.get()
         self.assertEqual(translation_request.source_locale, self.en_locale)
         self.assertEqual(translation_request.target_locale, self.fr_locale)
-        self.assertEqual(translation_request.target_root, self.fr_homepage.page_ptr)
         self.assertTrue(translation_request.created_at)
         self.assertEqual(translation_request.created_by.username, "test@email.com")
 
@@ -205,7 +201,6 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
         translation_request = TranslationRequest.objects.get()
         self.assertEqual(translation_request.source_locale, self.en_locale)
         self.assertEqual(translation_request.target_locale, self.fr_locale)
-        self.assertEqual(translation_request.target_root, self.fr_homepage.page_ptr)
         self.assertTrue(translation_request.created_at)
         self.assertEqual(translation_request.created_by.username, "test@email.com")
 
@@ -251,7 +246,6 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
         translation_request = TranslationRequest.objects.get()
         self.assertEqual(translation_request.source_locale, self.en_locale)
         self.assertEqual(translation_request.target_locale, es_locale)
-        self.assertEqual(translation_request.target_root, Page.objects.get(depth=1))
         self.assertTrue(translation_request.created_at)
         self.assertEqual(translation_request.created_by.username, "test@email.com")
 
@@ -319,7 +313,6 @@ def create_test_translation_request(test):
     test.translation_request = TranslationRequest.objects.create(
         source_locale=test.en_locale,
         target_locale=test.fr_locale,
-        target_root=test.fr_homepage.page_ptr,
         created_at=timezone.now(),
         created_by=test.user,
     )

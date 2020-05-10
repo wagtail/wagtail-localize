@@ -33,7 +33,6 @@ class TestTranslate(TestCase):
         self.translation_request = TranslationRequest.objects.create(
             source_locale=Locale.objects.default(),
             target_locale=Locale.objects.create(language_code="fr"),
-            target_root=Page.objects.get(id=1),
             created_at=timezone.now(),
             created_by=self.user,
         )

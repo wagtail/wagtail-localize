@@ -63,31 +63,28 @@ def create_translation_request(request, page_id):
                     revision = page.save_revision(changed=False)
 
                 for target_locale in form.cleaned_data["locales"]:
-                    # Work out target root. While we're at it, get list of any translatable
-                    # ancestor pages that don't have translations yet as these will need to
-                    # be translated too.
+                    # Get list of any translatable ancestor pages that don't have translations
+                    # yet as these will need to be translated too.
                     required_ancestors = []
                     current_page = page
-                    target_root = current_page.get_translation_or_none(target_locale)
-                    while target_root is None:
+                    current_page_translation = current_page.get_translation_or_none(target_locale)
+                    while current_page_translation is None:
                         current_page = current_page.get_parent()
 
                         if issubclass(current_page.specific_class, translatable_models):
-                            target_root = current_page.specific.get_translation_or_none(
+                            current_page_translation = current_page.specific.get_translation_or_none(
                                 target_locale
                             )
 
-                            if target_root is None:
+                            if current_page_translation is None:
                                 required_ancestors.append(current_page)
                         else:
-                            target_root = current_page
                             break
 
                     # Create translation request
                     translation_request = TranslationRequest.objects.create(
                         source_locale=source_locale,
                         target_locale=target_locale,
-                        target_root=target_root,
                         created_at=timezone.now(),
                         created_by=request.user,
                     )
