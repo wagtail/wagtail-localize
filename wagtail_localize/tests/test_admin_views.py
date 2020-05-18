@@ -8,8 +8,12 @@ from wagtail.tests.utils import WagtailTestUtils
 from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage
 
+from wagtail import VERSION as WAGTAIL_VERSION
+
 
 class TestTranslationsListView(TestCase, WagtailTestUtils):
+    maxDiff = None
+
     def setUp(self):
         self.login()
 
@@ -34,7 +38,7 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
         self.assertHTMLEqual(
             data["html"],
             """
-            <header class="  " role="banner">
+            <header class="  " """ + ('role="banner"' if WAGTAIL_VERSION < (2, 9) else "") + """>
                 <div class="row nice-padding">
                     <div class="left">
                         <div class="col header-title">
