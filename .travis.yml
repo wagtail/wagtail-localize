@@ -31,6 +31,16 @@ matrix:
    - env: TOXENV=py37-dj22-wa27-sqlite
      python: 3.7
 
+   - env: TOXENV=py37-dj30-wa29-postgres
+     python: 3.7
+
+   - env: TOXENV=py38-dj30-wamaster-postgres
+     python: 3.8
+
+  allow_failures:
+   - env: TOXENV=py38-dj30-wamaster-postgres
+
+
 before_install:
   - sudo apt-get update
   - sudo apt-get --yes remove postgresql\*
