@@ -77,10 +77,6 @@ urlpatterns += i18n_patterns(
 
 Wagtail-localize provides classes wich page models should extend if they are to be translatable. This will be different if you are enabling translation on an existing site with pages, or a new site.
 
-#### TranslatablePageRoutingMixin
-
-Returns the translation of the page that should be used to route the specified request.
-
 #### TranslatableMixin
 
 The base class for providing attributes needed to store translation mapping values:
@@ -111,20 +107,14 @@ A version of `TranslatableMixin`/`TranslatablePageMixin` without uniqueness cons
 
 ### 1. Enabling on a new site
 
-The homepage should extend both `TranslatablePageMixin` and `TranslatablePageRoutingMixin`
-
-```python
-from wagtail_localize.models import TranslatablePageMixin, TranslatablePageRoutingMixin
-...
-
-class HomePage(TranslatablePageRoutingMixin, TranslatablePageMixin, Page):
-```
-
-Then each page model that requires translation should extend TranslatablePageMixin:
+Each page model that requires translation should extend TranslatablePageMixin:
 
 ```
 from wagtail_localize.models import TranslatablePageMixin
 ...
+
+class HomePage(TranslatablePageMixin, Page):
+
 
 class ArticlePage(TranslatablePageMixin, SocialFields, ListingFields, Page):
 ```

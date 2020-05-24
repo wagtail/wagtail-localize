@@ -9,7 +9,6 @@ from wagtail_localize.fields import TranslatableField, SynchronizedField
 from wagtail_localize.models import (
     TranslatableMixin,
     TranslatablePageMixin,
-    TranslatablePageRoutingMixin,
 )
 from wagtail_localize.translation.segments import SegmentValue
 
@@ -172,5 +171,5 @@ class TestNonParentalChildObject(TranslatableMixin, Orderable):
     translatable_fields = [TranslatableField("field")]
 
 
-class TestHomePage(TranslatablePageMixin, TranslatablePageRoutingMixin, Page):
+class TestHomePage(TranslatablePageMixin, Page):
     pass
