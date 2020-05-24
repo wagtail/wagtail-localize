@@ -231,6 +231,63 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
         self.assertFalse(translation_request_child_page.is_completed)
         self.assertIsNone(translation_request_child_page.completed_revision)
 
+    def test_post_create_translation_request_with_untranslated_grandparent(self):
+        # This is the same as the previous test, except it's done with a new locale so the homepage doesn't exist yet.
+        # This should create a translation request that contains the homepage, blog index and the blog post that was requested.
+        es_locale = Locale.objects.create(language_code="es")
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_workflow:create_translation_request",
+                args=[self.en_blog_post.id],
+            ),
+            {"locales": [es_locale.id],},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        translation_request = TranslationRequest.objects.get()
+        self.assertEqual(translation_request.source_locale, self.en_locale)
+        self.assertEqual(translation_request.target_locale, es_locale)
+        self.assertEqual(translation_request.target_root, Page.objects.get(depth=1))
+        self.assertTrue(translation_request.created_at)
+        self.assertEqual(translation_request.created_by.username, "test@email.com")
+
+        # Check translation request page for root (homepage)
+        # This is added automatically. The blog post was requested but this is required in order for there
+        # to be somewhere for the translated blog post to exist in the destination tree
+        translation_request_root_page = translation_request.pages.get(parent=None)
+        self.assertEqual(
+            translation_request_root_page.source_revision,
+            self.en_homepage.get_latest_revision(),
+        )
+        self.assertFalse(translation_request_root_page.is_completed)
+        self.assertIsNone(translation_request_root_page.completed_revision)
+
+        # Check translation request page for child (blog index)
+        translation_request_child_page = translation_request.pages.get(
+            parent=translation_request_root_page
+        )
+        self.assertEqual(
+            translation_request_child_page.source_revision,
+            self.en_blog_index.get_latest_revision(),
+        )
+        self.assertFalse(translation_request_child_page.is_completed)
+        self.assertIsNone(translation_request_child_page.completed_revision)
+
+        # Check translation request page for grandchild (blog)
+        translation_request_grandchild_page = translation_request.pages.get(
+            parent=translation_request_child_page
+        )
+        self.assertEqual(
+            translation_request_grandchild_page.source_revision,
+            self.en_blog_post.get_latest_revision(),
+        )
+        self.assertFalse(translation_request_grandchild_page.is_completed)
+        self.assertIsNone(translation_request_grandchild_page.completed_revision)
+
     def test_post_create_translation_request_with_missing_locale(self):
         response = self.client.post(
             reverse(

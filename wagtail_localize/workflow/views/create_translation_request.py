@@ -93,8 +93,9 @@ def create_translation_request(request, page_id):
                     )
 
                     # Add ancestor pages to translation request
+                    # In reverse order so parents get added before children
                     parent_item = None
-                    for ancestor_page in required_ancestors:
+                    for ancestor_page in reversed(required_ancestors):
                         source_revision = ancestor_page.get_latest_revision()
                         if source_revision is None:
                             source_revision = ancestor_page.specific.save_revision(
