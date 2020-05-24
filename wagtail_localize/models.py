@@ -207,6 +207,11 @@ class ParentNotTranslatedError(Exception):
 
 
 class TranslatablePageMixin(TranslatableMixin):
+
+    class Meta:
+        abstract = True
+        unique_together = [("translation_key", "locale")]
+
     def copy(self, reset_translation_key=True, **kwargs):
         # If this is a regular copy (not copy_for_translation) we should change the translation_key
         # of the page and all child objects so they don't clash with the original page
@@ -360,12 +365,6 @@ class TranslatablePageMixin(TranslatableMixin):
 #            super().get_edit_handler(), filter_editable_fields
 #        ).bind_to(model=cls)
 
-    class Meta:
-        abstract = True
-        unique_together = [("translation_key", "locale")]
-
-
-class TranslatablePageRoutingMixin:
     def get_translation_for_request(self, request):
         """
         Returns the translation of this page that should be used to route

@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                 "unique_together": {("translation_key", "locale")},
             },
             bases=(
-                wagtail_localize.models.TranslatablePageRoutingMixin,
+                wagtail_localize.models.TranslatablePageMixin,
                 "wagtailcore.page",
                 models.Model,
             ),
