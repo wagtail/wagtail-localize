@@ -6,7 +6,7 @@ from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
 from wagtail.embeds.blocks import EmbedBlock
 
-from wagtail_localize.models import TranslatableMixin
+from wagtail_localize.models import TranslatableMixin, TranslatablePageMixin
 from wagtail_localize.translation.segments import (
     SegmentValue,
     TemplateValue,
@@ -92,6 +92,14 @@ class StreamFieldSegmentExtractor:
 
 def extract_segments(instance):
     segments = []
+
+    # AIf this is a page, add the parent page as a related object
+    if isinstance(instance, TranslatablePageMixin):
+        parent = instance.get_parent()
+        if issubclass(parent.specific_class, TranslatablePageMixin):
+            segments.append(
+                RelatedObjectValue.from_instance('_parent', parent.specific)
+            )
 
     for translatable_field in instance.get_translatable_fields():
         field = translatable_field.get_field(instance.__class__)

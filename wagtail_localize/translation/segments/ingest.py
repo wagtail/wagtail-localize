@@ -6,7 +6,7 @@ from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
 
-from wagtail_localize.models import TranslatableMixin
+from wagtail_localize.models import TranslatableMixin, TranslatablePageMixin
 from wagtail_localize.translation.segments import TemplateValue
 
 from .html import restore_html_segments
@@ -119,6 +119,11 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
         segments_by_field_name[field_name].append(segment)
 
     for field_name, field_segments in segments_by_field_name.items():
+        # A special instance of RelatedObjectLocation is created for pages that have translatable parents
+        # At this point, the parent page should already be created so ignore this field
+        if isinstance(translated_obj, TranslatablePageMixin) and field_name == '_parent':
+            continue
+
         field = translated_obj.__class__._meta.get_field(field_name)
 
         if hasattr(field, "restore_translated_segments"):
