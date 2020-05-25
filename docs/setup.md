@@ -20,22 +20,10 @@ INSTALLED_APPS = [
 ]
 ```
 
-Also remove the following from `INSTALLED_APPS`:
-
-```
-"wagtail.contrib.redirects",
-```
-
 Add the following to `MIDDLEWARE`:
 
 ```python
 "django.middleware.locale.LocaleMiddleware",
-```
-
-and disable:
-
-```python
-"wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ```
 
 Ensure your settings file has:
