@@ -45,40 +45,51 @@
                 {% for page in pages %}
                     <tr>
                         <td class="title" style="padding-left: {% widthratio page.depth 1 10 %}px;">
-                            {{ page.source_page.get_admin_display_title }}
+                            {{ page.get_admin_display_title }}
                         </td>
                         <td>
-                            {% if page.is_completed %}
-                                Completed
-                            {% elif page.get_translation %}
-                                Modified
-                            {% else %}
-                                New
-                            {% endif %}
+
                         </td>
                         <td>
                             <ul class="actions">
-                                {% if page.get_translation %}
-                                    <li style="visibility: visible !important">
-                                        <a href="{% url 'wagtailadmin_pages:edit' page.get_translation.id %}" class="button button-small button-secondary">{% trans "Edit" %}</a>
-                                    </li>
-                                    {% if not page.is_completed and page.previous_request %}
-                                        <li style="visibility: visible !important">
-                                            <a href="{% url 'wagtailadmin_pages:revisions_compare' page.source_page.id page.previous_request.source_revision_id page.source_revision_id %}" class="button button-small button-secondary">{% trans "View changes" %}</a>
-                                        </li>
-                                    {% endif %}
-                                {% else %}
-                                     {% if not page.parent or page.parent.get_translation %}
-                                        <li style="visibility: visible !important">
-                                            <a href="{% url view.copy_for_translation_url_name translation_request.id page.id %}" class="button button-small button-secondary">{% trans "Copy for translation" %}</a>
-                                        </li>
-                                    {% endif %}
-                                {% endif %}
+
                             </ul>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        {% for model, instances in other_models %}
+            <h2>{{ model }}</h2>
+
+            <table class="listing">
+                <thead>
+                    <tr>
+                        <th class="name">Name</th>
+                        <th class="name">Status</th>
+                        <th class="name">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in instances %}
+                        <tr>
+                            <td class="title" style="padding-left: {% widthratio page.depth 1 10 %}px;">
+                                {{ instance }}
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                <ul class="actions">
+
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% endfor %}
     </div>
 {% endblock %}

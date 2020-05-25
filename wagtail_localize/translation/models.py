@@ -1,6 +1,7 @@
 import json
 import uuid
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
@@ -13,6 +14,8 @@ from modelcluster.models import (
     model_from_serializable_data,
 )
 from wagtail.core.models import Page
+
+from wagtail_localize.models import TranslatableMixin
 
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments

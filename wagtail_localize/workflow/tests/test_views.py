@@ -8,7 +8,7 @@ from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestHomePage
-from wagtail_localize.workflow.models import TranslationRequest, TranslationRequestPage
+from wagtail_localize.translation.models import TranslationRequest
 
 
 def make_test_page(parent, cls=None, **kwargs):
@@ -310,27 +310,14 @@ class TestCreateTranslationRequest(TestCase, WagtailTestUtils):
 
 
 def create_test_translation_request(test):
-    test.translation_request = TranslationRequest.objects.create(
-        source_locale=test.en_locale,
-        target_locale=test.fr_locale,
-        created_at=timezone.now(),
-        created_by=test.user,
-    )
-
-    test.blog_index_translation_request_page = TranslationRequestPage.objects.create(
-        request=test.translation_request,
-        source_revision=test.en_blog_index.save_revision(),
-        parent=None,
-        is_completed=False,
-        completed_revision=None,
-    )
-
-    test.blog_post_translation_request_page = TranslationRequestPage.objects.create(
-        request=test.translation_request,
-        source_revision=test.en_blog_post.save_revision(),
-        parent=test.blog_index_translation_request_page,
-        is_completed=False,
-        completed_revision=None,
+    test.translation_request = TranslationRequest.from_instances(
+        [
+            test.en_blog_index,
+            test.en_blog_post,
+        ],
+        test.en_locale,
+        test.fr_locale,
+        user=test.user,
     )
 
 

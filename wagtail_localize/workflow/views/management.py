@@ -11,6 +11,8 @@ from wagtail.admin.views import generic
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.core.permission_policies import ModelPermissionPolicy
 
+from wagtail_localize.models import TranslatableMixin, TranslatablePageMixin
+
 from ..action_modules import get_action_modules
 from ..models import TranslationRequest
 
@@ -46,18 +48,34 @@ class TranslationRequestDetailView(DetailView):
 
     def get_context_data(self, object):
         context = super().get_context_data(object=object)
-        pages = list(object.pages.order_by("id"))
-        pages_by_id = {page.id: page for page in pages}
 
-        # Add depths to pages
-        for page in pages:
-            # Pages are in depth-first-search order so parents are processed before their children
-            if page.parent_id:
-                page.depth = pages_by_id[page.parent_id].depth + 1
-            else:
-                page.depth = 0
+        revisions_by_page_model = {}
+        revisions_by_other_model = {}
 
+        for revision in object.revisions.all().select_related('object'):
+            model = revision.object.content_type.model_class()
+            if issubclass(model, TranslatablePageMixin):
+                if model not in revisions_by_page_model:
+                    revisions_by_page_model[model] = []
+
+                revisions_by_page_model[model].append(revision)
+
+            elif issubclass(model, TranslatableMixin):
+                if model not in revisions_by_other_model:
+                    revisions_by_other_model[model] = []
+
+                revisions_by_other_model[model].append(revision)
+
+        pages = []
+        for model, revisions in revisions_by_page_model.items():
+            pages.extend(model.objects.filter(locale=object.source_locale, translation_key__in=[revision.object_id for revision in revisions]))
+        pages.sort(key=lambda page: page.path)
         context["pages"] = pages
+
+        other_models = []
+        for model, revisions in revisions_by_other_model.items():
+            other_models.append((model._meta.verbose_name_plural, model.objects.filter(locale=object.source_locale, translation_key__in=[revision.object_id for revision in revisions])))
+        context["other_models"] = other_models
 
         context["action_modules"] = [
             action_module(self.request, object)
