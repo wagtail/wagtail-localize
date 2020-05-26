@@ -350,7 +350,7 @@ class Segment(models.Model):
         unique_together = [("locale", "text_id")]
 
 
-class SegmentTranslationContext(models.Model):
+class TranslationContext(models.Model):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="+"
     )
@@ -381,7 +381,7 @@ class SegmentTranslationContext(models.Model):
     @classmethod
     def get_from_string(cls, msgctxt):
         """
-        Looks for the SegmentTranslationContext that the given string represents.
+        Looks for the TranslationContext that the given string represents.
         """
         object_id, path = msgctxt.split(":")
         path_id = cls.get_path_id(path)
@@ -394,7 +394,7 @@ class SegmentTranslation(models.Model):
     )
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
     context = models.ForeignKey(
-        SegmentTranslationContext,
+        TranslationContext,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -445,7 +445,7 @@ class Template(models.Model):
 
 class BaseLocation(models.Model):
     revision = models.ForeignKey(TranslatableRevision, on_delete=models.CASCADE)
-    context = models.ForeignKey(SegmentTranslationContext, on_delete=models.PROTECT,)
+    context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
     order = models.PositiveIntegerField()
 
     class Meta:
@@ -497,7 +497,7 @@ class SegmentLocation(BaseLocation):
     @classmethod
     def from_segment_value(cls, revision, language, segment_value):
         segment = Segment.from_text(language, segment_value.html_with_ids)
-        context, context_created = SegmentTranslationContext.objects.get_or_create(
+        context, context_created = TranslationContext.objects.get_or_create(
             object_id=revision.object_id, path=segment_value.path,
         )
 
@@ -520,7 +520,7 @@ class TemplateLocation(BaseLocation):
     @classmethod
     def from_template_value(cls, revision, template_value):
         template = Template.from_template_value(template_value)
-        context, context_created = SegmentTranslationContext.objects.get_or_create(
+        context, context_created = TranslationContext.objects.get_or_create(
             object_id=revision.object_id, path=template_value.path,
         )
 
@@ -541,7 +541,7 @@ class RelatedObjectLocation(BaseLocation):
 
     @classmethod
     def from_related_object_value(cls, revision, related_object_value):
-        context, context_created = SegmentTranslationContext.objects.get_or_create(
+        context, context_created = TranslationContext.objects.get_or_create(
             object_id=revision.object_id, path=related_object_value.path,
         )
 

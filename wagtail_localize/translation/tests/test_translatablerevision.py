@@ -14,7 +14,7 @@ from wagtail_localize.translation.models import (
     SourceDeletedError,
     MissingTranslationError,
     MissingRelatedObjectError,
-    SegmentTranslationContext,
+    TranslationContext,
 )
 from wagtail_localize.translation.utils import insert_segments
 from wagtail_localize.translation.segments import RelatedObjectValue
@@ -265,7 +265,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.translation = SegmentTranslation.objects.create(
             translation_of=self.segment,
             locale=self.dest_locale,
-            context=SegmentTranslationContext.objects.get(
+            context=TranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_charfield"
             ),
             text="Ceci est du contenu de test",
@@ -301,7 +301,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         SegmentTranslation.objects.create(
             translation_of=self.segment,
             locale=self.dest_locale,
-            context=SegmentTranslationContext.objects.get(
+            context=TranslationContext.objects.get(
                 object_id=child_page.translation_key, path="test_charfield"
             ),
             text="Ceci est du contenu de test",
@@ -439,7 +439,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         SegmentTranslation.objects.create(
             translation_of=self.segment,
             locale=self.dest_locale,
-            context=SegmentTranslationContext.objects.get(
+            context=TranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_streamfield.id"
             ),
             text="Ceci est du contenu de test",
