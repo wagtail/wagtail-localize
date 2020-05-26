@@ -19,7 +19,7 @@ from .models import (
     SegmentLocation,
     TemplateLocation,
     RelatedObjectLocation,
-    TranslatableRevision,
+    TranslationSource,
 )
 
 
