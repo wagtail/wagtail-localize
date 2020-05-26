@@ -5,6 +5,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('wagtail_localize', '0006_delete_language_model'),
         ('wagtailcore', '0045_assign_unlock_grouppagepermission'),
