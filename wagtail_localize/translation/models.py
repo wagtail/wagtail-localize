@@ -84,7 +84,7 @@ class MissingRelatedObjectError(Exception):
         super().__init__()
 
 
-class TranslatableRevision(models.Model):
+class TranslationSource(models.Model):
     """
     A piece of content that to be used as a source for translations.
     """
@@ -110,7 +110,7 @@ class TranslatableRevision(models.Model):
 
         object, created = TranslatableObject.objects.get_or_create_from_instance(page)
 
-        return TranslatableRevision.objects.get_or_create(
+        return TranslationSource.objects.get_or_create(
             object=object,
             page_revision=page_revision,
             defaults={
@@ -212,19 +212,19 @@ class TranslatableRevision(models.Model):
 
         # Fetch all translated segments
         segment_locations = (
-            SegmentLocation.objects.filter(revision=self)
+            SegmentLocation.objects.filter(source=self)
             .annotate_translation(locale)
             .select_related("context")
         )
 
         template_locations = (
-            TemplateLocation.objects.filter(revision=self)
+            TemplateLocation.objects.filter(source=self)
             .select_related("template")
             .select_related("context")
         )
 
         related_object_locations = (
-            RelatedObjectLocation.objects.filter(revision=self)
+            RelatedObjectLocation.objects.filter(source=self)
             .select_related("object")
             .select_related("context")
         )
@@ -283,7 +283,7 @@ class TranslatableRevision(models.Model):
 
         # Log that the translation was made
         TranslationLog.objects.create(
-            revision=self, locale=locale, page_revision=page_revision
+            source=self, locale=locale, page_revision=page_revision
         )
 
         return translation, created
@@ -294,8 +294,8 @@ class TranslationLog(models.Model):
     This model logs when we make a translation.
     """
 
-    revision = models.ForeignKey(
-        TranslatableRevision, on_delete=models.CASCADE, related_name="translation_logs"
+    source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, related_name="translation_logs"
     )
     locale = models.ForeignKey(
         "wagtail_localize.Locale",
@@ -315,7 +315,7 @@ class TranslationLog(models.Model):
         """
         Gets the instance of the translated object, if it still exists.
         """
-        return revision.object.get_instance(self.locale)
+        return self.source.object.get_instance(self.locale)
 
 
 class Segment(models.Model):
@@ -444,7 +444,7 @@ class Template(models.Model):
 
 
 class BaseLocation(models.Model):
-    revision = models.ForeignKey(TranslatableRevision, on_delete=models.CASCADE)
+    source = models.ForeignKey(TranslationSource, on_delete=models.CASCADE)
     context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
     order = models.PositiveIntegerField()
 
@@ -495,14 +495,14 @@ class SegmentLocation(BaseLocation):
     objects = SegmentLocationQuerySet.as_manager()
 
     @classmethod
-    def from_segment_value(cls, revision, language, segment_value):
+    def from_segment_value(cls, source, language, segment_value):
         segment = Segment.from_text(language, segment_value.html_with_ids)
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=revision.object_id, path=segment_value.path,
+            object_id=source.object_id, path=segment_value.path,
         )
 
         segment_loc, created = cls.objects.get_or_create(
-            revision=revision,
+            source=source,
             context=context,
             order=segment_value.order,
             segment=segment,
@@ -518,14 +518,14 @@ class TemplateLocation(BaseLocation):
     )
 
     @classmethod
-    def from_template_value(cls, revision, template_value):
+    def from_template_value(cls, source, template_value):
         template = Template.from_template_value(template_value)
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=revision.object_id, path=template_value.path,
+            object_id=source.object_id, path=template_value.path,
         )
 
         template_loc, created = cls.objects.get_or_create(
-            revision=revision,
+            source=source,
             context=context,
             order=template_value.order,
             template=template,
@@ -540,13 +540,13 @@ class RelatedObjectLocation(BaseLocation):
     )
 
     @classmethod
-    def from_related_object_value(cls, revision, related_object_value):
+    def from_related_object_value(cls, source, related_object_value):
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=revision.object_id, path=related_object_value.path,
+            object_id=source.object_id, path=related_object_value.path,
         )
 
         related_object_loc, created = cls.objects.get_or_create(
-            revision=revision,
+            source=source,
             context=context,
             order=related_object_value.order,
             object=TranslatableObject.objects.get_or_create(
