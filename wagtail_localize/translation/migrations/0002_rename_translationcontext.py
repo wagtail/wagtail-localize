@@ -5,6 +5,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('wagtail_localize_translation', '0001_initial_squashed_0004_change_language_to_locale_3'),
     ]
