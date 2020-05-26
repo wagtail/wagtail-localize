@@ -64,10 +64,6 @@ class TranslatableObject(models.Model):
         unique_together = [("content_type", "translation_key")]
 
 
-class SourceDeletedError(Exception):
-    pass
-
-
 class MissingTranslationError(Exception):
     def __init__(self, location, locale):
         self.location = location
@@ -155,28 +151,15 @@ class TranslationSource(models.Model):
         """
         Builds an instance of the object with the content at this revision.
         """
-        try:
-            instance = self.object.get_instance(self.locale)
-        except models.ObjectDoesNotExist:
-            raise SourceDeletedError
+        model = self.object.content_type.model_class()
 
-        if isinstance(instance, Page):
-            return instance.with_content_json(self.content_json)
-
-        elif isinstance(instance, ClusterableModel):
-            new_instance = instance.__class__.from_json(self.content_json)
+        if issubclass(model, ClusterableModel):
+            return model.from_json(self.content_json)
 
         else:
-            new_instance = model_from_serializable_data(
-                instance.__class__, json.loads(self.content_json)
+            return model_from_serializable_data(
+                model, json.loads(self.content_json)
             )
-
-        new_instance.pk = instance.pk
-        new_instance.locale = instance.locale
-        new_instance.translation_key = instance.translation_key
-        new_instance.is_source_translation = instance.is_source_translation
-
-        return new_instance
 
     def extract_segments(self):
         for segment in extract_segments(self.as_instance()):
