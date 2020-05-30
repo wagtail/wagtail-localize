@@ -90,7 +90,7 @@ class TranslationSource(models.Model):
     """
 
     object = models.ForeignKey(
-        TranslatableObject, on_delete=models.CASCADE, related_name="revisions"
+        TranslatableObject, on_delete=models.CASCADE, related_name="sources"
     )
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
     content_json = models.TextField()
@@ -134,7 +134,7 @@ class TranslationSource(models.Model):
 
         if not force:
             # Check if the instance has changed at all since the previous revision
-            previous_revision = object.revisions.order_by("created_at").last()
+            previous_revision = object.sources.order_by("created_at").last()
             if previous_revision:
                 if json.loads(content_json) == json.loads(
                     previous_revision.content_json
