@@ -73,7 +73,7 @@ class TestTranslate(TestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_google_translate:translate",
+                "wagtail_localize_workflow:machine_translate",
                 args=[self.translation_request.id],
             ),
             {"publish": "on"},
@@ -124,7 +124,7 @@ class TestTranslate(TestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_google_translate:translate",
+                "wagtail_localize_workflow:machine_translate",
                 args=[self.translation_request.id],
             )
         )
@@ -171,7 +171,7 @@ class TestTranslate(TestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_google_translate:translate",
+                "wagtail_localize_workflow:machine_translate",
                 args=[self.translation_request.id],
             ),
             {"publish": "on"},

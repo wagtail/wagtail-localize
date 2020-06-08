@@ -18,7 +18,6 @@ INSTALLED_APPS = [
     ...
     "wagtail_localize",
     "wagtail_localize.translation",
-    "wagtail_localize.translation.engines.google_translate",
     "wagtail_localize.workflow",
 ]
 ```
@@ -134,6 +133,5 @@ python manage.py sync_languages
 description of submodules
 'wagtail_localize.workflow',
 'wagtail_localize.translation',
-'wagtail_localize.translation.engines.google_translate',
 
 ### Translating snippets

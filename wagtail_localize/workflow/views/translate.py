@@ -31,8 +31,9 @@ def language_code(code):
     return code.split("-")[0]
 
 
+# TODO: Permission checks
 @require_POST
-def translate(request, translation_request_id):
+def machine_translate(request, translation_request_id):
     translation_request = get_object_or_404(
         TranslationRequest, id=translation_request_id
     )

@@ -13,6 +13,7 @@ from wagtail_localize.models import TranslatablePageMixin
 from .models import TranslationRequest
 from .views.create_translation_request import create_translation_request
 from .views.management import TranslationRequestViewSet
+from .views.translate import machine_translate
 
 
 @hooks.register("register_page_listing_more_buttons")
@@ -34,7 +35,9 @@ def register_admin_urls():
             "^create_translation_request/(\d+)/$",
             create_translation_request,
             name="create_translation_request",
-        )
+        ),
+        url("^machine_translate/(\d+)/$", machine_translate, name="machine_translate"),
+
     ]
 
     return [
