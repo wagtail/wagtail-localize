@@ -44,6 +44,13 @@ LANGUAGES = [
 ]
 ```
 
+To enable Google Translate as a machine translator, add the following to your settings:
+
+```python
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    'CLASS': 'wagtail_localize.translation.machine_translators.google_translate.GoogleTranslateTranslator',
+}
+```
 
 
 ### URL configuration

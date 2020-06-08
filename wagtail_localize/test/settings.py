@@ -166,3 +166,7 @@ MEDIA_URL = "/media/"
 WAGTAIL_SITE_NAME = "Wagtail localize test project"
 
 LANGUAGES = [("en", "English"), ("fr", "French")]
+
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    'CLASS': 'wagtail_localize.translation.machine_translators.google_translate.GoogleTranslateTranslator',
+}
