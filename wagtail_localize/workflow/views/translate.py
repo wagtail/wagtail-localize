@@ -16,19 +16,7 @@ from wagtail_localize.translation.engines.pofile.views import (
     MessageIngestor,
     MissingSegmentsException,
 )
-
-# TODO: Switch to official Google API client
-import googletrans
-
-
-def language_code(code):
-    if code in ["zh-hans", "zh-cn"]:
-        return "zh-cn"
-
-    if code in ["zh-hant", "zh-tw"]:
-        return "zh-tw"
-
-    return code.split("-")[0]
+from wagtail_localize.translation.machine_translators import get_machine_translator
 
 
 # TODO: Permission checks
@@ -43,16 +31,11 @@ def machine_translate(request, translation_request_id):
         instance = page.source_revision.as_page_object()
         message_extractor.extract_messages(instance)
 
-    translator = googletrans.Translator()
-    google_translations = translator.translate(
-        list(message_extractor.messages.keys()),
-        src=language_code(translation_request.source_locale.language_code),
-        dest=language_code(translation_request.target_locale.language_code),
-    )
+    translator = get_machine_translator()
+    if translator is None:
+        return Http404
 
-    translations = {
-        translation.origin: translation.text for translation in google_translations
-    }
+    translations = translator.translate(translation_request.source_locale, translation_request.target_locale, message_extractor.messages.keys())
 
     publish = request.POST.get("publish", "") == "on"
 
