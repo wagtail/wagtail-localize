@@ -3,7 +3,7 @@
 {% block content %}
     <h3>Google Translate</h3>
 
-    <form action="{% url 'wagtail_localize_google_translate:translate' translation_request.id %}" method="post">
+    <form action="{% url 'wagtail_localize_workflow:machine_translate' translation_request.id %}" method="post">
         {% csrf_token %}
 
         <label><input type="checkbox" name="publish" checked> Publish translated pages</label>

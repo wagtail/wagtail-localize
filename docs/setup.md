@@ -16,7 +16,6 @@ INSTALLED_APPS = [
     "wagtail_localize",
     "wagtail_localize.workflow",
     "wagtail_localize.translation",
-    "wagtail_localize.translation.engines.google_translate",
 ]
 ```
 

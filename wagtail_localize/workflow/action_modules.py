@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 
 from wagtail.core import hooks
 
+from .views.translate import language_code
+
 
 class BaseActionModule:
     template_name = None
@@ -25,9 +27,24 @@ class CopyPagesActionModule(BaseActionModule):
     template_name = "wagtail_localize_workflow/action_modules/copy_pages.html"
 
 
+class MachineTranslatorActionModule(BaseActionModule):
+    template_name = "wagtail_localize_workflow/action_modules/machine_translator.html"
+
+    def is_shown(self):
+        # Hide if the language is not different between the locales
+        source_lang = language_code(
+            self.translation_request.source_locale.language_code
+        )
+        target_lang = language_code(
+            self.translation_request.target_locale.language_code
+        )
+
+        return source_lang != target_lang
+
+
 @functools.lru_cache()
 def get_action_modules():
-    action_modules = [CopyPagesActionModule]
+    action_modules = [CopyPagesActionModule, MachineTranslatorActionModule]
 
     for fn in hooks.get_hooks("wagtail_localize_workflow_register_action_modules"):
         new_action_modules = fn()
