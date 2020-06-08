@@ -3,11 +3,11 @@
 {% block content %}
     <h3>Download / Upload PO file</h3>
 
-    <a class="icon icon-download" href="{% url 'wagtail_localize_pofile:download' translation_request.id %}" download>Download PO file</a>
+    <a class="icon icon-download" href="{% url 'wagtail_localize_workflow:export_file' translation_request.id %}" download>Download PO file</a>
 
     <hr>
 
-    <form action="{% url 'wagtail_localize_pofile:upload' translation_request.id %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'wagtail_localize_workflow:import_file' translation_request.id %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <input type="file" name="file">

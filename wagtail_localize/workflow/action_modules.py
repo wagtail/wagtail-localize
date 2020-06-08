@@ -27,6 +27,10 @@ class CopyPagesActionModule(BaseActionModule):
     template_name = "wagtail_localize_workflow/action_modules/copy_pages.html"
 
 
+class FileActionModule(BaseActionModule):
+    template_name = "wagtail_localize_workflow/action_modules/file.html"
+
+
 class MachineTranslatorActionModule(BaseActionModule):
     template_name = "wagtail_localize_workflow/action_modules/machine_translator.html"
 
@@ -40,7 +44,7 @@ class MachineTranslatorActionModule(BaseActionModule):
 
 @functools.lru_cache()
 def get_action_modules():
-    action_modules = [CopyPagesActionModule]
+    action_modules = [CopyPagesActionModule, FileActionModule]
 
     machine_translator = get_machine_translator()
     if machine_translator is not None:

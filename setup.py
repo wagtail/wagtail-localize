@@ -35,10 +35,9 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    install_requires=["Django>=2.1,<3.1", "Wagtail>=2.6,<2.10",],
+    install_requires=["Django>=2.1,<3.1", "Wagtail>=2.6,<2.10", "polib>=1.1,<2.0"],
     extras_require={
         "testing": ["dj-database-url==0.5.0",],
-        "pofile": ["polib>=1.1,<2.0",],
         "google_translate": ["googletrans>=2.4,<3.0",],
     },
     zip_safe=False,
