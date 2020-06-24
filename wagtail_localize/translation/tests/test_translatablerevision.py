@@ -5,7 +5,7 @@ from django.utils import timezone
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page
 
-from wagtail_localize.models import Locale
+from wagtail_localize.models import Locale, TranslatableObject
 from wagtail_localize.test.models import TestPage, TestSnippet
 from wagtail_localize.translation.models import (
     TranslationSource,
@@ -71,7 +71,7 @@ class TestGetOrCreateFromPageRevision(TestCase):
 
         self.assertTrue(created)
 
-        self.assertEqual(source.object_id, self.page.translation_key)
+        self.assertEqual(source.object.translation_key, self.page.translation_key)
         self.assertEqual(source.locale, self.page.locale)
         self.assertEqual(source.page_revision, page_revision)
         self.assertEqual(source.content_json, page_revision.content_json)
@@ -95,7 +95,7 @@ class TestFromInstance(TestCase):
 
         self.assertTrue(created)
 
-        self.assertEqual(source.object_id, self.snippet.translation_key)
+        self.assertEqual(source.object.translation_key, self.snippet.translation_key)
         self.assertEqual(source.locale, self.snippet.locale)
         self.assertIsNone(source.page_revision)
         self.assertEqual(
@@ -112,7 +112,7 @@ class TestFromInstance(TestCase):
 
     def test_creates_new_source_if_changed(self):
         source = TranslationSource.objects.create(
-            object_id=self.snippet.translation_key,
+            object=TranslatableObject.objects.get_or_create_from_instance(self.snippet)[0],
             locale=self.snippet.locale,
             content_json=json.dumps(
                 {
@@ -139,7 +139,7 @@ class TestFromInstance(TestCase):
 
     def test_reuses_existing_source_if_not_changed(self):
         source = TranslationSource.objects.create(
-            object_id=self.snippet.translation_key,
+            object=TranslatableObject.objects.get_or_create_from_instance(self.snippet)[0],
             locale=self.snippet.locale,
             content_json=json.dumps(
                 {
@@ -160,7 +160,7 @@ class TestFromInstance(TestCase):
 
     def test_creates_new_source_if_forced(self):
         source = TranslationSource.objects.create(
-            object_id=self.snippet.translation_key,
+            object=TranslatableObject.objects.get_or_create_from_instance(self.snippet)[0],
             locale=self.snippet.locale,
             content_json=json.dumps(
                 {
@@ -266,7 +266,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             translation_of=self.segment,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
-                object_id=self.page.translation_key, path="test_charfield"
+                object__translation_key=self.page.translation_key, path="test_charfield"
             ),
             text="Ceci est du contenu de test",
         )
@@ -302,7 +302,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             translation_of=self.segment,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
-                object_id=child_page.translation_key, path="test_charfield"
+                object__translation_key=child_page.translation_key, path="test_charfield"
             ),
             text="Ceci est du contenu de test",
         )
@@ -440,7 +440,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             translation_of=self.segment,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
-                object_id=self.page.translation_key, path="test_streamfield.id"
+                object__translation_key=self.page.translation_key, path="test_streamfield.id"
             ),
             text="Ceci est du contenu de test",
         )
@@ -477,5 +477,5 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         self.assertEqual(e.exception.location.source, self.source)
         self.assertEqual(e.exception.location.context.path, "test_snippet")
-        self.assertEqual(e.exception.location.object_id, self.snippet.translation_key)
+        self.assertEqual(e.exception.location.object.translation_key, self.snippet.translation_key)
         self.assertEqual(e.exception.locale, self.dest_locale)

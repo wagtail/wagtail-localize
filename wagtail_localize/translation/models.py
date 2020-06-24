@@ -14,6 +14,8 @@ from modelcluster.models import (
 )
 from wagtail.core.models import Page
 
+from wagtail_localize.models import TranslatableObject
+
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
@@ -24,44 +26,6 @@ def pk(obj):
         return obj.pk
     else:
         return obj
-
-
-class TranslatableObjectManager(models.Manager):
-    def get_or_create_from_instance(self, instance):
-        return self.get_or_create(
-            translation_key=instance.translation_key,
-            content_type=ContentType.objects.get_for_model(
-                instance.get_translation_model()
-            ),
-        )
-
-
-class TranslatableObject(models.Model):
-    """
-    Represents something that can be translated.
-
-    Note that one instance of this represents all translations for the object.
-    """
-
-    translation_key = models.UUIDField(primary_key=True)
-    content_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, related_name="+"
-    )
-
-    objects = TranslatableObjectManager()
-
-    def has_translation(self, locale):
-        return self.content_type.get_all_objects_for_this_type(
-            translation_key=self.translation_key, locale_id=pk(locale)
-        ).exists()
-
-    def get_instance(self, locale):
-        return self.content_type.get_object_for_this_type(
-            translation_key=self.translation_key, locale_id=pk(locale)
-        )
-
-    class Meta:
-        unique_together = [("content_type", "translation_key")]
 
 
 class SourceDeletedError(Exception):
@@ -88,10 +52,7 @@ class TranslationSource(models.Model):
     """
     A piece of content that to be used as a source for translations.
     """
-
-    object = models.ForeignKey(
-        TranslatableObject, on_delete=models.CASCADE, related_name="sources"
-    )
+    object = models.ForeignKey(TranslatableObject, on_delete=models.CASCADE, related_name="sources")
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
     content_json = models.TextField()
     created_at = models.DateTimeField()
@@ -351,9 +312,7 @@ class Segment(models.Model):
 
 
 class TranslationContext(models.Model):
-    object = models.ForeignKey(
-        TranslatableObject, on_delete=models.CASCADE, related_name="+"
-    )
+    object = models.ForeignKey(TranslatableObject, on_delete=models.CASCADE, related_name="contexts")
     path_id = models.UUIDField()
     path = models.TextField()
 
@@ -535,9 +494,7 @@ class TemplateLocation(BaseLocation):
 
 
 class RelatedObjectLocation(BaseLocation):
-    object = models.ForeignKey(
-        TranslatableObject, on_delete=models.CASCADE, related_name="references"
-    )
+    object = models.ForeignKey(TranslatableObject, on_delete=models.CASCADE, related_name="references")
 
     @classmethod
     def from_related_object_value(cls, source, related_object_value):

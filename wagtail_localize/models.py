@@ -3,6 +3,7 @@ import uuid
 
 from django.apps import apps
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.signals import pre_save, post_save, m2m_changed
@@ -87,6 +88,42 @@ class Locale(models.Model):
             )
 
         return Page.objects.filter(q)
+
+
+class TranslatableObjectManager(models.Manager):
+    def get_or_create_from_instance(self, instance):
+        return self.get_or_create(
+            translation_key=instance.translation_key,
+            content_type=ContentType.objects.get_for_model(
+                instance.get_translation_model()
+            ),
+        )
+
+
+class TranslatableObject(models.Model):
+    """
+    Represents something that can be translated.
+
+    One instance of this model is generated as an when it's first needed. A single instance
+    represents all the translations of an object.
+    """
+
+    translation_key = models.UUIDField(unique=True)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="+"
+    )
+
+    objects = TranslatableObjectManager()
+
+    def has_translation(self, locale):
+        return self.content_type.get_all_objects_for_this_type(
+            translation_key=self.translation_key, locale_id=pk(locale)
+        ).exists()
+
+    def get_instance(self, locale):
+        return self.content_type.get_object_for_this_type(
+            translation_key=self.translation_key, locale_id=pk(locale)
+        )
 
 
 def default_locale_id():
