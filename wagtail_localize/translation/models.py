@@ -54,6 +54,11 @@ class TranslationSource(models.Model):
     """
     object = models.ForeignKey(TranslatableObject, on_delete=models.CASCADE, related_name="sources")
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+    # object.content_type references the ContentType that has the `locale` field. But content types may exist beneath that.
+    # This field contains a reference to the ContentType that the content was extracted from.
+    specific_content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="+"
+    )
     content_json = models.TextField()
     created_at = models.DateTimeField()
 
@@ -106,6 +111,7 @@ class TranslationSource(models.Model):
             cls.objects.create(
                 object=object,
                 locale=instance.locale,
+                specific_content_type=ContentType.objects.get_for_model(instance.__class__),
                 content_json=content_json,
                 created_at=timezone.now(),
             ),
