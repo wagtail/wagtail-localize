@@ -12,6 +12,7 @@ from django.utils.text import slugify
 from wagtail.core.models import Page
 
 from wagtail_localize.translation.machine_translators import get_machine_translator
+from wagtail_localize.translation.models import TranslationSource
 from wagtail_localize.translation.segments import (
     SegmentValue,
     TemplateValue,
@@ -40,9 +41,13 @@ class MessageExtractor:
             return
         self.seen_objects.add(instance.translation_key)
 
-        for segment in extract_segments(instance):
+        source, created = TranslationSource.from_instance(instance)
+
+        source.extract_segments()
+        import pdb; pdb.set_trace()
+        for segment in source.get_segments():
             if isinstance(segment, SegmentValue):
-                self.messages[segment.text].append(
+                self.messages[segment.html].append(
                     (self.get_path(instance), segment.path)
                 )
             elif isinstance(segment, RelatedObjectValue):
@@ -60,6 +65,7 @@ def export_file(request, translation_request_id):
     message_extractor = MessageExtractor(translation_request.source_locale)
     for page in translation_request.pages.all():
         instance = page.source_revision.as_page_object()
+
         message_extractor.extract_messages(instance)
 
     # Build a PO file
@@ -107,7 +113,11 @@ class MessageIngestor:
             return
         self.seen_objects.add(instance.translation_key)
 
-        segments = extract_segments(instance)
+        source = TranslationSource.objects.get_for_instance(instance).order_by('-created_at').first()
+        if source is None:
+            raise Exception("Source was None?")
+
+        segments = source.get_segments()
 
         # Ingest segments for dependencies first
         for segment in segments:
@@ -127,11 +137,11 @@ class MessageIngestor:
 
         missing_segments = 0
         for segment in text_segments:
-            if segment.text in self.translations:
+            if segment.html in self.translations:
                 translated_segments.append(
-                    SegmentValue(
+                    SegmentValue.from_html(
                         segment.path,
-                        self.translations[segment.text],
+                        self.translations[segment.html],
                         order=segment.order,
                     )
                 )

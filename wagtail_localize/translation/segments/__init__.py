@@ -117,7 +117,7 @@ class SegmentValue(BaseValue):
         )
 
     @classmethod
-    def from_html(cls, path, html):
+    def from_html(cls, path, html, **kargs):
         text, elements = extract_html_elements(html)
 
         html_elements = []
@@ -130,7 +130,7 @@ class SegmentValue(BaseValue):
                 cls.HTMLElement(start, end, identifier, (element_type, element_attrs))
             )
 
-        return cls(path, text, html_elements)
+        return cls(path, text, html_elements, **kargs)
 
     @property
     def html(self):
