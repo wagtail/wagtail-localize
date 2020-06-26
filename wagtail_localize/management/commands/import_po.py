@@ -33,21 +33,6 @@ class LocaleLoader:
         return pathlib.Path(self.filename).exists
 
 
-def yield_locales(locales):
-    default = default_locale_id()
-    splitter = defaultdict(list)
-    for locale in locales:
-        splitter[locale.id == default].append(locale)
-    try:
-        pot_locale = splitter[True]
-    except KeyError:
-        raise ValueError("No default language set")
-
-    po_locales = splitter.get(False, [])
-    for locale in po_locales:
-        yield (pot_locale, locale)
-
-
 def get_pages(page):
     """Recursively browse, export a page and yield its sub pages."""
     yield page
@@ -80,6 +65,13 @@ class Command(BaseCommand):
         parser.add_argument(
             '--po-fmt', dest='po_outfmt', default=po_outfmt, type=str
         )
+        parser.add_argument(
+            '--pot-locale',
+            dest='pot_locale',
+            type=str,
+            help="Override the defaut locale to force the pivot language used"
+            "to generate the .pot file",
+        )
 
         parser.add_argument(
             '--publish',
@@ -99,7 +91,16 @@ class Command(BaseCommand):
             ).first()
         else:
             site = Site.objects.filter(is_default_site=True).first()
-        locales = Locale.objects.filter(is_active=True)
+
+        pot_locale = options.get('pot_locale')
+        if pot_locale:
+            source_locale = Locale.objects.get(language_code=pot_locale)
+        else:
+            source_locale = Locale.objects.get(id=default_locale_id())
+
+        locales = Locale.objects.filter(is_active=True).exclude(
+            id=source_locale.id
+        )
 
         publish = options.get('publish', False)
 
@@ -107,15 +108,28 @@ class Command(BaseCommand):
         if root_page is None:
             raise ValueError("Site is not properly configured, no root page.")
 
-        for source_locale, target_locale in yield_locales(locales):
-            print("Loading translations for {}".format(target_locale))
+        for target_locale in locales:
+            print(
+                "Loading translations for {} -> {}".format(
+                    source_locale, target_locale
+                )
+            )
             translations = LocaleLoader(target_locale, options)
             message_ingestor = MessageIngestor(
                 source_locale, target_locale, translations.items,
             )
 
             for page in get_pages(root_page):
+                print("Loading page {}".format(page))
                 instance = page.get_latest_revision().as_page_object()
+                if instance.is_source_translation:
+                    if instance.locale.id != source_locale.id:
+                        print(
+                            "Fix the locale for the source {} -> {}."
+                            "".format(instance.locale, source_locale)
+                        )
+                        instance.locale = source_locale
+                        instance.save()
                 translation = message_ingestor.ingest_messages(instance)
                 if publish:
                     translation.get_latest_revision().publish()

@@ -99,6 +99,13 @@ class Command(BaseCommand):
             help="host:port of the site, the default site will be exported "
             "if not specified",
         )
+        parser.add_argument(
+            '--pot-locale',
+            dest='pot_locale',
+            type=str,
+            help="Override the defaut locale to force the pivot language used"
+            "to generate the .pot file",
+        )
         parser.add_argument('--pot', dest='pot_out', default=potfile, type=str)
         parser.add_argument(
             '--po-fmt', dest='po_outfmt', default=po_outfmt, type=str
@@ -116,6 +123,12 @@ class Command(BaseCommand):
             site = Site.objects.filter(is_default_site=True).first()
         locales = Locale.objects.filter(is_active=True)
 
+        pot_locale = options.get('pot_locale')
+        if pot_locale:
+            source_locale = Locale.objects.get(language_code=pot_locale)
+        else:
+            source_locale = Locale.objects.get(id=default_locale_id())
+
         root_page = site.root_page if site else None
         if root_page is None:
             raise ValueError("Site is not properly configured, no root page.")
@@ -123,7 +136,7 @@ class Command(BaseCommand):
         for locale in locales:
 
             dumper = LocaleDumper(
-                locale, locale.id == default_locale_id(), options
+                locale, locale.id == source_locale.id, options
             )
             message_extractor = MessageExtractor(locale=locale)
 
