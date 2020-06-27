@@ -46,6 +46,13 @@ class TranslatableObjectManager(models.Manager):
             ),
         )
 
+    def get_for_instance(self, instance):
+        return self.get(
+            translation_key=instance.translation_key,
+            content_type=ContentType.objects.get_for_model(
+                instance.get_translation_model()
+            ),
+        )
 
 class TranslatableObject(models.Model):
     """
@@ -95,6 +102,17 @@ class MissingRelatedObjectError(Exception):
         super().__init__()
 
 
+class TranslationSourceQuerySet(models.QuerySet):
+    def get_for_instance(self, instance):
+        object = TranslatableObject.objects.get_for_instance(
+            instance
+        )
+        return self.filter(
+            object=object,
+            locale=instance.locale,
+        )
+
+
 class TranslationSource(models.Model):
     """
     A piece of content that to be used as a source for translations.
@@ -114,6 +132,8 @@ class TranslationSource(models.Model):
         blank=True,
         related_name="wagtaillocalize_revision",
     )
+
+    objects = TranslationSourceQuerySet.as_manager()
 
     @classmethod
     def get_or_create_from_page_revision(cls, page_revision):
@@ -198,6 +218,66 @@ class TranslationSource(models.Model):
             else:
                 SegmentLocation.from_segment_value(self, self.locale, segment)
 
+    def get_segments(self, with_translation=None):
+        segment_locations = (
+            SegmentLocation.objects.filter(source=self)
+            .select_related("context", "segment")
+        )
+
+        if with_translation:
+            segment_locations = segment_locations.annotate_translation(with_translation)
+
+        template_locations = (
+            TemplateLocation.objects.filter(source=self)
+            .select_related("template")
+            .select_related("context")
+        )
+
+        related_object_locations = (
+            RelatedObjectLocation.objects.filter(source=self)
+            .select_related("object")
+            .select_related("context")
+        )
+
+        segments = []
+
+        for location in segment_locations:
+            if with_translation and not location.translation:
+                raise MissingTranslationError(location, with_translation)
+
+            segment = SegmentValue.from_html(
+                location.context.path, location.translation if with_translation else location.segment.text
+            ).with_order(location.order)
+            if location.html_attrs:
+                segment.replace_html_attrs(json.loads(location.html_attrs))
+
+            segments.append(segment)
+
+        for location in template_locations:
+            template = location.template
+            segment = TemplateValue(
+                location.context.path,
+                template.template_format,
+                template.template,
+                template.segment_count,
+                order=location.order,
+            )
+            segments.append(segment)
+
+        for location in related_object_locations:
+            if with_translation and not location.object.has_translation(with_translation):
+                raise MissingRelatedObjectError(location, with_translation)
+
+            segment = RelatedObjectValue(
+                location.context.path,
+                location.object.content_type,
+                location.object.translation_key,
+                order=location.order,
+            )
+            segments.append(segment)
+
+        return segments
+
     @transaction.atomic
     def create_or_update_translation(self, locale):
         """
@@ -222,60 +302,7 @@ class TranslationSource(models.Model):
                 )
 
         # Fetch all translated segments
-        segment_locations = (
-            SegmentLocation.objects.filter(source=self)
-            .annotate_translation(locale)
-            .select_related("context")
-        )
-
-        template_locations = (
-            TemplateLocation.objects.filter(source=self)
-            .select_related("template")
-            .select_related("context")
-        )
-
-        related_object_locations = (
-            RelatedObjectLocation.objects.filter(source=self)
-            .select_related("object")
-            .select_related("context")
-        )
-
-        segments = []
-
-        for location in segment_locations:
-            if not location.translation:
-                raise MissingTranslationError(location, locale)
-
-            segment = SegmentValue.from_html(
-                location.context.path, location.translation
-            ).with_order(location.order)
-            if location.html_attrs:
-                segment.replace_html_attrs(json.loads(location.html_attrs))
-
-            segments.append(segment)
-
-        for location in template_locations:
-            template = location.template
-            segment = TemplateValue(
-                location.context.path,
-                template.template_format,
-                template.template,
-                template.segment_count,
-                order=location.order,
-            )
-            segments.append(segment)
-
-        for location in related_object_locations:
-            if not location.object.has_translation(locale):
-                raise MissingRelatedObjectError(location, locale)
-
-            segment = RelatedObjectValue(
-                location.context.path,
-                location.object.content_type,
-                location.object.translation_key,
-                order=location.order,
-            )
-            segments.append(segment)
+        segments = self.get_segments(with_translation=locale)
 
         # Ingest all translated segments
         ingest_segments(original, translation, self.locale, locale, segments)
