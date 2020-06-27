@@ -14,7 +14,7 @@ from wagtail_localize.models import (
     TranslatablePageMixin,
 )
 
-from ..models import TranslationRequest, TranslationRequestPage
+from wagtail_localize.translation.models import TranslationRequest, TranslationSource
 
 
 class CreateTranslationRequestForm(forms.Form):
@@ -54,90 +54,40 @@ def create_translation_request(request, page_id):
 
         if form.is_valid():
             with transaction.atomic():
-                source_locale = page.locale
-                revision = page.get_latest_revision()
-                translatable_models = tuple(get_translatable_models())
+                def _create_translation_requests(instance, target_locales):
+                    source, created = TranslationSource.from_instance(instance.specific)
 
-                # If the page doesn't have a revision (eg, came from import-export), create one.
-                if revision is None:
-                    revision = page.save_revision(changed=False)
+                    if created:
+                        source.extract_segments()
 
-                for target_locale in form.cleaned_data["locales"]:
-                    # Get list of any translatable ancestor pages that don't have translations
-                    # yet as these will need to be translated too.
-                    required_ancestors = []
-                    current_page = page
-                    current_page_translation = current_page.get_translation_or_none(target_locale)
-                    while current_page_translation is None:
-                        current_page = current_page.get_parent()
-
-                        if issubclass(current_page.specific_class, translatable_models):
-                            current_page_translation = current_page.specific.get_translation_or_none(
-                                target_locale
-                            )
-
-                            if current_page_translation is None:
-                                required_ancestors.append(current_page)
-                        else:
-                            break
-
-                    # Create translation request
-                    translation_request = TranslationRequest.objects.create(
-                        source_locale=source_locale,
-                        target_locale=target_locale,
-                        created_at=timezone.now(),
-                        created_by=request.user,
-                    )
-
-                    # Add ancestor pages to translation request
-                    # In reverse order so parents get added before children
-                    parent_item = None
-                    for ancestor_page in reversed(required_ancestors):
-                        source_revision = ancestor_page.get_latest_revision()
-                        if source_revision is None:
-                            source_revision = ancestor_page.specific.save_revision(
-                                changed=False
-                            )
-
-                        parent_item = TranslationRequestPage.objects.create(
-                            request=translation_request,
-                            source_revision=source_revision,
-                            parent=parent_item,
+                    for target_locale in target_locales:
+                        # Create translation request
+                        TranslationRequest.objects.get_or_create(
+                            source=source,
+                            target_locale=target_locale,
                         )
 
-                    # Now add the requested page
-                    parent_item = TranslationRequestPage.objects.create(
-                        request=translation_request,
-                        source_revision=revision,
-                        parent=parent_item,
-                    )
+                _create_translation_requests(page, form.cleaned_data["locales"])
 
-                    # Now add the sub tree
-                    if form.cleaned_data["include_subtree"]:
+                # Now add the sub tree
+                if form.cleaned_data["include_subtree"]:
+                    translatable_models = tuple(get_translatable_models())
 
-                        def _walk(current_page, parent_item):
-                            for child_page in current_page.get_children():
-                                if not issubclass(
-                                    child_page.specific_class, translatable_models
-                                ):
-                                    continue
+                    def _walk(current_page):
+                        for child_page in current_page.get_children():
+                            if not issubclass(
+                                child_page.specific_class, translatable_models
+                            ):
+                                continue
 
-                                source_revision = child_page.get_latest_revision()
-                                if source_revision is None:
-                                    source_revision = child_page.specific.save_revision(
-                                        changed=False
-                                    )
+                            print(child_page)
 
-                                child_item = TranslationRequestPage.objects.create(
-                                    request=translation_request,
-                                    source_revision=source_revision,
-                                    parent=parent_item,
-                                )
+                            _create_translation_requests(child_page, form.cleaned_data["locales"])
 
-                                if child_page.numchild:
-                                    _walk(child_page, child_item)
+                            if child_page.numchild:
+                                _walk(child_page)
 
-                        _walk(page, parent_item)
+                    _walk(page)
 
                 messages.success(
                     request, "The translation request was submitted successfully"

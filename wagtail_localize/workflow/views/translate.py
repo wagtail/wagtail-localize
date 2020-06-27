@@ -12,6 +12,7 @@ from django.utils.text import slugify
 from wagtail.core.models import Page
 
 from wagtail_localize.translation.machine_translators import get_machine_translator
+from wagtail_localize.translation.models import TranslationRequest
 from wagtail_localize.translation.segments import (
     SegmentValue,
     TemplateValue,
@@ -19,7 +20,6 @@ from wagtail_localize.translation.segments import (
 )
 from wagtail_localize.translation.segments.extract import extract_segments
 from wagtail_localize.translation.segments.ingest import ingest_segments
-from wagtail_localize.workflow.models import TranslationRequest
 
 
 class MessageExtractor:
@@ -68,6 +68,7 @@ def export_file(request, translation_request_id):
         "POT-Creation-Date": str(timezone.now()),
         "MIME-Version": "1.0",
         "Content-Type": "text/plain; charset=utf-8",
+        "X-WagtailLocalize-TranslationRequestID": str(translation_request.id),
     }
 
     for text, occurances in message_extractor.messages.items():

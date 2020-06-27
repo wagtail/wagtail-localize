@@ -4,7 +4,18 @@ import uuid
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
-from django.db.models import Subquery, OuterRef
+from django.db.models import (
+    Case,
+    Count,
+    Exists,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.utils import timezone
 from django.utils.text import slugify
 from modelcluster.models import (
@@ -287,6 +298,66 @@ class TranslationSource(models.Model):
         )
 
         return translation, created
+
+
+class TranslationRequest(models.Model):
+    # A unique ID that can be used to reference this request in external systems
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+
+    source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, related_name="translation_requests"
+    )
+    target_locale = models.ForeignKey(
+        "wagtail_localize.Locale",
+        on_delete=models.CASCADE,
+        related_name="translation_requests",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = [
+            ('source', 'target_locale'),
+        ]
+
+    def get_progress(self):
+        """
+        Returns the current progress of translating this TranslationRequest.
+
+        Returns two integers:
+        - The total number of segments in the source that need to be translated
+        - The number of segments that have been translated into the locale
+        """
+        # Get QuerySet of Segments that need to be translated
+        required_segments = SegmentLocation.objects.filter(source_id=self.source_id)
+
+        # Annotate each Segment with a flag that indicates whether the segment is translated
+        # into the locale
+        required_segments = required_segments.annotate(
+            is_translated=Exists(
+                SegmentTranslation.objects.filter(
+                    translation_of_id=OuterRef("segment_id"),
+                    context_id=OuterRef("context_id"),
+                    locale_id=self.target_locale_id,
+                )
+            )
+        )
+
+        # Count the total number of segments and the number of translated segments
+        aggs = required_segments.annotate(
+            is_translated_i=Case(
+                When(is_translated=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+        ).aggregate(total_segments=Count("pk"), translated_segments=Sum("is_translated_i"))
+
+        return aggs["total_segments"], aggs["translated_segments"]
+
+    def get_dependencies(self):
+        """
+        Returns a list of TranslatableObject's that this TranslationRequest depends on.
+        """
+        pass
 
 
 class TranslationLog(models.Model):

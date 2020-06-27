@@ -10,7 +10,6 @@ from wagtail.core.permission_policies import ModelPermissionPolicy
 
 from wagtail_localize.models import TranslatablePageMixin
 
-from .models import TranslationRequest
 from .views.create_translation_request import create_translation_request
 from .views.management import TranslationRequestViewSet
 from .views.translate import export_file, import_file, machine_translate

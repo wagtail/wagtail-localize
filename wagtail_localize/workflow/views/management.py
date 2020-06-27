@@ -11,19 +11,14 @@ from wagtail.admin.views import generic
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.core.permission_policies import ModelPermissionPolicy
 
+from wagtail_localize.translation.models import TranslationRequest
+
 from ..action_modules import get_action_modules
-from ..models import TranslationRequest
-
-
-class TranslationRequestForm(forms.ModelForm):
-    class Meta:
-        model = TranslationRequest
-        fields = ["source_locale"]
 
 
 class TranslationRequestListView(ListView):
     template_name = "wagtail_localize_workflow/management/list.html"
-    page_title = ugettext_lazy("Translaton requests")
+    page_title = ugettext_lazy("Translation requests")
     context_object_name = "translation_requests"
     permission_policy = None
     list_url_name = None
@@ -46,18 +41,18 @@ class TranslationRequestDetailView(DetailView):
 
     def get_context_data(self, object):
         context = super().get_context_data(object=object)
-        pages = list(object.pages.order_by("id"))
-        pages_by_id = {page.id: page for page in pages}
+        # pages = list(object.pages.order_by("id"))
+        # pages_by_id = {page.id: page for page in pages}
 
-        # Add depths to pages
-        for page in pages:
-            # Pages are in depth-first-search order so parents are processed before their children
-            if page.parent_id:
-                page.depth = pages_by_id[page.parent_id].depth + 1
-            else:
-                page.depth = 0
+        # # Add depths to pages
+        # for page in pages:
+        #     # Pages are in depth-first-search order so parents are processed before their children
+        #     if page.parent_id:
+        #         page.depth = pages_by_id[page.parent_id].depth + 1
+        #     else:
+        #         page.depth = 0
 
-        context["pages"] = pages
+        # context["pages"] = pages
 
         context["action_modules"] = [
             action_module(self.request, object)
