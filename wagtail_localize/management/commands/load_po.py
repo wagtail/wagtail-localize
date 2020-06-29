@@ -47,7 +47,8 @@ class CommandHandler:
 
 
 class Command(BaseCommand):
-    help = "Export .po files for all locals"
+    help = "Dump all translatable translations for a webside .po files for "
+    "its all locals"
 
     def add_arguments(self, parser):
         po_outfmt = (
@@ -63,14 +64,15 @@ class Command(BaseCommand):
             "if not specified",
         )
         parser.add_argument(
-            '--po-fmt', dest='po_outfmt', default=po_outfmt, type=str
+            '--po-fmt', dest='po_outfmt', default=po_outfmt, type=str,
+            help="Format for locales .po path"
         )
         parser.add_argument(
             '--pot-locale',
             dest='pot_locale',
             type=str,
             help="Override the defaut locale to force the pivot language used"
-            "to generate the .pot file",
+            "while generating the .pot file",
         )
 
         parser.add_argument(
@@ -79,6 +81,7 @@ class Command(BaseCommand):
             action='store_const',
             const=True,
             default=False,
+            help="Publish pages after loading translations, draft by default"
         )
 
     def handle(self, **options):
