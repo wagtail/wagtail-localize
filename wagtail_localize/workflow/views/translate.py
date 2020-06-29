@@ -1,3 +1,4 @@
+import json
 import tempfile
 from collections import defaultdict
 
@@ -12,7 +13,7 @@ from django.utils.text import slugify
 from wagtail.core.models import Page
 
 from wagtail_localize.translation.machine_translators import get_machine_translator
-from wagtail_localize.translation.models import TranslationRequest, TranslationSource
+from wagtail_localize.translation.models import TranslationRequest, TranslationSource, SegmentTranslation
 from wagtail_localize.translation.segments import (
     SegmentValue,
     TemplateValue,
@@ -35,22 +36,18 @@ class MessageExtractor:
             base_model = instance.get_translation_model()
             return f"{slugify(base_model._meta.verbose_name_plural)}/{instance.pk}"
 
-    def extract_messages(self, instance):
-        if instance.translation_key in self.seen_objects:
+    def extract_messages(self, source):
+        if source.object_id in self.seen_objects:
             return
-        self.seen_objects.add(instance.translation_key)
+        self.seen_objects.add(source.object_id)
 
-        source, created = TranslationSource.from_instance(instance)
-
-        source.extract_segments()
-        import pdb; pdb.set_trace()
         for segment in source.get_segments():
             if isinstance(segment, SegmentValue):
                 self.messages[segment.html].append(
                     (self.get_path(instance), segment.path)
                 )
-            elif isinstance(segment, RelatedObjectValue):
-                self.extract_messages(segment.get_instance(self.locale))
+            #elif isinstance(segment, RelatedObjectValue):
+            #    self.extract_messages(segment.get_instance(self.locale))
 
 
 # TODO: Permission checks
@@ -60,12 +57,15 @@ def export_file(request, translation_request_id):
         TranslationRequest, id=translation_request_id
     )
 
-    # Extract messages from pages
-    message_extractor = MessageExtractor(translation_request.source_locale)
-    for page in translation_request.pages.all():
-        instance = page.source_revision.as_page_object()
+    # Get messages
+    messages = defaultdict(list)
+    for segment in translation_request.source.get_segments(with_translation=translation_request.target_locale, raise_if_missing_translation=False):
+        if isinstance(segment, SegmentValue):
+            messages[segment.html_with_ids] = (segment.path, segment.translation.html_with_ids if segment.translation else None)
 
-        message_extractor.extract_messages(instance)
+    # TODO: We need to make sure we handle the case where two strings have the same source and context.
+    # For example, if I have a rich text field with two links that have the same text but go to different places
+    # We only want to include this once for translation
 
     # Build a PO file
     po = polib.POFile()
@@ -73,15 +73,15 @@ def export_file(request, translation_request_id):
         "POT-Creation-Date": str(timezone.now()),
         "MIME-Version": "1.0",
         "Content-Type": "text/plain; charset=utf-8",
-        "X-WagtailLocalize-TranslationRequestID": str(translation_request.id),
+        "X-WagtailLocalize-TranslationRequestID": str(translation_request.uuid),
     }
 
-    for text, occurances in message_extractor.messages.items():
+    for text, (context, translation) in messages.items():
         po.append(
             polib.POEntry(
                 msgid=text,
-                msgstr="",  # TODO: Fetch this from translation memory
-                occurrences=occurances,
+                msgctxt=context,
+                msgstr=translation or "",
             )
         )
 
@@ -192,7 +192,7 @@ def import_file(request, translation_request_id):
     try:
         with transaction.atomic():
             message_ingestor = MessageIngestor(
-                translation_request.source_locale,
+                translation_request.source.locale,
                 translation_request.target_locale,
                 translations,
             )
@@ -234,39 +234,46 @@ def machine_translate(request, translation_request_id):
         TranslationRequest, id=translation_request_id
     )
 
-    message_extractor = MessageExtractor(translation_request.source_locale)
-    for page in translation_request.pages.filter(is_completed=False):
-        instance = page.source_revision.as_page_object()
-        message_extractor.extract_messages(instance)
-
     translator = get_machine_translator()
     if translator is None:
         return Http404
 
-    translations = translator.translate(translation_request.source_locale, translation_request.target_locale, message_extractor.messages.keys())
+    # Get segments
+    segments = defaultdict(list)
+    for location in translation_request.source.segmentlocation_set.all().select_related("context", "segment"):
+        segment = SegmentValue.from_html(
+            location.context.path, location.segment.text
+        ).with_order(location.order)
+        if location.html_attrs:
+            segment.replace_html_attrs(json.loads(location.html_attrs))
+
+        segments[segment.html_with_ids] = (location.segment_id, location.context_id)
+
+    # TODO: We need to make sure we handle the case where two strings have the same source and context.
+    # For example, if I have a rich text field with two links that have the same text but go to different places
+    # We only want to include this once for translation
+
+    translations = translator.translate(translation_request.source.locale, translation_request.target_locale, segments.keys())
 
     publish = request.POST.get("publish", "") == "on"
 
     try:
         with transaction.atomic():
-            message_ingestor = MessageIngestor(
-                translation_request.source_locale,
-                translation_request.target_locale,
-                translations,
-            )
+            for source_text, (segment_id, context_id) in segments.items():
+                translated_text = translations[source_text]
+                print(source_text, translated_text)
 
-            for page in translation_request.pages.filter(is_completed=False):
-                instance = page.source_revision.as_page_object()
-                translation = message_ingestor.ingest_messages(instance)
-                revision = translation.get_latest_revision()
+                translation, created = SegmentTranslation.objects.get_or_create(
+                    translation_of_id=segment_id,
+                    locale=translation_request.target_locale,
+                    context_id=context_id,
+                    text=translated_text,
+                )
 
-                if publish:
-                    revision.publish()
+            total_segments, translated_segments = translation_request.get_progress()
 
-                # Update translation request
-                page.is_completed = True
-                page.completed_revision = revision
-                page.save(update_fields=["is_completed", "completed_revision"])
+            if total_segments == translated_segments:
+                translation_request.source.create_or_update_translation(translation_request.target_locale)
 
     except MissingSegmentsException as e:
         # TODO: Plural
@@ -280,16 +287,8 @@ def machine_translate(request, translation_request_id):
         # TODO: Plural
         messages.success(
             request,
-            "%d pages successfully translated with PO file"
-            % translation_request.pages.count(),
+            "successfully translated"
         )
-
-    # TODO: Plural
-    messages.success(
-        request,
-        "%d pages successfully translated with Google Translate"
-        % translation_request.pages.count(),
-    )
 
     return redirect(
         "wagtail_localize_workflow_management:detail", translation_request_id

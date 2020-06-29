@@ -37,7 +37,7 @@ class MachineTranslatorActionModule(BaseActionModule):
     def is_shown(self):
         machine_translator = get_machine_translator()
         return machine_translator.can_translate(
-            self.translation_request.source_locale,
+            self.translation_request.source.locale,
             self.translation_request.target_locale,
         )
 

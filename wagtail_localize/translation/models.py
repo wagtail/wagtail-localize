@@ -218,7 +218,7 @@ class TranslationSource(models.Model):
             else:
                 SegmentLocation.from_segment_value(self, self.locale, segment)
 
-    def get_segments(self, with_translation=None):
+    def get_segments(self, with_translation=None, raise_if_missing_translation=True):
         segment_locations = (
             SegmentLocation.objects.filter(source=self)
             .select_related("context", "segment")
@@ -242,14 +242,23 @@ class TranslationSource(models.Model):
         segments = []
 
         for location in segment_locations:
-            if with_translation and not location.translation:
+            if with_translation and not location.translation and raise_if_missing_translation:
                 raise MissingTranslationError(location, with_translation)
 
+            # TODO: We need to allow SegmentValues to include both source and translation at the same time
             segment = SegmentValue.from_html(
-                location.context.path, location.translation if with_translation else location.segment.text
+                location.context.path, location.segment.text
             ).with_order(location.order)
             if location.html_attrs:
                 segment.replace_html_attrs(json.loads(location.html_attrs))
+
+            if with_translation and location.translation:
+                segment.translation = SegmentValue.from_html(
+                    location.context.path, location.translation
+                ).with_order(location.order)
+
+                if location.html_attrs:
+                    segment.translation.replace_html_attrs(json.loads(location.html_attrs))
 
             segments.append(segment)
 
@@ -305,7 +314,7 @@ class TranslationSource(models.Model):
         segments = self.get_segments(with_translation=locale)
 
         # Ingest all translated segments
-        ingest_segments(original, translation, self.locale, locale, segments)
+        ingest_segments(original, translation, self.locale, locale, [segment.translation if isinstance(segment, SegmentValue) else segment for segment in segments])
 
         if isinstance(translation, Page):
             # Make sure the slug is valid
