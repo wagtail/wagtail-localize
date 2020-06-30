@@ -12,11 +12,11 @@ from wagtail_localize.models import TranslatablePageMixin
 
 from .views.create_translation_request import create_translation_request
 from .views.management import TranslationRequestViewSet
-from .views.translate import export_file, import_file, machine_translate
+from .views.translate import export_file, import_file, machine_translate, translation_form
 
 
 @hooks.register("register_page_listing_more_buttons")
-def page_listing_more_buttons(page, page_perms, is_parent=False):
+def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
     if isinstance(page, TranslatablePageMixin):
         yield wagtailadmin_widgets.Button(
             "Create translation request",
@@ -38,6 +38,7 @@ def register_admin_urls():
         url("^machine_translate/(\d+)/$", machine_translate, name="machine_translate"),
         url("^export_file/(\d+)/$", export_file, name="export_file"),
         url("^import_file/(\d+)/$", import_file, name="import_file"),
+        url("^translation_form/(\d+)/$", translation_form, name="translation_form"),
     ]
 
     return [
