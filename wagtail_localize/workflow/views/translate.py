@@ -285,6 +285,14 @@ def machine_translate(request, translation_id):
         if location.html_attrs:
             segment.replace_html_attrs(json.loads(location.html_attrs))
 
+        # Don't translate if there already is a translation
+        if SegmentTranslation.objects.filter(
+            translation_of_id=location.segment_id,
+            locale=translation.target_locale,
+            context_id=location.context_id,
+        ).exists():
+            continue
+
         segments[segment.html_with_ids] = (location.segment_id, location.context_id)
 
     # TODO: We need to make sure we handle the case where two strings have the same source and context.
@@ -302,7 +310,9 @@ def machine_translate(request, translation_id):
                     translation_of_id=segment_id,
                     locale=translation.target_locale,
                     context_id=context_id,
-                    text=translated_text,
+                    defaults={
+                        'text': translated_text,
+                    }
                 )
 
     except MissingSegmentsException as e:

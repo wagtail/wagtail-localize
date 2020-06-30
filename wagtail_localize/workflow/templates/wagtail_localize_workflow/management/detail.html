@@ -86,9 +86,16 @@
             <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
 
                 <h3>Machine translation</h3>
+
+                {% if num_segments_to_translate %}
+                    {{ num_segments_to_translate }} segment{{ num_segments_to_translate|pluralize }} haven't been translated yet.
+                {% else %}
+                    All segments have been translated.
+                {% endif %}
+
                 <form action="{% url 'wagtail_localize_workflow:machine_translate' translation.id %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="button button-secondary">Translate with Google Translate</button>
+                    <button type="submit" class="button button-secondary" {% if num_segments_to_translate == 0 %}disabled{% endif %}>Translate with Google Translate</button>
                 </form>
             </div>
 

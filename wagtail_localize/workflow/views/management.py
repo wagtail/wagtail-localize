@@ -73,6 +73,8 @@ class TranslationDetailView(DetailView):
 
         context["untranslated_segments"] = any(segment.translation is None for segment in context["segments"])
 
+        context["num_segments_to_translate"] = len([segment for segment in context["segments"] if segment.translation is None])
+
         context["ready_for_translation"] = not (context["untranslated_dependencies"] or context["untranslated_segments"])
 
         return context
