@@ -11,26 +11,26 @@ from wagtail.admin.views import generic
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.core.permission_policies import ModelPermissionPolicy
 
-from wagtail_localize.translation.models import TranslationRequest
+from wagtail_localize.translation.models import Translation
 from wagtail_localize.translation.segments import SegmentValue
 
 
-class TranslationRequestListView(ListView):
+class TranslationListView(ListView):
     template_name = "wagtail_localize_workflow/management/list.html"
     page_title = ugettext_lazy("Translation requests")
-    context_object_name = "translation_requests"
+    context_object_name = "translations"
     permission_policy = None
     list_url_name = None
     detail_url_name = None
     header_icon = ""
 
 
-class TranslationRequestDetailView(DetailView):
+class TranslationDetailView(DetailView):
     success_message = ugettext_lazy("Translation request '{0}' updated.")
     error_message = ugettext_lazy(
         "The translation request could not be saved due to errors."
     )
-    context_object_name = "translation_request"
+    context_object_name = "translation"
     template_name = "wagtail_localize_workflow/management/detail.html"
     permission_policy = None
     list_url_name = None
@@ -142,14 +142,14 @@ class CopyForTranslationView(DetailView):
         return redirect("wagtailadmin_pages:edit", new_page.id)
 
 
-class TranslationRequestViewSet(ViewSet):
+class TranslationViewSet(ViewSet):
     icon = "site"
 
-    model = TranslationRequest
-    permission_policy = ModelPermissionPolicy(TranslationRequest)
+    model = Translation
+    permission_policy = ModelPermissionPolicy(Translation)
 
-    list_view_class = TranslationRequestListView
-    detail_view_class = TranslationRequestDetailView
+    list_view_class = TranslationListView
+    detail_view_class = TranslationDetailView
     copy_for_translation_view_class = CopyForTranslationView
 
     @property

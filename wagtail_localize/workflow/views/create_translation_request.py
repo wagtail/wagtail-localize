@@ -14,7 +14,7 @@ from wagtail_localize.models import (
     TranslatablePageMixin,
 )
 
-from wagtail_localize.translation.models import TranslationRequest, TranslationSource
+from wagtail_localize.translation.models import Translation, TranslationSource
 
 
 class CreateTranslationRequestForm(forms.Form):
@@ -61,10 +61,13 @@ def create_translation_request(request, page_id):
                         source.extract_segments()
 
                     for target_locale in target_locales:
-                        # Create translation request
-                        TranslationRequest.objects.get_or_create(
-                            source=source,
+                        # Create/update translation
+                        Translation.objects.update_or_create(
+                            object=source.object,
                             target_locale=target_locale,
+                            defaults={
+                                'source': source,
+                            }
                         )
 
                 _create_translation_requests(page, form.cleaned_data["locales"])

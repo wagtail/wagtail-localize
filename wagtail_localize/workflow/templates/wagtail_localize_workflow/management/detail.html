@@ -5,7 +5,7 @@
 
 {% block content %}
 
-    {% include "wagtailadmin/shared/header.html" with title="translation request" subtitle=translation_request.id icon=view.header_icon merged=1 %}
+    {% include "wagtailadmin/shared/header.html" with title="translation request" subtitle=translation.id icon=view.header_icon merged=1 %}
 
     <ul class="tab-nav merged">
         <li class="active"><a href="#basic">{% trans "Basic information" %}</a></li>
@@ -16,17 +16,17 @@
         <section id="basic" class="active nice-padding">
             <dl>
                 <dt>Source:</dt>
-                <dd>{{ translation_request.source.as_instance }}</dd>
+                <dd>{{ translation.source.as_instance }}</dd>
 
                 <dt>Source Locale:</dt>
-                <dd>{{ translation_request.source.locale }}</dd>
+                <dd>{{ translation.source.locale }}</dd>
 
                 <dt>Target Locale:</dt>
-                <dd>{{ translation_request.target_locale }}</dd>
+                <dd>{{ translation.target_locale }}</dd>
             </dl>
 
             <h2>Translation Progress</h2>
-            {% with translation_request.get_progress as progress %}
+            {% with translation.get_progress as progress %}
                 {{ progress.1 }} out of {{ progress.0 }} strings translated
             {% endwith %}
 
@@ -86,7 +86,7 @@
             <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
 
                 <h3>Machine translation</h3>
-                <form action="{% url 'wagtail_localize_workflow:machine_translate' translation_request.id %}" method="post">
+                <form action="{% url 'wagtail_localize_workflow:machine_translate' translation.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="button button-secondary">Translate with Google Translate</button>
                 </form>
@@ -96,11 +96,11 @@
 
                 <h3>Download / Upload PO file</h3>
 
-                <a class="icon icon-download" href="{% url 'wagtail_localize_workflow:export_file' translation_request.id %}" download>Download PO file</a>
+                <a class="icon icon-download" href="{% url 'wagtail_localize_workflow:export_file' translation.id %}" download>Download PO file</a>
 
                 <hr>
 
-                <form action="{% url 'wagtail_localize_workflow:import_file' translation_request.id %}" method="post" enctype="multipart/form-data">
+                <form action="{% url 'wagtail_localize_workflow:import_file' translation.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     <input type="file" name="file">
@@ -114,7 +114,7 @@
 
                 <h3>Translate here</h3>
 
-                <form action="{% url 'wagtail_localize_workflow:translation_form' translation_request.id %}" method="post">
+                <form action="{% url 'wagtail_localize_workflow:translation_form' translation.id %}" method="post">
                     {% csrf_token %}
 
                     <ul>

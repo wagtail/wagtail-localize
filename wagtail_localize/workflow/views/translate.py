@@ -13,7 +13,7 @@ from django.utils.text import slugify
 from wagtail.core.models import Page
 
 from wagtail_localize.translation.machine_translators import get_machine_translator
-from wagtail_localize.translation.models import TranslationRequest, TranslationSource, SegmentTranslation
+from wagtail_localize.translation.models import Translation, TranslationSource, SegmentTranslation
 from wagtail_localize.translation.segments import (
     SegmentValue,
     TemplateValue,
@@ -52,14 +52,14 @@ class MessageExtractor:
 
 # TODO: Permission checks
 @require_GET
-def export_file(request, translation_request_id):
-    translation_request = get_object_or_404(
-        TranslationRequest, id=translation_request_id
+def export_file(request, translation_id):
+    translation = get_object_or_404(
+        Translation, id=translation_id
     )
 
     # Get messages
     messages = defaultdict(list)
-    for segment in translation_request.source.get_segments(with_translation=translation_request.target_locale, raise_if_missing_translation=False):
+    for segment in translation.source.get_segments(with_translation=translation.target_locale, raise_if_missing_translation=False):
         if isinstance(segment, SegmentValue):
             messages[segment.html_with_ids] = (segment.path, segment.translation.html_with_ids if segment.translation else None)
 
@@ -73,7 +73,7 @@ def export_file(request, translation_request_id):
         "POT-Creation-Date": str(timezone.now()),
         "MIME-Version": "1.0",
         "Content-Type": "text/plain; charset=utf-8",
-        "X-WagtailLocalize-TranslationRequestID": str(translation_request.uuid),
+        "X-WagtailLocalize-TranslationID": str(translation.uuid),
     }
 
     for text, (context, translation) in messages.items():
@@ -88,7 +88,7 @@ def export_file(request, translation_request_id):
     # Write response
     response = HttpResponse(str(po), content_type="text/x-gettext-translation")
     response["Content-Disposition"] = (
-        "attachment; filename=translation-%d.po" % translation_request.id
+        "attachment; filename=translation-%d.po" % translation.id
     )
     return response
 
@@ -177,9 +177,9 @@ class MessageIngestor:
 
 # TODO: Permission checks
 @require_POST
-def import_file(request, translation_request_id):
-    translation_request = get_object_or_404(
-        TranslationRequest, id=translation_request_id
+def import_file(request, translation_id):
+    translation = get_object_or_404(
+        Translation, id=translation_id
     )
 
     with tempfile.NamedTemporaryFile() as f:
@@ -192,12 +192,12 @@ def import_file(request, translation_request_id):
     try:
         with transaction.atomic():
             message_ingestor = MessageIngestor(
-                translation_request.source.locale,
-                translation_request.target_locale,
+                translation.source.locale,
+                translation.target_locale,
                 translations,
             )
 
-            for page in translation_request.pages.filter(is_completed=False):
+            for page in translation.pages.filter(is_completed=False):
                 instance = page.source_revision.as_page_object()
                 translation = message_ingestor.ingest_messages(instance)
 
@@ -219,29 +219,29 @@ def import_file(request, translation_request_id):
         messages.success(
             request,
             "%d pages successfully translated with PO file"
-            % translation_request.pages.count(),
+            % translation.pages.count(),
         )
 
     return redirect(
-        "wagtail_localize_workflow_management:detail", translation_request_id
+        "wagtail_localize_workflow_management:detail", translation_id
     )
 
 
 # TODO: Permission checks
 @require_POST
-def translation_form(request, translation_request_id):
-    translation_request = get_object_or_404(
-        TranslationRequest, id=translation_request_id
+def translation_form(request, translation_id):
+    translation = get_object_or_404(
+        Translation, id=translation_id
     )
 
     with transaction.atomic():
-        for segment in translation_request.source.segmentlocation_set.all():
+        for segment in translation.source.segmentlocation_set.all():
             value = request.POST.get(f"segment-{segment.id}", "")
 
             if value:
                 SegmentTranslation.objects.update_or_create(
                     translation_of_id=segment.segment_id,
-                    locale_id=translation_request.target_locale_id,
+                    locale_id=translation.target_locale_id,
                     context_id=segment.context_id,
                     defaults={
                         'text': value
@@ -250,7 +250,7 @@ def translation_form(request, translation_request_id):
             else:
                 SegmentTranslation.objects.filter(
                     translation_of_id=segment.segment_id,
-                    locale_id=translation_request.target_locale_id,
+                    locale_id=translation.target_locale_id,
                     context_id=segment.context_id,
                 ).delete()
 
@@ -261,15 +261,15 @@ def translation_form(request, translation_request_id):
 
 
     return redirect(
-        "wagtail_localize_workflow_management:detail", translation_request_id
+        "wagtail_localize_workflow_management:detail", translation_id
     )
 
 
 # TODO: Permission checks
 @require_POST
-def machine_translate(request, translation_request_id):
-    translation_request = get_object_or_404(
-        TranslationRequest, id=translation_request_id
+def machine_translate(request, translation_id):
+    translation = get_object_or_404(
+        Translation, id=translation_id
     )
 
     translator = get_machine_translator()
@@ -278,7 +278,7 @@ def machine_translate(request, translation_request_id):
 
     # Get segments
     segments = defaultdict(list)
-    for location in translation_request.source.segmentlocation_set.all().select_related("context", "segment"):
+    for location in translation.source.segmentlocation_set.all().select_related("context", "segment"):
         segment = SegmentValue.from_html(
             location.context.path, location.segment.text
         ).with_order(location.order)
@@ -291,17 +291,16 @@ def machine_translate(request, translation_request_id):
     # For example, if I have a rich text field with two links that have the same text but go to different places
     # We only want to include this once for translation
 
-    translations = translator.translate(translation_request.source.locale, translation_request.target_locale, segments.keys())
+    translations = translator.translate(translation.source.locale, translation.target_locale, segments.keys())
 
     try:
         with transaction.atomic():
             for source_text, (segment_id, context_id) in segments.items():
                 translated_text = translations[source_text]
-                print(source_text, translated_text)
 
-                translation, created = SegmentTranslation.objects.get_or_create(
+                SegmentTranslation.objects.get_or_create(
                     translation_of_id=segment_id,
-                    locale=translation_request.target_locale,
+                    locale=translation.target_locale,
                     context_id=context_id,
                     text=translated_text,
                 )
@@ -322,5 +321,5 @@ def machine_translate(request, translation_request_id):
         )
 
     return redirect(
-        "wagtail_localize_workflow_management:detail", translation_request_id
+        "wagtail_localize_workflow_management:detail", translation_id
     )

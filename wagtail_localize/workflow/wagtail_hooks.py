@@ -11,7 +11,7 @@ from wagtail.core.permission_policies import ModelPermissionPolicy
 from wagtail_localize.models import TranslatablePageMixin
 
 from .views.create_translation_request import create_translation_request
-from .views.management import TranslationRequestViewSet
+from .views.management import TranslationViewSet
 from .views.translate import export_file, import_file, machine_translate, translation_form
 
 
@@ -54,7 +54,7 @@ def register_admin_urls():
 
 @hooks.register("register_admin_viewset")
 def register_viewset():
-    return TranslationRequestViewSet(
+    return TranslationViewSet(
         "wagtail_localize_workflow_management",
         url_prefix="localize/workflow/translations",
     )

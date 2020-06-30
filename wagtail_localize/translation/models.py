@@ -342,28 +342,33 @@ class TranslationSource(models.Model):
         return translation, created
 
 
-class TranslationRequest(models.Model):
+class Translation(models.Model):
     # A unique ID that can be used to reference this request in external systems
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
 
-    source = models.ForeignKey(
-        TranslationSource, on_delete=models.CASCADE, related_name="translation_requests"
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="translations"
     )
     target_locale = models.ForeignKey(
         "wagtail_localize.Locale",
         on_delete=models.CASCADE,
-        related_name="translation_requests",
+        related_name="translations",
+    )
+
+    # The source may be changed if the object is resubmitted for translation into the same locale
+    source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, related_name="translations"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = [
-            ('source', 'target_locale'),
+            ('object', 'target_locale'),
         ]
 
     def get_progress(self):
         """
-        Returns the current progress of translating this TranslationRequest.
+        Returns the current progress of translating this Translation.
 
         Returns two integers:
         - The total number of segments in the source that need to be translated
@@ -397,7 +402,7 @@ class TranslationRequest(models.Model):
 
     def get_dependencies(self):
         """
-        Returns a list of TranslatableObject's that this TranslationRequest depends on.
+        Returns a list of TranslatableObject's that this Translation depends on.
         """
         pass
 
@@ -505,7 +510,7 @@ class SegmentTranslation(models.Model):
     translation_of = models.ForeignKey(
         Segment, on_delete=models.CASCADE, related_name="translations"
     )
-    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE, related_name="segment_translations")
     context = models.ForeignKey(
         TranslationContext,
         on_delete=models.SET_NULL,
@@ -651,12 +656,12 @@ class RelatedObjectLocationQuerySet(models.QuerySet):
     def annotate_translation_id(self, locale):
         """
         Adds a 'translation_id' field to the segments containing the
-        text content of the TranslationRequest of the related object
+        text content of the Translation of the related object
         in the specified locale
         """
         return self.annotate(
             translation_id=Subquery(
-                TranslationRequest.objects.filter(
+                Translation.objects.filter(
                     source__object_id=OuterRef("object_id"),
                     target_locale_id=pk(locale),
                 ).values("id")

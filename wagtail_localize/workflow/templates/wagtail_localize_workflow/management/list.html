@@ -15,17 +15,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for translation_request in translation_requests %}
-                        {% with translation_request.get_progress as progress %}
+                    {% for translation in translations %}
+                        {% with translation.get_progress as progress %}
                             <tr>
                                 <td class="hostname title">
-                                    <b><a href="{% url 'wagtail_localize_workflow_management:detail' translation_request.id %}">{{ translation_request.id }}</a></b>
+                                    <b><a href="{% url 'wagtail_localize_workflow_management:detail' translation.id %}">{{ translation.id }}</a></b>
                                 </td>
                                 <td>
-                                    {{ translation_request.source.locale }}
+                                    {{ translation.source.locale }}
                                 </td>
                                 <td>
-                                    {{ translation_request.target_locale }}
+                                    {{ translation.target_locale }}
                                 </td>
                                 <td>
                                     {{ progress.1 }} out of {{ progress.0 }} strings translated
