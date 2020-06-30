@@ -33,33 +33,62 @@
             {% with translation_request.get_progress as progress %}
                 {{ progress.1 }} out of {{ progress.0 }} strings translated
             {% endwith %}
-
-            <h2>Actions</h2>
-            {% for action_module in action_modules %}
-                {{ action_module.render }}
-            {% empty %}
-                <p>No actions can be performed on this request</p>
-            {% endfor %}
         </section>
 
         <section id="translate" class="nice-padding">
-            <form action="{% url 'wagtail_localize_workflow:translation_form' translation_request.id %}" method="post">
-                {% csrf_token %}
+            <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
 
-                <ul>
-                    {% for segment in segments %}
+                <h3>Machine translation</h3>
+                <form action="{% url 'wagtail_localize_workflow:machine_translate' translation_request.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="button button-secondary">Translate with Google Translate</button>
+                </form>
+            </div>
+
+            <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
+
+            <h3>Download / Upload PO file</h3>
+
+                <a class="icon icon-download" href="{% url 'wagtail_localize_workflow:export_file' translation_request.id %}" download>Download PO file</a>
+
+                <hr>
+
+                <form action="{% url 'wagtail_localize_workflow:import_file' translation_request.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <input type="file" name="file">
+
+                    <button type="submit" class="button button-secondary">Upload translated PO file</button>
+                </form>
+
+            </div>
+
+            <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
+
+                <h3>Translate here</h3>
+
+                <form action="{% url 'wagtail_localize_workflow:translation_form' translation_request.id %}" method="post">
+                    {% csrf_token %}
+
+                    <ul>
+                        {% for segment in segments %}
+                            <li>
+                                <h3>{{ segment.segment.text }}</h3>
+                                <h4>Context: {{ segment.context.path }}</h4>
+                                <p>
+                                    <input type="text" name="segment-{{ segment.id }}" value="{{ segment.translation|default:'' }}">
+                                </p>
+
+                                <hr>
+                            </li>
+                        {% endfor %}
+
                         <li>
-                            <h3>{{ segment.segment.text }}</h3>
-                            <h4>Context: {{ segment.context.path }}</h4>
-                            <p>
-                                <input type="text" name="segment-{{ segment.id }}" value="{{ segment.translation|default:'' }}">
-                            </p>
+                            <button type="submit">Save</button>
                         </li>
-                    {% endfor %}
-                </ul>
-
-                <button type="submit">Save</button>
-            </form>
+                    </ul>
+                </form>
+            </div>
         </section>
     </div>
 {% endblock %}

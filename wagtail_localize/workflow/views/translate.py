@@ -293,8 +293,6 @@ def machine_translate(request, translation_request_id):
 
     translations = translator.translate(translation_request.source.locale, translation_request.target_locale, segments.keys())
 
-    publish = request.POST.get("publish", "") == "on"
-
     try:
         with transaction.atomic():
             for source_text, (segment_id, context_id) in segments.items():
@@ -307,11 +305,6 @@ def machine_translate(request, translation_request_id):
                     context_id=context_id,
                     text=translated_text,
                 )
-
-            total_segments, translated_segments = translation_request.get_progress()
-
-            if total_segments == translated_segments:
-                translation_request.source.create_or_update_translation(translation_request.target_locale)
 
     except MissingSegmentsException as e:
         # TODO: Plural

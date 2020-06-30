@@ -14,8 +14,6 @@ from wagtail.core.permission_policies import ModelPermissionPolicy
 from wagtail_localize.translation.models import TranslationRequest
 from wagtail_localize.translation.segments import SegmentValue
 
-from ..action_modules import get_action_modules
-
 
 class TranslationRequestListView(ListView):
     template_name = "wagtail_localize_workflow/management/list.html"
@@ -54,18 +52,6 @@ class TranslationRequestDetailView(DetailView):
         #         page.depth = 0
 
         # context["pages"] = pages
-
-        context["action_modules"] = [
-            action_module(self.request, object)
-            for action_module in get_action_modules()
-        ]
-
-        # Hide action modules if their is_shown method returns false
-        context["action_modules"] = [
-            action_module
-            for action_module in context["action_modules"]
-            if action_module.is_shown()
-        ]
 
         context["segments"] = [
             segment
