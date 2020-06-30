@@ -78,6 +78,12 @@ class TranslatableObject(models.Model):
             translation_key=self.translation_key, locale_id=pk(locale)
         )
 
+    def get_instance_or_none(self, locale):
+        try:
+            return self.get_instance(locale)
+        except self.content_type.model_class().DoesNotExist:
+            pass
+
     class Meta:
         unique_together = [("content_type", "translation_key")]
 
@@ -641,10 +647,29 @@ class TemplateLocation(BaseLocation):
         return template_loc
 
 
+class RelatedObjectLocationQuerySet(models.QuerySet):
+    def annotate_translation_id(self, locale):
+        """
+        Adds a 'translation_id' field to the segments containing the
+        text content of the TranslationRequest of the related object
+        in the specified locale
+        """
+        return self.annotate(
+            translation_id=Subquery(
+                TranslationRequest.objects.filter(
+                    source__object_id=OuterRef("object_id"),
+                    target_locale_id=pk(locale),
+                ).values("id")
+            )
+        )
+
+
 class RelatedObjectLocation(BaseLocation):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="references"
     )
+
+    objects = RelatedObjectLocationQuerySet.as_manager()
 
     @classmethod
     def from_related_object_value(cls, source, related_object_value):

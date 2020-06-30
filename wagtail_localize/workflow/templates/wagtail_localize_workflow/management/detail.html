@@ -14,25 +14,52 @@
 
     <div class="tab-content">
         <section id="basic" class="active nice-padding">
-            <h2>Basic information</h2>
             <dl>
+                <dt>Source:</dt>
+                <dd>{{ translation_request.source.as_instance }}</dd>
+
                 <dt>Source Locale:</dt>
                 <dd>{{ translation_request.source.locale }}</dd>
 
                 <dt>Target Locale:</dt>
                 <dd>{{ translation_request.target_locale }}</dd>
-
-                <dt>Requested by:</dt>
-                <dd>{% firstof translation_request.created_by.get_full_name translation_request.created_by %}</dd>
-
-                <dt>Requested at:</dt>
-                <dd>{{ translation_request.created_at }}</dd>
             </dl>
 
-            <h2>Progress</h2>
+            <h2>Translation Progress</h2>
             {% with translation_request.get_progress as progress %}
                 {{ progress.1 }} out of {{ progress.0 }} strings translated
             {% endwith %}
+
+            <h2>Dependencies</h2>
+            This translation depends on {{ dependencies|length }} other {% if dependencies|length == 1 %}translation{% else %}translations{% endif %}
+
+            {% if dependencies %}
+                <table style="min-width: 1000px;">
+                    <thead>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </thead>
+                    <tbody>
+                        {% for dependency in dependencies %}
+                            <tr>
+                                <td>{{ dependency.instance }}</td>
+                                <td>{{ dependency.object.content_type.name|title }}</td>
+                                <td>
+                                    {% if dependency.translated_instance %}
+                                        Translated
+                                    {% elif dependency.translation_id %}
+                                        Translation in progress
+                                        <a href="{% url 'wagtail_localize_workflow_management:detail' dependency.translation_id %}">See progress</a>
+                                    {% else %}
+                                        Not submitted
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </section>
 
         <section id="translate" class="nice-padding">
@@ -47,7 +74,7 @@
 
             <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
 
-            <h3>Download / Upload PO file</h3>
+                <h3>Download / Upload PO file</h3>
 
                 <a class="icon icon-download" href="{% url 'wagtail_localize_workflow:export_file' translation_request.id %}" download>Download PO file</a>
 

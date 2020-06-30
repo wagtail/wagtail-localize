@@ -53,6 +53,18 @@ class TranslationRequestDetailView(DetailView):
 
         # context["pages"] = pages
 
+        context["dependencies"] = [
+            {
+                'object': related_object.object,
+                'instance': related_object.object.get_instance_or_none(object.source.locale),
+                'translated_instance': related_object.object.get_instance_or_none(object.target_locale),
+                'translation_id': related_object.translation_id,
+            }
+
+            for related_object in object.source.relatedobjectlocation_set.all().annotate_translation_id(object.target_locale)
+        ]
+
+
         context["segments"] = [
             segment
             for segment in object.source.segmentlocation_set.order_by('order').annotate_translation(object.target_locale)
