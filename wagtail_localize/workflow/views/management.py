@@ -12,6 +12,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.core.permission_policies import ModelPermissionPolicy
 
 from wagtail_localize.translation.models import TranslationRequest
+from wagtail_localize.translation.segments import SegmentValue
 
 from ..action_modules import get_action_modules
 
@@ -64,6 +65,11 @@ class TranslationRequestDetailView(DetailView):
             action_module
             for action_module in context["action_modules"]
             if action_module.is_shown()
+        ]
+
+        context["segments"] = [
+            segment
+            for segment in object.source.segmentlocation_set.order_by('order').annotate_translation(object.target_locale)
         ]
 
         return context

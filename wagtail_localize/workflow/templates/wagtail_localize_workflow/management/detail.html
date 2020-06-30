@@ -5,34 +5,61 @@
 
 {% block content %}
 
-    {% include "wagtailadmin/shared/header.html" with title="translation request" subtitle=translation_request.id icon=view.header_icon %}
+    {% include "wagtailadmin/shared/header.html" with title="translation request" subtitle=translation_request.id icon=view.header_icon merged=1 %}
 
-    <div class="nice-padding">
-        <h2>Basic information</h2>
-        <dl>
-            <dt>Source Locale:</dt>
-            <dd>{{ translation_request.source.locale }}</dd>
+    <ul class="tab-nav merged">
+        <li class="active"><a href="#basic">{% trans "Basic information" %}</a></li>
+        <li><a href="#translate">{% trans "Translate" %}</a></li>
+    </ul>
 
-            <dt>Target Locale:</dt>
-            <dd>{{ translation_request.target_locale }}</dd>
+    <div class="tab-content">
+        <section id="basic" class="active nice-padding">
+            <h2>Basic information</h2>
+            <dl>
+                <dt>Source Locale:</dt>
+                <dd>{{ translation_request.source.locale }}</dd>
 
-            <dt>Requested by:</dt>
-            <dd>{% firstof translation_request.created_by.get_full_name translation_request.created_by %}</dd>
+                <dt>Target Locale:</dt>
+                <dd>{{ translation_request.target_locale }}</dd>
 
-            <dt>Requested at:</dt>
-            <dd>{{ translation_request.created_at }}</dd>
-        </dl>
+                <dt>Requested by:</dt>
+                <dd>{% firstof translation_request.created_by.get_full_name translation_request.created_by %}</dd>
 
-        <h2>Progress</h2>
-        {% with translation_request.get_progress as progress %}
-            {{ progress.1 }} out of {{ progress.0 }} strings translated
-        {% endwith %}
+                <dt>Requested at:</dt>
+                <dd>{{ translation_request.created_at }}</dd>
+            </dl>
 
-        <h2>Actions</h2>
-        {% for action_module in action_modules %}
-            {{ action_module.render }}
-        {% empty %}
-            <p>No actions can be performed on this request</p>
-        {% endfor %}
+            <h2>Progress</h2>
+            {% with translation_request.get_progress as progress %}
+                {{ progress.1 }} out of {{ progress.0 }} strings translated
+            {% endwith %}
+
+            <h2>Actions</h2>
+            {% for action_module in action_modules %}
+                {{ action_module.render }}
+            {% empty %}
+                <p>No actions can be performed on this request</p>
+            {% endfor %}
+        </section>
+
+        <section id="translate" class="nice-padding">
+            <form action="{% url 'wagtail_localize_workflow:translation_form' translation_request.id %}" method="post">
+                {% csrf_token %}
+
+                <ul>
+                    {% for segment in segments %}
+                        <li>
+                            <h3>{{ segment.segment.text }}</h3>
+                            <h4>Context: {{ segment.context.path }}</h4>
+                            <p>
+                                <input type="text" name="segment-{{ segment.id }}" value="{{ segment.translation|default:'' }}">
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <button type="submit">Save</button>
+            </form>
+        </section>
     </div>
 {% endblock %}

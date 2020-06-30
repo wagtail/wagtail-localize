@@ -274,7 +274,7 @@ class TranslationSource(models.Model):
             segments.append(segment)
 
         for location in related_object_locations:
-            if with_translation and not location.object.has_translation(with_translation):
+            if with_translation and not location.object.has_translation(with_translation) and raise_if_missing_translation:
                 raise MissingRelatedObjectError(location, with_translation)
 
             segment = RelatedObjectValue(

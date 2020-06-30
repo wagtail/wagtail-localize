@@ -229,6 +229,44 @@ def import_file(request, translation_request_id):
 
 # TODO: Permission checks
 @require_POST
+def translation_form(request, translation_request_id):
+    translation_request = get_object_or_404(
+        TranslationRequest, id=translation_request_id
+    )
+
+    with transaction.atomic():
+        for segment in translation_request.source.segmentlocation_set.all():
+            value = request.POST.get(f"segment-{segment.id}", "")
+
+            if value:
+                SegmentTranslation.objects.update_or_create(
+                    translation_of_id=segment.segment_id,
+                    locale_id=translation_request.target_locale_id,
+                    context_id=segment.context_id,
+                    defaults={
+                        'text': value
+                    }
+                )
+            else:
+                SegmentTranslation.objects.filter(
+                    translation_of_id=segment.segment_id,
+                    locale_id=translation_request.target_locale_id,
+                    context_id=segment.context_id,
+                ).delete()
+
+    messages.success(
+        request,
+        "Saved translations"
+    )
+
+
+    return redirect(
+        "wagtail_localize_workflow_management:detail", translation_request_id
+    )
+
+
+# TODO: Permission checks
+@require_POST
 def machine_translate(request, translation_request_id):
     translation_request = get_object_or_404(
         TranslationRequest, id=translation_request_id
