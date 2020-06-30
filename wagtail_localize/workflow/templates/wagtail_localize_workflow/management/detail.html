@@ -60,6 +60,26 @@
                     </tbody>
                 </table>
             {% endif %}
+
+            <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
+                <h3>Make translation</h3>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="button button-secondary" {% if not ready_for_translation %}disabled{% endif %}>Make translation</button>
+
+                    {% if not ready_for_translation %}
+                        <ul class="error-message">
+                            {% if untranslated_segments %}
+                                <li>Some segments haven't been translated yet</li>
+                            {% endif %}
+                            {% if untranslated_dependencies %}
+                                <li>Some dependencies haven't been translated yet</li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </form>
+            </div>
         </section>
 
         <section id="translate" class="nice-padding">

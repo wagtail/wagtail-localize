@@ -64,11 +64,16 @@ class TranslationRequestDetailView(DetailView):
             for related_object in object.source.relatedobjectlocation_set.all().annotate_translation_id(object.target_locale)
         ]
 
+        context["untranslated_dependencies"] = any(dep['translated_instance'] is None for dep in context["dependencies"])
 
         context["segments"] = [
             segment
             for segment in object.source.segmentlocation_set.order_by('order').annotate_translation(object.target_locale)
         ]
+
+        context["untranslated_segments"] = any(segment.translation is None for segment in context["segments"])
+
+        context["ready_for_translation"] = not (context["untranslated_dependencies"] or context["untranslated_segments"])
 
         return context
 
