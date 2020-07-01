@@ -86,6 +86,8 @@ def import_file(request, translation_id=None):
                 }
             )
 
+        translation.update()
+
     # TODO: Plural
     messages.success(
         request,
@@ -123,6 +125,8 @@ def translation_form(request, translation_id):
                     locale_id=translation.target_locale_id,
                     context_id=segment.context_id,
                 ).delete()
+
+        translation.update()
 
     messages.success(
         request,
@@ -183,6 +187,8 @@ def machine_translate(request, translation_id):
                     'text': translated_text,
                 }
             )
+
+        translation.update()
 
     # TODO: Plural
     messages.success(

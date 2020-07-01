@@ -72,13 +72,14 @@ def create_translation_request(request, page_id):
 
                     for target_locale in target_locales:
                         # Create/update translation
-                        Translation.objects.update_or_create(
+                        t, created = Translation.objects.update_or_create(
                             object=source.object,
                             target_locale=target_locale,
                             defaults={
                                 'source': source,
                             }
                         )
+                        t.update()
 
                     # Add related objects
                     if include_related_objects:

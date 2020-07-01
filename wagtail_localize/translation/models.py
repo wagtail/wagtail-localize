@@ -224,7 +224,7 @@ class TranslationSource(models.Model):
             else:
                 SegmentLocation.from_segment_value(self, self.locale, segment)
 
-    def get_segments(self, with_translation=None, raise_if_missing_translation=True):
+    def get_segments(self, with_translation=None, raise_if_missing_translation=True, segment_translation_fallback_to_source=False):
         segment_locations = (
             SegmentLocation.objects.filter(source=self)
             .select_related("context", "segment")
@@ -248,8 +248,12 @@ class TranslationSource(models.Model):
         segments = []
 
         for location in segment_locations:
-            if with_translation and not location.translation and raise_if_missing_translation:
-                raise MissingTranslationError(location, with_translation)
+            if not location.translation:
+                if segment_translation_fallback_to_source:
+                    location.translation = location.segment.text
+
+                elif with_translation and raise_if_missing_translation:
+                    raise MissingTranslationError(location, with_translation)
 
             # TODO: We need to allow SegmentValues to include both source and translation at the same time
             segment = SegmentValue.from_html(
@@ -294,7 +298,7 @@ class TranslationSource(models.Model):
         return segments
 
     @transaction.atomic
-    def create_or_update_translation(self, locale):
+    def create_or_update_translation(self, locale, segment_translation_fallback_to_source=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -317,7 +321,7 @@ class TranslationSource(models.Model):
                 )
 
         # Fetch all translated segments
-        segments = self.get_segments(with_translation=locale)
+        segments = self.get_segments(with_translation=locale, segment_translation_fallback_to_source=segment_translation_fallback_to_source)
 
         # Ingest all translated segments
         ingest_segments(original, translation, self.locale, locale, [segment.translation if isinstance(segment, SegmentValue) else segment for segment in segments])
@@ -405,6 +409,17 @@ class Translation(models.Model):
         Returns a list of TranslatableObject's that this Translation depends on.
         """
         pass
+
+    def update(self):
+        try:
+            translation, created = self.source.create_or_update_translation(self.target_locale, segment_translation_fallback_to_source=True)
+
+            if created:
+                # Find all translations that depend on this one and update them
+                pass
+
+        except MissingRelatedObjectError:
+            pass
 
 
 class TranslationLog(models.Model):
