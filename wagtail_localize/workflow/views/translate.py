@@ -86,7 +86,7 @@ def import_file(request, translation_id=None):
                 }
             )
 
-        translation.update()
+        translation.update(user=request.user)
 
     # TODO: Plural
     messages.success(
@@ -126,7 +126,7 @@ def translation_form(request, translation_id):
                     context_id=segment.context_id,
                 ).delete()
 
-        translation.update()
+        translation.update(user=request.user)
 
     messages.success(
         request,
@@ -188,7 +188,7 @@ def machine_translate(request, translation_id):
                 }
             )
 
-        translation.update()
+        translation.update(user=request.user)
 
     # TODO: Plural
     messages.success(

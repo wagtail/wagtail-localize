@@ -79,7 +79,7 @@ def create_translation_request(request, page_id):
                                 'source': source,
                             }
                         )
-                        t.update()
+                        t.update(user=request.user)
 
                     # Add related objects
                     if include_related_objects:

@@ -298,7 +298,7 @@ class TranslationSource(models.Model):
         return segments
 
     @transaction.atomic
-    def create_or_update_translation(self, locale, segment_translation_fallback_to_source=False):
+    def create_or_update_translation(self, locale, user=None, publish=True, segment_translation_fallback_to_source=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -332,8 +332,10 @@ class TranslationSource(models.Model):
             translation.save()
 
             # Create a new revision
-            page_revision = translation.save_revision()
-            page_revision.publish()
+            page_revision = translation.save_revision(user=user)
+
+            if publish:
+                page_revision.publish()
         else:
             translation.save()
             page_revision = None
@@ -410,9 +412,32 @@ class Translation(models.Model):
         """
         pass
 
-    def update(self):
+    def is_up_to_date(self):
+        """
+        Returns True if the translated object has been updated since we last changed translations.
+        """
+        # If the source has never been translated into the target locale, it's not up to date
+        last_update_log = TranslationLog.objects.filter(source=source, locale=self.target_locale).order_by('-created_at').first()
+        if last_update_log is None:
+            return False
+
+        # Find the time which a segment translation was last updated
+        # TODO: Account for when a segment translation was deleted
+        last_translation_update = SegmentTranslation.objects.filter(translation_of__locations__source=self.source, locale=self.target_locale).aggregate(last_update=models.Max('updated_at'))
+
+        if last_translation_update['last_update'] is None:
+            # No translations exist for the source
+            return True
+
+        elif last_update_log > last_translation_update['last_update']:
+            # We've updated since the last time translations were updated
+            return True
+
+        return False
+
+    def update(self, user=None):
         try:
-            translation, created = self.source.create_or_update_translation(self.target_locale, segment_translation_fallback_to_source=True)
+            translation, created = self.source.create_or_update_translation(self.target_locale, user=user, segment_translation_fallback_to_source=True)
 
             if created:
                 # Find all translations that depend on this one and update them
