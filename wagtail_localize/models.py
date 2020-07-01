@@ -13,10 +13,9 @@ from wagtail.core.models import Page
 from wagtail.core.signals import page_published
 from wagtail.images.models import AbstractImage
 
-from .compat import get_languages, get_supported_language_variant
 from .edit_handlers import filter_edit_handler_on_instance_bound
 from .fields import TranslatableField, SynchronizedField
-from .utils import find_available_slug
+from .utils import find_available_slug, get_languages, get_supported_language_variant
 
 
 def pk(obj):

@@ -3,7 +3,7 @@ import uuid
 from django.conf import settings
 from django.db import migrations
 
-from .compat import get_supported_language_variant
+from .utils import get_supported_language_variant
 
 
 def bootstrap_translatable_model(model, locale):
