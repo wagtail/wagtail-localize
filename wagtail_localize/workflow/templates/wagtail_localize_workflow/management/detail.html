@@ -1,11 +1,11 @@
 {% extends "wagtailadmin/generic/edit.html" %}
 {% load i18n %}
 
-{% block titletag %}Translation request{% endblock %}
+{% block titletag %}Translation{% endblock %}
 
 {% block content %}
 
-    {% include "wagtailadmin/shared/header.html" with title="translation request" subtitle=translation.id icon=view.header_icon merged=1 %}
+    {% include "wagtailadmin/shared/header.html" with title="Translation" subtitle=translation.id icon=view.header_icon merged=1 %}
 
     <ul class="tab-nav merged">
         <li class="active"><a href="#basic">{% trans "Basic information" %}</a></li>
