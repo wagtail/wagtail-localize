@@ -17,7 +17,9 @@ from .views.translate import export_file, import_file, machine_translate
 
 
 @hooks.register("register_page_listing_more_buttons")
-def page_listing_more_buttons(page, page_perms, is_parent=False):
+def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
+    # TODO Handle next_url
+
     if isinstance(page, TranslatablePageMixin):
         yield wagtailadmin_widgets.Button(
             "Create translation request",
