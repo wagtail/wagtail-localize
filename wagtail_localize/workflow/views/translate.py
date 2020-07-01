@@ -76,12 +76,12 @@ def export_file(request, translation_id):
         "X-WagtailLocalize-TranslationID": str(translation.uuid),
     }
 
-    for text, (context, translation) in messages.items():
+    for text, (context, translated_text) in messages.items():
         po.append(
             polib.POEntry(
                 msgid=text,
                 msgctxt=context,
-                msgstr=translation or "",
+                msgstr=translated_text or "",
             )
         )
 
