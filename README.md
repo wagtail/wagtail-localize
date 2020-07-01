@@ -127,7 +127,7 @@ The process is as follows:
 
 ### Synchronising languages
 
-`wagtail_localize` stores the list of available languages in the database. To populate this to have the same values as is in the `WAGTAILLOCALIZE_LANGUAGES` (or `LANGUAGES`, if that's not defined) Django setting, you must run the following command:
+`wagtail_localize` stores the list of available languages in the database. To populate this to have the same values as is in the `LANGUAGES` Django setting, you must run the following command:
 
 ```shell
 python manage.py sync_languages

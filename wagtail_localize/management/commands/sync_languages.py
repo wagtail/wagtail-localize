@@ -2,14 +2,13 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from wagtail_localize.models import Locale
-from wagtail_localize.utils import get_languages
 
 
 class Command(BaseCommand):
     help = "Synchronises the value of settings.LANGUAGES with the Locale model"
 
     def handle(self, **options):
-        language_codes = get_languages().keys()
+        language_codes = dict(settings.LANGUAGES).keys()
 
         for language_code in language_codes:
             Locale.objects.update_or_create(

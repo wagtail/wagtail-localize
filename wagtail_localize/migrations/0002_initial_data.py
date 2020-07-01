@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations
 
-from wagtail_localize.utils import get_supported_language_variant
+from wagtail_localize.compat import get_supported_language_variant
 
 
 def initial_data(apps, schema_editor):
