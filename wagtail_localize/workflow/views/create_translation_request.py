@@ -54,8 +54,18 @@ def create_translation_request(request, page_id):
 
         if form.is_valid():
             with transaction.atomic():
-                def _create_translation_requests(instance, target_locales):
-                    source, created = TranslationSource.from_instance(instance.specific)
+                seen_objects = set()
+
+                def _create_translation_requests(instance, target_locales, include_related_objects=True):
+                    if isinstance(instance, Page):
+                        # TODO: Find a way to handle non-page models with MTI
+                        instance = instance.specific
+
+                    if instance.translation_key in seen_objects:
+                        return
+                    seen_objects.add(instance.translation_key)
+
+                    source, created = TranslationSource.from_instance(instance)
 
                     if created:
                         source.extract_segments()
@@ -70,6 +80,14 @@ def create_translation_request(request, page_id):
                             }
                         )
 
+                    # Add related objects
+                    if include_related_objects:
+                        for related_object_location in source.relatedobjectlocation_set.all():
+                            related_instance = related_object_location.object.get_instance(instance.locale)
+
+                            # Limit to one level of related objects, since this could potentially pull in a lot of stuff
+                            _create_translation_requests(related_instance, target_locales, include_related_objects=False)
+
                 _create_translation_requests(page, form.cleaned_data["locales"])
 
                 # Now add the sub tree
@@ -82,8 +100,6 @@ def create_translation_request(request, page_id):
                                 child_page.specific_class, translatable_models
                             ):
                                 continue
-
-                            print(child_page)
 
                             _create_translation_requests(child_page, form.cleaned_data["locales"])
 
