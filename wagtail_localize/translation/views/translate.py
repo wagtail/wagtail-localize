@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 
 from wagtail_localize.translation.machine_translators import get_machine_translator
-from wagtail_localize.translation.models import Translation, SegmentTranslation
+from wagtail_localize.translation.models import Translation, SegmentTranslation, SegmentLocation
 from wagtail_localize.translation.segments import SegmentValue
 
 
