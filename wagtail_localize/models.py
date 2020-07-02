@@ -90,8 +90,8 @@ def default_locale_id():
 
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name="+")
-    is_source_translation = models.BooleanField(default=True)
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name="+", editable=False)
+    is_source_translation = models.BooleanField(default=True, editable=False)
 
     translatable_fields = []
 
