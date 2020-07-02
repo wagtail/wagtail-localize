@@ -74,6 +74,7 @@ class TranslatableObject(models.Model):
         ContentType, on_delete=models.CASCADE, related_name="+"
     )
 
+    # This path can be used to generate filenames for exports
     path = models.TextField(max_length=1000, unique=True)
 
     objects = TranslatableObjectManager()
