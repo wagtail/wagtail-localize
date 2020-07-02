@@ -777,6 +777,11 @@ class RelatedObjectLocation(BaseLocation):
             object=TranslatableObject.objects.get_or_create(
                 content_type=related_object_value.content_type,
                 translation_key=related_object_value.translation_key,
+                defaults={
+                    # TODO: What if path already taken? (eg, page moved)
+                    # TODO: Probably should check if object exists first?
+                    'path': TranslatableObject.get_path(related_object_value.get_instance(source.locale)),
+                }
             )[0],
         )
 

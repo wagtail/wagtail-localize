@@ -269,6 +269,7 @@ class RelatedObjectValue(BaseValue):
         )
 
     def get_instance(self, locale):
+        # TODO: Accept locale by ID as well
         return self.content_type.get_object_for_this_type(
             translation_key=self.translation_key, locale=locale
         )
