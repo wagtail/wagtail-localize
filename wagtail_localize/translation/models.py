@@ -24,6 +24,9 @@ from modelcluster.models import (
     model_from_serializable_data,
 )
 from wagtail.core.models import Page
+from wagtail.snippets.models import get_snippet_models
+from wagtail.images.models import AbstractImage
+from wagtail.documents.models import AbstractDocument
 
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
@@ -44,6 +47,10 @@ class TranslatableObjectManager(models.Manager):
             content_type=ContentType.objects.get_for_model(
                 instance.get_translation_model()
             ),
+            defaults={
+                # TODO: What if path already taken? (eg, page moved)
+                'path': TranslatableObject.get_path(instance),
+            }
         )
 
     def get_for_instance(self, instance):
@@ -53,6 +60,7 @@ class TranslatableObjectManager(models.Manager):
                 instance.get_translation_model()
             ),
         )
+
 
 class TranslatableObject(models.Model):
     """
@@ -66,12 +74,19 @@ class TranslatableObject(models.Model):
         ContentType, on_delete=models.CASCADE, related_name="+"
     )
 
+    path = models.TextField(max_length=1000, unique=True)
+
     objects = TranslatableObjectManager()
 
     def has_translation(self, locale):
         return self.content_type.get_all_objects_for_this_type(
             translation_key=self.translation_key, locale_id=pk(locale)
         ).exists()
+
+    def get_source_instance(self):
+        return self.content_type.get_object_for_this_type(
+            translation_key=self.translation_key, is_source_translation=True
+        )
 
     def get_instance(self, locale):
         return self.content_type.get_object_for_this_type(
@@ -83,6 +98,35 @@ class TranslatableObject(models.Model):
             return self.get_instance(locale)
         except self.content_type.model_class().DoesNotExist:
             pass
+
+    @classmethod
+    def get_path(cls, instance):
+        if isinstance(instance, Page):
+            # Page paths have the format: `pages/URL_PATH`
+            # Note: Page.url_path always starts with a '/'
+            # TODO: Should this update if the page is moved?
+            return 'pages' + instance.url_path.rstrip('/')
+
+        else:
+            model_name = instance._meta.app_label + '.' + instance.__class__.__name__
+
+            if isinstance(instance, tuple(get_snippet_models())):
+                # Snippet paths have the format `snippets/app_label.ModelName/ID-title-slugified`
+                base_path = 'snippets/' + model_name
+
+            elif isinstance(instance, AbstractImage):
+                # Image paths have the format `images/ID-title-slugified`
+                base_path = 'images'
+
+            elif isinstance(instance, AbstractDocument):
+                # Document paths have the format `documents/ID-title-slugified`
+                base_path = 'documents'
+
+            else:
+                # All other models paths have the format `other/app_label.ModelName/ID-title-slugified`
+                base_path = 'other/' + model_name
+
+            return base_path + '/' + str(instance.pk) + '-' + slugify(str(instance))
 
     class Meta:
         unique_together = [("content_type", "translation_key")]
@@ -128,6 +172,7 @@ class TranslationSource(models.Model):
         TranslatableObject, on_delete=models.CASCADE, related_name="sources"
     )
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+    object_title = models.TextField(max_length=1000, blank=True)
     content_json = models.TextField()
     created_at = models.DateTimeField()
 
@@ -152,6 +197,7 @@ class TranslationSource(models.Model):
             page_revision=page_revision,
             defaults={
                 "locale_id": page.locale_id,
+                "object_title": page.title,
                 "content_json": page_revision.content_json,
                 "created_at": page_revision.created_at,
             },
@@ -182,6 +228,7 @@ class TranslationSource(models.Model):
             cls.objects.create(
                 object=object,
                 locale=instance.locale,
+                object_title=str(object),
                 content_json=content_json,
                 created_at=timezone.now(),
             ),
