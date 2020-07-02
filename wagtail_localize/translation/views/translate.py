@@ -95,7 +95,7 @@ def import_file(request, translation_id=None):
     )
 
     return redirect(
-        "wagtail_localize_workflow_management:detail", translation_id
+        "wagtail_localize_translation_management:detail", translation_id
     )
 
 
@@ -134,7 +134,7 @@ def translation_form(request, translation_id):
     )
 
     return redirect(
-        "wagtail_localize_workflow_management:detail", translation_id
+        "wagtail_localize_translation_management:detail", translation_id
     )
 
 
@@ -197,5 +197,5 @@ def machine_translate(request, translation_id):
     )
 
     return redirect(
-        "wagtail_localize_workflow_management:detail", translation_id
+        "wagtail_localize_translation_management:detail", translation_id
     )

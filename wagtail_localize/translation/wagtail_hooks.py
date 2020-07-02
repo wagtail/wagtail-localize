@@ -21,7 +21,7 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
         yield wagtailadmin_widgets.Button(
             "Create translation request",
             reverse(
-                "wagtail_localize_workflow:create_translation_request", args=[page.id]
+                "wagtail_localize_translation:create_translation_request", args=[page.id]
             ),
             priority=60,
         )
@@ -43,10 +43,10 @@ def register_admin_urls():
 
     return [
         url(
-            "^localize/workflow/",
+            "^localize/translation/",
             include(
-                (urls, "wagtail_localize_workflow"),
-                namespace="wagtail_localize_workflow",
+                (urls, "wagtail_localize_translation"),
+                namespace="wagtail_localize_translation",
             ),
         )
     ]
@@ -55,8 +55,8 @@ def register_admin_urls():
 @hooks.register("register_admin_viewset")
 def register_viewset():
     return TranslationViewSet(
-        "wagtail_localize_workflow_management",
-        url_prefix="localize/workflow/translations",
+        "wagtail_localize_translation_management",
+        url_prefix="localize/translation/translations",
     )
 
 
@@ -69,7 +69,7 @@ class TranslationsMenuItem(MenuItem):
 def register_menu_item():
     return TranslationsMenuItem(
         _("Translations"),
-        reverse("wagtail_localize_workflow_management:list"),
+        reverse("wagtail_localize_translation_management:list"),
         classnames="icon icon-site",
         order=500,
     )

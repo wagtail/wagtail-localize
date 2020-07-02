@@ -20,7 +20,7 @@
                         {% with translation.get_progress as progress %}
                             <tr>
                                 <td class="hostname title">
-                                    <b><a href="{% url 'wagtail_localize_workflow_management:detail' translation.id %}">{{ translation.source.as_instance }}</a></b>
+                                    <b><a href="{% url 'wagtail_localize_translation_management:detail' translation.id %}">{{ translation.source.as_instance }}</a></b>
                                 </td>
                                 <td>
                                     {{ translation.object.content_type.name|title }}

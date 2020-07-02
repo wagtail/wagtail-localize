@@ -59,7 +59,7 @@ class TestExportFile(BaseFileTestCase):
 
         response = self.client.get(
             reverse(
-                "wagtail_localize_workflow:export_file", args=[self.translation_request.id]
+                "wagtail_localize_translation:export_file", args=[self.translation_request.id]
             )
         )
 
@@ -85,7 +85,7 @@ class TestExportFile(BaseFileTestCase):
 
         response = self.client.get(
             reverse(
-                "wagtail_localize_workflow:export_file", args=[self.translation_request.id]
+                "wagtail_localize_translation:export_file", args=[self.translation_request.id]
             )
         )
 
@@ -132,14 +132,14 @@ class TestImport(BaseFileTestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_workflow:import_file", args=[self.translation_request.id]
+                "wagtail_localize_translation:import_file", args=[self.translation_request.id]
             ),
             {"file": SimpleUploadedFile("test.po", str(po).encode("utf-8")),},
         )
         self.assertRedirects(
             response,
             reverse(
-                "wagtail_localize_workflow_management:detail",
+                "wagtail_localize_translation_management:detail",
                 args=[self.translation_request.id],
             ),
         )
@@ -180,14 +180,14 @@ class TestImport(BaseFileTestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_workflow:import_file", args=[self.translation_request.id]
+                "wagtail_localize_translation:import_file", args=[self.translation_request.id]
             ),
             {"file": SimpleUploadedFile("test.po", str(po).encode("utf-8")),},
         )
         self.assertRedirects(
             response,
             reverse(
-                "wagtail_localize_workflow_management:detail",
+                "wagtail_localize_translation_management:detail",
                 args=[self.translation_request.id],
             ),
         )
@@ -259,7 +259,7 @@ class TestMachineTranslate(TestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_workflow:machine_translate",
+                "wagtail_localize_translation:machine_translate",
                 args=[self.translation_request.id],
             ),
             {"publish": "on"},
@@ -268,7 +268,7 @@ class TestMachineTranslate(TestCase):
         self.assertRedirects(
             response,
             reverse(
-                "wagtail_localize_workflow_management:detail",
+                "wagtail_localize_translation_management:detail",
                 args=[self.translation_request.id],
             ),
         )
@@ -310,7 +310,7 @@ class TestMachineTranslate(TestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_workflow:machine_translate",
+                "wagtail_localize_translation:machine_translate",
                 args=[self.translation_request.id],
             )
         )
@@ -318,7 +318,7 @@ class TestMachineTranslate(TestCase):
         self.assertRedirects(
             response,
             reverse(
-                "wagtail_localize_workflow_management:detail",
+                "wagtail_localize_translation_management:detail",
                 args=[self.translation_request.id],
             ),
         )
@@ -357,7 +357,7 @@ class TestMachineTranslate(TestCase):
 
         response = self.client.post(
             reverse(
-                "wagtail_localize_workflow:machine_translate",
+                "wagtail_localize_translation:machine_translate",
                 args=[self.translation_request.id],
             ),
             {"publish": "on"},
@@ -366,7 +366,7 @@ class TestMachineTranslate(TestCase):
         self.assertRedirects(
             response,
             reverse(
-                "wagtail_localize_workflow_management:detail",
+                "wagtail_localize_translation_management:detail",
                 args=[self.translation_request.id],
             ),
         )

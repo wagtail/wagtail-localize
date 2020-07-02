@@ -16,7 +16,7 @@ from wagtail_localize.translation.segments import SegmentValue
 
 
 class TranslationListView(ListView):
-    template_name = "wagtail_localize_workflow/management/list.html"
+    template_name = "wagtail_localize_translation/management/list.html"
     page_title = ugettext_lazy("Translations")
     context_object_name = "translations"
     permission_policy = None
@@ -31,7 +31,7 @@ class TranslationDetailView(DetailView):
         "The translation could not be saved due to errors."
     )
     context_object_name = "translation"
-    template_name = "wagtail_localize_workflow/management/detail.html"
+    template_name = "wagtail_localize_translation/management/detail.html"
     permission_policy = None
     list_url_name = None
     detail_url_name = None

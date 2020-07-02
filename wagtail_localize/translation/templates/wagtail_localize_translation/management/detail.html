@@ -62,7 +62,7 @@
                                         Translated
                                     {% elif dependency.translation_id %}
                                         Translation in progress
-                                        <a href="{% url 'wagtail_localize_workflow_management:detail' dependency.translation_id %}">See progress</a>
+                                        <a href="{% url 'wagtail_localize_translation_management:detail' dependency.translation_id %}">See progress</a>
                                     {% else %}
                                         Not submitted
                                     {% endif %}
@@ -85,7 +85,7 @@
                     All segments have been translated.
                 {% endif %}
 
-                <form action="{% url 'wagtail_localize_workflow:machine_translate' translation.id %}" method="post">
+                <form action="{% url 'wagtail_localize_translation:machine_translate' translation.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="button button-secondary" {% if num_segments_to_translate == 0 %}disabled{% endif %}>Translate with Google Translate</button>
                 </form>
@@ -95,11 +95,11 @@
 
                 <h3>Download / Upload PO file</h3>
 
-                <a class="icon icon-download" href="{% url 'wagtail_localize_workflow:export_file' translation.id %}" download>Download PO file</a>
+                <a class="icon icon-download" href="{% url 'wagtail_localize_translation:export_file' translation.id %}" download>Download PO file</a>
 
                 <hr>
 
-                <form action="{% url 'wagtail_localize_workflow:import_file' translation.id %}" method="post" enctype="multipart/form-data">
+                <form action="{% url 'wagtail_localize_translation:import_file' translation.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     <input type="file" name="file">
@@ -113,7 +113,7 @@
 
                 <h3>Translate here</h3>
 
-                <form action="{% url 'wagtail_localize_workflow:translation_form' translation.id %}" method="post">
+                <form action="{% url 'wagtail_localize_translation:translation_form' translation.id %}" method="post">
                     {% csrf_token %}
 
                     <ul>

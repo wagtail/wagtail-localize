@@ -6,7 +6,7 @@
     {% include "wagtailadmin/shared/header.html" with title="Create translation request" subtitle=page.get_admin_display_title icon="doc-empty-inverse" %}
 
     <div class="nice-padding">
-        <form action="{% url 'wagtail_localize_workflow:create_translation_request' page.id %}" method="POST">
+        <form action="{% url 'wagtail_localize_translation:create_translation_request' page.id %}" method="POST">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">
 

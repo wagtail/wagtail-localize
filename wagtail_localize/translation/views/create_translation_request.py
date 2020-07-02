@@ -118,6 +118,6 @@ def create_translation_request(request, page_id):
 
     return render(
         request,
-        "wagtail_localize_workflow/create_translation_request.html",
+        "wagtail_localize_translation/create_translation_request.html",
         {"page": page, "form": form},
     )
