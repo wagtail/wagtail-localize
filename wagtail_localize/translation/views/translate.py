@@ -24,9 +24,15 @@ def export_file(request, translation_id):
 
     # Get messages
     messages = defaultdict(list)
-    for segment in translation.source.get_segments(with_translation=translation.target_locale, raise_if_missing_translation=False):
-        if isinstance(segment, SegmentValue):
-            messages[segment.html_with_ids] = (segment.path, segment.translation.html_with_ids if segment.translation else None)
+
+    segment_locations = (
+        SegmentLocation.objects.filter(source=translation.source)
+        .select_related("context", "segment")
+        .annotate_translation(translation.target_locale)
+    )
+
+    for location in segment_locations:
+        messages[location.segment.text] = (location.context.path, location.translation)
 
     # TODO: We need to make sure we handle the case where two strings have the same source and context.
     # For example, if I have a rich text field with two links that have the same text but go to different places
