@@ -296,11 +296,11 @@ class TranslationSource(models.Model):
         segments = []
 
         for location in segment_locations:
-            if not location.translation:
+            if with_translation and not location.translation:
                 if segment_translation_fallback_to_source:
                     location.translation = location.segment.text
 
-                elif with_translation and raise_if_missing_translation:
+                elif raise_if_missing_translation:
                     raise MissingTranslationError(location, with_translation)
 
             # TODO: We need to allow SegmentValues to include both source and translation at the same time
