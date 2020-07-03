@@ -20,7 +20,7 @@
                         {% with translation.get_progress as progress %}
                             <tr>
                                 <td class="hostname title">
-                                    <b><a href="{% url 'wagtail_localize_translation_management:detail' translation.id %}">{{ translation.source.as_instance }}</a></b>
+                                    <b><a href="{% url 'wagtail_localize_translation_management:detail' translation.id %}">{{ translation.source.object_title }}</a></b>
                                 </td>
                                 <td>
                                     {{ translation.object.content_type.name|title }}
@@ -35,11 +35,7 @@
                                     {{ progress.1 }} out of {{ progress.0 }} strings translated
                                 </td>
                                 <td>
-                                    {% if progress.0 == progress.1 %}
-                                        Up to date
-                                    {% else %}
-                                        Waiting for translations
-                                    {% endif %}
+                                    {{ translation.get_status_display }}
                                 </td>
                             </tr>
                         {% endwith %}

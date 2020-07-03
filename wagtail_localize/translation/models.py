@@ -16,6 +16,7 @@ from django.db.models import (
     Value,
     When,
 )
+from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.utils.text import slugify
 from modelcluster.models import (
@@ -463,6 +464,17 @@ class Translation(models.Model):
         ).aggregate(total_segments=Count("pk"), translated_segments=Sum("is_translated_i"))
 
         return aggs["total_segments"], aggs["translated_segments"]
+
+    def get_status_display(self):
+        """
+        Returns a string to describe the current status of this translation to a user.
+        """
+        total_segments, translated_segments = self.get_progress()
+        if total_segments == translated_segments:
+            return _("Up to date")
+        else:
+            # TODO show actual number of strings required?
+            return _("Waiting for translations")
 
     def update(self, user=None):
         try:
