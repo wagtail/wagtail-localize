@@ -173,6 +173,12 @@ class TranslationSource(models.Model):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="sources"
     )
+    # object.content_type refers to the model that the TranslatableMixin was added to, however that model
+    # might have child models. So specific_content_type is needed to refer to the content type that this
+    # source data was extracted from.
+    specific_content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="+"
+    )
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
     object_title = models.TextField(max_length=1000, blank=True)
     content_json = models.TextField()
@@ -194,10 +200,11 @@ class TranslationSource(models.Model):
 
         object, created = TranslatableObject.objects.get_or_create_from_instance(page)
 
-        return TranslationSource.objects.get_or_create(
+        return cls.objects.get_or_create(
             object=object,
             page_revision=page_revision,
             defaults={
+                "specific_content_type": ContentType.objects.get_for_model(page.specific_class),
                 "locale_id": page.locale_id,
                 "object_title": page.title,
                 "content_json": page_revision.content_json,
@@ -229,6 +236,7 @@ class TranslationSource(models.Model):
         return (
             cls.objects.create(
                 object=object,
+                specific_content_type=ContentType.objects.get_for_model(instance.__class__),
                 locale=instance.locale,
                 object_title=str(object),
                 content_json=content_json,
@@ -237,12 +245,26 @@ class TranslationSource(models.Model):
             True,
         )
 
+    def get_source_instance(self):
+        """
+        This gets the instance of the object that the source data was extracted from.
+
+        This is different to source.object.get_instance(source.locale) as the instance
+        returned by this methid will have the same model that the content was extracted
+        from. The model returned by `object.get_instance` might be more generic since
+        that model only records the model that the TranslatableMixin was applied to but
+        that model might have child models.
+        """
+        return self.specific_content_type.get_object_for_this_type(
+            translation_key=self.translation_key, locale_id=self.locale_id
+        )
+
     def as_instance(self):
         """
         Builds an instance of the object with the content at this revision.
         """
         try:
-            instance = self.object.get_instance(self.locale)
+            instance = self.get_source_instance(self.locale)
         except models.ObjectDoesNotExist:
             raise SourceDeletedError
 
