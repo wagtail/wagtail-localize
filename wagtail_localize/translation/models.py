@@ -427,19 +427,9 @@ class Translation(models.Model):
 
     def update(self, user=None):
         try:
-            translation, created = self.source.create_or_update_translation(self.target_locale, user=user, segment_translation_fallback_to_source=True)
-
-            if created:
-                # Find all translations that depend on this one and update them
-                for related_object in RelatedObjectLocation.objects.filter(object=self.source.object).select_related('source'):
-                    try:
-                        translation = Translation.objects.get(object_id=related_object.source.object_id, target_locale=self.target_locale)
-                    except Translation.DoesNotExist:
-                        pass
-                    else:
-                        translation.update()
-
+            self.source.create_or_update_translation(self.target_locale, user=user, segment_translation_fallback_to_source=True)
         except (ParentNotTranslatedError, MissingRelatedObjectError):
+            # TODO: Create missing objects
             pass
 
 
