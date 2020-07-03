@@ -397,6 +397,15 @@ class TranslationSource(models.Model):
 
 
 class Translation(models.Model):
+    """
+    Manages the translation of an object into a locale.
+
+    An instance of this model is created whenever something is submitted for translation
+    into a new language. They live until either the source or destination has been deleted.
+
+    Only one of these will exist for a given object/langauge. If the object is resubmitted
+    for translation, the existing Translation instance's 'source' field is updated.
+    """
     # A unique ID that can be used to reference this request in external systems
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
 
@@ -409,10 +418,11 @@ class Translation(models.Model):
         related_name="translations",
     )
 
-    # The source may be changed if the object is resubmitted for translation into the same locale
+    # Note: The source may be changed if the object is resubmitted for translation into the same locale
     source = models.ForeignKey(
         TranslationSource, on_delete=models.CASCADE, related_name="translations"
     )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
