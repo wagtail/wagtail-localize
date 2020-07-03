@@ -100,6 +100,10 @@ class TranslatableObject(models.Model):
         unique_together = [("content_type", "translation_key")]
 
 
+class SourceDeletedError(Exception):
+    pass
+
+
 class MissingTranslationError(Exception):
     def __init__(self, location, locale):
         self.location = location
@@ -196,22 +200,35 @@ class TranslationSource(models.Model):
         that model might have child models.
         """
         return self.specific_content_type.get_object_for_this_type(
-            translation_key=self.translation_key, locale_id=self.locale_id
+            translation_key=self.object_id, locale_id=self.locale_id
         )
 
     def as_instance(self):
         """
         Builds an instance of the object with the content at this revision.
         """
-        model = self.specific_content_type.model_class()
+        try:
+            instance = self.get_source_instance()
+        except models.ObjectDoesNotExist:
+            raise SourceDeletedError
 
-        if issubclass(model, ClusterableModel):
-            return model.from_json(self.content_json)
+        if isinstance(instance, Page):
+            return instance.with_content_json(self.content_json)
+
+        elif isinstance(instance, ClusterableModel):
+            new_instance = instance.__class__.from_json(self.content_json)
 
         else:
-            return model_from_serializable_data(
-                model, json.loads(self.content_json)
+            new_instance = model_from_serializable_data(
+                instance.__class__, json.loads(self.content_json)
             )
+
+        new_instance.pk = instance.pk
+        new_instance.locale = instance.locale
+        new_instance.translation_key = instance.translation_key
+        new_instance.is_source_translation = instance.is_source_translation
+
+        return new_instance
 
     def extract_segments(self):
         for segment in extract_segments(self.as_instance()):
