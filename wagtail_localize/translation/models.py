@@ -50,10 +50,6 @@ class TranslatableObjectManager(models.Manager):
             content_type=ContentType.objects.get_for_model(
                 instance.get_translation_model()
             ),
-            defaults={
-                # TODO: What if path already taken? (eg, page moved)
-                'path': TranslatableObject.get_path(instance),
-            }
         )
 
     def get_for_instance(self, instance):
@@ -77,9 +73,6 @@ class TranslatableObject(models.Model):
         ContentType, on_delete=models.CASCADE, related_name="+"
     )
 
-    # This path can be used to generate filenames for exports
-    path = models.TextField(max_length=1000, unique=True)
-
     objects = TranslatableObjectManager()
 
     def has_translation(self, locale):
@@ -102,35 +95,6 @@ class TranslatableObject(models.Model):
             return self.get_instance(locale)
         except self.content_type.model_class().DoesNotExist:
             pass
-
-    @classmethod
-    def get_path(cls, instance):
-        if isinstance(instance, Page):
-            # Page paths have the format: `pages/URL_PATH`
-            # Note: Page.url_path always starts with a '/'
-            # TODO: Should this update if the page is moved?
-            return 'pages' + instance.url_path.rstrip('/')
-
-        else:
-            model_name = instance._meta.app_label + '.' + instance.__class__.__name__
-
-            if isinstance(instance, tuple(get_snippet_models())):
-                # Snippet paths have the format `snippets/app_label.ModelName/ID-title-slugified`
-                base_path = 'snippets/' + model_name
-
-            elif isinstance(instance, AbstractImage):
-                # Image paths have the format `images/ID-title-slugified`
-                base_path = 'images'
-
-            elif isinstance(instance, AbstractDocument):
-                # Document paths have the format `documents/ID-title-slugified`
-                base_path = 'documents'
-
-            else:
-                # All other models paths have the format `other/app_label.ModelName/ID-title-slugified`
-                base_path = 'other/' + model_name
-
-            return base_path + '/' + str(instance.pk) + '-' + slugify(str(instance))
 
     class Meta:
         unique_together = [("content_type", "translation_key")]
@@ -761,11 +725,6 @@ class RelatedObjectLocation(BaseLocation):
             object=TranslatableObject.objects.get_or_create(
                 content_type=related_object_value.content_type,
                 translation_key=related_object_value.translation_key,
-                defaults={
-                    # TODO: What if path already taken? (eg, page moved)
-                    # TODO: Probably should check if object exists first?
-                    'path': TranslatableObject.get_path(related_object_value.get_instance(source.locale)),
-                }
             )[0],
         )
 
