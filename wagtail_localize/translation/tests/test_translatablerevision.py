@@ -11,14 +11,30 @@ from wagtail_localize.translation.models import (
     TranslationSource,
     SegmentTranslation,
     Segment,
+    SegmentLocation,
     SourceDeletedError,
     MissingTranslationError,
     MissingRelatedObjectError,
+    RelatedObjectLocation,
     TranslationContext,
+    TemplateLocation,
 )
 from wagtail_localize.translation.utils import insert_segments
-from wagtail_localize.translation.segments import RelatedObjectValue
+from wagtail_localize.translation.segments import TemplateValue, RelatedObjectValue
 from wagtail_localize.translation.segments.extract import extract_segments
+
+
+def insert_segments(revision, locale, segments):
+    """
+    Inserts the list of untranslated segments into translation memory
+    """
+    for segment in segments:
+        if isinstance(segment, TemplateValue):
+            TemplateLocation.from_template_value(revision, segment)
+        elif isinstance(segment, RelatedObjectValue):
+            RelatedObjectLocation.from_related_object_value(revision, segment)
+        else:
+            SegmentLocation.from_segment_value(revision, locale, segment)
 
 
 def create_test_page(**kwargs):
