@@ -191,7 +191,7 @@ class TranslationSource(models.Model):
 
     def get_source_instance(self):
         """
-        This gets the instance of the object that the source data was extracted from.
+        This gets the live version of instance that the source data was extracted from.
 
         This is different to source.object.get_instance(source.locale) as the instance
         returned by this methid will have the same model that the content was extracted
