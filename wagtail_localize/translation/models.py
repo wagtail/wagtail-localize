@@ -29,6 +29,8 @@ from wagtail.snippets.models import get_snippet_models
 from wagtail.images.models import AbstractImage
 from wagtail.documents.models import AbstractDocument
 
+from wagtail_localize.models import ParentNotTranslatedError
+
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
@@ -473,7 +475,7 @@ class Translation(models.Model):
                     else:
                         translation.update()
 
-        except MissingRelatedObjectError:
+        except (ParentNotTranslatedError, MissingRelatedObjectError):
             pass
 
 
