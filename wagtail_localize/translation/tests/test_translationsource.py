@@ -41,10 +41,9 @@ def create_test_page(**kwargs):
     page = parent.add_child(instance=TestPage(**kwargs))
     page_revision = page.save_revision()
     page_revision.publish()
+    page.refresh_from_db()
 
-    source, created = TranslationSource.get_or_create_from_page_revision(
-        page_revision
-    )
+    source, created = TranslationSource.from_instance(page)
 
     prepare_source(source)
 
@@ -67,40 +66,6 @@ def prepare_source(source):
         prepare_source(related_source)
 
 
-class TestGetOrCreateFromPageRevision(TestCase):
-    def setUp(self):
-        self.page = create_test_page(title="Test page", slug="test-page")
-
-    def test_create(self):
-        # Delete the translation source that the Pontoon module creates on page publish
-        TranslationSource.objects.all().delete()
-
-        page_revision = self.page.get_latest_revision()
-
-        # Refetch the page revision so that it has the generic Page object associated
-        page_revision.refresh_from_db()
-
-        source, created = TranslationSource.get_or_create_from_page_revision(
-            page_revision
-        )
-
-        self.assertTrue(created)
-
-        self.assertEqual(source.object_id, self.page.translation_key)
-        self.assertEqual(source.locale, self.page.locale)
-        self.assertEqual(source.page_revision, page_revision)
-        self.assertEqual(source.content_json, page_revision.content_json)
-        self.assertEqual(source.created_at, page_revision.created_at)
-
-    def test_get(self):
-        page_revision = self.page.get_latest_revision()
-        revision, created = TranslationSource.get_or_create_from_page_revision(
-            page_revision
-        )
-
-        self.assertFalse(created)
-
-
 class TestFromInstance(TestCase):
     def setUp(self):
         self.snippet = TestSnippet.objects.create(field="This is some test content")
@@ -112,7 +77,6 @@ class TestFromInstance(TestCase):
 
         self.assertEqual(source.object_id, self.snippet.translation_key)
         self.assertEqual(source.locale, self.snippet.locale)
-        self.assertIsNone(source.page_revision)
         self.assertEqual(
             json.loads(source.content_json),
             {
@@ -202,9 +166,7 @@ class TestFromInstance(TestCase):
 class TestAsInstanceForPage(TestCase):
     def setUp(self):
         self.page = create_test_page(title="Test page", slug="test-page")
-        self.source = TranslationSource.get_or_create_from_page_revision(
-            self.page.get_latest_revision()
-        )[0]
+        self.source = TranslationSource.from_instance(self.page)[0]
 
     def test(self):
         # To show it actually is using the translation source and not the live object,
@@ -258,9 +220,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             test_charfield="This is some test content",
             test_snippet=self.snippet,
         )
-        self.source = TranslationSource.get_or_create_from_page_revision(
-            self.page.get_latest_revision()
-        )[0]
+        self.source = TranslationSource.from_instance(self.page)[0]
         self.source_locale = Locale.objects.get(language_code="en")
         self.dest_locale = Locale.objects.create(language_code="fr")
 
@@ -301,9 +261,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             parent=self.page,
             test_charfield="This is some test content",
         )
-        child_source = TranslationSource.get_or_create_from_page_revision(
-            child_page.get_latest_revision()
-        )[0]
+        child_source = TranslationSource.from_instance(child_page)[0]
 
         translated_parent = self.page.copy_for_translation(self.dest_locale)
 
@@ -362,11 +320,8 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         # Save the page
         revision = self.page.save_revision()
         revision.publish()
-        source_with_translated_countent = TranslationSource.get_or_create_from_page_revision(
-            revision
-        )[
-            0
-        ]
+        self.page.refresh_from_db()
+        source_with_translated_countent = TranslationSource.from_instance(self.page)[0]
 
         # Check translation hasn't been updated yet
         translated.refresh_from_db()
@@ -436,11 +391,8 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         # Save the page
         revision = self.page.save_revision()
         revision.publish()
-        source_with_streamfield = TranslationSource.get_or_create_from_page_revision(
-            revision
-        )[
-            0
-        ]
+        self.page.refresh_from_db()
+        source_with_streamfield = TranslationSource.from_instance(self.page)[0]
         source_with_streamfield.extract_segments()
 
         # Create a translation for the new context

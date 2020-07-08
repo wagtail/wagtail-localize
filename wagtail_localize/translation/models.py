@@ -121,34 +121,14 @@ class TranslationSource(models.Model):
     content_json = models.TextField()
     created_at = models.DateTimeField()
 
-    page_revision = models.OneToOneField(
-        "wagtailcore.PageRevision",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="wagtaillocalize_revision",
-    )
-
     objects = TranslationSourceQuerySet.as_manager()
 
     @classmethod
-    def get_or_create_from_page_revision(cls, page_revision):
-        page = page_revision.page.specific
-
-        object, created = TranslatableObject.objects.get_or_create_from_instance(page)
-
-        return TranslationSource.objects.get_or_create(
-            object=object,
-            page_revision=page_revision,
-            defaults={
-                "locale_id": page.locale_id,
-                "content_json": page_revision.content_json,
-                "created_at": page_revision.created_at,
-            },
-        )
-
-    @classmethod
     def from_instance(cls, instance, force=False):
+        # Make sure we're using the specific version of pages
+        if isinstance(instance, Page):
+            instance = instance.specific
+
         object, created = TranslatableObject.objects.get_or_create_from_instance(
             instance
         )
