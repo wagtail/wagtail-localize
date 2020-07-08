@@ -268,8 +268,10 @@ class RelatedObjectValue(BaseValue):
         )
 
     def get_instance(self, locale):
+        from ..models import pk
+
         return self.content_type.get_object_for_this_type(
-            translation_key=self.translation_key, locale=locale
+            translation_key=self.translation_key, locale_id=pk(locale)
         )
 
     def clone(self):
