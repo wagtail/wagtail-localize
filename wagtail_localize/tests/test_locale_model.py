@@ -49,7 +49,7 @@ class TestLocaleModel(TestCase):
 
     def test_str(self):
         locale = Locale.objects.get(language_code="en")
-        self.assertEqual(str(locale), "English (en)")
+        self.assertEqual(str(locale), "English")
 
     def test_str_for_unconfigured_langauge(self):
         # This language is not in LANGUAGES so it should just return the language code
