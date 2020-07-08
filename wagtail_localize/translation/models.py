@@ -35,6 +35,14 @@ class TranslatableObjectManager(models.Manager):
             ),
         )
 
+    def get_for_instance(self, instance):
+        return self.get(
+            translation_key=instance.translation_key,
+            content_type=ContentType.objects.get_for_model(
+                instance.get_translation_model()
+            ),
+        )
+
 
 class TranslatableObject(models.Model):
     """
@@ -60,6 +68,12 @@ class TranslatableObject(models.Model):
             translation_key=self.translation_key, locale_id=pk(locale)
         )
 
+    def get_instance_or_none(self, locale):
+        try:
+            return self.get_instance(locale)
+        except self.content_type.model_class().DoesNotExist:
+            pass
+
     class Meta:
         unique_together = [("content_type", "translation_key")]
 
@@ -84,6 +98,17 @@ class MissingRelatedObjectError(Exception):
         super().__init__()
 
 
+class TranslationSourceQuerySet(models.QuerySet):
+    def get_for_instance(self, instance):
+        object = TranslatableObject.objects.get_for_instance(
+            instance
+        )
+        return self.filter(
+            object=object,
+            locale=instance.locale,
+        )
+
+
 class TranslationSource(models.Model):
     """
     A piece of content that to be used as a source for translations.
@@ -103,6 +128,8 @@ class TranslationSource(models.Model):
         blank=True,
         related_name="wagtaillocalize_revision",
     )
+
+    objects = TranslationSourceQuerySet.as_manager()
 
     @classmethod
     def get_or_create_from_page_revision(cls, page_revision):
@@ -151,12 +178,18 @@ class TranslationSource(models.Model):
             True,
         )
 
+    def get_source_instance(self):
+        """
+        This gets the live version of instance that the source data was extracted from.
+        """
+        return self.object.get_instance(self.locale)
+
     def as_instance(self):
         """
         Builds an instance of the object with the content at this revision.
         """
         try:
-            instance = self.object.get_instance(self.locale)
+            instance = self.get_source_instance()
         except models.ObjectDoesNotExist:
             raise SourceDeletedError
 
