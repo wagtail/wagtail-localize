@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.utils import timezone
 from wagtail.core.blocks import StreamValue
@@ -91,6 +92,7 @@ class TestFromInstance(TestCase):
     def test_creates_new_source_if_changed(self):
         source = TranslationSource.objects.create(
             object_id=self.snippet.translation_key,
+            specific_content_type=ContentType.objects.get_for_model(TestSnippet),
             locale=self.snippet.locale,
             content_json=json.dumps(
                 {
@@ -117,6 +119,7 @@ class TestFromInstance(TestCase):
     def test_reuses_existing_source_if_not_changed(self):
         source = TranslationSource.objects.create(
             object_id=self.snippet.translation_key,
+            specific_content_type=ContentType.objects.get_for_model(TestSnippet),
             locale=self.snippet.locale,
             content_json=json.dumps(
                 {
@@ -137,6 +140,7 @@ class TestFromInstance(TestCase):
     def test_creates_new_source_if_forced(self):
         source = TranslationSource.objects.create(
             object_id=self.snippet.translation_key,
+            specific_content_type=ContentType.objects.get_for_model(TestSnippet),
             locale=self.snippet.locale,
             content_json=json.dumps(
                 {

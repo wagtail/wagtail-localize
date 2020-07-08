@@ -117,6 +117,12 @@ class TranslationSource(models.Model):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="sources"
     )
+    # object.content_type refers to the model that the TranslatableMixin was added to, however that model
+    # might have child models. So specific_content_type is needed to refer to the content type that this
+    # source data was extracted from.
+    specific_content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="+"
+    )
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
     content_json = models.TextField()
     created_at = models.DateTimeField()
@@ -151,6 +157,7 @@ class TranslationSource(models.Model):
         return (
             cls.objects.create(
                 object=object,
+                specific_content_type=ContentType.objects.get_for_model(instance.__class__),
                 locale=instance.locale,
                 content_json=content_json,
                 created_at=timezone.now(),
@@ -161,8 +168,16 @@ class TranslationSource(models.Model):
     def get_source_instance(self):
         """
         This gets the live version of instance that the source data was extracted from.
+
+        This is different to source.object.get_instance(source.locale) as the instance
+        returned by this methid will have the same model that the content was extracted
+        from. The model returned by `object.get_instance` might be more generic since
+        that model only records the model that the TranslatableMixin was applied to but
+        that model might have child models.
         """
-        return self.object.get_instance(self.locale)
+        return self.specific_content_type.get_object_for_this_type(
+            translation_key=self.object_id, locale_id=self.locale_id
+        )
 
     def as_instance(self):
         """
