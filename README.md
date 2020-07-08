@@ -78,7 +78,6 @@ The base class for providing attributes needed to store translation mapping valu
 
 * `translation_key` - A `UUID` that is shared between all translations of the same object/page
 * `locale` - A foreign key to the `wagtail_localize.Locale` table which could represent a language or language/region
-* `is_source_translation` - A boolean field that is `True` if this object is the translation source for objects with the same `translation_key`
 
 This adds the following methods to the model:
 

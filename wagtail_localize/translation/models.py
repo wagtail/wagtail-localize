@@ -174,7 +174,6 @@ class TranslationSource(models.Model):
         new_instance.pk = instance.pk
         new_instance.locale = instance.locale
         new_instance.translation_key = instance.translation_key
-        new_instance.is_source_translation = instance.is_source_translation
 
         return new_instance
 

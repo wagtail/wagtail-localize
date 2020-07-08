@@ -90,7 +90,6 @@ def default_locale_id():
 class TranslatableMixin(models.Model):
     translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
     locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name="+", editable=False)
-    is_source_translation = models.BooleanField(default=True, editable=False)
 
     translatable_fields = []
 
@@ -113,12 +112,6 @@ class TranslatableMixin(models.Model):
         except self.__class__.DoesNotExist:
             return None
 
-    def get_source_translation(self):
-        if self.is_source_translation:
-            return self
-
-        return self.get_translations(inclusive=False).get(is_source_translation=True)
-
     def has_translation(self, locale):
         return self.get_translations(inclusive=True).filter(locale_id=pk(locale)).exists()
 
@@ -129,7 +122,6 @@ class TranslatableMixin(models.Model):
         translated = self.__class__.objects.get(id=self.id)
         translated.id = None
         translated.locale = locale
-        translated.is_source_translation = False
 
         if isinstance(self, AbstractImage):
             # As we've copied the image record we also need to copy the original image file itself.
@@ -213,12 +205,10 @@ class TranslatablePageMixin(TranslatableMixin):
             if "update_attrs" in kwargs:
                 if "translation_key" not in kwargs["update_attrs"]:
                     kwargs["update_attrs"]["translation_key"] = uuid.uuid4()
-                    kwargs["update_attrs"]["is_source_translation"] = True
 
             else:
                 kwargs["update_attrs"] = {
                     "translation_key": uuid.uuid4(),
-                    "is_source_translation": True,
                 }
 
             original_process_child_object = kwargs.pop("process_child_object", None)
@@ -229,7 +219,6 @@ class TranslatablePageMixin(TranslatableMixin):
                 # Change translation keys of translatable child objects
                 if isinstance(child_object, TranslatableMixin):
                     child_object.translation_key = uuid.uuid4()
-                    child_object.is_source_translation = True
 
                 if original_process_child_object is not None:
                     original_process_child_object(
@@ -274,13 +263,11 @@ class TranslatablePageMixin(TranslatableMixin):
         ):
             if isinstance(child_object, TranslatableMixin):
                 child_object.locale = locale
-                child_object.is_source_translation = False
 
         return self.copy(
             to=translated_parent,
             update_attrs={
                 "locale": locale,
-                "is_source_translation": False,
                 "slug": slug,
             },
             copy_revisions=False,
@@ -330,34 +317,8 @@ class TranslatablePageMixin(TranslatableMixin):
         page = super().with_content_json(content_json)
         page.translation_key = self.translation_key
         page.locale = self.locale
-        page.is_source_translation = self.is_source_translation
 
         return page
-
-# Commented out as this prevents preview from working
-#
-#    @classmethod
-#    def get_edit_handler(cls):
-#        # Translatable and Synchronised fields should not be editable
-#        # on translations
-#        translatable_fields_by_name = {
-#            field.field_name: field for field in cls.translatable_fields
-#        }
-#
-#        def filter_editable_fields(edit_handler, instance):
-#            if not hasattr(edit_handler, "field_name"):
-#                return True
-#
-#            if not edit_handler.field_name in translatable_fields_by_name:
-#                return True
-#
-#            return translatable_fields_by_name[edit_handler.field_name].is_editable(
-#                instance
-#            )
-#
-#        return filter_edit_handler_on_instance_bound(
-#            super().get_edit_handler(), filter_editable_fields
-#        ).bind_to(model=cls)
 
     def get_translation_for_request(self, request):
         """

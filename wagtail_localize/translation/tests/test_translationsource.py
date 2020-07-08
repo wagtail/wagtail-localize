@@ -120,7 +120,6 @@ class TestFromInstance(TestCase):
                 "field": "This is some test content",
                 "translation_key": str(self.snippet.translation_key),
                 "locale": self.snippet.locale_id,
-                "is_source_translation": True,
             },
         )
         self.assertTrue(source.created_at)
@@ -135,7 +134,6 @@ class TestFromInstance(TestCase):
                     "field": "Some different content",  # Changed
                     "translation_key": str(self.snippet.translation_key),
                     "locale": self.snippet.locale_id,
-                    "is_source_translation": True,
                 }
             ),
             created_at=timezone.now(),
@@ -162,7 +160,6 @@ class TestFromInstance(TestCase):
                     "field": "This is some test content",
                     "translation_key": str(self.snippet.translation_key),
                     "locale": self.snippet.locale_id,
-                    "is_source_translation": True,
                 }
             ),
             created_at=timezone.now(),
@@ -183,7 +180,6 @@ class TestFromInstance(TestCase):
                     "field": "This is some test content",
                     "translation_key": str(self.snippet.translation_key),
                     "locale": self.snippet.locale_id,
-                    "is_source_translation": True,
                 }
             ),
             created_at=timezone.now(),
@@ -294,7 +290,6 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
-        self.assertFalse(new_page.is_source_translation)
         self.assertTrue(
             self.source.translation_logs.filter(locale=self.dest_locale).exists()
         )
@@ -332,7 +327,6 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
         self.assertEqual(new_page.translation_key, child_page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
-        self.assertFalse(new_page.is_source_translation)
         self.assertTrue(
             child_source.translation_logs.filter(locale=self.dest_locale).exists()
         )
@@ -347,7 +341,6 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
-        self.assertFalse(new_page.is_source_translation)
         self.assertTrue(
             self.source.translation_logs.filter(locale=self.dest_locale).exists()
         )
