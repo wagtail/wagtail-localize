@@ -424,7 +424,7 @@ class SegmentTranslation(models.Model):
     translation_of = models.ForeignKey(
         Segment, on_delete=models.CASCADE, related_name="translations"
     )
-    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE, related_name="segment_translations")
     context = models.ForeignKey(
         TranslationContext,
         on_delete=models.SET_NULL,
