@@ -124,6 +124,7 @@ class TranslationSource(models.Model):
         ContentType, on_delete=models.CASCADE, related_name="+"
     )
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+    object_repr = models.TextField(max_length=200)
     content_json = models.TextField()
     created_at = models.DateTimeField()
 
@@ -159,6 +160,7 @@ class TranslationSource(models.Model):
                 object=object,
                 specific_content_type=ContentType.objects.get_for_model(instance.__class__),
                 locale=instance.locale,
+                object_repr=str(instance)[:200],
                 content_json=content_json,
                 created_at=timezone.now(),
             ),
