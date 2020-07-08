@@ -1,6 +1,5 @@
 # Wagtail localize
 
-
 ## Installation and setup
 
 Install with pip:
@@ -51,7 +50,6 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 }
 ```
 
-
 ### URL configuration
 
 The following additions need to be made to `./yoursite/urls.py`
@@ -70,29 +68,29 @@ urlpatterns += i18n_patterns(
 
 Wagtail-localize provides classes wich page models should extend if they are to be translatable. This will be different if you are enabling translation on an existing site with pages, or a new site.
 
-#### TranslatableMixin
+### TranslatableMixin
 
 The base class for providing attributes needed to store translation mapping values:
 
-- `translation_key` - A `UUID` that is shared between all translations of the same object/page
-- `locale` - A foreign key to the `wagtail_localize.Locale` table which could represent a language or language/region
-- `is_source_translation` - A boolean field that is `True` if this object is the translation source for objects with the same `translation_key`
+* `translation_key` - A `UUID` that is shared between all translations of the same object/page
+* `locale` - A foreign key to the `wagtail_localize.Locale` table which could represent a language or language/region
+* `is_source_translation` - A boolean field that is `True` if this object is the translation source for objects with the same `translation_key`
 
 This adds the following methods to the model:
 
- - `get_translations(inclusive=False)` - Returns a `QuerySet` of translations of this object. This object will be excluded from that `QuerySet` unless `inclusive` is set to `True`
- - `get_translation(locale)` - Returns the translated version of the object in that target locale. Raises `Model.DoesNotExist` if the object hasn't been translated into the that target locale
-  - `get_translation_or_none(locale)` - Similar to `get_translation(locale)` except it returns `None` if the object hasn't been translated into the that target locale
- - `has_translation(locale)` - Returns `True` if the object has been translated into the target locale
- - `copy_for_translation(locale)` - Makes a copy of the object with the `locale` field of the new object set to the target locale
+* `get_translations(inclusive=False)` - Returns a `QuerySet` of translations of this object. This object will be excluded from that `QuerySet` unless `inclusive` is set to `True`
+* `get_translation(locale)` - Returns the translated version of the object in that target locale. Raises `Model.DoesNotExist` if the object hasn't been translated into the that target locale
+* `get_translation_or_none(locale)` - Similar to `get_translation(locale)` except it returns `None` if the object hasn't been translated into the that target locale
+* `has_translation(locale)` - Returns `True` if the object has been translated into the target locale
+* `copy_for_translation(locale)` - Makes a copy of the object with the `locale` field of the new object set to the target locale
 
-#### TranslatablePageMixin
+### TranslatablePageMixin
 
 A specialised version of `TranslatableMixin` to be used on page models. It has the following differences:
 
-- The `copy_for_translation` method will create the new page underneath the translation of the parent page (for example, if a page in the English "News" section is copied for translation into German, the new page will be automatically created under the "Nachrichten" section in the German site tree)
+* The `copy_for_translation` method will create the new page underneath the translation of the parent page (for example, if a page in the English "News" section is copied for translation into German, the new page will be automatically created under the "Nachrichten" section in the German site tree)
 
-- The `copy` method has been overridden to change the `translation_key` field. This method is called from the regular page copy action in the admin, it effectively creates a new page so the `translation_key` needs to be given a new value.
+* The `copy` method has been overridden to change the `translation_key` field. This method is called from the regular page copy action in the admin, it effectively creates a new page so the `translation_key` needs to be given a new value.
 
 #### BootstrapTranslatableMixin
 
@@ -102,7 +100,7 @@ A version of `TranslatableMixin`/`TranslatablePageMixin` without uniqueness cons
 
 Each page model that requires translation should extend TranslatablePageMixin:
 
-```
+```python
 from wagtail_localize.models import TranslatablePageMixin
 ...
 
@@ -116,13 +114,12 @@ class ArticlePage(TranslatablePageMixin, SocialFields, ListingFields, Page):
 
 The process is as follows:
 
-- Add `BootstrapTranslatableMixin` to your page models
-- Run `django-admin makemigrations`
-- Create a data migration for each app, then use the BootstrapTranslatableModel operation in
+* Add `BootstrapTranslatableMixin` to your page models
+* Run `django-admin makemigrations`
+* Create a data migration for each app, then use the BootstrapTranslatableModel operation in
 `wagtail_localize.bootstrap` on each model in that app
-- Change `BootstrapTranslatableMixin` to `TranslatableMixin` (or `TranslatablePageMixin`, if it's a page model)
-- Run `django-admin makemigrations` again
-
+* Change `BootstrapTranslatableMixin` to `TranslatableMixin` (or `TranslatablePageMixin`, if it's a page model)
+* Run `django-admin makemigrations` again
 
 ### Synchronising languages
 
