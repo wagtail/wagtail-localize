@@ -30,9 +30,6 @@ class TranslatableField(BaseTranslatableField):
     A field that should be translated whenever the original page changes
     """
 
-    def is_editable(self, obj):
-        return obj.is_source_translation
-
     def is_synchronized(self, obj):
         # Streamfields need to be re-synchronised before translation so the structure and non-translatable content is copied over
         return isinstance(self.get_field(obj.__class__), StreamField)
@@ -42,9 +39,6 @@ class SynchronizedField(BaseTranslatableField):
     """
     A field that should always be kept in sync with the original page
     """
-
-    def is_editable(self, obj):
-        return obj.is_source_translation
 
     def is_synchronized(self, obj):
         return self.is_editable(obj)
