@@ -17,6 +17,10 @@ INSTALLED_APPS = [
     ...
     "wagtail_localize",
     "wagtail_localize.translation",
+
+    # Note: Wagtail Localize must be above other Wagtail imports
+    "wagtail.core",
+    ...
 ]
 ```
 
