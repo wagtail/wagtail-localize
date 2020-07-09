@@ -1,0 +1,141 @@
+{% extends "wagtailadmin/generic/edit.html" %}
+{% load i18n %}
+
+{% block titletag %}Translation of {{ translation.source.as_instance }} into {{ translation.target_locale }}{% endblock %}
+
+{% block content %}
+    <header class="merged">
+        {% block breadcrumb %}{% endblock %}
+        <div class="row nice-padding">
+            <div class="left">
+                <div class="col header-title">
+                    {# Icons not supported on older Wagtail version TODO add compat for this #}
+                    <h1>{% if view.header_icon %}{#% icon name=view.header_icon class_name="header-title-icon" %#}{% endif %}
+                    Translation of <span>{{ translation.source.as_instance }}</span> into <span>{{ translation.target_locale }}</span></h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <ul class="tab-nav merged">
+        <li class="active"><a href="#basic">{% trans "Basic information" %}</a></li>
+        <li><a href="#translate">{% trans "Translate" %}</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <section id="basic" class="active nice-padding">
+            <dl>
+                <dt>Source:</dt>
+                <dd>{{ translation.source.object_repr }}</dd>
+
+                <dt>Content type:</dt>
+                <dd>{{ translation.object.content_type.name|title }}</dd>
+
+                <dt>Source Locale:</dt>
+                <dd>{{ translation.source.locale }}</dd>
+
+                <dt>Target Locale:</dt>
+                <dd>{{ translation.target_locale }}</dd>
+            </dl>
+
+            <h2>Translation Progress</h2>
+            {% with translation.get_progress as progress %}
+                {{ progress.1 }} out of {{ progress.0 }} strings translated
+            {% endwith %}
+
+            <h2>Dependencies</h2>
+            This translation depends on {{ dependencies|length }} other {% if dependencies|length == 1 %}translation{% else %}translations{% endif %}
+
+            {% if dependencies %}
+                <table style="min-width: 1000px;">
+                    <thead>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </thead>
+                    <tbody>
+                        {% for dependency in dependencies %}
+                            <tr>
+                                <td>{{ dependency.instance }}</td>
+                                <td>{{ dependency.object.content_type.name|title }}</td>
+                                <td>
+                                    {% if dependency.translated_instance %}
+                                        Translated
+                                    {% elif dependency.translation_id %}
+                                        Translation in progress
+                                        <a href="{% url 'wagtail_localize_translation_management:detail' dependency.translation_id %}">See progress</a>
+                                    {% else %}
+                                        Not submitted
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </section>
+
+        <section id="translate" class="nice-padding">
+            <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
+
+                <h3>Machine translation</h3>
+
+                {% if num_segments_to_translate %}
+                    {{ num_segments_to_translate }} segment{{ num_segments_to_translate|pluralize }} haven't been translated yet.
+                {% else %}
+                    All segments have been translated.
+                {% endif %}
+
+                <form action="{% url 'wagtail_localize_translation:machine_translate' translation.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="button button-secondary" {% if num_segments_to_translate == 0 %}disabled{% endif %}>Translate with Google Translate</button>
+                </form>
+            </div>
+
+            <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
+
+                <h3>Download / Upload PO file</h3>
+
+                <a class="icon icon-download" href="{% url 'wagtail_localize_translation:export_file' translation.id %}" download>Download PO file</a>
+
+                <hr>
+
+                <form action="{% url 'wagtail_localize_translation:import_file' translation.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <input type="file" name="file">
+
+                    <button type="submit" class="button button-secondary">Upload translated PO file</button>
+                </form>
+
+            </div>
+
+            <div style="margin-bottom: 10px; border: 1px solid #777; padding: 10px; padding-top: 0; border-radius: 3px; max-width: 1000px;">
+
+                <h3>Translate here</h3>
+
+                <form action="{% url 'wagtail_localize_translation:translation_form' translation.id %}" method="post">
+                    {% csrf_token %}
+
+                    <ul>
+                        {% for segment in segments %}
+                            <li>
+                                <h3>{{ segment.segment.text }}</h3>
+                                <h4>Context: {{ segment.context.path }}</h4>
+                                <p>
+                                    <input type="text" name="segment-{{ segment.id }}" value="{{ segment.translation|default:'' }}">
+                                </p>
+
+                                <hr>
+                            </li>
+                        {% endfor %}
+
+                        <li>
+                            <button type="submit">Save</button>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </section>
+    </div>
+{% endblock %}

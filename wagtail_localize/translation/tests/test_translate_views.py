@@ -1,0 +1,372 @@
+from unittest import mock
+
+import polib
+from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
+from django.urls import reverse
+from django.utils import timezone
+from googletrans.models import Translated
+from wagtail.core.models import Page
+
+from wagtail_localize.models import Locale
+from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.translation.models import Translation, TranslationSource
+
+
+def create_test_page(**kwargs):
+    parent = kwargs.pop("parent", None) or Page.objects.get(id=1)
+    page = parent.add_child(instance=TestPage(**kwargs))
+    revision = page.save_revision()
+    revision.publish()
+    return page
+
+
+def get_or_create_translation(instance, target_locale):
+    source, created = TranslationSource.from_instance(instance)
+
+    if created:
+        source.extract_segments()
+
+    return Translation.objects.get_or_create(
+        object=source.object,
+        target_locale=target_locale,
+        defaults={
+            'source': source,
+        }
+    )
+
+
+class BaseFileTestCase(TestCase):
+    fixtures = ["test_user.json"]
+
+    def setUp(self):
+        self.client.login(username="admin", password="password")
+
+        self.user = User.objects.get(username="admin")
+
+        self.french_locale = Locale.objects.create(language_code='fr')
+
+
+class TestExportFile(BaseFileTestCase):
+    def test_export(self):
+        page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="Some translatable content",
+            test_richtextfield="<p>Translatable <b>rich text</b></p>",
+        )
+        translation, created = get_or_create_translation(page, self.french_locale)
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_translation:export_file", args=[translation.id]
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/x-gettext-translation")
+
+        self.assertIn(
+            b'msgctxt "test_charfield"\nmsgid "Some translatable content"\nmsgstr ""\n',
+            response.content,
+        )
+
+        self.assertIn(
+            b'msgctxt "test_richtextfield"\nmsgid "Translatable <b>rich text</b>"\nmsgstr ""\n',
+            response.content,
+        )
+
+    def test_export_with_nested_snippet(self):
+        snippet = TestSnippet.objects.create(field="Some test snippet content")
+        page = create_test_page(
+            title="Test page", slug="test-page", test_snippet=snippet
+        )
+        translation, created = get_or_create_translation(page, self.french_locale)
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_translation:export_file", args=[translation.id]
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/x-gettext-translation")
+
+        # TODO
+        # self.assertIn(
+        #     f'#: test-snippets/{snippet.id}:field\nmsgid "Some test snippet content"\nmsgstr ""\n',
+        #     response.content.decode(),
+        # )
+
+
+class TestImport(BaseFileTestCase):
+    def test_import(self):
+        page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="Some translatable content",
+            test_richtextfield="<p>Translatable <b>rich text</b></p>",
+        )
+        translation, created = get_or_create_translation(page, self.french_locale)
+
+        po = polib.POFile()
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(translation.uuid),
+        }
+
+        po.extend(
+            [
+                polib.POEntry(
+                    msgid="Some translatable content",
+                    msgstr="Du contenu traduisible",
+                    occurrences="",
+                ),
+                polib.POEntry(
+                    msgid="Translatable <b>rich text</b>",
+                    msgstr="<b>Texte riche</b> traduisible",
+                    occurrences="",
+                ),
+            ]
+        )
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_translation:import_file", args=[translation.id]
+            ),
+            {"file": SimpleUploadedFile("test.po", str(po).encode("utf-8"))},
+        )
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_translation_management:detail",
+                args=[translation.id],
+            ),
+        )
+
+        # TODO
+        # request_page.refresh_from_db()
+        # self.assertTrue(request_page.is_completed)
+
+        # completed_revision = request_page.completed_revision
+        # completed_page = completed_revision.as_page_object()
+        # self.assertEqual(completed_page.locale, translation.target_locale)
+        # self.assertEqual(completed_page.translation_key, page.translation_key)
+        # self.assertEqual(completed_page.test_charfield, "Du contenu traduisible")
+        # self.assertEqual(
+        #     completed_page.test_richtextfield, "<p>Texte riche traduisible</p>"
+        # )
+
+    def test_import_with_nested_snippet(self):
+        snippet = TestSnippet.objects.create(field="Some test snippet content")
+        page = create_test_page(
+            title="Test page", slug="test-page", test_snippet=snippet
+        )
+        translation, created = get_or_create_translation(page, self.french_locale)
+
+        po = polib.POFile()
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(translation.uuid),
+        }
+
+        po.append(
+            polib.POEntry(
+                msgid="Some test snippet content",
+                msgstr="Du contenu d'extrait de test",
+                occurrences="",
+            )
+        )
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_translation:import_file", args=[translation.id]
+            ),
+            {"file": SimpleUploadedFile("test.po", str(po).encode("utf-8"))},
+        )
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_translation_management:detail",
+                args=[translation.id],
+            ),
+        )
+
+        # TODO
+        # request_page.refresh_from_db()
+        # self.assertTrue(request_page.is_completed)
+
+        # completed_revision = request_page.completed_revision
+        # completed_page = completed_revision.as_page_object()
+        # self.assertEqual(
+        #     completed_page.test_snippet.locale, translation.target_locale
+        # )
+        # self.assertEqual(
+        #     completed_page.test_snippet.translation_key, snippet.translation_key
+        # )
+        # self.assertEqual(
+        #     completed_page.test_snippet.field, "Du contenu d'extrait de test"
+        # )
+
+
+@mock.patch("googletrans.Translator")
+class TestMachineTranslate(BaseFileTestCase):
+    def test_translate(self, Translator):
+        page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="Some translatable content",
+            test_richtextfield="<p>Translatable <b>rich text</b></p>",
+        )
+        translation, created = get_or_create_translation(page, self.french_locale)
+
+        # Mock response from Google Translate
+        Translator().translate.return_value = [
+            Translated(
+                "en",
+                "fr",
+                "Some translatable content",
+                "Certains contenus traduisibles",
+                "Certains contenus traduisibles",
+            ),
+            Translated(
+                "en",
+                "fr",
+                "Translatable <b>rich text</b>",
+                "<b>Texte riche</b> traduisible",
+                "<b>Texte riche</b> traduisible",
+            ),
+        ]
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_translation:machine_translate",
+                args=[translation.id],
+            ),
+            {"publish": "on"},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_translation_management:detail",
+                args=[translation.id],
+            ),
+        )
+
+        Translator().translate.assert_called_with(
+            ["Some translatable content", "Translatable <b>rich text</b>"], dest="fr", src="en"
+        )
+
+        # TODO
+        # request_page.refresh_from_db()
+        # self.assertTrue(request_page.is_completed)
+
+        # translated_page = page.get_translation(Locale.objects.get(language_code="fr"))
+        # self.assertTrue(translated_page.live)
+        # self.assertEqual(
+        #     translated_page.test_charfield, "Certains contenus traduisibles"
+        # )
+        # self.assertEqual(
+        #     translated_page.test_richtextfield, "<p>Texte riche traduisible</p>"
+        # )
+
+    def test_translate_without_publishing(self, Translator):
+        page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="Some translatable content",
+        )
+        translation, created = get_or_create_translation(page, self.french_locale)
+
+        # Mock response from Google Translate
+        Translator().translate.return_value = [
+            Translated(
+                "en",
+                "fr",
+                "Some translatable content",
+                "Certains contenus traduisibles",
+                "Certains contenus traduisibles",
+            )
+        ]
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_translation:machine_translate",
+                args=[translation.id],
+            )
+        )
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_translation_management:detail",
+                args=[translation.id],
+            ),
+        )
+
+        Translator().translate.assert_called_with(
+            ["Some translatable content"], dest="fr", src="en"
+        )
+
+        # TODO
+        # request_page.refresh_from_db()
+        # self.assertTrue(request_page.is_completed)
+
+        # translated_page = page.get_translation(Locale.objects.get(language_code="fr"))
+        # self.assertFalse(translated_page.live)
+        # self.assertEqual(
+        #     translated_page.get_latest_revision_as_page().test_charfield,
+        #     "Certains contenus traduisibles",
+        # )
+
+    # def test_translate_with_nested_snippet(self, Translator):
+    #     snippet = TestSnippet.objects.create(field="Some test snippet content")
+    #     page = create_test_page(
+    #         title="Test page", slug="test-page", test_snippet=snippet
+    #     )
+    #     translation, created = get_or_create_translation(page, self.french_locale)
+
+    #     # Mock response from Google Translate
+    #     Translator().translate.return_value = [
+    #         Translated(
+    #             "en",
+    #             "fr",
+    #             "Some test snippet content",
+    #             "Du contenu d'extrait de test",
+    #             "Du contenu d'extrait de test",
+    #         )
+    #     ]
+
+    #     response = self.client.post(
+    #         reverse(
+    #             "wagtail_localize_translation:machine_translate",
+    #             args=[translation.id],
+    #         ),
+    #         {"publish": "on"},
+    #     )
+
+    #     self.assertRedirects(
+    #         response,
+    #         reverse(
+    #             "wagtail_localize_translation_management:detail",
+    #             args=[translation.id],
+    #         ),
+    #     )
+
+    #     Translator().translate.assert_called_with(
+    #         ["Some test snippet content"], dest="fr", src="en"
+    #     )
+
+    #     request_page.refresh_from_db()
+    #     self.assertTrue(request_page.is_completed)
+
+    #     translated_page = page.get_translation(Locale.objects.get(language_code="fr"))
+    #     self.assertEqual(
+    #         translated_page.test_snippet.field, "Du contenu d'extrait de test"
+    #     )

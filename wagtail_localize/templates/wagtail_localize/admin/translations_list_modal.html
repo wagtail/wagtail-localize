@@ -8,24 +8,38 @@
             <tr class="table-headers">
                 <th>{% trans "Language" %}</th>
                 <th>{% trans "Page" %}</th>
+                {% if has_translation_objects %}
+                    <th>{% trans "Translation status" %}</th>
+                {% endif %}
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            {% for translated_page in translations %}
+            {% for translation in translations %}
                 <tr>
-                    <td>{{ translated_page.locale.get_display_name }}</td>
-                    <td class="title">{{ translated_page.get_admin_display_title }}</td>
+                    <td>{{ translation.instance.locale.get_display_name }}</td>
+                    <td class="title">{{ translation.instance.get_admin_display_title }}</td>
+                    {% if has_translation_objects %}
+                        <td>
+                            {% if translation.translation %}
+                                <a href="{% url 'wagtail_localize_translation_management:detail' translation.translation.id %}" target="_blank">
+                                    {{ translation.translation.get_status_display }}
+                                </a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    {% endif %}
                     <td class="listing__item--active">
-                        {% if translated_page == page %}
-                            <b>Current page</b>
+                        {% if translation.instance == page %}
+                            <b>{% trans "Current page" %}</b>
                         {% else %}
                             <ul class="actions">
                                 <li>
-                                    <a href="{% url 'wagtailadmin_pages:edit' translated_page.id %}" class="button button-small button-secondary">{% trans "Edit" %}</a>
+                                    <a href="{% url 'wagtailadmin_pages:edit' translation.instance.id %}" class="button button-small button-secondary">{% trans "Edit" %}</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'wagtailadmin_pages:view_draft' translated_page.id %}" class="button button-small button-secondary" target="_blank" rel="noopener noreferrer">{% trans "View draft" %}</a>
+                                    <a href="{% url 'wagtailadmin_pages:view_draft' translation.instance.id %}" class="button button-small button-secondary" target="_blank" rel="noopener noreferrer">{% trans "View draft" %}</a>
                                 </li>
                             </ul>
                         {% endif %}

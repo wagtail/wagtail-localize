@@ -4,7 +4,18 @@ import uuid
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
-from django.db.models import Subquery, OuterRef
+from django.db.models import (
+    Case,
+    Count,
+    Exists,
+    IntegerField,
+    OuterRef,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
+from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.utils.text import slugify
 from modelcluster.models import (
@@ -218,7 +229,7 @@ class TranslationSource(models.Model):
                 StringSegment.from_value(self, self.locale, segment)
 
     @transaction.atomic
-    def create_or_update_translation(self, locale):
+    def create_or_update_translation(self, locale, user=None, publish=True, string_translation_fallback_to_source=False, copy_parent_pages=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -230,7 +241,11 @@ class TranslationSource(models.Model):
         try:
             translation = self.object.get_instance(locale)
         except models.ObjectDoesNotExist:
-            translation = original.copy_for_translation(locale)
+            if isinstance(original, Page):
+                translation = original.copy_for_translation(locale, copy_parents=copy_parent_pages)
+            else:
+                translation = original.copy_for_translation(locale)
+
             created = True
 
         # Copy synchronised fields
@@ -244,7 +259,7 @@ class TranslationSource(models.Model):
         string_segments = (
             StringSegment.objects.filter(source=self)
             .annotate_translation(locale)
-            .select_related("context")
+            .select_related("context", "string")
         )
 
         template_segments = (
@@ -262,12 +277,18 @@ class TranslationSource(models.Model):
         segments = []
 
         for string_segment in string_segments:
-            if not string_segment.translation:
+            if string_segment.translation:
+                string = StringValue(string_segment.translation)
+
+            elif string_translation_fallback_to_source:
+                string = string_segment.string.as_value()
+
+            else:
                 raise MissingTranslationError(string_segment, locale)
 
             segment_value = StringSegmentValue(
                 string_segment.context.path,
-                StringValue(string_segment.translation),
+                string,
                 attrs=json.loads(string_segment.attrs)
             ).with_order(string_segment.order)
 
@@ -305,8 +326,10 @@ class TranslationSource(models.Model):
             translation.save()
 
             # Create a new revision
-            page_revision = translation.save_revision()
-            page_revision.publish()
+            page_revision = translation.save_revision(user=user)
+
+            if publish:
+                page_revision.publish()
         else:
             translation.save()
             page_revision = None
@@ -317,6 +340,93 @@ class TranslationSource(models.Model):
         )
 
         return translation, created
+
+
+class Translation(models.Model):
+    """
+    Manages the translation of an object into a locale.
+
+    An instance of this model is created whenever something is submitted for translation
+    into a new language. They live until either the source or destination has been deleted.
+
+    Only one of these will exist for a given object/langauge. If the object is resubmitted
+    for translation, the existing Translation instance's 'source' field is updated.
+    """
+    # A unique ID that can be used to reference this request in external systems
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="translations"
+    )
+    target_locale = models.ForeignKey(
+        "wagtail_localize.Locale",
+        on_delete=models.CASCADE,
+        related_name="translations",
+    )
+
+    # Note: The source may be changed if the object is resubmitted for translation into the same locale
+    source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, related_name="translations"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = [
+            ('object', 'target_locale'),
+        ]
+
+    def get_progress(self):
+        """
+        Returns the current progress of translating this Translation.
+
+        Returns two integers:
+        - The total number of segments in the source that need to be translated
+        - The number of segments that have been translated into the locale
+        """
+        # Get QuerySet of Segments that need to be translated
+        required_segments = StringSegment.objects.filter(source_id=self.source_id)
+
+        # Annotate each Segment with a flag that indicates whether the segment is translated
+        # into the locale
+        required_segments = required_segments.annotate(
+            is_translated=Exists(
+                StringTranslation.objects.filter(
+                    translation_of_id=OuterRef("string_id"),
+                    context_id=OuterRef("context_id"),
+                    locale_id=self.target_locale_id,
+                )
+            )
+        )
+
+        # Count the total number of segments and the number of translated segments
+        aggs = required_segments.annotate(
+            is_translated_i=Case(
+                When(is_translated=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+        ).aggregate(total_segments=Count("pk"), translated_segments=Sum("is_translated_i"))
+
+        return aggs["total_segments"], aggs["translated_segments"]
+
+    def get_status_display(self):
+        """
+        Returns a string to describe the current status of this translation to a user.
+        """
+        total_segments, translated_segments = self.get_progress()
+        if total_segments == translated_segments:
+            return _("Up to date")
+        else:
+            # TODO show actual number of strings required?
+            return _("Waiting for translations")
+
+    def update(self, user=None):
+        try:
+            self.source.create_or_update_translation(self.target_locale, user=user, string_translation_fallback_to_source=True, copy_parent_pages=True)
+        except MissingRelatedObjectError:
+            # TODO: Create missing objects?
+            pass
 
 
 class TranslationLog(models.Model):
@@ -567,10 +677,29 @@ class TemplateSegment(BaseSegment):
         return segment
 
 
+class RelatedObjectSegmentQuerySet(models.QuerySet):
+    def annotate_translation_id(self, locale):
+        """
+        Adds a 'translation_id' field to the segments containing the
+        text content of the Translation of the related object
+        in the specified locale
+        """
+        return self.annotate(
+            translation_id=Subquery(
+                Translation.objects.filter(
+                    source__object_id=OuterRef("object_id"),
+                    target_locale_id=pk(locale),
+                ).values("id")
+            )
+        )
+
+
 class RelatedObjectSegment(BaseSegment):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="references"
     )
+
+    objects = RelatedObjectSegmentQuerySet.as_manager()
 
     @classmethod
     def from_value(cls, source, value):

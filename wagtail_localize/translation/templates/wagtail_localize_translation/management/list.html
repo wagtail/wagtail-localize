@@ -1,0 +1,47 @@
+{% extends "wagtailadmin/generic/index.html" %}
+{% load i18n %}
+
+{% block listing %}
+    <div class="nice-padding">
+        <div id="sites-list">
+            <table class="listing">
+                <thead>
+                    <tr>
+                        <th class="name">{% trans "Name" %}</th>
+                        <th class="name">{% trans "Content Type" %}</th>
+                        <th class="name">{% trans "Source locale" %}</th>
+                        <th class="name">{% trans "Target locale" %}</th>
+                        <th class="name">{% trans "Progress" %}</th>
+                        <th class="name">{% trans "Status" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for translation in translations %}
+                        {% with translation.get_progress as progress %}
+                            <tr>
+                                <td class="hostname title">
+                                    <b><a href="{% url 'wagtail_localize_translation_management:detail' translation.id %}">{{ translation.source.object_repr }}</a></b>
+                                </td>
+                                <td>
+                                    {{ translation.object.content_type.name|title }}
+                                </td>
+                                <td>
+                                    {{ translation.source.locale }}
+                                </td>
+                                <td>
+                                    {{ translation.target_locale }}
+                                </td>
+                                <td>
+                                    {{ progress.1 }} out of {{ progress.0 }} strings translated
+                                </td>
+                                <td>
+                                    {{ translation.get_status_display }}
+                                </td>
+                            </tr>
+                        {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
