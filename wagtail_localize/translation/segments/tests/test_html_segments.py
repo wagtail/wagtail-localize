@@ -133,6 +133,18 @@ class TestExtractHTMLElements(TestCase):
         self.assertEqual(text, "foo & bar")
         self.assertEqual(elements, [(0, 3, "b", {}), (3, 9, "i", {})])
 
+    def test_br_tags_converted_to_newlines(self):
+        text, elements = extract_html_elements("foo<br>bar<br>baz")
+
+        self.assertEqual(text, "foo\nbar\nbaz")
+        self.assertEqual(elements, [])
+
+
+        text, elements = extract_html_elements("<br/><b>foo</b><br/><i>bar</i><br/>")
+
+        self.assertEqual(text, "\nfoo\nbar\n")
+        self.assertEqual(elements, [(1, 4, "b", {}), (5, 8, "i", {})])
+
 
 class TestRestoreHTMLSegments(TestCase):
     def test_restore_segments(self):
@@ -207,6 +219,13 @@ class TestRestoreHTMLElements(TestCase):
         html = restore_html_elements("foo & bar", [(0, 3, "b", {}), (3, 9, "i", {})])
 
         self.assertEqual(html, "<b>foo</b><i> &amp; bar</i>")
+
+    def test_newlines_converted_to_br_tags(self):
+        html = restore_html_elements("foo\nbar\nbaz", [])
+        self.assertEqual(html, "foo<br/>bar<br/>baz")
+
+        html = restore_html_elements("\nfoo\nbar\n", [(1, 4, "b", {}), (5, 8, "i", {})])
+        self.assertEqual(html, "<br/><b>foo</b><br/><i>bar</i><br/>")
 
 
 class TestHTMLSegmentValue(TestCase):

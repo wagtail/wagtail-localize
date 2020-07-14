@@ -234,9 +234,9 @@ def extract_html_elements(html):
 
     For example:
 
-    text, elements = extract_html_elements("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
+    text, elements = extract_html_elements("This is a paragraph.<br/><b>This is some bold <i>and now italic</i></b> text")
 
-    text == "This is a paragraph. This is some bold and now italic text"
+    text == "This is a paragraph.\nThis is some bold and now italic text"
     elements == [(39, 53, 'i', {}), (21, 53, 'b', {})]
     """
     soup = BeautifulSoup(html, "html.parser")
@@ -250,6 +250,10 @@ def extract_html_elements(html):
             if isinstance(element, NavigableString):
                 texts.append(element)
                 cursor["current"] += len(element)
+
+            elif element.name == 'br':
+                texts.append('\n')
+                cursor["current"] += 1
 
             else:
                 start = cursor["current"]
@@ -272,13 +276,29 @@ def restore_html_elements(text, elements):
     cursor = 0
     current_element = soup
 
+    def append_text(text):
+        # Replace newlines with <br> tags
+        elements = []
+        for line in text.split('\n'):
+            if line:
+                elements.append(line)
+            elements.append(soup.new_tag('br'))
+
+        # Remove last element which is an extra br tag
+        elements.pop()
+
+        # We can replace this with .extend() when we remove Wagtil 2.8 support
+        # Unfortunately, it's pinned beautiful soup to an old version
+        for element in elements:
+            current_element.append(element)
+
     # Sort elements by start position
     elements.sort(key=lambda element: element[0])
 
     for i, element in enumerate(elements):
         if cursor < element[0]:
             # Output text and advance cursor
-            current_element.append(text[cursor:element[0]])
+            append_text(text[cursor:element[0]])
             cursor = element[0]
 
         stack.append((element[1], current_element))
@@ -298,12 +318,12 @@ def restore_html_elements(text, elements):
 
             if cursor < element_end:
                 # Output text and advance cursor
-                current_element.append(text[cursor:element_end])
+                append_text(text[cursor:element_end])
                 cursor = element_end
 
             current_element = previous_element
 
     if cursor < len(text):
-        current_element.append(text[cursor:])
+        append_text(text[cursor:])
 
     return str(soup)
