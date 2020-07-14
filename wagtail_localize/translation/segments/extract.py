@@ -12,7 +12,7 @@ from wagtail_localize.translation.segments import (
     RelatedObjectValue,
 )
 
-from .html import extract_html_segments
+from .html import extract_html_snippets
 
 
 class StreamFieldSegmentExtractor:
@@ -27,10 +27,10 @@ class StreamFieldSegmentExtractor:
             return [SegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            template, texts = extract_html_segments(block_value.source)
+            template, snippets = extract_html_snippets(block_value.source)
 
-            return [TemplateValue("", "html", template, len(texts))] + [
-                SegmentValue.from_html("", text) for text in texts
+            return [TemplateValue("", "html", template, len(snippets))] + [
+                SegmentValue("", snippet) for snippet in snippets
             ]
 
         elif isinstance(block_type, blocks.ChooserBlock):
@@ -112,10 +112,10 @@ def extract_segments(instance):
             )
 
         elif isinstance(field, RichTextField):
-            template, texts = extract_html_segments(field.value_from_object(instance))
+            template, snippets = extract_html_snippets(field.value_from_object(instance))
 
-            field_segments = [TemplateValue("", "html", template, len(texts))] + [
-                SegmentValue.from_html("", text) for text in texts
+            field_segments = [TemplateValue("", "html", template, len(snippets))] + [
+                SegmentValue("", snippet) for snippet in snippets
             ]
 
             segments.extend(segment.wrap(field.name) for segment in field_segments)

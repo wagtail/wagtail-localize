@@ -18,6 +18,7 @@ from wagtail_localize.translation.segments import (
     RelatedObjectValue,
 )
 from wagtail_localize.translation.segments.extract import extract_segments
+from wagtail_localize.translation.segments.html import HTMLSnippet
 
 
 def make_test_page(**kwargs):
@@ -35,18 +36,16 @@ RICH_TEXT_TEST_OUTPUT = [
         '<h1><text position="0"></text></h1><p><text position="1"></text></p><ul><li><text position="2"></text></li></ul>',
         3,
     ),
-    SegmentValue("", "This is a heading", html_elements=[]),
+    SegmentValue("", "This is a heading"),
     SegmentValue(
         "",
-        "This is a paragraph. <foo> Bold text",
-        html_elements=[SegmentValue.HTMLElement(27, 36, "b1", ("b", {}))],
+        HTMLSnippet("This is a paragraph. <foo> Bold text", entities=[HTMLSnippet.Entity(27, 36, "b1", ("b", {}))]),
     ),
     SegmentValue(
         "",
-        "This is a link.",
-        html_elements=[
-            SegmentValue.HTMLElement(0, 14, "a1", ("a", {"href": "http://example.com"}))
-        ],
+        HTMLSnippet("This is a link.", entities=[
+            HTMLSnippet.Entity(0, 14, "a1", ("a", {"href": "http://example.com"}))
+        ]),
     ),
 ]
 

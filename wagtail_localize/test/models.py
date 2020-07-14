@@ -41,7 +41,7 @@ class CustomStructBlock(blocks.StructBlock):
     def restore_translated_segments(self, value, segments):
         for segment in segments:
             if segment.path == "foo":
-                field_a, field_b = segment.text.split("/")
+                field_a, field_b = segment.translation.text.split("/")
                 value["field_a"] = field_a.strip()
                 value["field_b"] = field_b.strip()
 

@@ -1,41 +1,43 @@
 from unittest import TestCase
 
 from wagtail_localize.translation.segments import SegmentValue
+from wagtail_localize.translation.segments.html import HTMLSnippet
 
 
 class TestSegmentValue(TestCase):
     def test_segment_value(self):
-        segment = SegmentValue.from_html(
+        segment = SegmentValue(
             "foo.bar",
-            'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://example.com">A link and some more <b>Bold text</b></a>',
+            HTMLSnippet.from_html('This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://example.com">A link and some more <b>Bold text</b></a>'),
+            HTMLSnippet.from_html('Ceci est du texte. &lt;foo&gt; <b>Texte en gras</b> <a href="http://example.com">Un lien et du <b>texte en gras</b></a>'),
         )
 
         self.assertEqual(segment.path, "foo.bar")
         self.assertEqual(segment.order, 0)
         self.assertEqual(
-            segment.text,
+            segment.source.text,
             "This is some text. <foo> Bold text A link and some more Bold text",
         )
         self.assertEqual(
-            segment.html_elements,
+            segment.source.entities,
             [
-                SegmentValue.HTMLElement(25, 34, "b1", ("b", {})),
-                SegmentValue.HTMLElement(56, 65, "b2", ("b", {})),
-                SegmentValue.HTMLElement(
+                HTMLSnippet.Entity(25, 34, "b1", ("b", {})),
+                HTMLSnippet.Entity(56, 65, "b2", ("b", {})),
+                HTMLSnippet.Entity(
                     35, 65, "a1", ("a", {"href": "http://example.com"})
                 ),
             ],
         )
         self.assertEqual(
-            segment.html,
+            segment.source.html,
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://example.com">A link and some more <b>Bold text</b></a>',
         )
         self.assertEqual(
-            segment.html_with_ids,
+            segment.source.html_with_ids,
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a id="a1">A link and some more <b>Bold text</b></a>',
         )
         self.assertEqual(
-            segment.get_html_attrs(), {"a#a1": {"href": "http://example.com"}}
+            segment.source.get_html_attrs(), {"a#a1": {"href": "http://example.com"}}
         )
 
         # .with_order()
@@ -43,20 +45,16 @@ class TestSegmentValue(TestCase):
         self.assertEqual(segment.order, 0)
         self.assertEqual(orderred.order, 123)
         self.assertEqual(orderred.path, "foo.bar")
-        self.assertEqual(orderred.text, segment.text)
-        self.assertEqual(orderred.html_elements, segment.html_elements)
-        self.assertEqual(orderred.html, segment.html)
-        self.assertEqual(orderred.html_with_ids, segment.html_with_ids)
+        self.assertEqual(orderred.source, segment.source)
+        self.assertEqual(orderred.translation, segment.translation)
 
         # .wrap()
         wrapped = segment.wrap("baz")
         self.assertEqual(segment.path, "foo.bar")
         self.assertEqual(wrapped.path, "baz.foo.bar")
         self.assertEqual(wrapped.order, segment.order)
-        self.assertEqual(wrapped.text, segment.text)
-        self.assertEqual(wrapped.html_elements, segment.html_elements)
-        self.assertEqual(wrapped.html, segment.html)
-        self.assertEqual(wrapped.html_with_ids, segment.html_with_ids)
+        self.assertEqual(wrapped.source, segment.source)
+        self.assertEqual(wrapped.translation, segment.translation)
 
         # .unwrap()
         path_component, unwrapped = segment.unwrap()
@@ -64,20 +62,5 @@ class TestSegmentValue(TestCase):
         self.assertEqual(path_component, "foo")
         self.assertEqual(unwrapped.path, "bar")
         self.assertEqual(unwrapped.order, segment.order)
-        self.assertEqual(unwrapped.text, segment.text)
-        self.assertEqual(unwrapped.html_elements, segment.html_elements)
-        self.assertEqual(unwrapped.html, segment.html)
-        self.assertEqual(unwrapped.html_with_ids, segment.html_with_ids)
-
-    def test_replace_html_attrs(self):
-        segment = SegmentValue.from_html(
-            "foo.bar",
-            'This is some text. &lt;foo&gt; <b>Bold text</b> <a id="a1">A link and some more <b>Bold text</b></a>',
-        )
-
-        segment.replace_html_attrs({"a#a1": {"href": "http://changed-example.com"}})
-
-        self.assertEqual(
-            segment.html,
-            'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://changed-example.com">A link and some more <b>Bold text</b></a>',
-        )
+        self.assertEqual(unwrapped.source, segment.source)
+        self.assertEqual(unwrapped.translation, segment.translation)

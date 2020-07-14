@@ -16,6 +16,7 @@ from wagtail.core.models import Page
 
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
+from .segments.html import HTMLSnippet
 from .segments.ingest import ingest_segments
 
 
@@ -235,11 +236,15 @@ class TranslationSource(models.Model):
             if not location.translation:
                 raise MissingTranslationError(location, locale)
 
-            segment = SegmentValue.from_html(
-                location.context.path, location.translation
-            ).with_order(location.order)
+            segment = SegmentValue(
+                location.context.path,
+                HTMLSnippet.from_html(location.segment.text),
+                HTMLSnippet.from_html(location.translation)
+            ) .with_order(location.order)
+
             if location.html_attrs:
-                segment.replace_html_attrs(json.loads(location.html_attrs))
+                segment.source.replace_html_attrs(json.loads(location.html_attrs))
+                segment.translation.replace_html_attrs(json.loads(location.html_attrs))
 
             segments.append(segment)
 
@@ -496,7 +501,8 @@ class SegmentLocation(BaseLocation):
 
     @classmethod
     def from_segment_value(cls, source, language, segment_value):
-        segment = Segment.from_text(language, segment_value.html_with_ids)
+        # TODO: What if the segment_value has a translation?
+        segment = Segment.from_text(language, segment_value.source.html_with_ids)
         context, context_created = TranslationContext.objects.get_or_create(
             object_id=source.object_id, path=segment_value.path,
         )
@@ -506,7 +512,7 @@ class SegmentLocation(BaseLocation):
             context=context,
             order=segment_value.order,
             segment=segment,
-            html_attrs=json.dumps(segment_value.get_html_attrs()),
+            html_attrs=json.dumps(segment_value.source.get_html_attrs()),
         )
 
         return segment_loc
