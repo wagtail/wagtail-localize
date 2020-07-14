@@ -13,29 +13,15 @@ class TestSegmentValue(TestCase):
         self.assertEqual(segment.path, "foo.bar")
         self.assertEqual(segment.order, 0)
         self.assertEqual(
-            segment.text,
+            segment.attrs, {"a1": {"href": "http://example.com"}}
+        )
+        self.assertEqual(
+            segment.render_text(),
             "This is some text. <foo> Bold text A link and some more Bold text",
         )
         self.assertEqual(
-            segment.html_elements,
-            [
-                SegmentValue.HTMLElement(25, 34, "b1", ("b", {})),
-                SegmentValue.HTMLElement(56, 65, "b2", ("b", {})),
-                SegmentValue.HTMLElement(
-                    35, 65, "a1", ("a", {"href": "http://example.com"})
-                ),
-            ],
-        )
-        self.assertEqual(
-            segment.html,
+            segment.render_html(),
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://example.com">A link and some more <b>Bold text</b></a>',
-        )
-        self.assertEqual(
-            segment.html_with_ids,
-            'This is some text. &lt;foo&gt; <b>Bold text</b> <a id="a1">A link and some more <b>Bold text</b></a>',
-        )
-        self.assertEqual(
-            segment.get_html_attrs(), {"a#a1": {"href": "http://example.com"}}
         )
 
         # .with_order()
@@ -43,20 +29,16 @@ class TestSegmentValue(TestCase):
         self.assertEqual(segment.order, 0)
         self.assertEqual(orderred.order, 123)
         self.assertEqual(orderred.path, "foo.bar")
-        self.assertEqual(orderred.text, segment.text)
-        self.assertEqual(orderred.html_elements, segment.html_elements)
-        self.assertEqual(orderred.html, segment.html)
-        self.assertEqual(orderred.html_with_ids, segment.html_with_ids)
+        self.assertEqual(orderred.string, segment.string)
+        self.assertEqual(orderred.attrs, segment.attrs)
 
         # .wrap()
         wrapped = segment.wrap("baz")
         self.assertEqual(segment.path, "foo.bar")
         self.assertEqual(wrapped.path, "baz.foo.bar")
         self.assertEqual(wrapped.order, segment.order)
-        self.assertEqual(wrapped.text, segment.text)
-        self.assertEqual(wrapped.html_elements, segment.html_elements)
-        self.assertEqual(wrapped.html, segment.html)
-        self.assertEqual(wrapped.html_with_ids, segment.html_with_ids)
+        self.assertEqual(wrapped.string, segment.string)
+        self.assertEqual(wrapped.attrs, segment.attrs)
 
         # .unwrap()
         path_component, unwrapped = segment.unwrap()
@@ -64,10 +46,8 @@ class TestSegmentValue(TestCase):
         self.assertEqual(path_component, "foo")
         self.assertEqual(unwrapped.path, "bar")
         self.assertEqual(unwrapped.order, segment.order)
-        self.assertEqual(unwrapped.text, segment.text)
-        self.assertEqual(unwrapped.html_elements, segment.html_elements)
-        self.assertEqual(unwrapped.html, segment.html)
-        self.assertEqual(unwrapped.html_with_ids, segment.html_with_ids)
+        self.assertEqual(unwrapped.string, segment.string)
+        self.assertEqual(unwrapped.attrs, segment.attrs)
 
     def test_replace_html_attrs(self):
         segment = SegmentValue.from_html(
@@ -75,9 +55,9 @@ class TestSegmentValue(TestCase):
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a id="a1">A link and some more <b>Bold text</b></a>',
         )
 
-        segment.replace_html_attrs({"a#a1": {"href": "http://changed-example.com"}})
+        segment.attrs = {"a1": {"href": "http://changed-example.com"}}
 
         self.assertEqual(
-            segment.html,
+            segment.render_html(),
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://changed-example.com">A link and some more <b>Bold text</b></a>',
         )

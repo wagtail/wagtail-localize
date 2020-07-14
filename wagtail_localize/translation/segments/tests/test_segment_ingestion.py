@@ -13,6 +13,7 @@ from wagtail_localize.translation.segments import (
     TemplateValue,
     RelatedObjectValue,
 )
+from wagtail_localize.translation.segments.html import String
 from wagtail_localize.translation.segments.ingest import ingest_segments
 
 
@@ -32,19 +33,18 @@ RICH_TEXT_TEST_FRENCH_SEGMENTS = [
         3,
         order=9,
     ),
-    SegmentValue("", "Ceci est une rubrique", html_elements=[], order=10),
-    SegmentValue(
+    SegmentValue("", "Ceci est une rubrique", order=10),
+    SegmentValue.from_html(
         "",
-        "Ceci est un paragraphe. <foo> Texte en gras",
-        html_elements=[SegmentValue.HTMLElement(30, 43, "b1", ("b", {}))],
+        'Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b>',
         order=11,
     ),
     SegmentValue(
         "",
-        "Ceci est un lien",
-        html_elements=[
-            SegmentValue.HTMLElement(0, 16, "a1", ("a", {"href": "http://example.com"}))
-        ],
+        String('<a id="a1">Ceci est un lien</a>'),
+        attrs={
+            "a1": {"href": "http://example.com"}
+        },
         order=12,
     ),
 ]
@@ -246,7 +246,7 @@ def make_test_page_with_streamfield_block(block_id, block_type, block_value, **k
     )
 
 
-class TestSegmentExtractionWithStreamField(TestCase):
+class TestSegmentIngestionWithStreamField(TestCase):
     def setUp(self):
         self.src_locale = Locale.objects.default()
         self.locale = Locale.objects.create(language_code="fr")
