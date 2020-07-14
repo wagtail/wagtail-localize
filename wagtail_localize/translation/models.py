@@ -16,6 +16,7 @@ from wagtail.core.models import Page
 
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
+from .segments.html import String
 from .segments.ingest import ingest_segments
 
 
@@ -264,11 +265,11 @@ class TranslationSource(models.Model):
             if not location.translation:
                 raise MissingTranslationError(location, locale)
 
-            segment = SegmentValue.from_html(
-                location.context.path, location.translation
+            segment = SegmentValue(
+                location.context.path, String(location.translation)
             ).with_order(location.order)
             if location.html_attrs:
-                segment.replace_html_attrs(json.loads(location.html_attrs))
+                segment.attrs = json.loads(location.html_attrs)
 
             segments.append(segment)
 
@@ -360,14 +361,17 @@ class Segment(models.Model):
         return uuid.uuid5(cls.UUID_NAMESPACE, text)
 
     @classmethod
-    def from_text(cls, locale, text):
+    def from_string(cls, locale, string):
         segment, created = cls.objects.get_or_create(
             locale_id=pk(locale),
-            text_id=cls.get_text_id(text),
-            defaults={"text": text},
+            text_id=cls.get_text_id(string.data),
+            defaults={"text": string.data},
         )
 
         return segment
+
+    def as_string(self, attrs):
+        return String(self.text, attrs)
 
     def save(self, *args, **kwargs):
         if self.text and self.text_id is None:
@@ -525,7 +529,7 @@ class SegmentLocation(BaseLocation):
 
     @classmethod
     def from_segment_value(cls, source, language, segment_value):
-        segment = Segment.from_text(language, segment_value.html_with_ids)
+        segment = Segment.from_string(language, segment_value.string)
         context, context_created = TranslationContext.objects.get_or_create(
             object_id=source.object_id, path=segment_value.path,
         )
@@ -535,7 +539,7 @@ class SegmentLocation(BaseLocation):
             context=context,
             order=segment_value.order,
             segment=segment,
-            html_attrs=json.dumps(segment_value.get_html_attrs()),
+            html_attrs=json.dumps(segment_value.attrs),
         )
 
         return segment_loc

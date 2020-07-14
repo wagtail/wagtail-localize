@@ -1,3 +1,7 @@
+from collections import Counter
+
+from django.utils.html import escape
+
 from bs4 import BeautifulSoup, NavigableString
 
 
@@ -28,9 +32,114 @@ def rstrip_keep(text):
     return new_text, suffix
 
 
-def extract_html_segments(html):
+class String:
     """
-    This function extracts translatable segments from an HTML fragment.
+    A fragment of HTML that only contains inline tags with all attributes stripped out.
+    """
+    def __init__(self, data):
+        self.data = data
+
+    @classmethod
+    def from_plaintext(cls, text):
+        # Escapes all HTML characters and replaces newlines with <br> tags
+        elements = []
+
+        for line in text.split('\n'):
+            if line:
+                elements.append(escape(line))
+
+            elements.append('<br>')
+
+        # Remove last element which is an extra br tag
+        elements.pop()
+
+        return cls(''.join(elements))
+
+    @classmethod
+    def from_html(cls, html):
+        # Extracts attributes from any tags (eg, href from <a> tags) and stores a version
+        # with just the translatable HTML
+        soup = BeautifulSoup(html, "html.parser")
+        attrs = {}
+        counter = Counter()
+
+        def walk(soup):
+            for element in soup.children:
+                if isinstance(element, NavigableString):
+                    pass
+
+                else:
+                    # Extract HTML attributes replacing them with an ID
+                    if element.attrs:
+                        counter[element.name] += 1
+                        element_id = element.name + str(counter[element.name])
+                        attrs[element_id] = element.attrs
+                        element.attrs = {
+                            'id': element_id
+                        }
+
+                    # Traverse into element children
+                    walk(element)
+
+        walk(soup)
+
+        return cls(str(soup)), attrs
+
+    def render_text(self):
+        soup = BeautifulSoup(self.data, "html.parser")
+        texts = []
+
+        def walk(soup):
+            for element in soup.children:
+                if isinstance(element, NavigableString):
+                    texts.append(element)
+
+                elif element.name == 'br':
+                    texts.append('\n')
+
+                else:
+                    walk(element)
+
+        walk(soup)
+
+        return "".join(texts)
+
+    def render_soup(self, attrs):
+        soup = BeautifulSoup(self.data, "html.parser")
+
+        def walk(soup):
+            for element in soup.children:
+                if isinstance(element, NavigableString):
+                    pass
+
+                else:
+                    # Restore HTML attributes
+                    if 'id' in element.attrs:
+                        element.attrs = attrs[element.attrs['id']]
+
+                    # Traverse into element children
+                    walk(element)
+
+        walk(soup)
+
+        return soup
+
+    def render_html(self, attrs):
+        return str(self.render_soup(attrs))
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, String)
+            and other.data == self.data
+        )
+
+    def __repr__(self):
+        return "<html.String '{}'>".format(self.data)
+
+
+def extract_strings(html):
+    """
+    This function extracts translatable strings from an HTML fragment.
 
     Inline elements and visible text are extracted together.
 
@@ -193,8 +302,8 @@ def extract_html_segments(html):
 
     walk(soup)
 
-    # Now extract segments from the <text> tags
-    segments = []
+    # Now extract strings from the <text> tags
+    strings = []
     for element in soup.descendants:
         if element.name == "text":
             text = element.attrs.pop("value")
@@ -205,8 +314,8 @@ def extract_html_segments(html):
             text, prefix = lstrip_keep(text)
             text, suffix = rstrip_keep(text)
 
-            element.attrs["position"] = len(segments)
-            segments.append(text.strip())
+            element.attrs["position"] = len(strings)
+            strings.append(String.from_html(text))
 
             if prefix:
                 element.insert_before(prefix)
@@ -214,96 +323,14 @@ def extract_html_segments(html):
             if suffix:
                 element.insert_after(suffix)
 
-    return str(soup), segments
+    return str(soup), strings
 
 
-def restore_html_segments(template, segments):
+def restore_strings(template, strings):
     soup = BeautifulSoup(template, "html.parser")
 
     for text_element in soup.findAll("text"):
-        value = segments[int(text_element.get("position"))]
-        text_element.replaceWith(BeautifulSoup(value.strip(), "html.parser"))
-
-    return str(soup)
-
-
-def extract_html_elements(html):
-    """
-    Extracts HTML elements from a fragment. Returns the plain text representation
-    of the HTML document and an array of elements including their span, type and attributes.
-
-    For example:
-
-    text, elements = extract_html_elements("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
-
-    text == "This is a paragraph. This is some bold and now italic text"
-    elements == [(39, 53, 'i', {}), (21, 53, 'b', {})]
-    """
-    soup = BeautifulSoup(html, "html.parser")
-
-    texts = []
-    cursor = {"current": 0}
-    elements = []
-
-    def walk(soup):
-        for element in soup.children:
-            if isinstance(element, NavigableString):
-                texts.append(element)
-                cursor["current"] += len(element)
-
-            else:
-                start = cursor["current"]
-                walk(element)
-                end = cursor["current"]
-
-                elements.append((start, end, element.name, element.attrs.copy()))
-
-    walk(soup)
-
-    return "".join(texts), elements
-
-
-def restore_html_elements(text, elements):
-    """
-    Inserts elements into a plain text string returning a HTML document.
-    """
-    soup = BeautifulSoup("", "html.parser")
-    stack = []
-    cursor = 0
-    current_element = soup
-
-    # Sort elements by start position
-    elements.sort(key=lambda element: element[0])
-
-    for i, element in enumerate(elements):
-        if cursor < element[0]:
-            # Output text and advance cursor
-            current_element.append(text[cursor:element[0]])
-            cursor = element[0]
-
-        stack.append((element[1], current_element))
-        new_element = soup.new_tag(element[2], **element[3])
-        current_element.append(new_element)
-        current_element = new_element
-
-        # Close existing elements before going to the next element
-        while stack:
-            if i < len(elements) - 1:
-                if stack[len(stack) - 1][0] > elements[i + 1][0]:
-                    # New element created before this one closes.
-                    # Go to next element
-                    break
-
-            element_end, previous_element = stack.pop()
-
-            if cursor < element_end:
-                # Output text and advance cursor
-                current_element.append(text[cursor:element_end])
-                cursor = element_end
-
-            current_element = previous_element
-
-    if cursor < len(text):
-        current_element.append(text[cursor:])
+        string, attrs = strings[int(text_element.get("position"))]
+        text_element.replaceWith(string.render_soup(attrs))
 
     return str(soup)

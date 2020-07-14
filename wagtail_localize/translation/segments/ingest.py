@@ -6,7 +6,7 @@ from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
 
-from .html import restore_html_segments
+from .html import restore_strings
 
 
 def organise_template_segments(segments):
@@ -16,7 +16,7 @@ def organise_template_segments(segments):
     return (
         template.format,
         template.template,
-        [segment.html for segment in segments[1:]],
+        [(segment.string, segment.attrs) for segment in segments[1:]],
     )
 
 
@@ -37,12 +37,12 @@ class StreamFieldSegmentsWriter:
             return block_type.restore_translated_segments(block_value, segments)
 
         elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock)):
-            return segments[0].text
+            return segments[0].render_text()
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            format, template, segments = organise_template_segments(segments)
+            format, template, strings = organise_template_segments(segments)
             assert format == "html"
-            return RichText(restore_html_segments(template, segments))
+            return RichText(restore_strings(template, strings))
 
         elif isinstance(block_type, blocks.ChooserBlock):
             return self.handle_related_object_block(block_value, segments)
@@ -131,13 +131,13 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
             setattr(translated_obj, field_name, data)
 
         elif isinstance(field, RichTextField):
-            format, template, segments = organise_template_segments(field_segments)
+            format, template, strings = organise_template_segments(field_segments)
             assert format == "html"
-            html = restore_html_segments(template, segments)
+            html = restore_strings(template, strings)
             setattr(translated_obj, field_name, html)
 
         elif isinstance(field, (models.TextField, models.CharField)):
-            setattr(translated_obj, field_name, field_segments[0].text)
+            setattr(translated_obj, field_name, field_segments[0].render_text())
 
         elif isinstance(field, models.ForeignKey):
             related_original = getattr(original_obj, field_name)
