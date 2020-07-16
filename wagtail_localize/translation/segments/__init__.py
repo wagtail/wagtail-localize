@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 
-from .html import String
+from ..strings import String
 
 
 class BaseValue:

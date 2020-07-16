@@ -12,7 +12,7 @@ from wagtail_localize.translation.segments import (
     RelatedObjectValue,
 )
 
-from .html import extract_strings
+from ..strings import extract_strings
 
 
 class StreamFieldSegmentExtractor:
