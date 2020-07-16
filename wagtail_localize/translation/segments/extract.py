@@ -3,7 +3,6 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.rich_text import RichText
 from wagtail.embeds.blocks import EmbedBlock
 
 from wagtail_localize.models import TranslatableMixin

@@ -6,9 +6,6 @@ from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
 
-from wagtail_localize.models import TranslatableMixin
-from wagtail_localize.translation.segments import TemplateValue
-
 from .html import restore_html_segments
 
 

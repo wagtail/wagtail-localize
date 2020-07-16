@@ -11,7 +11,7 @@ def lstrip_keep(text):
     """
     text_length = len(text)
     new_text = text.lstrip()
-    prefix = text[0 : (text_length - len(new_text))]
+    prefix = text[0:(text_length - len(new_text))]
     return new_text, prefix
 
 
@@ -22,7 +22,7 @@ def rstrip_keep(text):
     text_length = len(text)
     new_text = text.rstrip()
     if text_length != len(new_text):
-        suffix = text[-(text_length - len(new_text)) :]
+        suffix = text[-(text_length - len(new_text)):]
     else:
         suffix = ""
     return new_text, suffix
@@ -278,7 +278,7 @@ def restore_html_elements(text, elements):
     for i, element in enumerate(elements):
         if cursor < element[0]:
             # Output text and advance cursor
-            current_element.append(text[cursor : element[0]])
+            current_element.append(text[cursor:element[0]])
             cursor = element[0]
 
         stack.append((element[1], current_element))

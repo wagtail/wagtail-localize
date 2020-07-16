@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"unique_together": {("language", "text_id")},},
+            options={"unique_together": {("language", "text_id")}},
         ),
         migrations.CreateModel(
             name="SegmentTranslationContext",
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"unique_together": {("content_type", "translation_key")},},
+            options={"unique_together": {("content_type", "translation_key")}},
         ),
         migrations.CreateModel(
             name="TranslatableRevision",
@@ -209,7 +209,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
         ),
         migrations.AddField(
             model_name="segmenttranslationcontext",
@@ -257,7 +257,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
         ),
         migrations.CreateModel(
             name="RelatedObjectLocation",
@@ -295,7 +295,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
         ),
         migrations.AlterUniqueTogether(
             name="segmenttranslationcontext", unique_together={("object", "path_id")},
@@ -341,6 +341,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"unique_together": {("language", "translation_of", "context")},},
+            options={"unique_together": {("language", "translation_of", "context")}},
         ),
     ]
