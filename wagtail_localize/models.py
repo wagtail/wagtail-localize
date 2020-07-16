@@ -3,19 +3,18 @@ import uuid
 
 from django.apps import apps
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.db import models, transaction
-from django.db.models import Exists, OuterRef, Q
-from django.db.models.signals import pre_save, post_save, m2m_changed
+from django.db.models import Q
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import translation
 from modelcluster.fields import ParentalKey
 from wagtail.core.models import Page
-from wagtail.core.signals import page_published
 from wagtail.images.models import AbstractImage
 
 from .compat import get_languages, get_supported_language_variant
-from .edit_handlers import filter_edit_handler_on_instance_bound
-from .fields import TranslatableField, SynchronizedField
+from .fields import TranslatableField
 from .utils import find_available_slug
 
 

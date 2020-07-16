@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from wagtail_localize.bootstrap import bootstrap_translatable_model
 from wagtail_localize.models import BootstrapTranslatableMixin, get_translatable_models

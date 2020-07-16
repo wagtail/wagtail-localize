@@ -13,7 +13,6 @@ from wagtail_localize.translation.segments import (
     TemplateValue,
     RelatedObjectValue,
 )
-from wagtail_localize.translation.segments.extract import extract_segments
 from wagtail_localize.translation.segments.ingest import ingest_segments
 
 

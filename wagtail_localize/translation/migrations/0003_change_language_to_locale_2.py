@@ -7,6 +7,7 @@ from django.db import migrations
 
 
 def migrate_to_locale(apps, schema_editor):
+    Locale = apps.get_model("wagtail_localize.Locale")
     Segment = apps.get_model("wagtail_localize_translation.Segment")
     SegmentTranslation = apps.get_model(
         "wagtail_localize_translation.SegmentTranslation"

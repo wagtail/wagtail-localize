@@ -3,14 +3,11 @@ from unittest.mock import Mock, patch
 from django.conf import settings
 from django.test import TestCase
 
-from wagtail.core.models import Page
-
 from wagtail_localize.models import Locale
 from wagtail_localize.test.models import (
     InheritedTestModel,
     TestChildObject,
     TestModel,
-    TestPage,
 )
 from wagtail_localize.tests.test_locale_model import make_test_page
 

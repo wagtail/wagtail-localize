@@ -338,7 +338,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         )
 
     def test_update(self):
-        translated = self.page.copy_for_translation(self.dest_locale)
+        self.page.copy_for_translation(self.dest_locale)
 
         new_page, created = self.source.create_or_update_translation(self.dest_locale)
 
