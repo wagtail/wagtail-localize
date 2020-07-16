@@ -1,0 +1,46 @@
+version: 2
+
+jobs:
+  backend:
+    docker:
+      - image: circleci/python:3.6.4
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pip-packages-v1-{{ .Branch }}
+            - pip-packages-v1-
+      - run: pipenv install flake8
+      - save_cache:
+          paths:
+            - ~/.local/
+          key: pip-package-v1-{{ .Branch }}
+      - run: pipenv run flake8 wagtail_localize
+      - run: pipenv install -e .[testing]
+      - run: pipenv run python testmanage.py test
+
+  nightly-wagtail-test:
+    docker:
+      - image: circleci/python:3.7.3
+    steps:
+      - checkout
+      - run: git clone git@github.com:wagtail/wagtail.git
+      - run: pipenv install -e .[testing] -e ./wagtail
+      - run: pipenv run python testmanage.py test
+
+workflows:
+    version: 2
+    test:
+      jobs:
+        - backend
+
+    nightly:
+      jobs:
+        - nightly-wagtail-test
+      triggers:
+        - schedule:
+            cron: "0 0 * * *"
+            filters:
+              branches:
+                only:
+                  - master
