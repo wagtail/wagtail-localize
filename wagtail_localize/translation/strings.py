@@ -136,6 +136,9 @@ class String:
     def __repr__(self):
         return "<html.String '{}'>".format(self.data)
 
+    def __hash__(self):
+        return hash(self.data)
+
 
 def extract_strings(html):
     """
