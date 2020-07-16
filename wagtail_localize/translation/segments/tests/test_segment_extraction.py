@@ -17,8 +17,8 @@ from wagtail_localize.translation.segments import (
     TemplateValue,
     RelatedObjectValue,
 )
-from wagtail_localize.translation.segments.html import String
 from wagtail_localize.translation.segments.extract import extract_segments
+from wagtail_localize.translation.strings import String
 
 
 def make_test_page(**kwargs):

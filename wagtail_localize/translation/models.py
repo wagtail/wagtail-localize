@@ -16,8 +16,8 @@ from wagtail.core.models import Page
 
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
-from .segments.html import String
 from .segments.ingest import ingest_segments
+from .strings import String
 
 
 def pk(obj):

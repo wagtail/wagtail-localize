@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from wagtail_localize.translation.segments.html import String, extract_strings, restore_strings
+from wagtail_localize.translation.strings import String, extract_strings, restore_strings
 
 
 class TestStringFromHTML(TestCase):
