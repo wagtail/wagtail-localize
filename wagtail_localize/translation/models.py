@@ -84,16 +84,16 @@ class SourceDeletedError(Exception):
 
 
 class MissingTranslationError(Exception):
-    def __init__(self, location, locale):
-        self.location = location
+    def __init__(self, segment, locale):
+        self.segment = segment
         self.locale = locale
 
         super().__init__()
 
 
 class MissingRelatedObjectError(Exception):
-    def __init__(self, location, locale):
-        self.location = location
+    def __init__(self, segment, locale):
+        self.segment = segment
         self.locale = locale
 
         super().__init__()
@@ -211,11 +211,11 @@ class TranslationSource(models.Model):
     def extract_segments(self):
         for segment in extract_segments(self.as_instance()):
             if isinstance(segment, TemplateValue):
-                TemplateLocation.from_template_value(self, segment)
+                TemplateSegment.from_template_value(self, segment)
             elif isinstance(segment, RelatedObjectValue):
-                RelatedObjectLocation.from_related_object_value(self, segment)
+                RelatedObjectSegment.from_related_object_value(self, segment)
             else:
-                StringLocation.from_value(self, self.locale, segment)
+                StringSegment.from_value(self, self.locale, segment)
 
     @transaction.atomic
     def create_or_update_translation(self, locale):
@@ -241,60 +241,60 @@ class TranslationSource(models.Model):
                 )
 
         # Fetch all translated segments
-        segment_locations = (
-            StringLocation.objects.filter(source=self)
+        string_segments = (
+            StringSegment.objects.filter(source=self)
             .annotate_translation(locale)
             .select_related("context")
         )
 
-        template_locations = (
-            TemplateLocation.objects.filter(source=self)
+        template_segments = (
+            TemplateSegment.objects.filter(source=self)
             .select_related("template")
             .select_related("context")
         )
 
-        related_object_locations = (
-            RelatedObjectLocation.objects.filter(source=self)
+        related_object_segments = (
+            RelatedObjectSegment.objects.filter(source=self)
             .select_related("object")
             .select_related("context")
         )
 
         segments = []
 
-        for location in segment_locations:
-            if not location.translation:
-                raise MissingTranslationError(location, locale)
+        for string_segment in string_segments:
+            if not string_segment.translation:
+                raise MissingTranslationError(string_segment, locale)
 
-            segment = StringSegmentValue(
-                location.context.path,
-                StringValue(location.translation),
-                attrs=json.loads(location.attrs)
-            ).with_order(location.order)
+            segment_value = StringSegmentValue(
+                string_segment.context.path,
+                StringValue(string_segment.translation),
+                attrs=json.loads(string_segment.attrs)
+            ).with_order(string_segment.order)
 
-            segments.append(segment)
+            segments.append(segment_value)
 
-        for location in template_locations:
-            template = location.template
-            segment = TemplateValue(
-                location.context.path,
+        for template_segment in template_segments:
+            template = template_segment.template
+            segment_value = TemplateValue(
+                template_segment.context.path,
                 template.template_format,
                 template.template,
                 template.string_count,
-                order=location.order,
+                order=template_segment.order,
             )
-            segments.append(segment)
+            segments.append(segment_value)
 
-        for location in related_object_locations:
-            if not location.object.has_translation(locale):
-                raise MissingRelatedObjectError(location, locale)
+        for related_object_segment in related_object_segments:
+            if not related_object_segment.object.has_translation(locale):
+                raise MissingRelatedObjectError(related_object_segment, locale)
 
-            segment = RelatedObjectValue(
-                location.context.path,
-                location.object.content_type,
-                location.object.translation_key,
-                order=location.order,
+            segment_value = RelatedObjectValue(
+                related_object_segment.context.path,
+                related_object_segment.object.content_type,
+                related_object_segment.object.translation_key,
+                order=related_object_segment.order,
             )
-            segments.append(segment)
+            segments.append(segment_value)
 
         # Ingest all translated segments
         ingest_segments(original, translation, self.locale, locale, segments)
@@ -476,7 +476,7 @@ class Template(models.Model):
         return template
 
 
-class BaseLocation(models.Model):
+class BaseSegment(models.Model):
     source = models.ForeignKey(TranslationSource, on_delete=models.CASCADE)
     context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
     order = models.PositiveIntegerField()
@@ -485,7 +485,7 @@ class BaseLocation(models.Model):
         abstract = True
 
 
-class StringLocationQuerySet(models.QuerySet):
+class StringSegmentQuerySet(models.QuerySet):
     def annotate_translation(self, locale):
         """
         Adds a 'translation' field to the segments containing the
@@ -503,9 +503,9 @@ class StringLocationQuerySet(models.QuerySet):
         )
 
 
-class StringLocation(BaseLocation):
+class StringSegment(BaseSegment):
     string = models.ForeignKey(
-        String, on_delete=models.CASCADE, related_name="locations"
+        String, on_delete=models.CASCADE, related_name="segments"
     )
 
     # When we extract the segment, we replace HTML attributes with id tags
@@ -525,7 +525,7 @@ class StringLocation(BaseLocation):
     #  }
     attrs = models.TextField(blank=True)
 
-    objects = StringLocationQuerySet.as_manager()
+    objects = StringSegmentQuerySet.as_manager()
 
     @classmethod
     def from_value(cls, source, language, value):
@@ -534,7 +534,7 @@ class StringLocation(BaseLocation):
             object_id=source.object_id, path=value.path,
         )
 
-        loc, created = cls.objects.get_or_create(
+        segment, created = cls.objects.get_or_create(
             source=source,
             context=context,
             order=value.order,
@@ -542,12 +542,12 @@ class StringLocation(BaseLocation):
             attrs=json.dumps(value.attrs),
         )
 
-        return loc
+        return segment
 
 
-class TemplateLocation(BaseLocation):
+class TemplateSegment(BaseSegment):
     template = models.ForeignKey(
-        Template, on_delete=models.CASCADE, related_name="locations"
+        Template, on_delete=models.CASCADE, related_name="segments"
     )
 
     @classmethod
@@ -557,17 +557,17 @@ class TemplateLocation(BaseLocation):
             object_id=source.object_id, path=template_value.path,
         )
 
-        template_loc, created = cls.objects.get_or_create(
+        segment, created = cls.objects.get_or_create(
             source=source,
             context=context,
             order=template_value.order,
             template=template,
         )
 
-        return template_loc
+        return segment
 
 
-class RelatedObjectLocation(BaseLocation):
+class RelatedObjectSegment(BaseSegment):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="references"
     )
@@ -578,7 +578,7 @@ class RelatedObjectLocation(BaseLocation):
             object_id=source.object_id, path=related_object_value.path,
         )
 
-        related_object_loc, created = cls.objects.get_or_create(
+        segment, created = cls.objects.get_or_create(
             source=source,
             context=context,
             order=related_object_value.order,
@@ -588,4 +588,4 @@ class RelatedObjectLocation(BaseLocation):
             )[0],
         )
 
-        return related_object_loc
+        return segment
