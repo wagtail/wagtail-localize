@@ -42,7 +42,7 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
                 <div class="row nice-padding">
                     <div class="left">
                         <div class="col header-title">
-                            <h1 class="icon icon-">Translations <span>Test page</span></h1>
+                            <h1""" + (' class="icon icon-"' if WAGTAIL_VERSION < (2, 10) else "") + """>Translations <span>Test page</span></h1>
                         </div>
                     </div>
                     <div class="right"></div>
