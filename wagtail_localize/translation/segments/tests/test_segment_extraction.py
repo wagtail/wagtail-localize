@@ -18,7 +18,7 @@ from wagtail_localize.translation.segments import (
     RelatedObjectValue,
 )
 from wagtail_localize.translation.segments.extract import extract_segments
-from wagtail_localize.translation.strings import String
+from wagtail_localize.translation.strings import StringValue
 
 
 def make_test_page(**kwargs):
@@ -43,7 +43,7 @@ RICH_TEXT_TEST_OUTPUT = [
     ),
     SegmentValue(
         "",
-        String('<a id="a1">This is a link</a>.'),
+        StringValue('<a id="a1">This is a link</a>.'),
         attrs={
             "a1": {"href": "http://example.com"}
         }

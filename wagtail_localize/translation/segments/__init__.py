@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 
-from ..strings import String
+from ..strings import StringValue
 
 
 class BaseValue:
@@ -62,7 +62,7 @@ class BaseValue:
 class SegmentValue(BaseValue):
     def __init__(self, path, string, attrs=None, **kwargs):
         if isinstance(string, str):
-            string = String.from_plaintext(string)
+            string = StringValue.from_plaintext(string)
 
         self.string = string
         self.attrs = attrs or None
@@ -76,7 +76,7 @@ class SegmentValue(BaseValue):
 
     @classmethod
     def from_html(cls, path, html, **kwargs):
-        string, attrs = String.from_html(html)
+        string, attrs = StringValue.from_html(html)
         return cls(path, string, attrs=attrs, **kwargs)
 
     def render_text(self):

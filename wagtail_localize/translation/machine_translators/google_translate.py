@@ -1,4 +1,4 @@
-from wagtail_localize.translation.strings import String
+from wagtail_localize.translation.strings import StringValue
 
 from .base import BaseMachineTranslator
 
@@ -26,7 +26,7 @@ class GoogleTranslateTranslator(BaseMachineTranslator):
         )
 
         return {
-            String.from_plaintext(translation.origin): String.from_plaintext(translation.text) for translation in google_translations
+            StringValue.from_plaintext(translation.origin): StringValue.from_plaintext(translation.text) for translation in google_translations
         }
 
     def can_translate(self, source_locale, target_locale):

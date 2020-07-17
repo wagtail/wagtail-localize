@@ -32,7 +32,7 @@ def rstrip_keep(text):
     return new_text, suffix
 
 
-class String:
+class StringValue:
     """
     A fragment of HTML that only contains inline tags with all attributes stripped out.
     """
@@ -129,12 +129,12 @@ class String:
 
     def __eq__(self, other):
         return (
-            isinstance(other, String)
+            isinstance(other, StringValue)
             and other.data == self.data
         )
 
     def __repr__(self):
-        return "<html.String '{}'>".format(self.data)
+        return "<StringValue '{}'>".format(self.data)
 
     def __hash__(self):
         return hash(self.data)
@@ -318,7 +318,7 @@ def extract_strings(html):
             text, suffix = rstrip_keep(text)
 
             element.attrs["position"] = len(strings)
-            strings.append(String.from_html(text))
+            strings.append(StringValue.from_html(text))
 
             if prefix:
                 element.insert_before(prefix)

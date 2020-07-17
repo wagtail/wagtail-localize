@@ -22,7 +22,7 @@ from wagtail_localize.translation.models import (
 )
 from wagtail_localize.translation.segments import TemplateValue, RelatedObjectValue
 from wagtail_localize.translation.segments.extract import extract_segments
-from wagtail_localize.translation.strings import String
+from wagtail_localize.translation.strings import StringValue
 
 
 def insert_segments(revision, locale, segments):
@@ -236,7 +236,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         # Add translation for test_charfield
         self.segment = Segment.from_string(
-            self.source_locale, String.from_plaintext("This is some test content")
+            self.source_locale, StringValue.from_plaintext("This is some test content")
         )
         self.translation = SegmentTranslation.objects.create(
             translation_of=self.segment,
