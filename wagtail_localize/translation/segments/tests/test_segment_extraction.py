@@ -13,7 +13,7 @@ from wagtail_localize.test.models import (
     TestNonParentalChildObject,
 )
 from wagtail_localize.translation.segments import (
-    SegmentValue,
+    StringSegmentValue,
     TemplateValue,
     RelatedObjectValue,
 )
@@ -36,12 +36,12 @@ RICH_TEXT_TEST_OUTPUT = [
         '<h1><text position="0"></text></h1><p><text position="1"></text></p><ul><li><text position="2"></text></li></ul>',
         3,
     ),
-    SegmentValue("", "This is a heading"),
-    SegmentValue.from_html(
+    StringSegmentValue("", "This is a heading"),
+    StringSegmentValue.from_html(
         "",
         'This is a paragraph. &lt;foo&gt; <b>Bold text</b>',
     ),
-    SegmentValue(
+    StringSegmentValue(
         "",
         StringValue('<a id="a1">This is a link</a>.'),
         attrs={
@@ -56,34 +56,34 @@ class TestSegmentExtraction(TestCase):
         page = make_test_page(test_charfield="Test content")
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [SegmentValue("test_charfield", "Test content")])
+        self.assertEqual(segments, [StringSegmentValue("test_charfield", "Test content")])
 
     def test_textfield(self):
         page = make_test_page(test_textfield="Test content")
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [SegmentValue("test_textfield", "Test content")])
+        self.assertEqual(segments, [StringSegmentValue("test_textfield", "Test content")])
 
     def test_emailfield(self):
         page = make_test_page(test_emailfield="test@example.com")
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [SegmentValue("test_emailfield", "test@example.com")]
+            segments, [StringSegmentValue("test_emailfield", "test@example.com")]
         )
 
     def test_slugfield(self):
         page = make_test_page(test_slugfield="test-content")
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [SegmentValue("test_slugfield", "test-content")])
+        self.assertEqual(segments, [StringSegmentValue("test_slugfield", "test-content")])
 
     def test_urlfield(self):
         page = make_test_page(test_urlfield="http://test-content.com/foo")
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [SegmentValue("test_urlfield", "http://test-content.com/foo")]
+            segments, [StringSegmentValue("test_urlfield", "http://test-content.com/foo")]
         )
 
     def test_richtextfield(self):
@@ -116,7 +116,7 @@ class TestSegmentExtraction(TestCase):
         self.assertEqual(
             segments,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_childobjects.{child_translation_key}.field", "Test content"
                 )
             ],
@@ -139,7 +139,7 @@ class TestSegmentExtraction(TestCase):
 
         self.assertEqual(
             segments,
-            [SegmentValue("test_customfield.foo", "Test content and some extra")],
+            [StringSegmentValue("test_customfield.foo", "Test content and some extra")],
         )
 
 
@@ -164,7 +164,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [SegmentValue(f"test_streamfield.{block_id}", "Test content")]
+            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")]
         )
 
     def test_textblock(self):
@@ -176,7 +176,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [SegmentValue(f"test_streamfield.{block_id}", "Test content")]
+            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")]
         )
 
     @unittest.expectedFailure  # Not supported
@@ -189,7 +189,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [SegmentValue(f"test_streamfield.{block_id}", "test@example.com")]
+            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "test@example.com")]
         )
 
     @unittest.expectedFailure  # Not supported
@@ -204,7 +204,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
         self.assertEqual(
             segments,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}", "http://test-content.com/foo"
                 )
             ],
@@ -252,7 +252,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [SegmentValue(f"test_streamfield.{block_id}", "Test content")]
+            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")]
         )
 
     def test_structblock(self):
@@ -268,8 +268,8 @@ class TestSegmentExtractionWithStreamField(TestCase):
         self.assertEqual(
             segments,
             [
-                SegmentValue(f"test_streamfield.{block_id}.field_a", "Test content"),
-                SegmentValue(
+                StringSegmentValue(f"test_streamfield.{block_id}.field_a", "Test content"),
+                StringSegmentValue(
                     f"test_streamfield.{block_id}.field_b", "Some more test content"
                 ),
             ],
@@ -287,8 +287,8 @@ class TestSegmentExtractionWithStreamField(TestCase):
         self.assertEqual(
             segments,
             [
-                SegmentValue(f"test_streamfield.{block_id}", "Test content"),
-                SegmentValue(f"test_streamfield.{block_id}", "Some more test content"),
+                StringSegmentValue(f"test_streamfield.{block_id}", "Test content"),
+                StringSegmentValue(f"test_streamfield.{block_id}", "Some more test content"),
             ],
         )
 
@@ -306,7 +306,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
         self.assertEqual(
             segments,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}.{nested_block_id}", "Test content"
                 )
             ],
@@ -325,7 +325,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
         self.assertEqual(
             segments,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}.foo",
                     "Test content / Some more test content",
                 )

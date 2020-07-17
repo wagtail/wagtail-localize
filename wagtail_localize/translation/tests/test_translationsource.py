@@ -11,12 +11,12 @@ from wagtail_localize.test.models import TestPage, TestSnippet
 from wagtail_localize.translation.models import (
     TranslationSource,
     SegmentTranslation,
-    Segment,
+    String,
     SourceDeletedError,
     MissingTranslationError,
     MissingRelatedObjectError,
     TranslationContext,
-    SegmentLocation,
+    StringLocation,
     TemplateLocation,
     RelatedObjectLocation,
 )
@@ -35,7 +35,7 @@ def insert_segments(revision, locale, segments):
         elif isinstance(segment, RelatedObjectValue):
             RelatedObjectLocation.from_related_object_value(revision, segment)
         else:
-            SegmentLocation.from_segment_value(revision, locale, segment)
+            StringLocation.from_value(revision, locale, segment)
 
 
 def create_test_page(**kwargs):
@@ -235,11 +235,11 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.translated_snippet.save()
 
         # Add translation for test_charfield
-        self.segment = Segment.from_string(
+        self.string = String.from_value(
             self.source_locale, StringValue.from_plaintext("This is some test content")
         )
         self.translation = SegmentTranslation.objects.create(
-            translation_of=self.segment,
+            translation_of=self.string,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_charfield"
@@ -272,7 +272,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         # Create a translation for the new context
         SegmentTranslation.objects.create(
-            translation_of=self.segment,
+            translation_of=self.string,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
                 object_id=child_page.translation_key, path="test_charfield"
@@ -402,7 +402,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         # Create a translation for the new context
         SegmentTranslation.objects.create(
-            translation_of=self.segment,
+            translation_of=self.string,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_streamfield.id"
@@ -431,7 +431,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         self.assertEqual(e.exception.location.source, self.source)
         self.assertEqual(e.exception.location.context.path, "test_charfield")
-        self.assertEqual(e.exception.location.segment, self.segment)
+        self.assertEqual(e.exception.location.string, self.string)
         self.assertEqual(e.exception.locale, self.dest_locale)
 
     def test_create_related_object_not_ready(self):

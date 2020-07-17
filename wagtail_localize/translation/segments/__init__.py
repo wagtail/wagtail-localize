@@ -28,9 +28,9 @@ class BaseValue:
 
         For example:
 
-        >>> s = SegmentValue('field', 'foo')
+        >>> s = StringSegmentValue('field', 'foo')
         >>> s.wrap('wrapped')
-        SegmentValue('wrapped.field', 'foo')
+        StringSegmentValue('wrapped.field', 'foo')
         """
         new_path = base_path
 
@@ -47,9 +47,9 @@ class BaseValue:
 
         For example:
 
-        >>> s = SegmentValue('wrapped.field', 'foo')
+        >>> s = StringSegmentValue('wrapped.field', 'foo')
         >>> s.unwrap()
-        'wrapped', SegmentValue('field', 'foo')
+        'wrapped', StringSegmentValue('field', 'foo')
         """
         first_component, *remaining_components = self.path.split(".")
         new_path = ".".join(remaining_components)
@@ -59,7 +59,7 @@ class BaseValue:
         return first_component, clone
 
 
-class SegmentValue(BaseValue):
+class StringSegmentValue(BaseValue):
     def __init__(self, path, string, attrs=None, **kwargs):
         if isinstance(string, str):
             string = StringValue.from_plaintext(string)
@@ -70,7 +70,7 @@ class SegmentValue(BaseValue):
         super().__init__(path, **kwargs)
 
     def clone(self):
-        return SegmentValue(
+        return StringSegmentValue(
             self.path, self.string, attrs=self.attrs, order=self.order
         )
 
@@ -90,27 +90,27 @@ class SegmentValue(BaseValue):
 
     def __eq__(self, other):
         return (
-            isinstance(other, SegmentValue)
+            isinstance(other, StringSegmentValue)
             and self.path == other.path
             and self.string == other.string
             and self.attrs == other.attrs
         )
 
     def __repr__(self):
-        return "<SegmentValue {} '{}'>".format(self.path, self.render_html())
+        return "<StringSegmentValue {} '{}'>".format(self.path, self.render_html())
 
 
 class TemplateValue(BaseValue):
-    def __init__(self, path, format, template, segment_count, **kwargs):
+    def __init__(self, path, format, template, string_count, **kwargs):
         self.format = format
         self.template = template
-        self.segment_count = segment_count
+        self.string_count = string_count
 
         super().__init__(path, **kwargs)
 
     def clone(self):
         return TemplateValue(
-            self.path, self.format, self.template, self.segment_count, order=self.order
+            self.path, self.format, self.template, self.string_count, order=self.order
         )
 
     def is_empty(self):
@@ -122,12 +122,12 @@ class TemplateValue(BaseValue):
             and self.path == other.path
             and self.format == other.format
             and self.template == other.template
-            and self.segment_count == other.segment_count
+            and self.string_count == other.string_count
         )
 
     def __repr__(self):
         return "<TemplateValue {} format:{} {} segments>".format(
-            self.path, self.format, self.segment_count
+            self.path, self.format, self.string_count
         )
 
 
