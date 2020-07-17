@@ -100,7 +100,7 @@ class StringSegmentValue(BaseValue):
         return "<StringSegmentValue {} '{}'>".format(self.path, self.render_html())
 
 
-class TemplateValue(BaseValue):
+class TemplateSegmentValue(BaseValue):
     def __init__(self, path, format, template, string_count, **kwargs):
         self.format = format
         self.template = template
@@ -109,7 +109,7 @@ class TemplateValue(BaseValue):
         super().__init__(path, **kwargs)
 
     def clone(self):
-        return TemplateValue(
+        return TemplateSegmentValue(
             self.path, self.format, self.template, self.string_count, order=self.order
         )
 
@@ -118,7 +118,7 @@ class TemplateValue(BaseValue):
 
     def __eq__(self, other):
         return (
-            isinstance(other, TemplateValue)
+            isinstance(other, TemplateSegmentValue)
             and self.path == other.path
             and self.format == other.format
             and self.template == other.template
@@ -126,12 +126,12 @@ class TemplateValue(BaseValue):
         )
 
     def __repr__(self):
-        return "<TemplateValue {} format:{} {} segments>".format(
+        return "<TemplateSegmentValue {} format:{} {} segments>".format(
             self.path, self.format, self.string_count
         )
 
 
-class RelatedObjectValue(BaseValue):
+class RelatedObjectSegmentValue(BaseValue):
     def __init__(self, path, content_type, translation_key, **kwargs):
         self.content_type = content_type
         self.translation_key = translation_key
@@ -153,7 +153,7 @@ class RelatedObjectValue(BaseValue):
         )
 
     def clone(self):
-        return RelatedObjectValue(
+        return RelatedObjectSegmentValue(
             self.path, self.content_type, self.translation_key, order=self.order
         )
 
@@ -162,13 +162,13 @@ class RelatedObjectValue(BaseValue):
 
     def __eq__(self, other):
         return (
-            isinstance(other, RelatedObjectValue)
+            isinstance(other, RelatedObjectSegmentValue)
             and self.path == other.path
             and self.content_type == other.content_type
             and self.translation_key == other.translation_key
         )
 
     def __repr__(self):
-        return "<RelatedObjectValue {} {} {}>".format(
+        return "<RelatedObjectSegmentValue {} {} {}>".format(
             self.path, self.content_type, self.translation_key
         )

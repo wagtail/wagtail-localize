@@ -14,7 +14,7 @@ from modelcluster.models import (
 )
 from wagtail.core.models import Page
 
-from .segments import StringSegmentValue, TemplateValue, RelatedObjectValue
+from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue
@@ -210,10 +210,10 @@ class TranslationSource(models.Model):
 
     def extract_segments(self):
         for segment in extract_segments(self.as_instance()):
-            if isinstance(segment, TemplateValue):
-                TemplateSegment.from_template_value(self, segment)
-            elif isinstance(segment, RelatedObjectValue):
-                RelatedObjectSegment.from_related_object_value(self, segment)
+            if isinstance(segment, TemplateSegmentValue):
+                TemplateSegment.from_value(self, segment)
+            elif isinstance(segment, RelatedObjectSegmentValue):
+                RelatedObjectSegment.from_value(self, segment)
             else:
                 StringSegment.from_value(self, self.locale, segment)
 
@@ -275,7 +275,7 @@ class TranslationSource(models.Model):
 
         for template_segment in template_segments:
             template = template_segment.template
-            segment_value = TemplateValue(
+            segment_value = TemplateSegmentValue(
                 template_segment.context.path,
                 template.template_format,
                 template.template,
@@ -288,7 +288,7 @@ class TranslationSource(models.Model):
             if not related_object_segment.object.has_translation(locale):
                 raise MissingRelatedObjectError(related_object_segment, locale)
 
-            segment_value = RelatedObjectValue(
+            segment_value = RelatedObjectSegmentValue(
                 related_object_segment.context.path,
                 related_object_segment.object.content_type,
                 related_object_segment.object.translation_key,
@@ -461,7 +461,7 @@ class Template(models.Model):
     string_count = models.PositiveIntegerField()
 
     @classmethod
-    def from_template_value(cls, template_value):
+    def from_value(cls, template_value):
         uuid_namespace = uuid.uuid5(cls.BASE_UUID_NAMESPACE, template_value.format)
 
         template, created = cls.objects.get_or_create(
@@ -551,16 +551,16 @@ class TemplateSegment(BaseSegment):
     )
 
     @classmethod
-    def from_template_value(cls, source, template_value):
-        template = Template.from_template_value(template_value)
+    def from_value(cls, source, value):
+        template = Template.from_value(value)
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=source.object_id, path=template_value.path,
+            object_id=source.object_id, path=value.path,
         )
 
         segment, created = cls.objects.get_or_create(
             source=source,
             context=context,
-            order=template_value.order,
+            order=value.order,
             template=template,
         )
 
@@ -573,18 +573,18 @@ class RelatedObjectSegment(BaseSegment):
     )
 
     @classmethod
-    def from_related_object_value(cls, source, related_object_value):
+    def from_value(cls, source, value):
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=source.object_id, path=related_object_value.path,
+            object_id=source.object_id, path=value.path,
         )
 
         segment, created = cls.objects.get_or_create(
             source=source,
             context=context,
-            order=related_object_value.order,
+            order=value.order,
             object=TranslatableObject.objects.get_or_create(
-                content_type=related_object_value.content_type,
-                translation_key=related_object_value.translation_key,
+                content_type=value.content_type,
+                translation_key=value.translation_key,
             )[0],
         )
 

@@ -14,8 +14,8 @@ from wagtail_localize.test.models import (
 )
 from wagtail_localize.translation.segments import (
     StringSegmentValue,
-    TemplateValue,
-    RelatedObjectValue,
+    TemplateSegmentValue,
+    RelatedObjectSegmentValue,
 )
 from wagtail_localize.translation.segments.extract import extract_segments
 from wagtail_localize.translation.strings import StringValue
@@ -30,7 +30,7 @@ def make_test_page(**kwargs):
 RICH_TEXT_TEST_INPUT = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a>.</li></ul>'
 
 RICH_TEXT_TEST_OUTPUT = [
-    TemplateValue(
+    TemplateSegmentValue(
         "",
         "html",
         '<h1><text position="0"></text></h1><p><text position="1"></text></p><ul><li><text position="2"></text></li></ul>',
@@ -101,7 +101,7 @@ class TestSegmentExtraction(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [RelatedObjectValue.from_instance("test_snippet", test_snippet)]
+            segments, [RelatedObjectSegmentValue.from_instance("test_snippet", test_snippet)]
         )
 
     def test_childobjects(self):
