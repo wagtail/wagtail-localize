@@ -16,9 +16,9 @@ from wagtail_localize.translation.models import (
     MissingTranslationError,
     MissingRelatedObjectError,
     TranslationContext,
-    StringLocation,
-    TemplateLocation,
-    RelatedObjectLocation,
+    StringSegment,
+    TemplateSegment,
+    RelatedObjectSegment,
 )
 from wagtail_localize.translation.segments import TemplateValue, RelatedObjectValue
 from wagtail_localize.translation.segments.extract import extract_segments
@@ -31,11 +31,11 @@ def insert_segments(revision, locale, segments):
     """
     for segment in segments:
         if isinstance(segment, TemplateValue):
-            TemplateLocation.from_template_value(revision, segment)
+            TemplateSegment.from_template_value(revision, segment)
         elif isinstance(segment, RelatedObjectValue):
-            RelatedObjectLocation.from_related_object_value(revision, segment)
+            RelatedObjectSegment.from_related_object_value(revision, segment)
         else:
-            StringLocation.from_value(revision, locale, segment)
+            StringSegment.from_value(revision, locale, segment)
 
 
 def create_test_page(**kwargs):
@@ -429,9 +429,9 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         with self.assertRaises(MissingTranslationError) as e:
             self.source.create_or_update_translation(self.dest_locale)
 
-        self.assertEqual(e.exception.location.source, self.source)
-        self.assertEqual(e.exception.location.context.path, "test_charfield")
-        self.assertEqual(e.exception.location.string, self.string)
+        self.assertEqual(e.exception.segment.source, self.source)
+        self.assertEqual(e.exception.segment.context.path, "test_charfield")
+        self.assertEqual(e.exception.segment.string, self.string)
         self.assertEqual(e.exception.locale, self.dest_locale)
 
     def test_create_related_object_not_ready(self):
@@ -440,7 +440,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         with self.assertRaises(MissingRelatedObjectError) as e:
             self.source.create_or_update_translation(self.dest_locale)
 
-        self.assertEqual(e.exception.location.source, self.source)
-        self.assertEqual(e.exception.location.context.path, "test_snippet")
-        self.assertEqual(e.exception.location.object_id, self.snippet.translation_key)
+        self.assertEqual(e.exception.segment.source, self.source)
+        self.assertEqual(e.exception.segment.context.path, "test_snippet")
+        self.assertEqual(e.exception.segment.object_id, self.snippet.translation_key)
         self.assertEqual(e.exception.locale, self.dest_locale)
