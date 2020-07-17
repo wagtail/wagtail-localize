@@ -17,7 +17,7 @@ from wagtail.core.models import Page
 from .segments import SegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
-from .strings import String
+from .strings import StringValue
 
 
 def pk(obj):
@@ -266,7 +266,7 @@ class TranslationSource(models.Model):
                 raise MissingTranslationError(location, locale)
 
             segment = SegmentValue(
-                location.context.path, String(location.translation)
+                location.context.path, StringValue(location.translation)
             ).with_order(location.order)
             if location.html_attrs:
                 segment.attrs = json.loads(location.html_attrs)
@@ -370,8 +370,8 @@ class Segment(models.Model):
 
         return segment
 
-    def as_string(self, attrs):
-        return String(self.text, attrs)
+    def as_string(self):
+        return StringValue(self.text)
 
     def save(self, *args, **kwargs):
         if self.text and self.text_id is None:
