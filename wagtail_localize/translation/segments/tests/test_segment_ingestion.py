@@ -9,7 +9,7 @@ from wagtail.core.models import Page
 from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
 from wagtail_localize.translation.segments import (
-    SegmentValue,
+    StringSegmentValue,
     TemplateValue,
     RelatedObjectValue,
 )
@@ -33,13 +33,13 @@ RICH_TEXT_TEST_FRENCH_SEGMENTS = [
         3,
         order=9,
     ),
-    SegmentValue("", "Ceci est une rubrique", order=10),
-    SegmentValue.from_html(
+    StringSegmentValue("", "Ceci est une rubrique", order=10),
+    StringSegmentValue.from_html(
         "",
         'Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b>',
         order=11,
     ),
-    SegmentValue(
+    StringSegmentValue(
         "",
         StringValue('<a id="a1">Ceci est un lien</a>'),
         attrs={
@@ -66,7 +66,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue("test_charfield", "Tester le contenu")],
+            [StringSegmentValue("test_charfield", "Tester le contenu")],
         )
 
         self.assertEqual(translated_page.test_charfield, "Tester le contenu")
@@ -80,7 +80,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue("test_textfield", "Tester le contenu")],
+            [StringSegmentValue("test_textfield", "Tester le contenu")],
         )
 
         self.assertEqual(translated_page.test_textfield, "Tester le contenu")
@@ -94,7 +94,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue("test_emailfield", "test@example.fr")],
+            [StringSegmentValue("test_emailfield", "test@example.fr")],
         )
 
         self.assertEqual(translated_page.test_emailfield, "test@example.fr")
@@ -108,7 +108,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue("test_slugfield", "tester-le-contenu")],
+            [StringSegmentValue("test_slugfield", "tester-le-contenu")],
         )
 
         self.assertEqual(translated_page.test_slugfield, "tester-le-contenu")
@@ -122,7 +122,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue("test_urlfield", "http://test-content.fr/foo")],
+            [StringSegmentValue("test_urlfield", "http://test-content.fr/foo")],
         )
 
         self.assertEqual(translated_page.test_urlfield, "http://test-content.fr/foo")
@@ -155,7 +155,7 @@ class TestSegmentIngestion(TestCase):
             translated_snippet,
             self.src_locale,
             self.locale,
-            [SegmentValue("field", "Tester le contenu")],
+            [StringSegmentValue("field", "Tester le contenu")],
         )
 
         translated_snippet.save()
@@ -200,7 +200,7 @@ class TestSegmentIngestion(TestCase):
             self.src_locale,
             self.locale,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_childobjects.{child_translation_key}.field",
                     "Tester le contenu",
                 )
@@ -229,7 +229,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue("test_customfield.foo", "Tester le contenu")],
+            [StringSegmentValue("test_customfield.foo", "Tester le contenu")],
         )
 
         self.assertEqual(translated_page.test_customfield, "Tester le contenu")
@@ -264,7 +264,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue(f"test_streamfield.{block_id}", "Tester le contenu")],
+            [StringSegmentValue(f"test_streamfield.{block_id}", "Tester le contenu")],
         )
 
         translated_page.save()
@@ -294,7 +294,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue(f"test_streamfield.{block_id}", "Tester le contenu")],
+            [StringSegmentValue(f"test_streamfield.{block_id}", "Tester le contenu")],
         )
 
         translated_page.save()
@@ -325,7 +325,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue(f"test_streamfield.{block_id}", "test@example.fr")],
+            [StringSegmentValue(f"test_streamfield.{block_id}", "test@example.fr")],
         )
 
         translated_page.save()
@@ -357,7 +357,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
             self.src_locale,
             self.locale,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}", "http://test-content.fr/foo"
                 )
             ],
@@ -457,7 +457,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [SegmentValue(f"test_streamfield.{block_id}", "Tester le contenu")],
+            [StringSegmentValue(f"test_streamfield.{block_id}", "Tester le contenu")],
         )
 
         translated_page.save()
@@ -490,10 +490,10 @@ class TestSegmentIngestionWithStreamField(TestCase):
             self.src_locale,
             self.locale,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}.field_a", "Tester le contenu"
                 ),
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}.field_b", "Encore du contenu de test"
                 ),
             ],
@@ -531,10 +531,10 @@ class TestSegmentIngestionWithStreamField(TestCase):
             self.src_locale,
             self.locale,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}", "Tester le contenu", order=0
                 ),
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}", "Encore du contenu de test", order=1
                 ),
             ],
@@ -571,7 +571,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
             self.src_locale,
             self.locale,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}.{nested_block_id}",
                     "Tester le contenu",
                 )
@@ -614,7 +614,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
             self.src_locale,
             self.locale,
             [
-                SegmentValue(
+                StringSegmentValue(
                     f"test_streamfield.{block_id}.foo",
                     "Tester le contenu / Encore du contenu de test",
                 )

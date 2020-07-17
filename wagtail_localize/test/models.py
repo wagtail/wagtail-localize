@@ -10,7 +10,7 @@ from wagtail_localize.models import (
     TranslatableMixin,
     TranslatablePageMixin,
 )
-from wagtail_localize.translation.segments import SegmentValue
+from wagtail_localize.translation.segments import StringSegmentValue
 
 
 class TestSnippet(TranslatableMixin, models.Model):
@@ -35,7 +35,7 @@ class CustomStructBlock(blocks.StructBlock):
 
     def get_translatable_segments(self, value):
         return [
-            SegmentValue("foo", "{} / {}".format(value["field_a"], value["field_b"]))
+            StringSegmentValue("foo", "{} / {}".format(value["field_a"], value["field_b"]))
         ]
 
     def restore_translated_segments(self, value, segments):
@@ -68,7 +68,7 @@ class TestCustomField(models.TextField):
             # Don't disrupt other tests
             return []
 
-        return [SegmentValue("foo", "{} and some extra".format(value))]
+        return [StringSegmentValue("foo", "{} and some extra".format(value))]
 
 
 class TestPage(TranslatablePageMixin, Page):

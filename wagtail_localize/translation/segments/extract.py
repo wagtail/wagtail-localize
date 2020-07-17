@@ -7,7 +7,7 @@ from wagtail.embeds.blocks import EmbedBlock
 
 from wagtail_localize.models import TranslatableMixin
 from wagtail_localize.translation.segments import (
-    SegmentValue,
+    StringSegmentValue,
     TemplateValue,
     RelatedObjectValue,
 )
@@ -24,13 +24,13 @@ class StreamFieldSegmentExtractor:
             return block_type.get_translatable_segments(block_value)
 
         elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock)):
-            return [SegmentValue("", block_value)]
+            return [StringSegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
             template, strings = extract_strings(block_value.source)
 
             return [TemplateValue("", "html", template, len(strings))] + [
-                SegmentValue("", string, attrs=attrs) for string, attrs in strings
+                StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
             ]
 
         elif isinstance(block_type, blocks.ChooserBlock):
@@ -115,7 +115,7 @@ def extract_segments(instance):
             template, strings = extract_strings(field.value_from_object(instance))
 
             field_segments = [TemplateValue("", "html", template, len(strings))] + [
-                SegmentValue("", string, attrs=attrs) for string, attrs in strings
+                StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
             ]
 
             segments.extend(segment.wrap(field.name) for segment in field_segments)
@@ -123,7 +123,7 @@ def extract_segments(instance):
         elif isinstance(field, (models.TextField, models.CharField)):
             if not field.choices:
                 segments.append(
-                    SegmentValue(field.name, field.value_from_object(instance))
+                    StringSegmentValue(field.name, field.value_from_object(instance))
                 )
 
         elif isinstance(field, (models.ForeignKey)) and issubclass(

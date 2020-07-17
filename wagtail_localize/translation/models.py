@@ -14,7 +14,7 @@ from modelcluster.models import (
 )
 from wagtail.core.models import Page
 
-from .segments import SegmentValue, TemplateValue, RelatedObjectValue
+from .segments import StringSegmentValue, TemplateValue, RelatedObjectValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue
@@ -215,7 +215,7 @@ class TranslationSource(models.Model):
             elif isinstance(segment, RelatedObjectValue):
                 RelatedObjectLocation.from_related_object_value(self, segment)
             else:
-                SegmentLocation.from_segment_value(self, self.locale, segment)
+                StringLocation.from_value(self, self.locale, segment)
 
     @transaction.atomic
     def create_or_update_translation(self, locale):
@@ -242,7 +242,7 @@ class TranslationSource(models.Model):
 
         # Fetch all translated segments
         segment_locations = (
-            SegmentLocation.objects.filter(source=self)
+            StringLocation.objects.filter(source=self)
             .annotate_translation(locale)
             .select_related("context")
         )
@@ -265,11 +265,11 @@ class TranslationSource(models.Model):
             if not location.translation:
                 raise MissingTranslationError(location, locale)
 
-            segment = SegmentValue(
-                location.context.path, StringValue(location.translation)
+            segment = StringSegmentValue(
+                location.context.path,
+                StringValue(location.translation),
+                attrs=json.loads(location.attrs)
             ).with_order(location.order)
-            if location.html_attrs:
-                segment.attrs = json.loads(location.html_attrs)
 
             segments.append(segment)
 
@@ -279,7 +279,7 @@ class TranslationSource(models.Model):
                 location.context.path,
                 template.template_format,
                 template.template,
-                template.segment_count,
+                template.string_count,
                 order=location.order,
             )
             segments.append(segment)
@@ -348,39 +348,39 @@ class TranslationLog(models.Model):
         return self.source.object.get_instance(self.locale)
 
 
-class Segment(models.Model):
+class String(models.Model):
     UUID_NAMESPACE = uuid.UUID("59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7")
 
-    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE)
+    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE, related_name="source_strings")
 
-    text_id = models.UUIDField()
-    text = models.TextField()
-
-    @classmethod
-    def get_text_id(cls, text):
-        return uuid.uuid5(cls.UUID_NAMESPACE, text)
+    data_hash = models.UUIDField()
+    data = models.TextField()
 
     @classmethod
-    def from_string(cls, locale, string):
-        segment, created = cls.objects.get_or_create(
+    def get_data_hash(cls, data):
+        return uuid.uuid5(cls.UUID_NAMESPACE, data)
+
+    @classmethod
+    def from_value(cls, locale, stringvalue):
+        string, created = cls.objects.get_or_create(
             locale_id=pk(locale),
-            text_id=cls.get_text_id(string.data),
-            defaults={"text": string.data},
+            data_hash=cls.get_data_hash(stringvalue.data),
+            defaults={"data": stringvalue.data},
         )
 
-        return segment
+        return string
 
-    def as_string(self):
-        return StringValue(self.text)
+    def as_value(self):
+        return StringValue(self.data)
 
     def save(self, *args, **kwargs):
-        if self.text and self.text_id is None:
-            self.text_id = self.get_text_id(self.text)
+        if self.data and self.data_hash is None:
+            self.data_hash = self.get_data_hash(self.data)
 
         return super().save(*args, **kwargs)
 
     class Meta:
-        unique_together = [("locale", "text_id")]
+        unique_together = [("locale", "data_hash")]
 
 
 class TranslationContext(models.Model):
@@ -423,7 +423,7 @@ class TranslationContext(models.Model):
 
 class SegmentTranslation(models.Model):
     translation_of = models.ForeignKey(
-        Segment, on_delete=models.CASCADE, related_name="translations"
+        String, on_delete=models.CASCADE, related_name="translations"
     )
     locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE, related_name="segment_translations")
     context = models.ForeignKey(
@@ -458,7 +458,7 @@ class Template(models.Model):
     uuid = models.UUIDField(unique=True)
     template = models.TextField()
     template_format = models.CharField(max_length=100)
-    segment_count = models.PositiveIntegerField()
+    string_count = models.PositiveIntegerField()
 
     @classmethod
     def from_template_value(cls, template_value):
@@ -469,7 +469,7 @@ class Template(models.Model):
             defaults={
                 "template": template_value.template,
                 "template_format": template_value.format,
-                "segment_count": template_value.segment_count,
+                "string_count": template_value.string_count,
             },
         )
 
@@ -485,7 +485,7 @@ class BaseLocation(models.Model):
         abstract = True
 
 
-class SegmentLocationQuerySet(models.QuerySet):
+class StringLocationQuerySet(models.QuerySet):
     def annotate_translation(self, locale):
         """
         Adds a 'translation' field to the segments containing the
@@ -495,7 +495,7 @@ class SegmentLocationQuerySet(models.QuerySet):
         return self.annotate(
             translation=Subquery(
                 SegmentTranslation.objects.filter(
-                    translation_of_id=OuterRef("segment_id"),
+                    translation_of_id=OuterRef("string_id"),
                     locale_id=pk(locale),
                     context_id=OuterRef("context_id"),
                 ).values("text")
@@ -503,9 +503,9 @@ class SegmentLocationQuerySet(models.QuerySet):
         )
 
 
-class SegmentLocation(BaseLocation):
-    segment = models.ForeignKey(
-        Segment, on_delete=models.CASCADE, related_name="locations"
+class StringLocation(BaseLocation):
+    string = models.ForeignKey(
+        String, on_delete=models.CASCADE, related_name="locations"
     )
 
     # When we extract the segment, we replace HTML attributes with id tags
@@ -523,26 +523,26 @@ class SegmentLocation(BaseLocation):
     #          "href": "https://www.example.com"
     #      }
     #  }
-    html_attrs = models.TextField(blank=True)
+    attrs = models.TextField(blank=True)
 
-    objects = SegmentLocationQuerySet.as_manager()
+    objects = StringLocationQuerySet.as_manager()
 
     @classmethod
-    def from_segment_value(cls, source, language, segment_value):
-        segment = Segment.from_string(language, segment_value.string)
+    def from_value(cls, source, language, value):
+        string = String.from_value(language, value.string)
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=source.object_id, path=segment_value.path,
+            object_id=source.object_id, path=value.path,
         )
 
-        segment_loc, created = cls.objects.get_or_create(
+        loc, created = cls.objects.get_or_create(
             source=source,
             context=context,
-            order=segment_value.order,
-            segment=segment,
-            html_attrs=json.dumps(segment_value.attrs),
+            order=value.order,
+            string=string,
+            attrs=json.dumps(value.attrs),
         )
 
-        return segment_loc
+        return loc
 
 
 class TemplateLocation(BaseLocation):
