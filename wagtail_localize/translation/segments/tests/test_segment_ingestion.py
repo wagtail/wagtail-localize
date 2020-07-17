@@ -10,8 +10,8 @@ from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
 from wagtail_localize.translation.segments import (
     StringSegmentValue,
-    TemplateValue,
-    RelatedObjectValue,
+    TemplateSegmentValue,
+    RelatedObjectSegmentValue,
 )
 from wagtail_localize.translation.segments.ingest import ingest_segments
 from wagtail_localize.translation.strings import StringValue
@@ -26,7 +26,7 @@ def make_test_page(**kwargs):
 RICH_TEXT_TEST_INPUT = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a></li></ul>'
 
 RICH_TEXT_TEST_FRENCH_SEGMENTS = [
-    TemplateValue(
+    TemplateSegmentValue(
         "",
         "html",
         '<h1><text position="0"></text></h1><p><text position="1"></text></p><ul><li><text position="2"></text></li></ul>',
@@ -162,7 +162,7 @@ class TestSegmentIngestion(TestCase):
 
         self.assertEqual(translated_snippet.field, "Tester le contenu")
 
-        # Now ingest a RelatedObjectValue into the page
+        # Now ingest a RelatedObjectSegmentValue into the page
         page = make_test_page(test_snippet=test_snippet)
         translated_page = page.copy_for_translation(self.locale)
 
@@ -171,7 +171,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [RelatedObjectValue.from_instance("test_snippet", test_snippet)],
+            [RelatedObjectSegmentValue.from_instance("test_snippet", test_snippet)],
         )
 
         # Check the translated snippet was linked to the translated page

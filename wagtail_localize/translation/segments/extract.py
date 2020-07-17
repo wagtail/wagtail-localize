@@ -8,8 +8,8 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail_localize.models import TranslatableMixin
 from wagtail_localize.translation.segments import (
     StringSegmentValue,
-    TemplateValue,
-    RelatedObjectValue,
+    TemplateSegmentValue,
+    RelatedObjectSegmentValue,
 )
 
 from ..strings import extract_strings
@@ -29,7 +29,7 @@ class StreamFieldSegmentExtractor:
         elif isinstance(block_type, blocks.RichTextBlock):
             template, strings = extract_strings(block_value.source)
 
-            return [TemplateValue("", "html", template, len(strings))] + [
+            return [TemplateSegmentValue("", "html", template, len(strings))] + [
                 StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
             ]
 
@@ -59,7 +59,7 @@ class StreamFieldSegmentExtractor:
         if related_object is None or not isinstance(related_object, TranslatableMixin):
             return []
 
-        return RelatedObjectValue.from_instance("", related_object)
+        return RelatedObjectSegmentValue.from_instance("", related_object)
 
     def handle_struct_block(self, struct_block):
         segments = []
@@ -114,7 +114,7 @@ def extract_segments(instance):
         elif isinstance(field, RichTextField):
             template, strings = extract_strings(field.value_from_object(instance))
 
-            field_segments = [TemplateValue("", "html", template, len(strings))] + [
+            field_segments = [TemplateSegmentValue("", "html", template, len(strings))] + [
                 StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
             ]
 
@@ -133,7 +133,7 @@ def extract_segments(instance):
 
             if related_instance:
                 segments.append(
-                    RelatedObjectValue.from_instance(field.name, related_instance)
+                    RelatedObjectSegmentValue.from_instance(field.name, related_instance)
                 )
 
         elif (
