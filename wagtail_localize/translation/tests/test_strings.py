@@ -36,12 +36,12 @@ class TestStringFromPlaintext(TestCase):
         if DJANGO_VERSION >= (3, 0):
             self.assertEqual(
                 string.data,
-                "This is a test &lt;Foo&gt; bar &#39;baz&#39;",
+                "This is a test &lt;Foo&gt; bar &#x27;baz&#x27;",
             )
         else:
             self.assertEqual(
                 string.data,
-                "This is a test &lt;Foo&gt; bar &#x27;baz&#x27;",
+                "This is a test &lt;Foo&gt; bar &#39;baz&#39;",
             )
 
     def test_special_chars_escaped(self):
