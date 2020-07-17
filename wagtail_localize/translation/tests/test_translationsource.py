@@ -10,8 +10,8 @@ from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage, TestSnippet
 from wagtail_localize.translation.models import (
     TranslationSource,
-    SegmentTranslation,
     String,
+    StringTranslation,
     SourceDeletedError,
     MissingTranslationError,
     MissingRelatedObjectError,
@@ -238,13 +238,13 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.string = String.from_value(
             self.source_locale, StringValue.from_plaintext("This is some test content")
         )
-        self.translation = SegmentTranslation.objects.create(
+        self.translation = StringTranslation.objects.create(
             translation_of=self.string,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_charfield"
             ),
-            text="Ceci est du contenu de test",
+            data="Ceci est du contenu de test",
         )
 
     def test_create(self):
@@ -271,13 +271,13 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         translated_parent = self.page.copy_for_translation(self.dest_locale)
 
         # Create a translation for the new context
-        SegmentTranslation.objects.create(
+        StringTranslation.objects.create(
             translation_of=self.string,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
                 object_id=child_page.translation_key, path="test_charfield"
             ),
-            text="Ceci est du contenu de test",
+            data="Ceci est du contenu de test",
         )
 
         new_page, created = child_source.create_or_update_translation(
@@ -401,13 +401,13 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         source_with_streamfield.extract_segments()
 
         # Create a translation for the new context
-        SegmentTranslation.objects.create(
+        StringTranslation.objects.create(
             translation_of=self.string,
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
                 object_id=self.page.translation_key, path="test_streamfield.id"
             ),
-            text="Ceci est du contenu de test",
+            data="Ceci est du contenu de test",
         )
 
         new_page, created = source_with_streamfield.create_or_update_translation(

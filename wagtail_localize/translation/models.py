@@ -421,11 +421,11 @@ class TranslationContext(models.Model):
         return cls.objects.get(object_id=object_id, path_id=path_id)
 
 
-class SegmentTranslation(models.Model):
+class StringTranslation(models.Model):
     translation_of = models.ForeignKey(
         String, on_delete=models.CASCADE, related_name="translations"
     )
-    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE, related_name="segment_translations")
+    locale = models.ForeignKey("wagtail_localize.Locale", on_delete=models.CASCADE, related_name="string_translations")
     context = models.ForeignKey(
         TranslationContext,
         on_delete=models.SET_NULL,
@@ -433,7 +433,7 @@ class SegmentTranslation(models.Model):
         blank=True,
         related_name="translations",
     )
-    text = models.TextField()
+    data = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -441,12 +441,12 @@ class SegmentTranslation(models.Model):
         unique_together = [("locale", "translation_of", "context")]
 
     @classmethod
-    def from_text(cls, translation_of, locale, context, text):
+    def from_text(cls, translation_of, locale, context, data):
         segment, created = cls.objects.get_or_create(
             translation_of=translation_of,
             locale_id=pk(locale),
             context_id=pk(context),
-            defaults={"text": text},
+            defaults={"data": data},
         )
 
         return segment
@@ -494,11 +494,11 @@ class StringLocationQuerySet(models.QuerySet):
         """
         return self.annotate(
             translation=Subquery(
-                SegmentTranslation.objects.filter(
+                StringTranslation.objects.filter(
                     translation_of_id=OuterRef("string_id"),
                     locale_id=pk(locale),
                     context_id=OuterRef("context_id"),
-                ).values("text")
+                ).values("data")
             )
         )
 
