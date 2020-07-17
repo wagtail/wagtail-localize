@@ -1,3 +1,4 @@
+from django import VERSION as DJANGO_VERSION
 from django.test import TestCase
 
 from wagtail_localize.translation.strings import String, extract_strings, restore_strings
@@ -31,10 +32,17 @@ class TestStringFromPlaintext(TestCase):
             "This is a test <Foo> bar 'baz'",
         )
 
-        self.assertEqual(
-            string.data,
-            "This is a test &lt;Foo&gt; bar &#x27;baz&#x27;",
-        )
+        # Django 2.x HTML escape function escapes quotes differently
+        if DJANGO_VERSION >= (3, 0):
+            self.assertEqual(
+                string.data,
+                "This is a test &lt;Foo&gt; bar &#x27;baz&#x27;",
+            )
+        else:
+            self.assertEqual(
+                string.data,
+                "This is a test &lt;Foo&gt; bar &#39;baz&#39;",
+            )
 
     def test_special_chars_escaped(self):
         string = String.from_plaintext("foo & bar")
