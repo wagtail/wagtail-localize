@@ -2,10 +2,9 @@ import json
 
 from django.test import TestCase
 from django.urls import reverse
-from wagtail.core.models import Page
+from wagtail.core.models import Page, Locale
 from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_localize.models import Locale
 from wagtail_localize.test.models import TestPage
 
 from wagtail import VERSION as WAGTAIL_VERSION
@@ -89,13 +88,3 @@ class TestTranslationsListView(TestCase, WagtailTestUtils):
                 ),
             ),
         )
-
-    def test_for_non_translatable_page(self):
-        response = self.client.get(
-            reverse(
-                "wagtail_localize:translations_list_modal",
-                args=[self.root_page.id],
-            ),
-            follow=True,
-        )
-        self.assertEqual(response.status_code, 404)

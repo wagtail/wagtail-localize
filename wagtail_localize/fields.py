@@ -17,6 +17,13 @@ class BaseTranslatableField:
         """
         return True
 
+    def is_translated(self, obj):
+        """
+        Returns True if the value of this field on the given object should be
+        extracted and submitted for translation
+        """
+        return False
+
     def is_synchronized(self, obj):
         """
         Returns True if the value of this field on the given object should be
@@ -29,6 +36,9 @@ class TranslatableField(BaseTranslatableField):
     """
     A field that should be translated whenever the original page changes
     """
+
+    def is_translated(self, obj):
+        return True
 
     def is_synchronized(self, obj):
         # Streamfields need to be re-synchronised before translation so the structure and non-translatable content is copied over

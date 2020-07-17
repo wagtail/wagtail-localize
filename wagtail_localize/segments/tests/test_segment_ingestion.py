@@ -4,17 +4,16 @@ import unittest
 from django.test import TestCase
 
 from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page
+from wagtail.core.models import Page, Locale
 
-from wagtail_localize.models import Locale
-from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
-from wagtail_localize.translation.segments import (
+from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
     RelatedObjectSegmentValue,
 )
-from wagtail_localize.translation.segments.ingest import ingest_segments
-from wagtail_localize.translation.strings import StringValue
+from wagtail_localize.segments.ingest import ingest_segments
+from wagtail_localize.strings import StringValue
+from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
 
 
 def make_test_page(**kwargs):

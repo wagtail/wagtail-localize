@@ -3,10 +3,10 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import TranslatableMixin
 from wagtail.embeds.blocks import EmbedBlock
 
-from wagtail_localize.models import TranslatableMixin
-from wagtail_localize.translation.segments import (
+from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
     RelatedObjectSegmentValue,
@@ -92,7 +92,10 @@ class StreamFieldSegmentExtractor:
 def extract_segments(instance):
     segments = []
 
-    for translatable_field in instance.get_translatable_fields():
+    for translatable_field in getattr(instance, 'translatable_fields', []):
+        if not translatable_field.is_translated(instance):
+            continue
+
         field = translatable_field.get_field(instance.__class__)
 
         if hasattr(field, "get_translatable_segments"):

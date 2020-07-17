@@ -1,7 +1,7 @@
 from django import VERSION as DJANGO_VERSION
 from django.test import TestCase
 
-from wagtail_localize.translation.strings import StringValue, extract_strings, restore_strings
+from wagtail_localize.strings import StringValue, extract_strings, restore_strings
 
 
 class TestStringValueFromHTML(TestCase):

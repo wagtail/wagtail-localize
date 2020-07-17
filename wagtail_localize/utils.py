@@ -5,7 +5,7 @@ from django.conf.locale import LANG_INFO
 from django.core.signals import setting_changed
 from django.dispatch import receiver
 
-from .compat import get_languages, get_supported_language_variant
+from wagtail.core.compat import get_languages, get_supported_language_variant
 
 
 def find_available_slug(parent, requested_slug):

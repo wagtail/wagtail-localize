@@ -1,21 +1,23 @@
-import os
+import json
 import uuid
 
-from django.apps import apps
-from django.conf import settings
-from django.core.files.base import ContentFile
+from django.contrib.contenttypes.models import ContentType
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
-from django.db.models import Q
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
-from django.utils import translation
-from modelcluster.fields import ParentalKey
+from django.db.models import Subquery, OuterRef
+from django.utils import timezone
+from django.utils.text import slugify
+from modelcluster.models import (
+    ClusterableModel,
+    get_serializable_data_for_fields,
+    model_from_serializable_data,
+)
 from wagtail.core.models import Page
-from wagtail.images.models import AbstractImage
 
-from .compat import get_languages, get_supported_language_variant
-from .fields import TranslatableField
-from .utils import find_available_slug
+from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
+from .segments.extract import extract_segments
+from .segments.ingest import ingest_segments
+from .strings import StringValue
 
 
 def pk(obj):
@@ -25,402 +27,566 @@ def pk(obj):
         return obj
 
 
-class LocaleManager(models.Manager):
-    use_in_migrations = True
-
-    def default(self):
-        default_code = get_supported_language_variant(settings.LANGUAGE_CODE)
-        return self.get(language_code=default_code)
-
-    def default_id(self):
-        return self.default().id
-
-
-class Locale(models.Model):
-    language_code = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-
-    objects = LocaleManager()
-
-    class Meta:
-        ordering = [
-            "-is_active",
-            "language_code",
-        ]
-
-    def get_display_name(self):
-        return get_languages().get(self.language_code)
-
-    def __str__(self):
-        return self.get_display_name() or self.language_code
-
-    @classmethod
-    def get_active(cls):
-        active_code = get_supported_language_variant(translation.get_language())
-
-        locale, created = cls.objects.get_or_create(language_code=active_code)
-
-        return locale
-
-    @property
-    def slug(self):
-        return self.language_code
-
-    def get_all_pages(self):
-        """
-        Returns a queryset of all pages that have been translated into this locale.
-        """
-        q = Q()
-
-        for model in get_translatable_models():
-            if not issubclass(model, Page):
-                continue
-
-            q |= Q(
-                id__in=model.objects.filter(locale=self).values_list("id", flat=True)
-            )
-
-        return Page.objects.filter(q)
-
-
-def default_locale_id():
-    return Locale.objects.default_id()
-
-
-class TranslatableMixin(models.Model):
-    translation_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name="+", editable=False)
-
-    translatable_fields = []
-
-    def get_translations(self, inclusive=False):
-        translations = self.__class__.objects.filter(
-            translation_key=self.translation_key
+class TranslatableObjectManager(models.Manager):
+    def get_or_create_from_instance(self, instance):
+        return self.get_or_create(
+            translation_key=instance.translation_key,
+            content_type=ContentType.objects.get_for_model(
+                instance.get_translation_model()
+            ),
         )
 
-        if inclusive is False:
-            translations = translations.exclude(id=self.id)
+    def get_for_instance(self, instance):
+        return self.get(
+            translation_key=instance.translation_key,
+            content_type=ContentType.objects.get_for_model(
+                instance.get_translation_model()
+            ),
+        )
 
-        return translations
 
-    def get_translation(self, locale):
-        return self.get_translations(inclusive=True).get(locale_id=pk(locale))
+class TranslatableObject(models.Model):
+    """
+    Represents something that can be translated.
 
-    def get_translation_or_none(self, locale):
-        try:
-            return self.get_translation(locale)
-        except self.__class__.DoesNotExist:
-            return None
+    Note that one instance of this represents all translations for the object.
+    """
+
+    translation_key = models.UUIDField(primary_key=True)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="+"
+    )
+
+    objects = TranslatableObjectManager()
 
     def has_translation(self, locale):
-        return self.get_translations(inclusive=True).filter(locale_id=pk(locale)).exists()
+        return self.content_type.get_all_objects_for_this_type(
+            translation_key=self.translation_key, locale_id=pk(locale)
+        ).exists()
 
-    def copy_for_translation(self, locale):
-        """
-        Copies this instance for the specified locale.
-        """
-        translated = self.__class__.objects.get(id=self.id)
-        translated.id = None
-        translated.locale = locale
+    def get_instance(self, locale):
+        return self.content_type.get_object_for_this_type(
+            translation_key=self.translation_key, locale_id=pk(locale)
+        )
 
-        if isinstance(self, AbstractImage):
-            # As we've copied the image record we also need to copy the original image file itself.
-            # This is in case either image record is changed or deleted, the other record will still
-            # have its file.
-            file_stem, file_ext = os.path.splitext(self.file.name)
-            new_name = "{}-{}{}".format(file_stem, locale.slug, file_ext)
-            translated.file = ContentFile(self.file.read(), name=new_name)
-
-        return translated
-
-    def get_default_locale_id(self):
-        """
-        Finds the default locale to use for this object.
-
-        Intended to be run before save.
-        """
-        # Check if the object has any parental keys to another translatable model
-        # If so, take the locale from the object referenced in that parental key
-        parental_keys = [
-            field
-            for field in self._meta.get_fields()
-            if isinstance(field, ParentalKey)
-            and issubclass(field.related_model, TranslatableMixin)
-        ]
-
-        if parental_keys:
-            parent_id = parental_keys[0].value_from_object(self)
-            return (
-                parental_keys[0]
-                .related_model.objects.only("locale_id")
-                .get(id=parent_id)
-                .locale_id
-            )
-
-        return Locale.objects.default_id()
-
-    @classmethod
-    def get_translation_model(self):
-        """
-        Gets the model which manages the translations for this model.
-        (The model that has the "translation_key" and "locale" fields)
-        Most of the time this would be the current model, but some sites
-        may have intermediate concrete models between wagtailcore.Page and
-        the specfic page model.
-        """
-        return self._meta.get_field("locale").model
-
-    @classmethod
-    def get_translatable_fields(cls):
-        return [
-            field
-            for field in cls.translatable_fields
-            if isinstance(field, TranslatableField)
-        ]
+    def get_instance_or_none(self, locale):
+        try:
+            return self.get_instance(locale)
+        except self.content_type.model_class().DoesNotExist:
+            pass
 
     class Meta:
-        abstract = True
-        unique_together = [("translation_key", "locale")]
+        unique_together = [("content_type", "translation_key")]
 
 
-class ParentNotTranslatedError(Exception):
-    """
-    Raised when a call to Page.copy_for_translation is made but the
-    parent page is not translated and copy_parents is False.
-    """
-
+class SourceDeletedError(Exception):
     pass
 
 
-class TranslatablePageMixin(TranslatableMixin):
+class MissingTranslationError(Exception):
+    def __init__(self, segment, locale):
+        self.segment = segment
+        self.locale = locale
 
-    class Meta:
-        abstract = True
-        unique_together = [("translation_key", "locale")]
+        super().__init__()
 
-    def copy(self, reset_translation_key=True, **kwargs):
-        # If this is a regular copy (not copy_for_translation) we should change the translation_key
-        # of the page and all child objects so they don't clash with the original page
-        if reset_translation_key:
-            if "update_attrs" in kwargs:
-                if "translation_key" not in kwargs["update_attrs"]:
-                    kwargs["update_attrs"]["translation_key"] = uuid.uuid4()
 
+class MissingRelatedObjectError(Exception):
+    def __init__(self, segment, locale):
+        self.segment = segment
+        self.locale = locale
+
+        super().__init__()
+
+
+class TranslationSourceQuerySet(models.QuerySet):
+    def get_for_instance(self, instance):
+        object = TranslatableObject.objects.get_for_instance(
+            instance
+        )
+        return self.filter(
+            object=object,
+            locale=instance.locale,
+        )
+
+
+class TranslationSource(models.Model):
+    """
+    A piece of content that to be used as a source for translations.
+    """
+
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="sources"
+    )
+    # object.content_type refers to the model that the TranslatableMixin was added to, however that model
+    # might have child models. So specific_content_type is needed to refer to the content type that this
+    # source data was extracted from.
+    specific_content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="+"
+    )
+    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE)
+    object_repr = models.TextField(max_length=200)
+    content_json = models.TextField()
+    created_at = models.DateTimeField()
+
+    objects = TranslationSourceQuerySet.as_manager()
+
+    @classmethod
+    def from_instance(cls, instance, force=False):
+        # Make sure we're using the specific version of pages
+        if isinstance(instance, Page):
+            instance = instance.specific
+
+        object, created = TranslatableObject.objects.get_or_create_from_instance(
+            instance
+        )
+
+        if isinstance(instance, ClusterableModel):
+            content_json = instance.to_json()
+        else:
+            serializable_data = get_serializable_data_for_fields(instance)
+            content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
+
+        if not force:
+            # Check if the instance has changed at all since the previous revision
+            previous_revision = object.sources.order_by("created_at").last()
+            if previous_revision:
+                if json.loads(content_json) == json.loads(
+                    previous_revision.content_json
+                ):
+                    return previous_revision, False
+
+        return (
+            cls.objects.create(
+                object=object,
+                specific_content_type=ContentType.objects.get_for_model(instance.__class__),
+                locale=instance.locale,
+                object_repr=str(instance)[:200],
+                content_json=content_json,
+                created_at=timezone.now(),
+            ),
+            True,
+        )
+
+    def get_source_instance(self):
+        """
+        This gets the live version of instance that the source data was extracted from.
+
+        This is different to source.object.get_instance(source.locale) as the instance
+        returned by this methid will have the same model that the content was extracted
+        from. The model returned by `object.get_instance` might be more generic since
+        that model only records the model that the TranslatableMixin was applied to but
+        that model might have child models.
+        """
+        return self.specific_content_type.get_object_for_this_type(
+            translation_key=self.object_id, locale_id=self.locale_id
+        )
+
+    def as_instance(self):
+        """
+        Builds an instance of the object with the content at this revision.
+        """
+        try:
+            instance = self.get_source_instance()
+        except models.ObjectDoesNotExist:
+            raise SourceDeletedError
+
+        if isinstance(instance, Page):
+            return instance.with_content_json(self.content_json)
+
+        elif isinstance(instance, ClusterableModel):
+            new_instance = instance.__class__.from_json(self.content_json)
+
+        else:
+            new_instance = model_from_serializable_data(
+                instance.__class__, json.loads(self.content_json)
+            )
+
+        new_instance.pk = instance.pk
+        new_instance.locale = instance.locale
+        new_instance.translation_key = instance.translation_key
+
+        return new_instance
+
+    def extract_segments(self):
+        for segment in extract_segments(self.as_instance()):
+            if isinstance(segment, TemplateSegmentValue):
+                TemplateSegment.from_value(self, segment)
+            elif isinstance(segment, RelatedObjectSegmentValue):
+                RelatedObjectSegment.from_value(self, segment)
             else:
-                kwargs["update_attrs"] = {
-                    "translation_key": uuid.uuid4(),
-                }
-
-            original_process_child_object = kwargs.pop("process_child_object", None)
-
-            def process_child_object(
-                original_page, page_copy, child_relation, child_object
-            ):
-                # Change translation keys of translatable child objects
-                if isinstance(child_object, TranslatableMixin):
-                    child_object.translation_key = uuid.uuid4()
-
-                if original_process_child_object is not None:
-                    original_process_child_object(
-                        original_page, page_copy, child_relation, child_object
-                    )
-
-            kwargs["process_child_object"] = process_child_object
-
-        return super().copy(**kwargs)
+                StringSegment.from_value(self, self.locale, segment)
 
     @transaction.atomic
-    def copy_for_translation(self, locale, copy_parents=False, exclude_fields=None):
+    def create_or_update_translation(self, locale):
         """
-        Copies this page for the specified locale.
+        Creates/updates a translation of the object into the specified locale
+        based on the content of this source and the translated strings
+        currently in translation memory.
         """
-        # Find the translated version of the parent page to create the new page under
-        parent = self.get_parent().specific
-        slug = self.slug
-        if isinstance(parent, TranslatablePageMixin):
-            try:
-                translated_parent = parent.get_translation(locale)
-            except parent.__class__.DoesNotExist:
-                if not copy_parents:
-                    raise ParentNotTranslatedError
-
-                translated_parent = parent.copy_for_translation(
-                    locale, copy_parents=True
-                )
-        else:
-            translated_parent = parent
-
-            # Append locale code to slug as the new page
-            # will be created in the same section as the existing one
-            slug += "-" + locale.slug
-
-        # Find available slug for new page
-        slug = find_available_slug(translated_parent, slug)
-
-        # Update locale on translatable child objects as well
-        def process_child_object(
-            original_page, page_copy, child_relation, child_object
-        ):
-            if isinstance(child_object, TranslatableMixin):
-                child_object.locale = locale
-
-        return self.copy(
-            to=translated_parent,
-            update_attrs={
-                "locale": locale,
-                "slug": slug,
-            },
-            copy_revisions=False,
-            keep_live=False,
-            reset_translation_key=False,
-            process_child_object=process_child_object,
-            exclude_fields=exclude_fields,
-        )
-
-    def get_default_locale_id(self):
-        """
-        Finds the default locale to use for this page.
-
-        Intended to be run before save.
-        """
-        parent = self.get_parent()
-        if parent is not None:
-            if issubclass(parent.specific_class, TranslatablePageMixin):
-                return (
-                    parent.specific_class.objects.only("locale_id")
-                    .get(id=parent.id)
-                    .locale_id
-                )
-
-        return super().get_default_locale_id()
-
-    def full_clean(self, **kwargs):
-        # We need to override this as the locale ID needs to be set before validation
-        # (normally we would set this on the pre_save signal but Wagtail does model level validation)
-        if self.locale_id is None:
-            self.locale_id = self.get_default_locale_id()
-
-        return super().full_clean(**kwargs)
-
-    def can_move_to(self, parent):
-        if not super().can_move_to(parent):
-            return False
-
-        # Prevent pages being moved to different language sections
-        if issubclass(parent.specific_class, TranslatablePageMixin):
-            if parent.specific.locale_id != self.locale_id:
-                return False
-
-        return True
-
-    def with_content_json(self, content_json):
-        page = super().with_content_json(content_json)
-        page.translation_key = self.translation_key
-        page.locale = self.locale
-
-        return page
-
-    def get_translation_for_request(self, request):
-        """
-        Returns the translation of this page that should be used to route
-        the specified request.
-        """
-        language_code = translation.get_supported_language_variant(
-            request.LANGUAGE_CODE
-        )
+        original = self.as_instance()
+        created = False
 
         try:
-            locale = Locale.objects.get(language_code=language_code)
-            return self.get_translation(locale)
+            translation = self.object.get_instance(locale)
+        except models.ObjectDoesNotExist:
+            translation = original.copy_for_translation(locale)
+            created = True
 
-        except Locale.DoesNotExist:
-            return
+        # Copy synchronised fields
+        for field in getattr(translation, 'translatable_fields', []):
+            if field.is_synchronized(original):
+                # TODO: Use Django to set the field so the attname is correct
+                setattr(
+                    translation, field.field_name, getattr(original, field.field_name)
+                )
 
-        except self.DoesNotExist:
-            return
+        # Fetch all translated segments
+        string_segments = (
+            StringSegment.objects.filter(source=self)
+            .annotate_translation(locale)
+            .select_related("context")
+        )
 
-    def route(self, request, path_components):
-        # When this mixin is applied to a page, this override
-        # will change the routing behaviour to route requests to
-        # the correct translation based on the language code on
-        # the request.
+        template_segments = (
+            TemplateSegment.objects.filter(source=self)
+            .select_related("template")
+            .select_related("context")
+        )
 
-        # Check that an ancestor hasn't already routed the request into
-        # a single-language section of the site.
-        if not getattr(request, "_wagtail_localize_routed", False):
-            # If the site root is translatable, reroute based on language
-            page = self.get_translation_for_request(request)
+        related_object_segments = (
+            RelatedObjectSegment.objects.filter(source=self)
+            .select_related("object")
+            .select_related("context")
+        )
 
-            if page is not None:
-                request._wagtail_localize_routed = True
-                return page.route(request, path_components)
+        segments = []
 
-        return super().route(request, path_components)
+        for string_segment in string_segments:
+            if not string_segment.translation:
+                raise MissingTranslationError(string_segment, locale)
+
+            segment_value = StringSegmentValue(
+                string_segment.context.path,
+                StringValue(string_segment.translation),
+                attrs=json.loads(string_segment.attrs)
+            ).with_order(string_segment.order)
+
+            segments.append(segment_value)
+
+        for template_segment in template_segments:
+            template = template_segment.template
+            segment_value = TemplateSegmentValue(
+                template_segment.context.path,
+                template.template_format,
+                template.template,
+                template.string_count,
+                order=template_segment.order,
+            )
+            segments.append(segment_value)
+
+        for related_object_segment in related_object_segments:
+            if not related_object_segment.object.has_translation(locale):
+                raise MissingRelatedObjectError(related_object_segment, locale)
+
+            segment_value = RelatedObjectSegmentValue(
+                related_object_segment.context.path,
+                related_object_segment.object.content_type,
+                related_object_segment.object.translation_key,
+                order=related_object_segment.order,
+            )
+            segments.append(segment_value)
+
+        # Ingest all translated segments
+        ingest_segments(original, translation, self.locale, locale, segments)
+
+        if isinstance(translation, Page):
+            # Make sure the slug is valid
+            translation.slug = slugify(translation.slug)
+            translation.save()
+
+            # Create a new revision
+            page_revision = translation.save_revision()
+            page_revision.publish()
+        else:
+            translation.save()
+            page_revision = None
+
+        # Log that the translation was made
+        TranslationLog.objects.create(
+            source=self, locale=locale, page_revision=page_revision
+        )
+
+        return translation, created
 
 
-class BootstrapTranslatableMixin(TranslatableMixin):
+class TranslationLog(models.Model):
     """
-    A version of TranslatableMixin without uniqueness constraints.
-
-    This is to make it easy to transition existing models to being translatable.
-
-    The process is as follows:
-     - Add BootstrapTranslatableMixin to the model
-     - Run makemigrations
-     - Create a data migration for each app, then use the BootstrapTranslatableModel operation in
-       wagtail_localize.bootstrap on each model in that app
-     - Change BootstrapTranslatableMixin to TranslatableMixin (or TranslatablePageMixin, if it's a page model)
-     - Run makemigrations again
-     - Migrate!
+    This model logs when we make a translation.
     """
 
-    translation_key = models.UUIDField(null=True, editable=False)
-    locale = models.ForeignKey(
-        Locale, on_delete=models.PROTECT, null=True, related_name="+", editable=False
+    source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, related_name="translation_logs"
     )
+    locale = models.ForeignKey(
+        "wagtailcore.Locale",
+        on_delete=models.CASCADE,
+        related_name="translation_logs",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    page_revision = models.ForeignKey(
+        "wagtailcore.PageRevision",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+
+    def get_instance(self):
+        """
+        Gets the instance of the translated object, if it still exists.
+        """
+        return self.source.object.get_instance(self.locale)
+
+
+class String(models.Model):
+    UUID_NAMESPACE = uuid.UUID("59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7")
+
+    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE, related_name="source_strings")
+
+    data_hash = models.UUIDField()
+    data = models.TextField()
+
+    @classmethod
+    def get_data_hash(cls, data):
+        return uuid.uuid5(cls.UUID_NAMESPACE, data)
+
+    @classmethod
+    def from_value(cls, locale, stringvalue):
+        string, created = cls.objects.get_or_create(
+            locale_id=pk(locale),
+            data_hash=cls.get_data_hash(stringvalue.data),
+            defaults={"data": stringvalue.data},
+        )
+
+        return string
+
+    def as_value(self):
+        return StringValue(self.data)
+
+    def save(self, *args, **kwargs):
+        if self.data and self.data_hash is None:
+            self.data_hash = self.get_data_hash(self.data)
+
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = [("locale", "data_hash")]
+
+
+class TranslationContext(models.Model):
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="+"
+    )
+    path_id = models.UUIDField()
+    path = models.TextField()
+
+    class Meta:
+        unique_together = [
+            ("object", "path_id"),
+        ]
+
+    @classmethod
+    def get_path_id(cls, path):
+        return uuid.uuid5(uuid.UUID("fcab004a-2b50-11ea-978f-2e728ce88125"), path)
+
+    def save(self, *args, **kwargs):
+        if self.path and self.path_id is None:
+            self.path_id = self.get_path_id(self.path)
+
+        return super().save(*args, **kwargs)
+
+    def as_string(self):
+        """
+        Creates a string that can be used in the "msgctxt" field of PO files.
+        """
+        return str(self.object_id) + ":" + self.path
+
+    @classmethod
+    def get_from_string(cls, msgctxt):
+        """
+        Looks for the TranslationContext that the given string represents.
+        """
+        object_id, path = msgctxt.split(":")
+        path_id = cls.get_path_id(path)
+        return cls.objects.get(object_id=object_id, path_id=path_id)
+
+
+class StringTranslation(models.Model):
+    translation_of = models.ForeignKey(
+        String, on_delete=models.CASCADE, related_name="translations"
+    )
+    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE, related_name="string_translations")
+    context = models.ForeignKey(
+        TranslationContext,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="translations",
+    )
+    data = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = [("locale", "translation_of", "context")]
+
+    @classmethod
+    def from_text(cls, translation_of, locale, context, data):
+        segment, created = cls.objects.get_or_create(
+            translation_of=translation_of,
+            locale_id=pk(locale),
+            context_id=pk(context),
+            defaults={"data": data},
+        )
+
+        return segment
+
+
+class Template(models.Model):
+    BASE_UUID_NAMESPACE = uuid.UUID("4599eabc-3f8e-41a9-be61-95417d26a8cd")
+
+    uuid = models.UUIDField(unique=True)
+    template = models.TextField()
+    template_format = models.CharField(max_length=100)
+    string_count = models.PositiveIntegerField()
+
+    @classmethod
+    def from_value(cls, template_value):
+        uuid_namespace = uuid.uuid5(cls.BASE_UUID_NAMESPACE, template_value.format)
+
+        template, created = cls.objects.get_or_create(
+            uuid=uuid.uuid5(uuid_namespace, template_value.template),
+            defaults={
+                "template": template_value.template,
+                "template_format": template_value.format,
+                "string_count": template_value.string_count,
+            },
+        )
+
+        return template
+
+
+class BaseSegment(models.Model):
+    source = models.ForeignKey(TranslationSource, on_delete=models.CASCADE)
+    context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
+    order = models.PositiveIntegerField()
 
     class Meta:
         abstract = True
 
 
-def get_translatable_models(include_subclasses=False):
-    """
-    Returns a list of all concrete models that inherit from TranslatableMixin.
-    By default, this only includes models that are direct children of TranslatableMixin,
-    to get all models, set the include_subclasses attribute to True.
-    """
-    translatable_models = [
-        model
-        for model in apps.get_models()
-        if issubclass(model, TranslatableMixin) and not model._meta.abstract
-    ]
-
-    if include_subclasses is False:
-        # Exclude models that inherit from another translatable model
-        root_translatable_models = set()
-
-        for model in translatable_models:
-            root_translatable_models.add(model.get_translation_model())
-
-        translatable_models = [
-            model for model in translatable_models if model in root_translatable_models
-        ]
-
-    return translatable_models
+class StringSegmentQuerySet(models.QuerySet):
+    def annotate_translation(self, locale):
+        """
+        Adds a 'translation' field to the segments containing the
+        text content of the segment translated into the specified
+        locale.
+        """
+        return self.annotate(
+            translation=Subquery(
+                StringTranslation.objects.filter(
+                    translation_of_id=OuterRef("string_id"),
+                    locale_id=pk(locale),
+                    context_id=OuterRef("context_id"),
+                ).values("data")
+            )
+        )
 
 
-@receiver(pre_save)
-def set_locale_on_new_instance(sender, instance, **kwargs):
-    if not isinstance(instance, TranslatableMixin):
-        return
+class StringSegment(BaseSegment):
+    string = models.ForeignKey(
+        String, on_delete=models.CASCADE, related_name="segments"
+    )
 
-    if instance.locale_id is not None:
-        return
+    # When we extract the segment, we replace HTML attributes with id tags
+    # The attributes that were removed are stored here. These must be
+    # added into the translated strings.
+    # These are stored as a mapping of element ids to KV mappings of
+    # attributes in JSON format. For example:
+    #
+    #  For this segment: <a id="a1">Link to example.com</a>
+    #
+    #  The value of this field could be:
+    #
+    #  {
+    #      "a#a1": {
+    #          "href": "https://www.example.com"
+    #      }
+    #  }
+    attrs = models.TextField(blank=True)
 
-    # If this is a fixture load, use the global default Locale
-    # as the page tree is probably in an flux
-    if kwargs["raw"]:
-        instance.locale_id = Locale.objects.default_id()
-        return
+    objects = StringSegmentQuerySet.as_manager()
 
-    instance.locale_id = instance.get_default_locale_id()
+    @classmethod
+    def from_value(cls, source, language, value):
+        string = String.from_value(language, value.string)
+        context, context_created = TranslationContext.objects.get_or_create(
+            object_id=source.object_id, path=value.path,
+        )
+
+        segment, created = cls.objects.get_or_create(
+            source=source,
+            context=context,
+            order=value.order,
+            string=string,
+            attrs=json.dumps(value.attrs),
+        )
+
+        return segment
+
+
+class TemplateSegment(BaseSegment):
+    template = models.ForeignKey(
+        Template, on_delete=models.CASCADE, related_name="segments"
+    )
+
+    @classmethod
+    def from_value(cls, source, value):
+        template = Template.from_value(value)
+        context, context_created = TranslationContext.objects.get_or_create(
+            object_id=source.object_id, path=value.path,
+        )
+
+        segment, created = cls.objects.get_or_create(
+            source=source,
+            context=context,
+            order=value.order,
+            template=template,
+        )
+
+        return segment
+
+
+class RelatedObjectSegment(BaseSegment):
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="references"
+    )
+
+    @classmethod
+    def from_value(cls, source, value):
+        context, context_created = TranslationContext.objects.get_or_create(
+            object_id=source.object_id, path=value.path,
+        )
+
+        segment, created = cls.objects.get_or_create(
+            source=source,
+            context=context,
+            order=value.order,
+            object=TranslatableObject.objects.get_or_create(
+                content_type=value.content_type,
+                translation_key=value.translation_key,
+            )[0],
+        )
+
+        return segment

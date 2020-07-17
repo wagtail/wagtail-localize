@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from wagtail_localize.translation.segments import StringSegmentValue
+from wagtail_localize.segments import StringSegmentValue
 
 
 class TestStringSegmentValue(TestCase):

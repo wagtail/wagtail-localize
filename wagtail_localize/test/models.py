@@ -3,14 +3,10 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, Orderable
+from wagtail.core.models import Page, Orderable, TranslatableMixin
 
 from wagtail_localize.fields import TranslatableField, SynchronizedField
-from wagtail_localize.models import (
-    TranslatableMixin,
-    TranslatablePageMixin,
-)
-from wagtail_localize.translation.segments import StringSegmentValue
+from wagtail_localize.segments import StringSegmentValue
 
 
 class TestSnippet(TranslatableMixin, models.Model):
@@ -71,7 +67,7 @@ class TestCustomField(models.TextField):
         return [StringSegmentValue("foo", "{} and some extra".format(value))]
 
 
-class TestPage(TranslatablePageMixin, Page):
+class TestPage(Page):
     test_charfield = models.CharField(max_length=255, blank=True)
     test_textfield = models.TextField(blank=True)
     test_emailfield = models.EmailField(blank=True)
@@ -171,5 +167,5 @@ class TestNonParentalChildObject(TranslatableMixin, Orderable):
     translatable_fields = [TranslatableField("field")]
 
 
-class TestHomePage(TranslatablePageMixin, Page):
+class TestHomePage(Page):
     pass

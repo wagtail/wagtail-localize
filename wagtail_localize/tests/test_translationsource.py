@@ -4,11 +4,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.utils import timezone
 from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page
+from wagtail.core.models import Page, Locale
 
-from wagtail_localize.models import Locale
-from wagtail_localize.test.models import TestPage, TestSnippet
-from wagtail_localize.translation.models import (
+from wagtail_localize.models import (
     TranslationSource,
     String,
     StringTranslation,
@@ -20,9 +18,10 @@ from wagtail_localize.translation.models import (
     TemplateSegment,
     RelatedObjectSegment,
 )
-from wagtail_localize.translation.segments import TemplateSegmentValue, RelatedObjectSegmentValue
-from wagtail_localize.translation.segments.extract import extract_segments
-from wagtail_localize.translation.strings import StringValue
+from wagtail_localize.segments import TemplateSegmentValue, RelatedObjectSegmentValue
+from wagtail_localize.segments.extract import extract_segments
+from wagtail_localize.strings import StringValue
+from wagtail_localize.test.models import TestPage, TestSnippet
 
 
 def insert_segments(revision, locale, segments):
@@ -326,7 +325,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         revision = self.page.save_revision()
         revision.publish()
         self.page.refresh_from_db()
-        source_with_translated_countent = TranslationSource.from_instance(self.page)[0]
+        source_with_translated_content = TranslationSource.from_instance(self.page)[0]
 
         # Check translation hasn't been updated yet
         translated.refresh_from_db()
@@ -341,7 +340,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         (
             new_page,
             created,
-        ) = source_with_translated_countent.create_or_update_translation(
+        ) = source_with_translated_content.create_or_update_translation(
             self.dest_locale
         )
 
