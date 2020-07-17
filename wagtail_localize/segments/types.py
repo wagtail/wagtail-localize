@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 
-from ..strings import StringValue
+from wagtail_localize.strings import StringValue
 
 
 class BaseValue:

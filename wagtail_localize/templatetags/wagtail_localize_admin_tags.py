@@ -1,7 +1,5 @@
 from django import template
 
-from wagtail_localize.models import TranslatablePageMixin
-
 
 register = template.Library()
 
@@ -11,16 +9,9 @@ register = template.Library()
 )
 def admin_language_switch(context):
     page = context["page"]
-    is_translatable = True
-
-    if isinstance(page, TranslatablePageMixin):
-        language_count = page.get_translations().count()
-    else:
-        is_translatable = False
-        language_count = 0
 
     return {
         "page": page,
-        "is_translatable": is_translatable,
-        "language_count": language_count,
+        "is_translatable": True,  # TODO Remove
+        "language_count": page.get_translations().count(),
     }

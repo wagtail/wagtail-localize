@@ -6,7 +6,7 @@ from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
 
-from ..strings import restore_strings
+from wagtail_localize.strings import restore_strings
 
 
 def organise_template_segments(segments):
