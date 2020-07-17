@@ -182,6 +182,11 @@ class TranslationSource(models.Model):
             translation_key=self.object_id, locale_id=self.locale_id
         )
 
+    def get_translated_instance(self, locale):
+        return self.specific_content_type.get_object_for_this_type(
+            translation_key=self.object_id, locale_id=pk(locale)
+        )
+
     def as_instance(self):
         """
         Builds an instance of the object with the content at this revision.
@@ -228,7 +233,7 @@ class TranslationSource(models.Model):
         created = False
 
         try:
-            translation = self.object.get_instance(locale)
+            translation = self.get_translated_instance(locale)
         except models.ObjectDoesNotExist:
             translation = original.copy_for_translation(locale)
             created = True
