@@ -335,6 +335,94 @@ class TranslationSource(models.Model):
         return translation, created
 
 
+class Translation(models.Model):
+    """
+    Manages the translation of an object into a locale.
+    An instance of this model is created whenever something is submitted for translation
+    into a new language. They live until either the source or destination has been deleted.
+    Only one of these will exist for a given object/langauge. If the object is resubmitted
+    for translation, the existing Translation instance's 'source' field is updated.
+    """
+    # A unique ID that can be used to reference this request in external systems
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+
+    object = models.ForeignKey(
+        TranslatableObject, on_delete=models.CASCADE, related_name="translations"
+    )
+    target_locale = models.ForeignKey(
+        "wagtailcore.Locale",
+        on_delete=models.CASCADE,
+        related_name="translations",
+    )
+
+    # Note: The source may be changed if the object is resubmitted for translation into the same locale
+    source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, related_name="translations"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    source_last_updated_at = models.DateTimeField(auto_now_add=True)
+    translations_last_updated_at = models.DateTimeField(null=True)
+    destination_last_updated_at = models.DateTimeField(null=True)
+    enabled = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = [
+            ('object', 'target_locale'),
+        ]
+
+    def get_progress(self):
+        """
+        Returns the current progress of translating this Translation.
+        Returns two integers:
+        - The total number of segments in the source that need to be translated
+        - The number of segments that have been translated into the locale
+        """
+        # Get QuerySet of Segments that need to be translated
+        required_segments = StringSegment.objects.filter(source_id=self.source_id)
+
+        # Annotate each Segment with a flag that indicates whether the segment is translated
+        # into the locale
+        required_segments = required_segments.annotate(
+            is_translated=Exists(
+                StringTranslation.objects.filter(
+                    translation_of_id=OuterRef("string_id"),
+                    context_id=OuterRef("context_id"),
+                    locale_id=self.target_locale_id,
+                )
+            )
+        )
+
+        # Count the total number of segments and the number of translated segments
+        aggs = required_segments.annotate(
+            is_translated_i=Case(
+                When(is_translated=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+        ).aggregate(total_segments=Count("pk"), translated_segments=Sum("is_translated_i"))
+
+        return aggs["total_segments"], aggs["translated_segments"]
+
+    def get_status_display(self):
+        """
+        Returns a string to describe the current status of this translation to a user.
+        """
+        total_segments, translated_segments = self.get_progress()
+        if total_segments == translated_segments:
+            return _("Up to date")
+        else:
+            # TODO show actual number of strings required?
+            return _("Waiting for translations")
+
+    def update(self, user=None):
+        try:
+            self.source.create_or_update_translation(self.target_locale, user=user, string_translation_fallback_to_source=True, copy_parent_pages=True)
+        except MissingRelatedObjectError:
+            # TODO: Create missing objects?
+            pass
+
+
 class TranslationLog(models.Model):
     """
     This model logs when we make a translation.
