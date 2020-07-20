@@ -13,26 +13,20 @@ env:
 
 matrix:
   include:
-   - env: TOXENV=py37-dj22-wa27-postgres
+   - env: TOXENV=py37-dj22-wai18n-postgres
      python: 3.7
 
-   - env: TOXENV=py37-dj21-wa27-postgres
-     python: 3.7
-
-   - env: TOXENV=py37-dj22-wa26-postgres
-     python: 3.7
-
-   - env: TOXENV=py37-dj30-wa28-postgres
-     python: 3.7
-
-   - env: TOXENV=py38-dj22-wa27-postgres
+   - env: TOXENV=py38-dj22-wai18n-postgres
      python: 3.8
 
-   - env: TOXENV=py37-dj22-wa27-sqlite
-     python: 3.7
+   - env: TOXENV=py38-dj22-wai18n-sqlite
+     python: 3.8
 
-   - env: TOXENV=py37-dj30-wa29-postgres
-     python: 3.7
+   - env: TOXENV=py38-dj30-wai18n-postgres
+     python: 3.8
+
+   - env: TOXENV=py38-dj30-wai18n-sqlite
+     python: 3.8
 
    - env: TOXENV=py38-dj30-wamaster-postgres
      python: 3.8
