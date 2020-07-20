@@ -1,12 +1,15 @@
 from django.contrib.contenttypes.models import ContentType
+from django.utils.functional import cached_property
+from wagtail.core.models import Locale
 
 from wagtail_localize.strings import StringValue
 
 
 class BaseValue:
-    def __init__(self, path, order=0):
+    def __init__(self, path, order=0, if_untranslated=None):
         self.path = path
         self.order = order
+        self.if_untranslated = if_untranslated
 
     def clone(self):
         """
@@ -132,33 +135,45 @@ class TemplateSegmentValue(BaseValue):
 
 
 class RelatedObjectSegmentValue(BaseValue):
-    def __init__(self, path, content_type, translation_key, **kwargs):
+    def __init__(self, path, content_type, translation_key, locale, **kwargs):
+        from ..models import pk
+
         self.content_type = content_type
         self.translation_key = translation_key
+        self.locale_id = pk(locale)
 
         super().__init__(path, **kwargs)
 
     @classmethod
     def from_instance(cls, path, instance):
         model = instance.get_translation_model()
-        return cls(
-            path, ContentType.objects.get_for_model(model), instance.translation_key
+        value = cls(
+            path, ContentType.objects.get_for_model(model), instance.translation_key, instance.locale_id
         )
+        value.instance = instance
+        return value
 
-    def get_instance(self, locale):
-        from ..models import pk
+    @classmethod
+    def null(cls, path):
+        value = cls(
+            path, None, None, None
+        )
+        value.instance = None
+        return value
 
+    @cached_property
+    def instance(self):
         return self.content_type.get_object_for_this_type(
-            translation_key=self.translation_key, locale_id=pk(locale)
+            translation_key=self.translation_key, locale_id=self.locale_id
         )
 
     def clone(self):
         return RelatedObjectSegmentValue(
-            self.path, self.content_type, self.translation_key, order=self.order
+            self.path, self.content_type, self.translation_key, self.locale_id, order=self.order
         )
 
     def is_empty(self):
-        return self.content_type is None and self.translation_key is None
+        return self.content_type is None and self.translation_key is None and self.locale_id is None
 
     def __eq__(self, other):
         return (
@@ -166,9 +181,11 @@ class RelatedObjectSegmentValue(BaseValue):
             and self.path == other.path
             and self.content_type == other.content_type
             and self.translation_key == other.translation_key
+            and self.locale_id == other.locale_id
         )
 
     def __repr__(self):
-        return "<RelatedObjectSegmentValue {} {} {}>".format(
-            self.path, self.content_type, self.translation_key
+        locale = Locale.objects.get(self.locale_id)
+        return "<RelatedObjectSegmentValue {} {} {} {}>".format(
+            self.path, self.content_type, self.translation_key, locale
         )

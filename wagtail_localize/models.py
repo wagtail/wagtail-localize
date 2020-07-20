@@ -25,6 +25,7 @@ from modelcluster.models import (
 )
 from wagtail.core.models import Page
 
+from .fields import COPY_SOURCE, USE_BLANK_VALUE, WAIT
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
@@ -285,8 +286,13 @@ class TranslationSource(models.Model):
         for string_segment in string_segments:
             if string_segment.translation:
                 string = StringValue(string_segment.translation)
-            elif string_translation_fallback_to_source:
+
+            elif string_translation_fallback_to_source or string_segment.if_untranslated == COPY_SOURCE:
                 string = StringValue(string_segment.string.data)
+
+            elif string_segment.if_untranslated == USE_BLANK_VALUE:
+                string = StringValue("")
+
             else:
                 raise MissingTranslationError(string_segment, locale)
 
@@ -310,15 +316,32 @@ class TranslationSource(models.Model):
             segments.append(segment_value)
 
         for related_object_segment in related_object_segments:
-            if not related_object_segment.object.has_translation(locale):
+            if related_object_segment.object.has_translation(locale):
+                related_object_locale = locale
+
+            elif string_segment.if_untranslated == COPY_SOURCE and related_object_segment.object.has_translation(self.locale):
+                related_object_locale = locale
+
+            elif string_segment.if_untranslated == USE_BLANK_VALUE:
+                related_object_locale = None
+
+            else:
                 raise MissingRelatedObjectError(related_object_segment, locale)
 
-            segment_value = RelatedObjectSegmentValue(
-                related_object_segment.context.path,
-                related_object_segment.object.content_type,
-                related_object_segment.object.translation_key,
-                order=related_object_segment.order,
-            )
+            if related_object_locale:
+                segment_value = RelatedObjectSegmentValue(
+                    related_object_segment.context.path,
+                    related_object_segment.object.content_type,
+                    related_object_segment.object.translation_key,
+                    related_object_locale,
+                    order=related_object_segment.order,
+                )
+            else:
+                segment_value = RelatedObjectSegmentValue.null(
+                    related_object_segment.context.path,
+                    order=related_object_segment.order,
+                )
+
             segments.append(segment_value)
 
         # Ingest all translated segments
@@ -592,9 +615,16 @@ class Template(models.Model):
 
 
 class BaseSegment(models.Model):
+    IF_UNTRANSLATED_CHOICES = [
+        (WAIT, "Wait"),
+        (USE_BLANK_VALUE, "Use blank value"),
+        (COPY_SOURCE, "Copy Source"),
+    ]
+
     source = models.ForeignKey(TranslationSource, on_delete=models.CASCADE)
     context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
     order = models.PositiveIntegerField()
+    if_untranslated = models.PositiveSmallIntegerField(choices=IF_UNTRANSLATED_CHOICES, default=WAIT)
 
     class Meta:
         abstract = True
@@ -655,6 +685,7 @@ class StringSegment(BaseSegment):
             order=value.order,
             string=string,
             attrs=json.dumps(value.attrs),
+            if_untranslated=value.if_untranslated or WAIT,
         )
 
         return segment
@@ -720,6 +751,7 @@ class RelatedObjectSegment(BaseSegment):
                 content_type=value.content_type,
                 translation_key=value.translation_key,
             )[0],
+            if_untranslated=value.if_untranslated or WAIT,
         )
 
         return segment

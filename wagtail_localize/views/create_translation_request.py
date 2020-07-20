@@ -6,6 +6,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from wagtail.core.models import Page, Locale, get_translatable_models
 
+from wagtail_localize.fields import WAIT
 from wagtail_localize.models import Translation, TranslationSource
 
 
@@ -72,7 +73,7 @@ def create_translation_request(request, page_id):
 
                     # Add related objects
                     if include_related_objects:
-                        for related_object_segment in source.relatedobjectsegment_set.all():
+                        for related_object_segment in source.relatedobjectsegment_set.filter(if_untranslated=WAIT):
                             related_instance = related_object_segment.object.get_instance(instance.locale)
 
                             # Limit to one level of related objects, since this could potentially pull in a lot of stuff

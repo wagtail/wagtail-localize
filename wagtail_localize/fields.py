@@ -1,5 +1,10 @@
 from wagtail.core.fields import StreamField
 
+# Options for TranslatableField.if_untranslated
+WAIT = 1
+USE_BLANK_VALUE = 2
+COPY_SOURCE = 3
+
 
 class BaseTranslatableField:
     def __init__(self, field_name):
@@ -36,6 +41,10 @@ class TranslatableField(BaseTranslatableField):
     """
     A field that should be translated whenever the original page changes
     """
+
+    def __init__(self, field_name, if_untranslated=WAIT):
+        self.field_name = field_name
+        self.if_untranslated = if_untranslated
 
     def is_translated(self, obj):
         return True

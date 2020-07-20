@@ -59,7 +59,7 @@ def prepare_source(source):
             continue
 
         related_source, created = TranslationSource.from_instance(
-            segment.get_instance(source.locale)
+            segment.instance
         )
         prepare_source(related_source)
 

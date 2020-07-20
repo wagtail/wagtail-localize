@@ -98,9 +98,13 @@ def extract_segments(instance):
 
         field = translatable_field.get_field(instance.__class__)
 
+        def set_if_untranslated(segment):
+            segment.if_untranslated = translatable_field.if_untranslated
+            return segment
+
         if hasattr(field, "get_translatable_segments"):
             segments.extend(
-                segment.wrap(field.name)
+                set_if_untranslated(segment.wrap(field.name))
                 for segment in field.get_translatable_segments(
                     field.value_from_object(instance)
                 )
@@ -108,7 +112,7 @@ def extract_segments(instance):
 
         elif isinstance(field, StreamField):
             segments.extend(
-                segment.wrap(field.name)
+                set_if_untranslated(segment.wrap(field.name))
                 for segment in StreamFieldSegmentExtractor(field).handle_stream_block(
                     field.value_from_object(instance)
                 )
@@ -121,12 +125,12 @@ def extract_segments(instance):
                 StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
             ]
 
-            segments.extend(segment.wrap(field.name) for segment in field_segments)
+            segments.extend(set_if_untranslated(segment.wrap(field.name)) for segment in field_segments)
 
         elif isinstance(field, (models.TextField, models.CharField)):
             if not field.choices:
                 segments.append(
-                    StringSegmentValue(field.name, field.value_from_object(instance))
+                    StringSegmentValue(field.name, field.value_from_object(instance), if_untranslated=translatable_field.if_untranslated)
                 )
 
         elif isinstance(field, (models.ForeignKey)) and issubclass(
@@ -136,7 +140,7 @@ def extract_segments(instance):
 
             if related_instance:
                 segments.append(
-                    RelatedObjectSegmentValue.from_instance(field.name, related_instance)
+                    RelatedObjectSegmentValue.from_instance(field.name, related_instance, if_untranslated=translatable_field.if_untranslated)
                 )
 
         elif (
@@ -147,6 +151,7 @@ def extract_segments(instance):
             manager = getattr(instance, field.name)
 
             for child_instance in manager.all():
+                # Note: if_untranslated would already be set on these
                 segments.extend(
                     segment.wrap(str(child_instance.translation_key)).wrap(field.name)
                     for segment in extract_segments(child_instance)

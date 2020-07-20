@@ -23,7 +23,11 @@ def organise_template_segments(segments):
 def handle_related_object(related_object, src_locale, tgt_locale, segments):
     # FIXME: Check that segments is a single item list
     related_object_value = segments[0]
-    return related_object_value.get_instance(tgt_locale)
+
+    if related_object_value.is_empty():
+        return None
+    else:
+        return related_object_value.instance
 
 
 class StreamFieldSegmentsWriter:

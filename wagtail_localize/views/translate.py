@@ -153,7 +153,7 @@ def machine_translate(request, translation_id):
 
     translator = get_machine_translator()
     if translator is None:
-        return Http404
+        raise Http404
 
     # Get segments
     segments = defaultdict(list)
