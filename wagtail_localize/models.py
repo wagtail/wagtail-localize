@@ -223,7 +223,7 @@ class TranslationSource(models.Model):
                 StringSegment.from_value(self, self.locale, segment)
 
     @transaction.atomic
-    def create_or_update_translation(self, locale):
+    def create_or_update_translation(self, locale, copy_parent_pages=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -235,7 +235,11 @@ class TranslationSource(models.Model):
         try:
             translation = self.get_translated_instance(locale)
         except models.ObjectDoesNotExist:
-            translation = original.copy_for_translation(locale)
+            if isinstance(original, Page):
+                translation = original.copy_for_translation(locale, copy_parents=copy_parent_pages)
+            else:
+                translation = original.copy_for_translation(locale)
+
             created = True
 
         # Copy synchronised fields
