@@ -223,7 +223,7 @@ class TranslationSource(models.Model):
                 StringSegment.from_value(self, self.locale, segment)
 
     @transaction.atomic
-    def create_or_update_translation(self, locale, copy_parent_pages=False, string_translation_fallback_to_source=False):
+    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, string_translation_fallback_to_source=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -319,8 +319,10 @@ class TranslationSource(models.Model):
             translation.save()
 
             # Create a new revision
-            page_revision = translation.save_revision()
-            page_revision.publish()
+            page_revision = translation.save_revision(user=user)
+
+            if publish:
+                page_revision.publish()
         else:
             translation.save()
             page_revision = None
