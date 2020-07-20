@@ -223,7 +223,7 @@ class TranslationSource(models.Model):
                 StringSegment.from_value(self, self.locale, segment)
 
     @transaction.atomic
-    def create_or_update_translation(self, locale, copy_parent_pages=False):
+    def create_or_update_translation(self, locale, copy_parent_pages=False, string_translation_fallback_to_source=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -254,7 +254,7 @@ class TranslationSource(models.Model):
         string_segments = (
             StringSegment.objects.filter(source=self)
             .annotate_translation(locale)
-            .select_related("context")
+            .select_related("context", "string")
         )
 
         template_segments = (
@@ -272,12 +272,16 @@ class TranslationSource(models.Model):
         segments = []
 
         for string_segment in string_segments:
-            if not string_segment.translation:
+            if string_segment.translation:
+                string = StringValue(string_segment.translation)
+            elif string_translation_fallback_to_source:
+                string = StringValue(string_segment.string.data)
+            else:
                 raise MissingTranslationError(string_segment, locale)
 
             segment_value = StringSegmentValue(
                 string_segment.context.path,
-                StringValue(string_segment.translation),
+                string,
                 attrs=json.loads(string_segment.attrs)
             ).with_order(string_segment.order)
 
