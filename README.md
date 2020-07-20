@@ -16,8 +16,6 @@ Add `wagtail_localize` and any optional sub modules to `INSTALLED_APPS` in `sett
 INSTALLED_APPS = [
     ...
     "wagtail_localize",
-    "wagtail_localize.translation",
-
     # Note: Wagtail Localize must be above other Wagtail imports
     "wagtail.core",
     ...
@@ -50,7 +48,7 @@ To enable Google Translate as a machine translator, add the following to your se
 
 ```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'wagtail_localize.translation.machine_translators.google_translate.GoogleTranslateTranslator',
+    'CLASS': 'wagtail_localize.machine_translators.google_translate.GoogleTranslateTranslator',
 }
 ```
 
@@ -68,75 +66,3 @@ urlpatterns += i18n_patterns(
 )
 ```
 
-## Enabling Wagtail-localize within a new site
-
-Wagtail-localize provides classes wich page models should extend if they are to be translatable. This will be different if you are enabling translation on an existing site with pages, or a new site.
-
-### TranslatableMixin
-
-The base class for providing attributes needed to store translation mapping values:
-
-* `translation_key` - A `UUID` that is shared between all translations of the same object/page
-* `locale` - A foreign key to the `wagtail_localize.Locale` table which could represent a language or language/region
-
-This adds the following methods to the model:
-
-* `get_translations(inclusive=False)` - Returns a `QuerySet` of translations of this object. This object will be excluded from that `QuerySet` unless `inclusive` is set to `True`
-* `get_translation(locale)` - Returns the translated version of the object in that target locale. Raises `Model.DoesNotExist` if the object hasn't been translated into the that target locale
-* `get_translation_or_none(locale)` - Similar to `get_translation(locale)` except it returns `None` if the object hasn't been translated into the that target locale
-* `has_translation(locale)` - Returns `True` if the object has been translated into the target locale
-* `copy_for_translation(locale)` - Makes a copy of the object with the `locale` field of the new object set to the target locale
-
-### TranslatablePageMixin
-
-A specialised version of `TranslatableMixin` to be used on page models. It has the following differences:
-
-* The `copy_for_translation` method will create the new page underneath the translation of the parent page (for example, if a page in the English "News" section is copied for translation into German, the new page will be automatically created under the "Nachrichten" section in the German site tree)
-
-* The `copy` method has been overridden to change the `translation_key` field. This method is called from the regular page copy action in the admin, it effectively creates a new page so the `translation_key` needs to be given a new value.
-
-#### BootstrapTranslatableMixin
-
-A version of `TranslatableMixin`/`TranslatablePageMixin` without uniqueness constraints. This is to make it easy to transition existing models to being translatable. This is only used for generating the correct migrations in order to set the `translation_key` field uniquely for existing content.
-
-### 1. Enabling on a new site
-
-Each page model that requires translation should extend TranslatablePageMixin:
-
-```python
-from wagtail_localize.models import TranslatablePageMixin
-...
-
-class HomePage(TranslatablePageMixin, Page):
-
-
-class ArticlePage(TranslatablePageMixin, SocialFields, ListingFields, Page):
-```
-
-### 2. Enabling on an existing site with page data
-
-The process is as follows:
-
-* Add `BootstrapTranslatableMixin` to your page models
-* Run `django-admin makemigrations`
-* Create a data migration for each app, then use the BootstrapTranslatableModel operation in
-`wagtail_localize.bootstrap` on each model in that app
-* Change `BootstrapTranslatableMixin` to `TranslatableMixin` (or `TranslatablePageMixin`, if it's a page model)
-* Run `django-admin makemigrations` again
-
-### Synchronising languages
-
-`wagtail_localize` stores the list of available languages in the database. To populate this to have the same values as is in the `LANGUAGES` Django setting, you must run the following command:
-
-```shell
-python manage.py sync_languages
-```
-
-## TODO
-
-### Optional modules
-
-description of submodules
-'wagtail_localize.translation',
-
-### Translating snippets
