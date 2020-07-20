@@ -254,7 +254,7 @@ class TranslationSource(models.Model):
         string_segments = (
             StringSegment.objects.filter(source=self)
             .annotate_translation(locale)
-            .select_related("context")
+            .select_related("context", "string")
         )
 
         template_segments = (
