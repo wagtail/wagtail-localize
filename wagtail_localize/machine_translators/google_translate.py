@@ -1,4 +1,4 @@
-from wagtail_localize.translation.strings import StringValue
+from wagtail_localize.strings import StringValue
 
 from .base import BaseMachineTranslator
 

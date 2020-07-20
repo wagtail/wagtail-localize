@@ -40,9 +40,6 @@ def insert_segments(revision, locale, segments):
 def create_test_page(**kwargs):
     parent = kwargs.pop("parent", None) or Page.objects.get(id=1)
     page = parent.add_child(instance=TestPage(**kwargs))
-    page_revision = page.save_revision()
-    page_revision.publish()
-    page.refresh_from_db()
 
     source, created = TranslationSource.from_instance(page)
 
