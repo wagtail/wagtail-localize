@@ -12,6 +12,5 @@ def admin_language_switch(context):
 
     return {
         "page": page,
-        "is_translatable": True,  # TODO Remove
         "language_count": page.get_translations().count(),
     }
