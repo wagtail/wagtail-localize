@@ -1,3 +1,5 @@
+from django.utils.translation import gettext_lazy as _
+
 from wagtail_localize.strings import StringValue
 
 from .base import BaseMachineTranslator
@@ -17,6 +19,8 @@ def language_code(code):
 
 
 class GoogleTranslateTranslator(BaseMachineTranslator):
+    display_name = _("Google Translate")
+
     def translate(self, source_locale, target_locale, strings):
         translator = googletrans.Translator()
         google_translations = translator.translate(

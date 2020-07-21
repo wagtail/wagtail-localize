@@ -1,4 +1,6 @@
 class BaseMachineTranslator:
+    display_name = "Unknown"
+
     def __init__(self, options):
         self.options = options
 

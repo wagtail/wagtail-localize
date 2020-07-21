@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup, NavigableString, Tag
+from django.utils.translation import gettext_lazy as _
 
 from wagtail_localize.strings import lstrip_keep, rstrip_keep, StringValue
 
@@ -41,6 +42,8 @@ def translate_html(html):
 
 
 class DummyTranslator(BaseMachineTranslator):
+    display_name = _("Dummy translator")
+
     def translate(self, source_locale, target_locale, strings):
         return {
             string: StringValue(translate_html(string.data)) for string in strings
