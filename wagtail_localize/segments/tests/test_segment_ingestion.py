@@ -53,7 +53,7 @@ RICH_TEXT_TEST_OUTPUT = '<h1>Ceci est une rubrique</h1><p>Ceci est un paragraphe
 
 class TestSegmentIngestion(TestCase):
     def setUp(self):
-        self.src_locale = Locale.objects.default()
+        self.src_locale = Locale.get_default()
         self.locale = Locale.objects.create(language_code="fr")
 
     def test_charfield(self):
@@ -247,7 +247,7 @@ def make_test_page_with_streamfield_block(block_id, block_type, block_value, **k
 
 class TestSegmentIngestionWithStreamField(TestCase):
     def setUp(self):
-        self.src_locale = Locale.objects.default()
+        self.src_locale = Locale.get_default()
         self.locale = Locale.objects.create(language_code="fr")
 
     def test_charblock(self):
