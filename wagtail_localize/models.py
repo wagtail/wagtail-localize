@@ -4,7 +4,18 @@ import uuid
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
-from django.db.models import Subquery, OuterRef
+from django.db.models import (
+    Case,
+    Count,
+    Exists,
+    IntegerField,
+    OuterRef,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
+from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.utils.text import slugify
 from modelcluster.models import (
@@ -415,7 +426,7 @@ class Translation(models.Model):
             # TODO show actual number of strings required?
             return _("Waiting for translations")
 
-    def update(self, user=None):
+    def update_destination(self, user=None):
         try:
             self.source.create_or_update_translation(self.target_locale, user=user, string_translation_fallback_to_source=True, copy_parent_pages=True)
         except MissingRelatedObjectError:
@@ -671,10 +682,29 @@ class TemplateSegment(BaseSegment):
         return segment
 
 
+class RelatedObjectSegmentQuerySet(models.QuerySet):
+    def annotate_translation_id(self, locale):
+        """
+        Adds a 'translation_id' field to the segments containing the
+        text content of the Translation of the related object
+        in the specified locale
+        """
+        return self.annotate(
+            translation_id=Subquery(
+                Translation.objects.filter(
+                    source__object_id=OuterRef("object_id"),
+                    target_locale_id=pk(locale),
+                ).values("id")
+            )
+        )
+
+
 class RelatedObjectSegment(BaseSegment):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="references"
     )
+
+    objects = RelatedObjectSegmentQuerySet.as_manager()
 
     @classmethod
     def from_value(cls, source, value):
