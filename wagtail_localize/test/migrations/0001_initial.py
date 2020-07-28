@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('wagtailcore', '0051_page_locale_fields_notnull'),
+        ('wagtailcore', '0057_page_locale_fields_notnull'),
     ]
 
     operations = [
