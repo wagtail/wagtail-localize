@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "lib": ["es2015", "dom"],
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    },
+    "files": [
+        "src/main.tsx"
+    ]
+}
