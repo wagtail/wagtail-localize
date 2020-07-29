@@ -39,6 +39,7 @@ module.exports = {
     /* These are provided by Wagtail */
     'react': 'React',
     'react-dom': 'ReactDOM',
+    'gettext': 'gettext',
   },
   output: {
     path: path.resolve(__dirname, '../static/wagtail_localize/js'),
