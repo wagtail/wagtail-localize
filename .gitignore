@@ -9,3 +9,4 @@
 /.vscode
 /site
 /test_wagtaillocalize.db
+/wagtail_localize/static/wagtail_localize/js/wagtail-localize.js
