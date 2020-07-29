@@ -1,12 +1,15 @@
 from django import forms
 
 from django.contrib import messages
+from django.contrib.admin.utils import quote, unquote
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import gettext as _
 from wagtail.admin.views.pages import get_valid_next_url_from_request
-from wagtail.core.models import Page, Locale
+from wagtail.core.models import Page, Locale, TranslatableMixin
+from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
 from wagtail_localize.models import Translation, TranslationSource
 
@@ -17,10 +20,14 @@ class SubmitTranslationForm(forms.Form):
     )
     include_subtree = forms.BooleanField(required=False)
 
-    def __init__(self, page, *args, **kwargs):
+    def __init__(self, instance, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        page_descendant_count = page.get_descendants().count()
+        if isinstance(instance, Page):
+            page_descendant_count = instance.get_descendants().count()
+        else:
+            page_descendant_count = 0
+
         if page_descendant_count > 0:
             self.fields[
                 "include_subtree"
@@ -31,7 +38,7 @@ class SubmitTranslationForm(forms.Form):
             self.fields["include_subtree"].widget = forms.HiddenInput()
 
         self.fields["locales"].queryset = Locale.objects.exclude(
-            id=page.locale_id
+            id=instance.locale_id
         )
 
 
@@ -131,4 +138,56 @@ def submit_page_translation(request, page_id):
         request,
         "wagtail_localize/admin/submit_page_translation.html",
         {"page": page, "form": form, "next_url": next_url},
+    )
+
+
+def submit_snippet_translation(request, app_label, model_name, pk):
+    if not request.user.has_perms(['wagtail_localize.submit_translation']):
+        raise PermissionDenied
+
+    model = get_snippet_model_from_url_params(app_label, model_name)
+
+    if not issubclass(model, TranslatableMixin):
+        raise Http404
+
+    instance = get_object_or_404(model, pk=unquote(pk))
+    next_url = get_valid_next_url_from_request(request)
+
+    if request.method == "POST":
+        form = SubmitTranslationForm(instance, request.POST)
+
+        if form.is_valid():
+            with transaction.atomic():
+                translator = TranslationCreator(request.user, form.cleaned_data["locales"])
+                translator.create_translations(instance)
+
+                if len(form.cleaned_data["locales"]) == 1:
+                    locales = form.cleaned_data["locales"][0].get_display_name()
+                else:
+                    # Note: always plural
+                    locales = _('{} locales').format(len(form.cleaned_data["locales"]))
+
+                # TODO: Button that links to snippet in translations report when we have it
+                messages.success(
+                    request, _("The {} '{}' was successfully submitted for translation into {}").format(model._meta.verbose_name.title(), (str(instance)), locales)
+                )
+
+                if next_url:
+                    return redirect(next_url)
+                else:
+                    return redirect("wagtailsnippets:edit", app_label, model_name, quote(pk))
+    else:
+        form = SubmitTranslationForm(instance)
+
+    return render(
+        request,
+        "wagtail_localize/admin/submit_snippet_translation.html",
+        {
+            "app_label": app_label,
+            "model_name": model_name,
+            "model_verbose_name": model._meta.verbose_name.title(),
+            "instance": instance,
+            "form": form,
+            "next_url": next_url,
+        }
     )
