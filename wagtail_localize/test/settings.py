@@ -161,6 +161,8 @@ MEDIA_URL = "/media/"
 # Wagtail settings
 WAGTAIL_SITE_NAME = "Wagtail localize test project"
 
+WAGTAIL_I18N_ENABLED = True
+
 LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [("en", "English"), ("fr", "French")]
 
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
