@@ -1,0 +1,104 @@
+.segments {
+    list-style-type: none;
+    padding-left: 40px;
+    padding-right: 40px;
+
+    &__block-label {
+        color: #007273;
+        border: 1px solid #f5f5f5;
+        padding-left: 11px;
+        padding-right: 11px;
+        padding-top: 7px;
+        padding-bottom: 9px;
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: bold;
+    }
+
+    &__block-content {
+        list-style-type: none;
+        border: 1px solid #eeeeee;
+        background-color: #f1f1f1;
+        margin-top: 0;
+        padding: 0;
+        font-style: italic;
+
+        > ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+    &__segment-field-label {
+        color: #007273;
+        margin-top: 0;
+        font-style: normal;
+        font-weight: bold;
+        padding-left: 40px;
+    }
+
+    &__segment-source {
+        padding: 15px 20px;
+    }
+
+    &__segment-value {
+        > textarea {
+            border: none;
+            border-radius: 0;
+        }
+    }
+
+    &__segment-value-inner, &__segment-value > textarea {
+        padding: .9em 1.2em;
+        font-size: 1.2em;
+        line-height: 1.5em;
+        font-style: italic;
+        font-weight: 600;
+    }
+
+    &__segment-toolbar {
+        box-sizing: border-box;
+        width: 100%;
+        text-align: right;
+        padding: 10px;
+    }
+
+    &__segment-toolbar-buttons {
+        padding: 0;
+        margin: 0;
+
+        > li {
+            display: inline-block;
+
+            &:not(:first-child) {
+                margin-left: 15px;
+            }
+        }
+
+        button {
+            text-transform: uppercase;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #017373;
+            background-color: #e5f1f1;
+            border: 1px solid #6cafaf;
+            border-radius: 2px;
+            padding: 5px 10px;
+
+            &:hover {
+                background-color: darken(#e5f1f1, 10%);
+            }
+        }
+    }
+
+    &__segment:not(:last-child) {
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    &__segment:after {
+        content: '';
+        display: table;
+        clear: both;
+    }
+}

@@ -18,7 +18,8 @@ from django.db.models import (
     OuterRef
 )
 from django.utils import timezone
-from django.utils.text import slugify
+from django.utils.encoding import force_text
+from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext as _
 from modelcluster.models import (
     ClusterableModel,
@@ -835,6 +836,11 @@ class TranslationContext(models.Model):
         path_id = cls.get_path_id(path)
         return cls.objects.get(object_id=object_id, path_id=path_id)
 
+    def get_field_verbose_name(self, content_type):
+        # TODO: What if the model or field doesn't exist?
+        field = self.path.split('.')[0]
+        return capfirst(force_text(content_type.model_class()._meta.get_field(field).verbose_name))
+
 
 class StringTranslation(models.Model):
     TRANSLATION_TYPE_MANUAL = 'manual'
@@ -939,6 +945,23 @@ class StringSegmentQuerySet(models.QuerySet):
                     context_id=OuterRef("context_id"),
                 ).values("data")
             )
+        )
+
+    def get_translations(self, locale):
+        """
+        Returns a queryset of StringTranslations that match any of the
+        strings in this queryset.
+        """
+        return StringTranslation.objects.filter(
+            id__in=self.annotate(
+                translation_id=Subquery(
+                    StringTranslation.objects.filter(
+                        translation_of_id=OuterRef("string_id"),
+                        locale_id=pk(locale),
+                        context_id=OuterRef("context_id"),
+                    ).values("id")
+                )
+            ).values_list('translation_id', flat=True)
         )
 
 

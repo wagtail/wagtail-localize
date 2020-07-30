@@ -1,0 +1,294 @@
+import json
+
+from django.contrib.admin.utils import quote
+from django.core.exceptions import PermissionDenied
+from django.db import models
+from django.http import Http404
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, render, redirect
+from django.utils.encoding import force_text
+from django.utils.functional import cached_property
+from django.utils.text import capfirst
+from django.utils.translation import gettext as _
+from modelcluster.fields import ParentalKey
+from rest_framework import serializers, status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from wagtail.admin import messages
+from wagtail.admin.edit_handlers import TabbedInterface
+from wagtail.admin.navigation import get_explorable_root_page
+from wagtail.core.blocks import StructBlock
+from wagtail.core.fields import StreamField
+from wagtail.core.models import Page, TranslatableMixin
+from wagtail.snippets.views.snippets import get_snippet_edit_handler
+
+from wagtail_localize.models import Translation, StringTranslation, StringSegment
+
+
+class StringTranslationSerializer(serializers.ModelSerializer):
+    string_id = serializers.ReadOnlyField(source='translation_of_id')
+    segment_id = serializers.SerializerMethodField('get_segment_id')
+    comment = serializers.ReadOnlyField(source='get_comment')
+
+    def get_segment_id(self, translation):
+        if 'translation_source' in self.context:
+            translation_source = self.context['translation_source']
+            return translation_source.stringsegment_set.filter(
+                string_id=translation.translation_of_id,
+                context_id=translation.context_id,
+            ).values_list('id', flat=True).first()
+
+    class Meta:
+        model = StringTranslation
+        fields = ['string_id', 'segment_id', 'data', 'comment']
+
+
+class TabHelper:
+    def __init__(self, instance):
+        self.instance = instance
+
+    @cached_property
+    def edit_handler(self):
+        if isinstance(self.instance, Page):
+            return self.instance.get_edit_handler()
+        else:
+            return get_snippet_edit_handler(self.instance.__class__)
+
+    @cached_property
+    def tabs(self):
+        if isinstance(self.edit_handler, TabbedInterface):
+            tabs = []
+
+            for tab in self.edit_handler.children:
+                tabs.append(force_text(tab.heading))
+
+            return tabs
+
+        else:
+            return [_("Content")]
+
+    @cached_property
+    def field_tab_mapping(self):
+        if isinstance(self.edit_handler, TabbedInterface):
+            field_tabs = {}
+            for tab in self.edit_handler.children:
+                tab_name = force_text(tab.heading)
+                for tab_field in tab.required_fields():
+                    field_tabs[tab_field] = tab_name
+
+            return field_tabs
+        else:
+            return {}
+
+    def get_field_tab(self, field_name):
+        if field_name in self.field_tab_mapping:
+            return self.field_tab_mapping[field_name]
+        else:
+            return self.tabs[0]
+
+
+def get_segment_location_info(source_instance, tab_helper, segment):
+    context = segment.context
+    context_path_components = context.path.split('.')
+    field = segment.source.specific_content_type.model_class()._meta.get_field(context_path_components[0])
+
+    # Work out which tab the segment is on from edit handler
+    tab = tab_helper.get_field_tab(field.name)
+
+    if isinstance(field, StreamField):
+        stream_value = field.value_from_object(source_instance)
+        stream_blocks_by_id = {
+            block.id: block
+            for block in field.value_from_object(source_instance)
+        }
+        block_id = context_path_components[1]
+        block_value = stream_blocks_by_id[block_id]
+        block_type = stream_value.stream_block.child_blocks[block_value.block_type]
+
+        if isinstance(block_type, StructBlock):
+            block_field_name = context_path_components[2]
+            block_field = block_type.child_blocks[block_field_name].label
+        else:
+            block_field = None
+
+        return {
+            'tab': tab,
+            'field': capfirst(block_type.label),
+            'blockId': block_id,
+            'fieldHelpText': '',
+            'subField': block_field,
+        }
+
+    elif (
+        isinstance(field, (models.ManyToOneRel))
+        and isinstance(field.remote_field, ParentalKey)
+        and issubclass(field.related_model, TranslatableMixin)
+    ):
+        child_field = field.related_model._meta.get_field(context_path_components[2])
+
+        return {
+            'tab': tab,
+            'field': capfirst(force_text(field.related_model._meta.verbose_name)),
+            'blockId': context_path_components[1],
+            'fieldHelpText': force_text(child_field.help_text),
+            'subField': capfirst(force_text(child_field.verbose_name)),
+        }
+
+    else:
+        return {
+            'tab': tab,
+            'field': capfirst(force_text(field.verbose_name)),
+            'blockId': None,
+            'fieldHelpText': force_text(field.help_text),
+            'subField': None,
+        }
+
+
+def edit_translation(request, translation, instance):
+    live_url = None
+    if isinstance(instance, Page):
+        page_perms = instance.permissions_for_user(request.user)
+
+        if instance.live:
+            live_url = instance.full_url
+
+    source_instance = translation.source.get_source_instance()
+
+    if request.method == 'POST':
+        if request.POST.get('action') == 'publish':
+            if isinstance(instance, Page):
+                if not page_perms.can_publish():
+                    raise PermissionDenied
+
+            translation.save_target(user=request.user, publish=True)
+
+            # Refresh instance to title in success message is up to date
+            instance.refresh_from_db()
+
+            messages.success(request, _("Successfully published '{object}' in {locale}").format(
+                object=str(instance),
+                locale=translation.target_locale.get_display_name()
+            ))
+
+        return redirect(request.path)
+
+    string_segments = translation.source.stringsegment_set.all().order_by('order')
+    string_translations = string_segments.get_translations(translation.target_locale)
+
+    tab_helper = TabHelper(source_instance)
+
+    breadcrumb = []
+    if isinstance(instance, Page):
+        # find the closest common ancestor of the pages that this user has direct explore permission
+        # (i.e. add/edit/publish/lock) over; this will be the root of the breadcrumb
+        cca = get_explorable_root_page(request.user)
+        if cca:
+            breadcrumb = [
+                {
+                    'isRoot': page.is_root(),
+                    'title': page.title,
+                    'exploreUrl': reverse('wagtailadmin_explore_root') if page.is_root() else reverse('wagtailadmin_explore', args=[page.id]),
+                }
+                for page in instance.get_ancestors(inclusive=False).descendant_of(cca, inclusive=True)
+            ]
+
+    return render(request, 'wagtail_localize/admin/edit_translation.html', {
+        # These props are passed directly to the TranslationEditor react component
+        'props': json.dumps({
+            'object': {
+                'title': str(instance),
+                'isLive': instance.live if isinstance(instance, Page) else True,
+                'isLocked': instance.locked if isinstance(instance, Page) else False,
+                'lastPublishedDate': instance.last_published_at.strftime('%-d %B %Y') if isinstance(instance, Page) and instance.last_published_at else None,
+                'liveUrl': live_url,
+            },
+            'breadcrumb': breadcrumb,
+            'tabs': tab_helper.tabs,
+            'sourceLocale': {
+                'code': translation.source.locale.language_code,
+                'displayName': translation.source.locale.get_display_name(),
+            },
+            'locale': {
+                'code': translation.target_locale.language_code,
+                'displayName': translation.target_locale.get_display_name(),
+            },
+            'translations': [
+                {
+                    'title': str(translated_instance),
+                    'locale': {
+                        'code': translated_instance.locale.language_code,
+                        'displayName': translated_instance.locale.get_display_name(),
+                    },
+                    'editUrl': reverse('wagtailadmin_pages:edit', args=[translated_instance.id]) if isinstance(translated_instance, Page) else reverse('wagtailsnippets:edit', args=[translated_instance._meta.app_label, translated_instance._meta.model_name, quote(translated_instance.id)]),
+                }
+                for translated_instance in instance.get_translations().select_related('locale')
+            ],
+            'perms': {
+                'canPublish': not isinstance(instance, Page) or page_perms.can_publish(),
+                'canUnpublish': isinstance(instance, Page) and page_perms.can_publish(),
+                'canLock': isinstance(instance, Page) and page_perms.can_lock(),
+                'canUnlock': isinstance(instance, Page) and page_perms.can_unlock(),
+                'canDelete': True,  # TODO
+            },
+            'links': {
+                'unpublishUrl': reverse('wagtailadmin_pages:unpublish', args=[instance.id]) if isinstance(instance, Page) else None,
+                'lockUrl': reverse('wagtailadmin_pages:lock', args=[instance.id]) if isinstance(instance, Page) else None,
+                'unlockUrl': reverse('wagtailadmin_pages:unlock', args=[instance.id]) if isinstance(instance, Page) else None,
+                'deleteUrl': reverse('wagtailadmin_pages:delete', args=[instance.id]) if isinstance(instance, Page) else reverse('wagtailsnippets:delete', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.pk)]),
+            },
+            'segments': [
+                {
+                    'id': segment.id,
+                    'contentPath': segment.context.path,
+                    'source': segment.string.data,
+                    'location': get_segment_location_info(source_instance, tab_helper, segment),
+                    'editUrl': reverse('wagtail_localize:edit_string_translation', kwargs={'translation_id': translation.id, 'string_segment_id': segment.id}),
+                }
+                for segment in string_segments
+            ],
+
+            # We serialize the translation data using Django REST Framework.
+            # This gives us a consistent representation with the APIs so we
+            # can dynamically update translations in the view.
+            'initialStringTranslations': StringTranslationSerializer(string_translations, many=True, context={'translation_source': translation.source}).data,
+        })
+    })
+
+
+@api_view(['PUT', 'DELETE'])
+def edit_string_translation(request, translation_id, string_segment_id):
+    translation = get_object_or_404(Translation, id=translation_id)
+    string_segment = get_object_or_404(StringSegment, id=string_segment_id)
+
+    if string_segment.context.object_id != translation.source.object_id:
+        raise Http404
+
+    if request.method == 'PUT':
+        string_translation, created = StringTranslation.objects.update_or_create(
+            translation_of_id=string_segment.string_id,
+            locale_id=translation.target_locale_id,
+            context_id=string_segment.context_id,
+            defaults={
+                'data': request.POST['value'],
+                'translation_type': StringTranslation.TRANSLATION_TYPE_MANUAL,
+                'tool_name': "",
+            }
+        )
+
+        return Response(StringTranslationSerializer(string_translation, context={'translation_source': translation.source}).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    elif request.method == 'DELETE':
+        string_translation = StringTranslation.objects.filter(
+            translation_of_id=string_segment.string_id,
+            locale_id=translation.target_locale_id,
+            context_id=string_segment.context_id,
+        ).first()
+
+        if string_translation:
+            string_translation.delete()
+
+            return Response(StringTranslationSerializer(string_translation, context={'translation_source': translation.source}).data, status=status.HTTP_200_OK)
+
+        else:
+            # Note: this is still considered a success in the frontend
+            return Response(status=status.HTTP_404_NOT_FOUND)

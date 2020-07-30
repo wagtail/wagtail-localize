@@ -1,0 +1,22 @@
+{% extends "wagtailadmin/generic/edit.html" %}
+{% load i18n wagtailadmin_tags %}
+
+{% block bodyclass %}page-editor{% endblock %}
+
+{% block titletag %}Translation of {{ translation.source.as_instance }} into {{ translation.target_locale }}{% endblock %}
+
+{% block content %}
+    <div class="js-translation-editor" data-props="{{ props }}">
+        {# Generates the CSRF token hidden input. This is read by the JavaScript. #}
+        {% csrf_token %}
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {% include "wagtailadmin/pages/_editor_css.html" %}
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% url 'wagtail_localize:javascript_catalog' %}"></script>
+    <script type="text/javascript" src="{% versioned_static 'wagtail_localize/js/wagtail-localize.js' %}"></script>
+{% endblock %}
