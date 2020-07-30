@@ -1,6 +1,8 @@
 import json
 import uuid
+from collections import defaultdict
 
+import polib
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
@@ -233,6 +235,35 @@ class TranslationSource(models.Model):
             else:
                 StringSegment.from_value(self, self.locale, segment)
 
+    def export_po(self):
+        """
+        Exports a PO file contining the source strings.
+        """
+        # Get messages
+        messages = defaultdict(list)
+
+        for string_segment in StringSegment.objects.filter(source=self).order_by('order').select_related("context", "string"):
+            messages[string_segment.string.data] = string_segment.context.path
+
+        # Build a PO file
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+        }
+
+        for text, context in messages.items():
+            po.append(
+                polib.POEntry(
+                    msgid=text,
+                    msgctxt=context,
+                    msgstr="",
+                )
+            )
+
+        return po
+
     @transaction.atomic
     def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, string_translation_fallback_to_source=False):
         """
@@ -346,6 +377,50 @@ class TranslationSource(models.Model):
         return translation, created
 
 
+class POImportWarning:
+    """
+    Base class for warnings that are yielded by Translation.import_po.
+    """
+    pass
+
+
+class UnknownString(POImportWarning):
+    def __init__(self, index, string):
+        self.index = index
+        self.string = string
+
+    def __eq__(self, other):
+        return isinstance(other, UnknownString) and self.index == other.index and self.string == other.string
+
+    def __repr__(self):
+        return f"<UnknownString {self.index} '{self.string}'>"
+
+
+class UnknownContext(POImportWarning):
+    def __init__(self, index, context):
+        self.index = index
+        self.context = context
+
+    def __eq__(self, other):
+        return isinstance(other, UnknownContext) and self.index == other.index and self.context == other.context
+
+    def __repr__(self):
+        return f"<UnknownContext {self.index} '{self.context}'>"
+
+
+class StringNotUsedInContext(POImportWarning):
+    def __init__(self, index, string, context):
+        self.index = index
+        self.string = string
+        self.context = context
+
+    def __eq__(self, other):
+        return isinstance(other, StringNotUsedInContext) and self.index == other.index and self.string == other.string and self.context == other.context
+
+    def __repr__(self):
+        return f"<StringNotUsedInContext {self.index} '{self.string}' '{self.context}'>"
+
+
 class Translation(models.Model):
     """
     Manages the translation of an object into a locale.
@@ -425,11 +500,121 @@ class Translation(models.Model):
         else:
             return _("Waiting for translations")
 
+    def export_po(self):
+        """
+        Exports a PO file contining the source strings and translations.
+        """
+        # Get messages
+        messages = defaultdict(list)
+
+        string_segments = (
+            StringSegment.objects.filter(source=self.source)
+            .order_by('order')
+            .select_related("context", "string")
+            .annotate_translation(self.target_locale)
+        )
+
+        for string_segment in string_segments:
+            messages[string_segment.string.data] = (string_segment.context.path, string_segment.translation)
+
+        # Build a PO file
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(self.uuid),
+        }
+
+        for text, (context, translation) in messages.items():
+            po.append(
+                polib.POEntry(
+                    msgid=text,
+                    msgctxt=context,
+                    msgstr=translation or "",
+                )
+            )
+
+        # Add any obsolete segments that have translations for future reference
+        # We find this by looking for obsolete contexts and annotate the latest
+        # translation for each one. Contexts that were never translated are
+        # excluded
+        for translation in (
+            StringTranslation.objects
+            .filter(context__object=self.object, locale=self.target_locale)
+            .exclude(translation_of_id__in=StringSegment.objects.filter(source=self.source).values_list('string_id', flat=True))
+            .select_related("translation_of", "context")
+            .iterator()
+        ):
+            po.append(
+                polib.POEntry(
+                    msgid=translation.translation_of.data,
+                    msgstr=translation.data or "",
+                    msgctxt=translation.context.path,
+                    obsolete=True,
+                )
+            )
+
+        return po
+
+    @transaction.atomic
+    def import_po(self, po, delete=False):
+        """
+        Imports translations from a PO file.
+        """
+        seen_translation_ids = set()
+
+        if 'X-WagtailLocalize-TranslationID' in po.metadata and po.metadata['X-WagtailLocalize-TranslationID'] != str(self.uuid):
+            return
+
+        for index, entry in enumerate(po):
+            try:
+                string = String.objects.get(locale_id=self.source.locale_id, data=entry.msgid)
+                context = TranslationContext.objects.get(object_id=self.source.object_id, path=entry.msgctxt)
+
+                # Ignore blank strings
+                if not entry.msgstr:
+                    continue
+
+                # Ignore if the string has never appeared in a version of this object
+                if not StringSegment.objects.filter(string=string, context=context).exists():
+                    yield StringNotUsedInContext(index, entry.msgid, entry.msgctxt)
+                    continue
+
+                string_translation, created = string.translations.get_or_create(
+                    locale_id=self.target_locale_id,
+                    context=context,
+                    defaults={
+                        "data": entry.msgstr,
+                        "updated_at": timezone.now(),
+                    },
+                )
+
+                seen_translation_ids.add(string_translation.id)
+
+                if not created:
+                    # Update the string_translation only if it has changed
+                    if string_translation.data != entry.msgstr:
+                        string_translation.data = entry.msgstr
+                        string_translation.updated_at = timezone.now()
+                        string_translation.save()
+
+            except TranslationContext.DoesNotExist:
+                yield UnknownContext(index, entry.msgctxt)
+
+            except String.DoesNotExist:
+                yield UnknownString(index, entry.msgid)
+
+        # Delete any translations that weren't mentioned
+        if delete:
+            StringTranslation.objects.filter(context__object=self.object, locale=self.target_locale).exclude(id__in=seen_translation_ids).delete()
+
     def update(self, user=None):
         try:
             self.source.create_or_update_translation(self.target_locale, user=user, string_translation_fallback_to_source=True, copy_parent_pages=True)
         except MissingRelatedObjectError:
             pass
+
 
 
 class TranslationLog(models.Model):
