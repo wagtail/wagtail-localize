@@ -94,6 +94,13 @@ class SourceDeletedError(Exception):
     pass
 
 
+class CannotSaveDraftError(Exception):
+    """
+    Raised when a save draft was request on a non-page model.
+    """
+    pass
+
+
 class MissingTranslationError(Exception):
     def __init__(self, segment, locale):
         self.segment = segment
@@ -242,6 +249,10 @@ class TranslationSource(models.Model):
         """
         original = self.as_instance()
         created = False
+
+        # Only pages can be saved as draft
+        if not publish and not isinstance(original, Page):
+            raise CannotSaveDraftError
 
         try:
             translation = self.get_translated_instance(locale)
@@ -425,11 +436,11 @@ class Translation(models.Model):
         else:
             return _("Waiting for translations")
 
-    def update(self, user=None):
-        try:
-            self.source.create_or_update_translation(self.target_locale, user=user, string_translation_fallback_to_source=True, copy_parent_pages=True)
-        except MissingRelatedObjectError:
-            pass
+    def save_target(self, user=None, publish=True):
+        """
+        Saves the target page/snippet using the current translations.
+        """
+        self.source.create_or_update_translation(self.target_locale, user=user, publish=publish, string_translation_fallback_to_source=True, copy_parent_pages=True)
 
 
 class TranslationLog(models.Model):

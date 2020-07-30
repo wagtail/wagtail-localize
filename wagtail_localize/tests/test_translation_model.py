@@ -10,10 +10,11 @@ from wagtail_localize.models import (
     TemplateSegment,
     RelatedObjectSegment,
     Translation,
+    CannotSaveDraftError,
 )
 from wagtail_localize.segments import TemplateSegmentValue, RelatedObjectSegmentValue
 from wagtail_localize.segments.extract import extract_segments
-from wagtail_localize.test.models import TestPage
+from wagtail_localize.test.models import TestPage, TestSnippet
 
 
 def insert_segments(revision, locale, segments):
@@ -189,7 +190,7 @@ class TestGetStatus(TestCase):
         self.assertEqual(self.translation.get_status_display(), "Up to date")
 
 
-class TestUpdate(TestCase):
+class TestSaveTarget(TestCase):
     def setUp(self):
         self.fr_locale = Locale.objects.create(language_code="fr")
 
@@ -212,15 +213,27 @@ class TestUpdate(TestCase):
         self.test_content_string = String.objects.get(data="Test content")
         self.more_test_content_string = String.objects.get(data="More test content")
 
-    def test_update(self):
-        self.translation.update()
+    def test_save_target(self):
+        self.translation.save_target()
 
         # Should create the page with English content
         translated_page = self.page.get_translation(self.fr_locale)
         self.assertEqual(translated_page.test_charfield, "Test content")
         self.assertEqual(translated_page.test_textfield, "More test content")
 
-    def test_update_with_translations(self):
+        self.assertTrue(translated_page.live)
+
+    def test_save_target_as_draft(self):
+        self.translation.save_target(publish=False)
+
+        # Should create the page with English content
+        translated_page = self.page.get_translation(self.fr_locale)
+        self.assertEqual(translated_page.test_charfield, "Test content")
+        self.assertEqual(translated_page.test_textfield, "More test content")
+
+        self.assertFalse(translated_page.live)
+
+    def test_save_target_with_translations(self):
         StringTranslation.objects.create(
             translation_of=self.test_content_string,
             context=self.test_charfield_context,
@@ -235,13 +248,13 @@ class TestUpdate(TestCase):
             data="Plus de contenu de test",
         )
 
-        self.translation.update()
+        self.translation.save_target()
 
         translated_page = self.page.get_translation(self.fr_locale)
         self.assertEqual(translated_page.test_charfield, "Contenu de test")
         self.assertEqual(translated_page.test_textfield, "Plus de contenu de test")
 
-    def test_update_with_partial_translations(self):
+    def test_save_target_with_partial_translations(self):
         StringTranslation.objects.create(
             translation_of=self.more_test_content_string,
             context=self.test_textfield_context,
@@ -249,8 +262,52 @@ class TestUpdate(TestCase):
             data="Plus de contenu de test",
         )
 
-        self.translation.update()
+        self.translation.save_target()
 
         translated_page = self.page.get_translation(self.fr_locale)
         self.assertEqual(translated_page.test_charfield, "Test content")
         self.assertEqual(translated_page.test_textfield, "Plus de contenu de test")
+
+    def test_save_target_snippet(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+        source, created = TranslationSource.from_instance(snippet)
+        source.extract_segments()
+        translation = Translation.objects.create(
+            object=source.object,
+            target_locale=self.fr_locale,
+            source=source,
+        )
+
+        field_context = TranslationContext.objects.get(path="field")
+        StringTranslation.objects.create(
+            translation_of=self.test_content_string,
+            context=field_context,
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        translation.save_target()
+
+        translated_snippet = snippet.get_translation(self.fr_locale)
+        self.assertEqual(translated_snippet.field, "Contenu de test")
+
+    def test_save_target_cant_save_snippet_as_draft(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+        source, created = TranslationSource.from_instance(snippet)
+        source.extract_segments()
+        translation = Translation.objects.create(
+            object=source.object,
+            target_locale=self.fr_locale,
+            source=source,
+        )
+
+        field_context = TranslationContext.objects.get(path="field")
+        StringTranslation.objects.create(
+            translation_of=self.test_content_string,
+            context=field_context,
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        with self.assertRaises(CannotSaveDraftError):
+            translation.save_target(publish=False)
