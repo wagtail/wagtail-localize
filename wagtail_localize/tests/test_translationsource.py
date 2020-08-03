@@ -215,6 +215,26 @@ class TestAsInstanceForSnippet(TestCase):
         self.assertEqual(new_instance.field, "Some changed content")
 
 
+class TestExportPO(TestCase):
+    def setUp(self):
+        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
+        self.source = TranslationSource.from_instance(self.page)[0]
+        self.source.extract_segments()
+
+    def test_export_po(self):
+        po = self.source.export_po()
+
+        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type'})
+        self.assertEqual(po.metadata['MIME-Version'], '1.0')
+        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
+
+        self.assertEqual(len(po), 1)
+        self.assertEqual(po[0].msgid, "This is some test content")
+        self.assertEqual(po[0].msgctxt, "test_charfield")
+        self.assertEqual(po[0].msgstr, "")
+        self.assertFalse(po[0].obsolete)
+
+
 class TestCreateOrUpdateTranslationForPage(TestCase):
     def setUp(self):
         self.snippet = TestSnippet.objects.create(field="Test snippet content")

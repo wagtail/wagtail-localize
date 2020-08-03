@@ -1,4 +1,6 @@
+import polib
 from django.test import TestCase
+from django.utils import timezone
 from wagtail.core.models import Page, Locale
 
 from wagtail_localize.models import (
@@ -10,10 +12,14 @@ from wagtail_localize.models import (
     TemplateSegment,
     RelatedObjectSegment,
     Translation,
+    UnknownString,
+    UnknownContext,
+    StringNotUsedInContext,
     CannotSaveDraftError,
 )
 from wagtail_localize.segments import TemplateSegmentValue, RelatedObjectSegmentValue
 from wagtail_localize.segments.extract import extract_segments
+from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import TestPage, TestSnippet
 
 
@@ -144,6 +150,255 @@ class TestGetProgress(TestCase):
 
         progress = self.translation.get_progress()
         self.assertEqual(progress, (2, 0))
+
+
+class TestExportPO(TestCase):
+    def setUp(self):
+        self.en_locale = Locale.objects.get(language_code="en")
+        self.fr_locale = Locale.objects.create(language_code="fr")
+
+        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
+        self.source = TranslationSource.from_instance(self.page)[0]
+        self.source.extract_segments()
+
+        self.translation = Translation.objects.create(
+            object=self.source.object,
+            target_locale=self.fr_locale,
+            source=self.source,
+        )
+
+    def test_export_po(self):
+        po = self.translation.export_po()
+
+        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type', 'X-WagtailLocalize-TranslationID'})
+        self.assertEqual(po.metadata['MIME-Version'], '1.0')
+        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
+        self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
+
+        self.assertEqual(len(po), 1)
+        self.assertEqual(po[0].msgid, "This is some test content")
+        self.assertEqual(po[0].msgctxt, "test_charfield")
+        self.assertEqual(po[0].msgstr, "")
+        self.assertFalse(po[0].obsolete)
+
+    def test_export_po_with_translation(self):
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="This is some test content"),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        po = self.translation.export_po()
+
+        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type', 'X-WagtailLocalize-TranslationID'})
+        self.assertEqual(po.metadata['MIME-Version'], '1.0')
+        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
+        self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
+
+        self.assertEqual(len(po), 1)
+        self.assertEqual(po[0].msgid, "This is some test content")
+        self.assertEqual(po[0].msgctxt, "test_charfield")
+        self.assertEqual(po[0].msgstr, "Contenu de test")
+        self.assertFalse(po[0].obsolete)
+
+    def test_export_po_with_obsolete_translation(self):
+        obsolete_string = String.from_value(self.en_locale, StringValue("This is an obsolete string"))
+        String.from_value(self.en_locale, StringValue("This is an obsolete string that was never translated"))
+
+        StringTranslation.objects.create(
+            translation_of=obsolete_string,
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Ceci est une chaîne obsolète",
+        )
+
+        po = self.translation.export_po()
+
+        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type', 'X-WagtailLocalize-TranslationID'})
+        self.assertEqual(po.metadata['MIME-Version'], '1.0')
+        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
+        self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
+
+        # The non-obsolete strings come first
+        self.assertEqual(len(po), 2)
+        self.assertEqual(po[0].msgid, "This is some test content")
+        self.assertEqual(po[0].msgctxt, "test_charfield")
+        self.assertEqual(po[0].msgstr, "")
+        self.assertFalse(po[0].obsolete)
+
+        # Then the obsolete string
+        self.assertEqual(po[1].msgid, "This is an obsolete string")
+        self.assertEqual(po[1].msgctxt, "test_charfield")
+        self.assertEqual(po[1].msgstr, "Ceci est une chaîne obsolète")
+        self.assertTrue(po[1].obsolete)
+
+        # Obsolete strings that never had a translation don't get exported
+
+
+class TestImportPO(TestCase):
+    def setUp(self):
+        self.en_locale = Locale.objects.get(language_code="en")
+        self.fr_locale = Locale.objects.create(language_code="fr")
+
+        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
+        self.source = TranslationSource.from_instance(self.page)[0]
+        self.source.extract_segments()
+
+        self.translation = Translation.objects.create(
+            object=self.source.object,
+            target_locale=self.fr_locale,
+            source=self.source,
+        )
+
+    def test_import_po(self):
+        obsolete_string = String.from_value(self.en_locale, StringValue("This is an obsolete string"))
+        StringTranslation.objects.create(
+            translation_of=obsolete_string,
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Ceci est une chaîne obsolète",
+        )
+
+        # Create a translation source to represent a past source that had the above string
+        past_source = TranslationSource.from_instance(self.page, force=True)[0]
+        past_source.extract_segments()
+        past_source.stringsegment_set.update(string=obsolete_string)
+
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(self.translation.uuid),
+        }
+
+        po.append(
+            polib.POEntry(
+                msgid="This is some test content",
+                msgctxt="test_charfield",
+                msgstr="Contenu de test",
+            )
+        )
+
+        po.append(
+            polib.POEntry(
+                msgid="This is an obsolete string",
+                msgctxt="test_charfield",
+                msgstr="C'est encore une chaîne obsolète",
+                obsolete=True
+            )
+        )
+
+        warnings = list(self.translation.import_po(po))
+        self.assertEqual(warnings, [])
+
+        translation = StringTranslation.objects.get(translation_of__data="This is some test content")
+        self.assertEqual(translation.context, TranslationContext.objects.get(path="test_charfield"))
+        self.assertEqual(translation.locale, self.fr_locale)
+        self.assertEqual(translation.data, "Contenu de test")
+
+        # Obsolete strings still get updated
+        translation = StringTranslation.objects.get(translation_of__data="This is an obsolete string")
+        self.assertEqual(translation.context, TranslationContext.objects.get(path="test_charfield"))
+        self.assertEqual(translation.locale, self.fr_locale)
+        self.assertEqual(translation.data, "C'est encore une chaîne obsolète",)
+
+    def test_import_po_deletes_translations(self):
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="This is some test content"),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        StringTranslation.objects.create(
+            translation_of=String.from_value(self.en_locale, StringValue("This is an obsolete string")),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Ceci est une chaîne obsolète",
+        )
+
+        # Create an empty PO file
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(self.translation.uuid),
+        }
+
+        warnings = list(self.translation.import_po(po, delete=True))
+        self.assertEqual(warnings, [])
+
+        # Should delete both the translations
+        self.assertFalse(StringTranslation.objects.exists())
+
+    def test_import_po_with_invalid_translation_id(self):
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": 'foo',
+        }
+
+        po.append(
+            polib.POEntry(
+                msgid="This is some test content",
+                msgctxt="test_charfield",
+                msgstr="Contenu de test",
+            )
+        )
+
+        warnings = list(self.translation.import_po(po))
+        self.assertEqual(warnings, [])
+
+        # Should delete both the translations
+        self.assertFalse(StringTranslation.objects.exists())
+
+    def test_warnings(self):
+        String.from_value(self.en_locale, StringValue("This string exists in the database but isn't relevant to this object"))
+
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(self.translation.uuid),
+        }
+
+        po.append(
+            polib.POEntry(
+                msgid="This string exists in the database but isn't relevant to this object",
+                msgctxt="test_charfield",
+                msgstr="Contenu de test",
+            )
+        )
+
+        po.append(
+            polib.POEntry(
+                msgid="This string doesn't exist",
+                msgctxt="test_charfield",
+                msgstr="Contenu de test",
+            )
+        )
+
+        po.append(
+            polib.POEntry(
+                msgid="This is some test content",
+                msgctxt="invalidcontext",
+                msgstr="Contenu de test",
+            )
+        )
+
+        warnings = list(self.translation.import_po(po))
+
+        self.assertEqual(warnings, [
+            StringNotUsedInContext(0, "This string exists in the database but isn't relevant to this object", "test_charfield"),
+            UnknownString(1, "This string doesn't exist"),
+            UnknownContext(2, "invalidcontext"),
+        ])
 
 
 class TestGetStatus(TestCase):
