@@ -147,12 +147,18 @@ class TranslationSource(models.Model):
     locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE)
     object_repr = models.TextField(max_length=200)
     content_json = models.TextField()
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_updated_at = models.DateTimeField()
 
     objects = TranslationSourceQuerySet.as_manager()
 
+    class Meta:
+        unique_together = [
+            ('object', 'locale'),
+        ]
+
     @classmethod
-    def from_instance(cls, instance, force=False):
+    def from_instance(cls, instance):
         # Make sure we're using the specific version of pages
         if isinstance(instance, Page):
             instance = instance.specific
@@ -167,26 +173,32 @@ class TranslationSource(models.Model):
             serializable_data = get_serializable_data_for_fields(instance)
             content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
 
-        if not force:
-            # Check if the instance has changed at all since the previous revision
-            previous_revision = object.sources.order_by("created_at").last()
-            if previous_revision:
-                if json.loads(content_json) == json.loads(
-                    previous_revision.content_json
-                ):
-                    return previous_revision, False
+        # Check if the instance has changed since the previous version
+        source = TranslationSource.objects.filter(object_id=object.translation_key, locale_id=instance.locale_id).first()
 
-        return (
-            cls.objects.create(
-                object=object,
-                specific_content_type=ContentType.objects.get_for_model(instance.__class__),
-                locale=instance.locale,
-                object_repr=str(instance)[:200],
-                content_json=content_json,
-                created_at=timezone.now(),
-            ),
-            True,
+        # Check if the instance has changed at all since the previous version
+        if source:
+            if json.loads(content_json) == json.loads(source.content_json):
+                return source
+
+        source, created = cls.objects.update_or_create(
+            object=object,
+            locale=instance.locale,
+
+            # You can't update the content type of a source. So if this happens,
+            # it'll try and create a new source and crash (can't have more than
+            # one source per object/locale)
+            specific_content_type=ContentType.objects.get_for_model(instance.__class__),
+
+            defaults={
+                'locale': instance.locale,
+                'object_repr': str(instance)[:200],
+                'content_json': content_json,
+                'last_updated_at': timezone.now(),
+            }
         )
+        source.refresh_segments()
+        return source
 
     def get_source_instance(self):
         """
@@ -233,14 +245,35 @@ class TranslationSource(models.Model):
 
         return new_instance
 
-    def extract_segments(self):
+    @transaction.atomic
+    def refresh_segments(self):
+        """
+        Updates the *Segment models to reflect the latest version of the source.
+
+        This is called by `from_instance` so you don't usually need to call this manually.
+        """
+        seen_string_segment_ids = []
+        seen_template_segment_ids = []
+        seen_related_object_segment_ids = []
+
         for segment in extract_segments(self.as_instance()):
             if isinstance(segment, TemplateSegmentValue):
-                TemplateSegment.from_value(self, segment)
+                seen_template_segment_ids.append(
+                    TemplateSegment.from_value(self, segment).id
+                )
             elif isinstance(segment, RelatedObjectSegmentValue):
-                RelatedObjectSegment.from_value(self, segment)
+                seen_related_object_segment_ids.append(
+                    RelatedObjectSegment.from_value(self, segment).id
+                )
             else:
-                StringSegment.from_value(self, self.locale, segment)
+                seen_string_segment_ids.append(
+                    StringSegment.from_value(self, self.locale, segment).id
+                )
+
+        # Delete any segments that weren't mentioned
+        self.stringsegment_set.exclude(id__in=seen_string_segment_ids).delete()
+        self.templatesegment_set.exclude(id__in=seen_template_segment_ids).delete()
+        self.relatedobjectsegment_set.exclude(id__in=seen_related_object_segment_ids).delete()
 
     def export_po(self):
         """
@@ -587,8 +620,8 @@ class Translation(models.Model):
                 if not entry.msgstr:
                     continue
 
-                # Ignore if the string has never appeared in a version of this object
-                if not StringSegment.objects.filter(string=string, context=context).exists():
+                # Ignore if the string doesn't appear in this context, and if there is not an obsolete StringTranslation
+                if not StringSegment.objects.filter(string=string, context=context).exists() and not StringTranslation.objects.filter(translation_of=string, context=context).exists():
                     yield StringNotUsedInContext(index, entry.msgid, entry.msgctxt)
                     continue
 
