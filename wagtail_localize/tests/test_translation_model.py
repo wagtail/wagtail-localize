@@ -8,32 +8,15 @@ from wagtail_localize.models import (
     String,
     StringTranslation,
     TranslationContext,
-    StringSegment,
-    TemplateSegment,
-    RelatedObjectSegment,
     Translation,
     UnknownString,
     UnknownContext,
     StringNotUsedInContext,
     CannotSaveDraftError,
 )
-from wagtail_localize.segments import TemplateSegmentValue, RelatedObjectSegmentValue
-from wagtail_localize.segments.extract import extract_segments
+from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import TestPage, TestSnippet
-
-
-def insert_segments(revision, locale, segments):
-    """
-    Inserts the list of untranslated segments into translation memory
-    """
-    for segment in segments:
-        if isinstance(segment, TemplateSegmentValue):
-            TemplateSegment.from_value(revision, segment)
-        elif isinstance(segment, RelatedObjectSegmentValue):
-            RelatedObjectSegment.from_value(revision, segment)
-        else:
-            StringSegment.from_value(revision, locale, segment)
 
 
 def create_test_page(**kwargs):
@@ -43,7 +26,7 @@ def create_test_page(**kwargs):
     page_revision.publish()
     page.refresh_from_db()
 
-    source, created = TranslationSource.from_instance(page)
+    source = TranslationSource.from_instance(page)
 
     prepare_source(source)
 
@@ -51,16 +34,12 @@ def create_test_page(**kwargs):
 
 
 def prepare_source(source):
-    # Extract segments from source and save them into translation memory
-    segments = extract_segments(source.as_instance())
-    insert_segments(source, source.locale_id, segments)
-
     # Recurse into any related objects
-    for segment in segments:
+    for segment in source.relatedobjectsegment_set.all():
         if not isinstance(segment, RelatedObjectSegmentValue):
             continue
 
-        related_source, created = TranslationSource.from_instance(
+        related_source = TranslationSource.from_instance(
             segment.get_instance(source.locale)
         )
         prepare_source(related_source)
@@ -158,8 +137,7 @@ class TestExportPO(TestCase):
         self.fr_locale = Locale.objects.create(language_code="fr")
 
         self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
-        self.source = TranslationSource.from_instance(self.page)[0]
-        self.source.extract_segments()
+        self.source = TranslationSource.from_instance(self.page)
 
         self.translation = Translation.objects.create(
             object=self.source.object,
@@ -242,8 +220,7 @@ class TestImportPO(TestCase):
         self.fr_locale = Locale.objects.create(language_code="fr")
 
         self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
-        self.source = TranslationSource.from_instance(self.page)[0]
-        self.source.extract_segments()
+        self.source = TranslationSource.from_instance(self.page)
 
         self.translation = Translation.objects.create(
             object=self.source.object,
@@ -259,11 +236,6 @@ class TestImportPO(TestCase):
             locale=self.fr_locale,
             data="Ceci est une chaîne obsolète",
         )
-
-        # Create a translation source to represent a past source that had the above string
-        past_source = TranslationSource.from_instance(self.page, force=True)[0]
-        past_source.extract_segments()
-        past_source.stringsegment_set.update(string=obsolete_string)
 
         po = polib.POFile(wrapwidth=200)
         po.metadata = {
@@ -525,8 +497,7 @@ class TestSaveTarget(TestCase):
 
     def test_save_target_snippet(self):
         snippet = TestSnippet.objects.create(field="Test content")
-        source, created = TranslationSource.from_instance(snippet)
-        source.extract_segments()
+        source = TranslationSource.from_instance(snippet)
         translation = Translation.objects.create(
             object=source.object,
             target_locale=self.fr_locale,
@@ -548,8 +519,7 @@ class TestSaveTarget(TestCase):
 
     def test_save_target_cant_save_snippet_as_draft(self):
         snippet = TestSnippet.objects.create(field="Test content")
-        source, created = TranslationSource.from_instance(snippet)
-        source.extract_segments()
+        source = TranslationSource.from_instance(snippet)
         translation = Translation.objects.create(
             object=source.object,
             target_locale=self.fr_locale,
