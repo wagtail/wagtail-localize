@@ -57,9 +57,8 @@ class TestGetProgress(TestCase):
         )
         self.source = TranslationSource.objects.get()
         self.translation = Translation.objects.create(
-            object=self.source.object,
-            target_locale=self.fr_locale,
             source=self.source,
+            target_locale=self.fr_locale,
         )
 
         self.test_charfield_context = TranslationContext.objects.get(path="test_charfield")
@@ -140,9 +139,8 @@ class TestExportPO(TestCase):
         self.source = TranslationSource.from_instance(self.page)
 
         self.translation = Translation.objects.create(
-            object=self.source.object,
-            target_locale=self.fr_locale,
             source=self.source,
+            target_locale=self.fr_locale,
         )
 
     def test_export_po(self):
@@ -223,9 +221,8 @@ class TestImportPO(TestCase):
         self.source = TranslationSource.from_instance(self.page)
 
         self.translation = Translation.objects.create(
-            object=self.source.object,
-            target_locale=self.fr_locale,
             source=self.source,
+            target_locale=self.fr_locale,
         )
 
     def test_import_po(self):
@@ -385,9 +382,8 @@ class TestGetStatus(TestCase):
         )
         self.source = TranslationSource.objects.get()
         self.translation = Translation.objects.create(
-            object=self.source.object,
-            target_locale=self.fr_locale,
             source=self.source,
+            target_locale=self.fr_locale,
         )
 
         self.test_charfield_context = TranslationContext.objects.get(path="test_charfield")
@@ -429,9 +425,8 @@ class TestSaveTarget(TestCase):
         )
         self.source = TranslationSource.objects.get()
         self.translation = Translation.objects.create(
-            object=self.source.object,
-            target_locale=self.fr_locale,
             source=self.source,
+            target_locale=self.fr_locale,
         )
 
         self.test_charfield_context = TranslationContext.objects.get(path="test_charfield")
@@ -499,9 +494,8 @@ class TestSaveTarget(TestCase):
         snippet = TestSnippet.objects.create(field="Test content")
         source = TranslationSource.from_instance(snippet)
         translation = Translation.objects.create(
-            object=source.object,
-            target_locale=self.fr_locale,
             source=source,
+            target_locale=self.fr_locale,
         )
 
         field_context = TranslationContext.objects.get(path="field")
@@ -521,9 +515,8 @@ class TestSaveTarget(TestCase):
         snippet = TestSnippet.objects.create(field="Test content")
         source = TranslationSource.from_instance(snippet)
         translation = Translation.objects.create(
-            object=source.object,
-            target_locale=self.fr_locale,
             source=source,
+            target_locale=self.fr_locale,
         )
 
         field_context = TranslationContext.objects.get(path="field")
