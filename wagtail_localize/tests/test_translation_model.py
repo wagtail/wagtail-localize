@@ -26,7 +26,7 @@ def create_test_page(**kwargs):
     page_revision.publish()
     page.refresh_from_db()
 
-    source = TranslationSource.from_instance(page)
+    source, created = TranslationSource.get_or_create_from_instance(page)
 
     prepare_source(source)
 
@@ -39,7 +39,7 @@ def prepare_source(source):
         if not isinstance(segment, RelatedObjectSegmentValue):
             continue
 
-        related_source = TranslationSource.from_instance(
+        related_source, created = TranslationSource.get_or_create_from_instance(
             segment.get_instance(source.locale)
         )
         prepare_source(related_source)
@@ -136,7 +136,7 @@ class TestExportPO(TestCase):
         self.fr_locale = Locale.objects.create(language_code="fr")
 
         self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
-        self.source = TranslationSource.from_instance(self.page)
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
         self.translation = Translation.objects.create(
             source=self.source,
@@ -218,7 +218,7 @@ class TestImportPO(TestCase):
         self.fr_locale = Locale.objects.create(language_code="fr")
 
         self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
-        self.source = TranslationSource.from_instance(self.page)
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
         self.translation = Translation.objects.create(
             source=self.source,
@@ -492,7 +492,7 @@ class TestSaveTarget(TestCase):
 
     def test_save_target_snippet(self):
         snippet = TestSnippet.objects.create(field="Test content")
-        source = TranslationSource.from_instance(snippet)
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
         translation = Translation.objects.create(
             source=source,
             target_locale=self.fr_locale,
@@ -513,7 +513,7 @@ class TestSaveTarget(TestCase):
 
     def test_save_target_cant_save_snippet_as_draft(self):
         snippet = TestSnippet.objects.create(field="Test content")
-        source = TranslationSource.from_instance(snippet)
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
         translation = Translation.objects.create(
             source=source,
             target_locale=self.fr_locale,

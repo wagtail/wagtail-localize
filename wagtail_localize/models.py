@@ -158,7 +158,47 @@ class TranslationSource(models.Model):
         ]
 
     @classmethod
-    def from_instance(cls, instance):
+    def get_or_create_from_instance(cls, instance):
+        # Make sure we're using the specific version of pages
+        if isinstance(instance, Page):
+            instance = instance.specific
+
+        object, created = TranslatableObject.objects.get_or_create_from_instance(
+            instance
+        )
+
+        try:
+            return TranslationSource.objects.get(object_id=object.translation_key, locale_id=instance.locale_id), False
+        except TranslationSource.DoesNotExist:
+            pass
+
+        if isinstance(instance, ClusterableModel):
+            content_json = instance.to_json()
+        else:
+            serializable_data = get_serializable_data_for_fields(instance)
+            content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
+
+        source, created = cls.objects.update_or_create(
+            object=object,
+            locale=instance.locale,
+
+            # You can't update the content type of a source. So if this happens,
+            # it'll try and create a new source and crash (can't have more than
+            # one source per object/locale)
+            specific_content_type=ContentType.objects.get_for_model(instance.__class__),
+
+            defaults={
+                'locale': instance.locale,
+                'object_repr': str(instance)[:200],
+                'content_json': content_json,
+                'last_updated_at': timezone.now(),
+            }
+        )
+        source.refresh_segments()
+        return source, created
+
+    @classmethod
+    def update_or_create_from_instance(cls, instance):
         # Make sure we're using the specific version of pages
         if isinstance(instance, Page):
             instance = instance.specific
@@ -179,7 +219,7 @@ class TranslationSource(models.Model):
         # Check if the instance has changed at all since the previous version
         if source:
             if json.loads(content_json) == json.loads(source.content_json):
-                return source
+                return source, False
 
         source, created = cls.objects.update_or_create(
             object=object,
@@ -198,7 +238,7 @@ class TranslationSource(models.Model):
             }
         )
         source.refresh_segments()
-        return source
+        return source, created
 
     def get_source_instance(self):
         """

@@ -27,7 +27,7 @@ def create_test_page(**kwargs):
     page_revision.publish()
     page.refresh_from_db()
 
-    source = TranslationSource.from_instance(page)
+    source, created = TranslationSource.get_or_create_from_instance(page)
 
     prepare_source(source)
 
@@ -40,20 +40,21 @@ def prepare_source(source):
         if not isinstance(segment, RelatedObjectSegmentValue):
             continue
 
-        related_source = TranslationSource.from_instance(
+        related_source, created = TranslationSource.get_or_create_from_instance(
             segment.get_instance(source.locale)
         )
         prepare_source(related_source)
 
 
 
-class TestFromInstance(TestCase):
+class TestGetOrCreateFromInstance(TestCase):
     def setUp(self):
         self.snippet = TestSnippet.objects.create(field="This is some test content")
 
     def test_create(self):
-        source = TranslationSource.from_instance(self.snippet)
+        source, created = TranslationSource.get_or_create_from_instance(self.snippet)
 
+        self.assertTrue(created)
         self.assertEqual(source.object_id, self.snippet.translation_key)
         self.assertEqual(source.locale, self.snippet.locale)
         self.assertEqual(
@@ -83,7 +84,57 @@ class TestFromInstance(TestCase):
             last_updated_at=timezone.now(),
         )
 
-        new_source = TranslationSource.from_instance(self.snippet)
+        new_source, created = TranslationSource.get_or_create_from_instance(self.snippet)
+
+        self.assertEqual(source, new_source)
+        self.assertEqual(
+            json.loads(source.content_json)["field"], "Some different content"
+        )
+        self.assertEqual(
+            json.loads(new_source.content_json)["field"], "Some different content"
+        )
+
+
+class TestUpdateOrCreateFromInstance(TestCase):
+    def setUp(self):
+        self.snippet = TestSnippet.objects.create(field="This is some test content")
+
+    def test_create(self):
+        source, created = TranslationSource.update_or_create_from_instance(self.snippet)
+
+        self.assertTrue(created)
+        self.assertEqual(source.object_id, self.snippet.translation_key)
+        self.assertEqual(source.locale, self.snippet.locale)
+        self.assertEqual(
+            json.loads(source.content_json),
+            {
+                "pk": self.snippet.pk,
+                "field": "This is some test content",
+                "translation_key": str(self.snippet.translation_key),
+                "locale": self.snippet.locale_id,
+            },
+        )
+        self.assertTrue(source.created_at)
+
+    def test_update(self):
+        source = TranslationSource.objects.create(
+            object_id=self.snippet.translation_key,
+            specific_content_type=ContentType.objects.get_for_model(TestSnippet),
+            locale=self.snippet.locale,
+            content_json=json.dumps(
+                {
+                    "pk": self.snippet.pk,
+                    "field": "Some different content",  # Changed
+                    "translation_key": str(self.snippet.translation_key),
+                    "locale": self.snippet.locale_id,
+                }
+            ),
+            last_updated_at=timezone.now(),
+        )
+
+        new_source, created = TranslationSource.update_or_create_from_instance(self.snippet)
+
+        self.assertFalse(created)
 
         self.assertEqual(source, new_source)
         self.assertEqual(
@@ -97,7 +148,7 @@ class TestFromInstance(TestCase):
 class TestAsInstanceForPage(TestCase):
     def setUp(self):
         self.page = create_test_page(title="Test page", slug="test-page")
-        self.source = TranslationSource.from_instance(self.page)
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
     def test(self):
         # To show it actually is using the translation source and not the live object,
@@ -124,7 +175,7 @@ class TestAsInstanceForPage(TestCase):
 class TestAsInstanceForSnippet(TestCase):
     def setUp(self):
         self.snippet = TestSnippet.objects.create(field="This is some test content")
-        self.source = TranslationSource.from_instance(self.snippet)
+        self.source, created = TranslationSource.get_or_create_from_instance(self.snippet)
 
     def test(self):
         # To show it actually is using the translation source and not the live object,
@@ -145,7 +196,7 @@ class TestAsInstanceForSnippet(TestCase):
 class TestExportPO(TestCase):
     def setUp(self):
         self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
-        self.source = TranslationSource.from_instance(self.page)
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
     def test_export_po(self):
         po = self.source.export_po()
@@ -170,7 +221,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             test_charfield="This is some test content",
             test_snippet=self.snippet,
         )
-        self.source = TranslationSource.from_instance(self.page)
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
         self.source_locale = Locale.objects.get(language_code="en")
         self.dest_locale = Locale.objects.create(language_code="fr")
 
@@ -211,7 +262,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             parent=self.page,
             test_charfield="This is some test content",
         )
-        child_source = TranslationSource.from_instance(child_page)
+        child_source, created = TranslationSource.get_or_create_from_instance(child_page)
 
         translated_parent = self.page.copy_for_translation(self.dest_locale)
 
@@ -271,7 +322,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         revision = self.page.save_revision()
         revision.publish()
         self.page.refresh_from_db()
-        source_with_translated_content = TranslationSource.from_instance(self.page)
+        source_with_translated_content, created = TranslationSource.update_or_create_from_instance(self.page)
 
         # Check translation hasn't been updated yet
         translated.refresh_from_db()
@@ -342,7 +393,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         revision = self.page.save_revision()
         revision.publish()
         self.page.refresh_from_db()
-        source_with_streamfield = TranslationSource.from_instance(self.page)
+        source_with_streamfield, created = TranslationSource.update_or_create_from_instance(self.page)
 
         # Create a translation for the new context
         StringTranslation.objects.create(
