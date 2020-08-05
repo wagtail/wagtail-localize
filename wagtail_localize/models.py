@@ -476,18 +476,13 @@ class Translation(models.Model):
     # A unique ID that can be used to reference this request in external systems
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
 
-    object = models.ForeignKey(
-        TranslatableObject, on_delete=models.CASCADE, related_name="translations"
+    source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, related_name="translations"
     )
     target_locale = models.ForeignKey(
         "wagtailcore.Locale",
         on_delete=models.CASCADE,
         related_name="translations",
-    )
-
-    # Note: The source may be changed if the object is resubmitted for translation into the same locale
-    source = models.ForeignKey(
-        TranslationSource, on_delete=models.CASCADE, related_name="translations"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -498,7 +493,7 @@ class Translation(models.Model):
 
     class Meta:
         unique_together = [
-            ('object', 'target_locale'),
+            ('source', 'target_locale'),
         ]
 
     def get_progress(self):
@@ -585,7 +580,7 @@ class Translation(models.Model):
         # excluded
         for translation in (
             StringTranslation.objects
-            .filter(context__object=self.object, locale=self.target_locale)
+            .filter(context__object_id=self.source.object_id, locale=self.target_locale)
             .exclude(translation_of_id__in=StringSegment.objects.filter(source=self.source).values_list('string_id', flat=True))
             .select_related("translation_of", "context")
             .iterator()
@@ -651,7 +646,7 @@ class Translation(models.Model):
 
         # Delete any translations that weren't mentioned
         if delete:
-            StringTranslation.objects.filter(context__object=self.object, locale=self.target_locale).exclude(id__in=seen_translation_ids).delete()
+            StringTranslation.objects.filter(context__object_id=self.source.object_id, locale=self.target_locale).exclude(id__in=seen_translation_ids).delete()
 
     def save_target(self, user=None, publish=True):
         """
