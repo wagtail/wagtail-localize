@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["localhost", "testserver"]
 
 INSTALLED_APPS = [
     "wagtail_localize",
+    "wagtail_localize.git",
     "wagtail_localize.test",
     "wagtail.contrib.search_promotions",
     "wagtail.contrib.forms",
