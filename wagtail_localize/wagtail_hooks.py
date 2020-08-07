@@ -16,8 +16,8 @@ from .views import submit_translations
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     urls = [
-        path("submit/page/<int:page_id>/", submit_translations.submit_page_translation, name="submit_page_translation"),
-        path("submit/snippet/<slug:app_label>/<slug:model_name>/<str:pk>/", submit_translations.submit_snippet_translation, name="submit_snippet_translation"),
+        path("submit/page/<int:page_id>/", submit_translations.SubmitPageTranslationView.as_view(), name="submit_page_translation"),
+        path("submit/snippet/<slug:app_label>/<slug:model_name>/<str:pk>/", submit_translations.SubmitSnippetTranslationView.as_view(), name="submit_snippet_translation"),
     ]
 
     return [
