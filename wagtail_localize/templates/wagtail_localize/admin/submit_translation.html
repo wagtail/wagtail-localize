@@ -27,3 +27,21 @@
         </form>
     </div>
 {% endblock %}
+
+
+{% block extra_js %}
+    {{ block.super }}
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectAll = document.querySelector('[name="select_all"]');
+            var locales = document.querySelectorAll('[name="locales"]');
+
+            selectAll.addEventListener('change', function() {
+                locales.forEach(function(locale) {
+                    locale.checked = selectAll.checked;
+                })
+            });
+        });
+    </script>
+{% endblock %}
