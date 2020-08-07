@@ -1,12 +1,17 @@
 from django import forms
 
 from django.contrib import messages
-from django.contrib.admin.utils import quote, unquote
+from django.contrib.admin.utils import unquote
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.utils.text import capfirst
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as __
+from django.views.generic import TemplateView
+from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages import get_valid_next_url_from_request
 from wagtail.core.models import Page, Locale, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
@@ -89,31 +94,56 @@ class TranslationCreator:
                 translation.save_target(user=self.user)
 
 
-def submit_page_translation(request, page_id):
-    if not request.user.has_perms(['wagtail_localize.submit_translation']):
-        raise PermissionDenied
+class SubmitTranslationView(SingleObjectMixin, TemplateView):
+    template_name = "wagtail_localize/admin/submit_translation.html"
+    title = __("Translate")
 
-    page = get_object_or_404(Page, id=page_id).specific
-    next_url = get_valid_next_url_from_request(request)
+    def get_title(self):
+        return self.title
 
-    if request.method == "POST":
-        form = SubmitTranslationForm(page, request.POST)
+    def get_subtitle(self):
+        return str(self.object)
+
+    def get_form(self):
+        if self.request.method == 'POST':
+            return SubmitTranslationForm(self.object, self.request.POST)
+        else:
+            return SubmitTranslationForm(self.object)
+
+    def get_success_url(self):
+        return get_valid_next_url_from_request(self.request)
+
+    def get_default_success_url(self):
+        pass
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "form": self.get_form(),
+            "next_url": self.get_success_url(),
+            "back_url": self.get_success_url() or self.get_default_success_url(),
+        })
+        return context
+
+    def post(self, request, **kwargs):
+        form = self.get_form()
 
         if form.is_valid():
             with transaction.atomic():
-                translator = TranslationCreator(request.user, form.cleaned_data["locales"])
-                translator.create_translations(page)
+                translator = TranslationCreator(self.request.user, form.cleaned_data["locales"])
+                translator.create_translations(self.object)
 
-                # Now add the sub tree
-                if form.cleaned_data["include_subtree"]:
-                    def _walk(current_page):
-                        for child_page in current_page.get_children():
-                            translator.create_translations(child_page)
+                # Now add the sub tree (if the obj is a page)
+                if isinstance(self.object, Page):
+                    if form.cleaned_data["include_subtree"]:
+                        def _walk(current_page):
+                            for child_page in current_page.get_children():
+                                translator.create_translations(child_page)
 
-                            if child_page.numchild:
-                                _walk(child_page)
+                                if child_page.numchild:
+                                    _walk(child_page)
 
-                    _walk(page)
+                        _walk(self.object)
 
                 if len(form.cleaned_data["locales"]) == 1:
                     locales = form.cleaned_data["locales"][0].get_display_name()
@@ -124,70 +154,62 @@ def submit_page_translation(request, page_id):
 
                 # TODO: Button that links to page in translations report when we have it
                 messages.success(
-                    request, _("The page '{}' was successfully submitted for translation into {}").format(page.title, locales)
+                    self.request, self.get_success_message(locales)
                 )
 
-                if next_url:
-                    return redirect(next_url)
-                else:
-                    return redirect("wagtailadmin_explore", page.get_parent().id)
-    else:
-        form = SubmitTranslationForm(page)
+                return redirect(self.get_success_url() or self.get_default_success_url())
 
-    return render(
-        request,
-        "wagtail_localize/admin/submit_page_translation.html",
-        {"page": page, "form": form, "next_url": next_url},
-    )
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.has_perms(['wagtail_localize.submit_translation']):
+            raise PermissionDenied
+
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
 
 
-def submit_snippet_translation(request, app_label, model_name, pk):
-    if not request.user.has_perms(['wagtail_localize.submit_translation']):
-        raise PermissionDenied
+class SubmitPageTranslationView(SubmitTranslationView):
+    title = __("Translate page")
 
-    model = get_snippet_model_from_url_params(app_label, model_name)
+    def get_subtitle(self):
+        return self.object.get_admin_display_title()
 
-    if not issubclass(model, TranslatableMixin):
-        raise Http404
+    def get_object(self):
+        return get_object_or_404(Page, id=self.kwargs['page_id']).specific
 
-    instance = get_object_or_404(model, pk=unquote(pk))
-    next_url = get_valid_next_url_from_request(request)
+    def get_default_success_url(self):
+        return reverse("wagtailadmin_explore", args=[self.get_object().get_parent().id])
 
-    if request.method == "POST":
-        form = SubmitTranslationForm(instance, request.POST)
+    def get_success_message(self, locales):
+        return _("The page '{page_title}' was successfully submitted for translation into {locales}").format(
+            page_title=self.object.get_admin_display_title(),
+            locales=locales
+        )
 
-        if form.is_valid():
-            with transaction.atomic():
-                translator = TranslationCreator(request.user, form.cleaned_data["locales"])
-                translator.create_translations(instance)
 
-                if len(form.cleaned_data["locales"]) == 1:
-                    locales = form.cleaned_data["locales"][0].get_display_name()
-                else:
-                    # Note: always plural
-                    locales = _('{} locales').format(len(form.cleaned_data["locales"]))
+class SubmitSnippetTranslationView(SubmitTranslationView):
 
-                # TODO: Button that links to snippet in translations report when we have it
-                messages.success(
-                    request, _("The {} '{}' was successfully submitted for translation into {}").format(model._meta.verbose_name.title(), (str(instance)), locales)
-                )
+    def get_title(self):
+        return _("Translate {model_name}").format(
+            model_name=capfirst(self.object._meta.verbose_name)
+        )
 
-                if next_url:
-                    return redirect(next_url)
-                else:
-                    return redirect("wagtailsnippets:edit", app_label, model_name, quote(pk))
-    else:
-        form = SubmitTranslationForm(instance)
+    def get_object(self):
+        model = get_snippet_model_from_url_params(self.kwargs['app_label'], self.kwargs['model_name'])
 
-    return render(
-        request,
-        "wagtail_localize/admin/submit_snippet_translation.html",
-        {
-            "app_label": app_label,
-            "model_name": model_name,
-            "model_verbose_name": model._meta.verbose_name.title(),
-            "instance": instance,
-            "form": form,
-            "next_url": next_url,
-        }
-    )
+        if not issubclass(model, TranslatableMixin):
+            raise Http404
+
+        return get_object_or_404(model, pk=unquote(self.kwargs['pk']))
+
+    def get_default_success_url(self):
+        return reverse("wagtailsnippets:edit", args=[self.kwargs['app_label'], self.kwargs['model_name'], self.kwargs['pk']])
+
+    def get_success_message(self, locales):
+        return _("The {model_name} '{object}' was successfully submitted for translation into {locales}").format(
+            model_name=capfirst(self.object._meta.verbose_name),
+            object=str(self.object),
+            locales=locales
+        )

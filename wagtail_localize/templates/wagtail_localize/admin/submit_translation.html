@@ -1,14 +1,13 @@
 
 {% extends "wagtailadmin/base.html" %}
 {% load i18n wagtailadmin_tags %}
-{% block titletag %}Create translation request{% endblock %}
+{% block titletag %}{{ view.get_title }} {{ view.get_subtitle }}{% endblock %}
 
 {% block content %}
-    {% trans "Translate page" as title %}
-    {% include "wagtailadmin/shared/header.html" with title=title subtitle=page.get_admin_display_title icon="doc-empty-inverse" %}
+    {% include "wagtailadmin/shared/header.html" with title=view.get_title subtitle=view.get_subtitle icon="doc-empty-inverse" %}
 
     <div class="nice-padding">
-        <form action="{% url 'wagtail_localize:submit_page_translation' page.id %}" method="POST">
+        <form method="POST">
             {% csrf_token %}
 
             {% if next_url %}
@@ -23,7 +22,7 @@
                         {% include "wagtailadmin/shared/field_as_li.html" %}
                     {% endfor %}
                 {% endblock %}
-                <li><input type="submit" value="{% trans 'Submit' %}" class="button" /> <a href="{% if next_url %}{{ next_url }}{% else %}{% url 'wagtailadmin_explore' page.get_parent.id %}{% endif %}" class="button button-secondary">{% trans "Go back" %}</a></li>
+                <li><input type="submit" value="{% trans 'Submit' %}" class="button" />{% if back_url %} <a href="{{ back_url }}" class="button button-secondary">{% trans "Go back" %}</a>{% endif %}</li>
             </ul>
         </form>
     </div>
