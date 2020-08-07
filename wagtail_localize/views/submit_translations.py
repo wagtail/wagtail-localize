@@ -46,7 +46,7 @@ class SubmitTranslationForm(forms.Form):
             self.fields["include_subtree"].widget = forms.HiddenInput()
 
         self.fields["locales"].queryset = Locale.objects.exclude(
-            id=instance.locale_id
+            id__in=instance.get_translations(inclusive=True).values_list('locale_id', flat=True)
         )
 
         # Using len() instead of count() here as we're going to evaluate this queryset
