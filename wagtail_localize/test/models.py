@@ -4,15 +4,22 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable, TranslatableMixin
+from wagtail.snippets.models import register_snippet
 
 from wagtail_localize.fields import TranslatableField, SynchronizedField
 from wagtail_localize.segments import StringSegmentValue
 
 
+@register_snippet
 class TestSnippet(TranslatableMixin, models.Model):
     field = models.TextField()
 
     translatable_fields = [TranslatableField("field")]
+
+
+@register_snippet
+class NonTranslatableSnippet(models.Model):
+    field = models.TextField()
 
 
 class TestStructBlock(blocks.StructBlock):
