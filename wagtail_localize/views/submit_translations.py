@@ -20,6 +20,9 @@ from wagtail_localize.models import Translation, TranslationSource
 
 
 class SubmitTranslationForm(forms.Form):
+    # Note: We don't actually use select_all in Python., is is just the
+    # easiest way to add the widget to the form. It's controlled in JS.
+    select_all = forms.BooleanField(required=False)
     locales = forms.ModelMultipleChoiceField(
         queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple
     )
@@ -45,6 +48,11 @@ class SubmitTranslationForm(forms.Form):
         self.fields["locales"].queryset = Locale.objects.exclude(
             id=instance.locale_id
         )
+
+        # Using len() instead of count() here as we're going to evaluate this queryset
+        # anyway and it gets cached so it'll only have one query in the end.
+        if len(self.fields["locales"].queryset) < 2:
+            self.fields["select_all"].widget = forms.HiddenInput()
 
 
 class TranslationCreator:
