@@ -22,27 +22,16 @@ from wagtail_localize.models import Translation, TranslationSource
 class SubmitTranslationForm(forms.Form):
     # Note: We don't actually use select_all in Python., is is just the
     # easiest way to add the widget to the form. It's controlled in JS.
-    select_all = forms.BooleanField(required=False)
+    select_all = forms.BooleanField(label=__("Select all"), required=False)
     locales = forms.ModelMultipleChoiceField(
-        queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple
+        label=__("Locales"), queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple
     )
-    include_subtree = forms.BooleanField(required=False)
+    include_subtree = forms.BooleanField(label=__("Include subtree"), required=False, help_text=__("All child pages will be translated"))
 
     def __init__(self, instance, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if isinstance(instance, Page):
-            page_descendant_count = instance.get_descendants().count()
-        else:
-            page_descendant_count = 0
-
-        if page_descendant_count > 0:
-            self.fields[
-                "include_subtree"
-            ].help_text = "This will add {} additional pages to the request".format(
-                page_descendant_count
-            )
-        else:
+        if not isinstance(instance, Page) or instance.get_descendants().count() == 0:
             self.fields["include_subtree"].widget = forms.HiddenInput()
 
         self.fields["locales"].queryset = Locale.objects.exclude(
