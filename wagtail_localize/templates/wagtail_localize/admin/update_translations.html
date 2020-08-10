@@ -1,0 +1,77 @@
+
+{% extends "wagtailadmin/base.html" %}
+{% load i18n wagtailadmin_tags %}
+{% block titletag %}{{ view.get_title }} {{ view.get_subtitle }}{% endblock %}
+
+{% block content %}
+    {% include "wagtailadmin/shared/header.html" with title=view.get_title subtitle=view.get_subtitle icon="doc-empty-inverse" %}
+
+    <div class="nice-padding">
+        <p>{% trans "You are about to update the following translations:" %}</p>
+        <ul>
+            {% for translation in translations %}
+                <li>
+                    {{ translation.locale.get_display_name }}
+                    {% if translation.edit_url %}
+                        (<a href="{{ translation.edit_url }}" target="_blank"/>{{ translation.title }}</a>)
+                    {% else %}
+                        ({{ translation.title }})
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if next_url %}
+                <input type="hidden" name="next" value="{{ next_url }}">
+            {% endif %}
+
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+
+            <ul class="fields">
+                {% block visible_fields %}
+                    {% for field in form.visible_fields %}
+                        {% if field.name == 'publish_translations' %}
+                            <li class="publish-translations-field">
+                                <div class="field boolean_field checkbox_input">
+                                    <div class="field-content">
+                                        <div class="input">
+                                            <input type="checkbox" name="{{ field.name }}" id="{{ field.auto_id }}">
+                                            <label class="publish-translations-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="help">{{ field.help_text }}</p>
+                            </li>
+                        {% else %}
+                            {% include "wagtailadmin/shared/field_as_li.html" %}
+                        {% endif %}
+                    {% endfor %}
+                {% endblock %}
+                <li><input type="submit" value="{% trans 'Submit' %}" class="button" />{% if back_url %} <a href="{{ back_url }}" class="button button-secondary">{% trans "Go back" %}</a>{% endif %}</li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}
+
+
+{% block extra_css %}
+    {{ block.super }}
+
+    <style>
+        .publish-translations-field {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .publish-translations-field > p.help {
+            margin-top: 10px;
+        }
+
+        .publish-translations-label {
+            float: unset;
+            font-weight: normal;
+        }
+    </style>
+{% endblock %}
