@@ -196,6 +196,17 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_get_submit_page_translation_on_root_page(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[1],
+            ),
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 404)
+
     def test_post_submit_page_translation(self):
         response = self.client.post(
             reverse(
