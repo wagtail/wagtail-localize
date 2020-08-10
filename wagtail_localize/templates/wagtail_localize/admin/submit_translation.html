@@ -38,9 +38,9 @@
             var locales = document.querySelectorAll('[name="locales"]');
 
             selectAll.addEventListener('change', function() {
-                locales.forEach(function(locale) {
-                    locale.checked = selectAll.checked;
-                })
+                for (var i = 0; i < locales.length; i++) {
+                    locales[i].checked = selectAll.checked;
+                }
             });
         });
     </script>
