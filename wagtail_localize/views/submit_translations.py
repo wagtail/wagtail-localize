@@ -7,8 +7,7 @@ from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy as __
+from django.utils.translation import gettext as _, gettext_lazy as __, ngettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages import get_valid_next_url_from_request
@@ -25,12 +24,21 @@ class SubmitTranslationForm(forms.Form):
     locales = forms.ModelMultipleChoiceField(
         label=__("Locales"), queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple
     )
-    include_subtree = forms.BooleanField(label=__("Include subtree"), required=False, help_text=__("All child pages will be translated"))
+    include_subtree = forms.BooleanField(required=False, help_text=__("All child pages will be created."))
 
     def __init__(self, instance, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if not isinstance(instance, Page) or instance.get_descendants().count() == 0:
+        hide_include_subtree = True
+
+        if isinstance(instance, Page):
+            descendant_count = instance.get_descendants().count()
+
+            if descendant_count > 0:
+                hide_include_subtree = False
+                self.fields["include_subtree"].label = ngettext("Include subtree ({} page)", "Include subtree ({} pages)", descendant_count).format(descendant_count)
+
+        if hide_include_subtree:
             self.fields["include_subtree"].widget = forms.HiddenInput()
 
         self.fields["locales"].queryset = Locale.objects.exclude(
