@@ -124,10 +124,16 @@ class TranslationSourceQuerySet(models.QuerySet):
         object = TranslatableObject.objects.get_for_instance(
             instance
         )
-        return self.filter(
+        return self.get(
             object=object,
             locale=instance.locale,
         )
+
+    def get_for_instance_or_none(self, instance):
+        try:
+            return self.get_for_instance(instance)
+        except (TranslationSource.DoesNotExist, TranslatableObject.DoesNotExist):
+            return None
 
 
 class TranslationSource(models.Model):
