@@ -246,6 +246,26 @@ class TranslationSource(models.Model):
         source.refresh_segments()
         return source, created
 
+    @transaction.atomic
+    def update_from_db(self):
+        """
+        Retrieves the source instance from the database and updates this TranslationSource
+        with its current contents.
+        """
+        instance = self.get_source_instance()
+
+        if isinstance(instance, ClusterableModel):
+            self.content_json = instance.to_json()
+        else:
+            serializable_data = get_serializable_data_for_fields(instance)
+            self.content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
+
+        self.object_repr = str(instance)[:200]
+        self.last_updated_at = timezone.now()
+
+        self.save(update_fields=['content_json', 'object_repr', 'last_updated_at'])
+        self.refresh_segments()
+
     def get_source_instance(self):
         """
         This gets the live version of instance that the source data was extracted from.
