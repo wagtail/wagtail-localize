@@ -7,7 +7,6 @@ from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
 from django.views.generic import TemplateView
@@ -196,7 +195,7 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
 
     def get_title(self):
         return _("Translate {model_name}").format(
-            model_name=capfirst(self.object._meta.verbose_name)
+            model_name=self.object._meta.verbose_name
         )
 
     def get_object(self):
@@ -212,7 +211,7 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
 
     def get_success_message(self, locales):
         return _("The {model_name} '{object}' was successfully submitted for translation into {locales}").format(
-            model_name=capfirst(self.object._meta.verbose_name),
+            model_name=self.object._meta.verbose_name,
             object=str(self.object),
             locales=locales
         )
