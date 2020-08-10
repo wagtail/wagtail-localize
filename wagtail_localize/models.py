@@ -542,6 +542,12 @@ class Translation(models.Model):
             ('source', 'target_locale'),
         ]
 
+    def get_target_instance(self):
+        """
+        Fetches the translated instance from the database.
+        """
+        return self.source.get_translated_instance(self.target_locale)
+
     def get_progress(self):
         """
         Returns the current progress of translating this Translation.
