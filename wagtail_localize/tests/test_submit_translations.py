@@ -462,10 +462,10 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         strip_user_perms()
 
         response = self.client.get(
-            reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'nontranslatablesnippet'])
+            reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'testsnippet'])
         )
 
-        self.assertNotContains(response, "Translate this page")
+        self.assertNotContains(response, "Translate")
 
 
 @override_settings(
