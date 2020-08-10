@@ -10,7 +10,8 @@ from wagtail.core import hooks
 from wagtail.core.models import Locale, TranslatableMixin
 from wagtail.snippets.widgets import SnippetListingButton
 
-from .views import submit_translations
+from .models import TranslationSource
+from .views import submit_translations, update_translations
 
 
 @hooks.register("register_admin_urls")
@@ -18,6 +19,7 @@ def register_admin_urls():
     urls = [
         path("submit/page/<int:page_id>/", submit_translations.SubmitPageTranslationView.as_view(), name="submit_page_translation"),
         path("submit/snippet/<slug:app_label>/<slug:model_name>/<str:pk>/", submit_translations.SubmitSnippetTranslationView.as_view(), name="submit_snippet_translation"),
+        path("update/<int:translation_source_id>/", update_translations.UpdateTranslationsView.as_view(), name="update_translations"),
     ]
 
     return [
@@ -51,6 +53,15 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
 
             yield wagtailadmin_widgets.Button(_("Translate this page"), url, priority=60)
 
+        # If the page is the source for translations, show "Update translations" button
+        source = TranslationSource.objects.get_for_instance_or_none(page)
+        if source is not None:
+            url = reverse("wagtail_localize:update_translations", args=[source.id])
+            if next_url is not None:
+                url += '?' + urlencode({'next': next_url})
+
+            yield wagtailadmin_widgets.Button(_("Update translations"), url, priority=65)
+
 
 @hooks.register('register_snippet_listing_buttons')
 def register_snippet_listing_buttons(snippet, user, next_url=None):
@@ -72,4 +83,18 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
                 url,
                 attrs={'aria-label': _("Translate '%(title)s'") % {'title': str(snippet)}},
                 priority=100
+            )
+
+        # If the snippet is the source for translations, show "Update translations" button
+        source = TranslationSource.objects.get_for_instance_or_none(snippet)
+        if source is not None:
+            url = reverse('wagtail_localize:update_translations', args=[source.id])
+            if next_url is not None:
+                url += '?' + urlencode({'next': next_url})
+
+            yield SnippetListingButton(
+                _('Update translations'),
+                url,
+                attrs={'aria-label': _("Update translations for '%(title)s'") % {'title': str(snippet)}},
+                priority=106
             )
