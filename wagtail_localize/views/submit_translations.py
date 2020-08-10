@@ -174,7 +174,13 @@ class SubmitPageTranslationView(SubmitTranslationView):
         return self.object.get_admin_display_title()
 
     def get_object(self):
-        return get_object_or_404(Page, id=self.kwargs['page_id']).specific
+        page = get_object_or_404(Page, id=self.kwargs['page_id']).specific
+
+        # Can't translate the root page
+        if page.is_root():
+            raise Http404
+
+        return page
 
     def get_default_success_url(self):
         return reverse("wagtailadmin_explore", args=[self.get_object().get_parent().id])

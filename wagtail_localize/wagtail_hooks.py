@@ -38,7 +38,7 @@ def register_submit_translation_permission():
 
 @hooks.register("register_page_listing_more_buttons")
 def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
-    if page_perms.user.has_perm('wagtail_localize.submit_translation'):
+    if page_perms.user.has_perm('wagtail_localize.submit_translation') and not page.is_root():
         # If there's at least one locale that we haven't translated into yet, show "Translate this page" button
         has_locale_to_translate_to = Locale.objects.exclude(
             id__in=page.get_translations(inclusive=True).values_list('locale_id', flat=True)
