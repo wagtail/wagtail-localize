@@ -22,17 +22,23 @@ matrix:
    - env: TOXENV=py38-dj22-wai18n-sqlite
      python: 3.8
 
+   - env: TOXENV=py37-dj30-wai18n-postgres
+     python: 3.7
+
    - env: TOXENV=py38-dj30-wai18n-postgres
      python: 3.8
 
-   - env: TOXENV=py38-dj30-wai18n-sqlite
+   - env: TOXENV=py38-dj31-wai18n-postgres
      python: 3.8
 
-   - env: TOXENV=py38-dj30-wamaster-postgres
+   - env: TOXENV=py38-dj31-wai18n-sqlite
+     python: 3.8
+
+   - env: TOXENV=py38-dj31-wamaster-postgres
      python: 3.8
 
   allow_failures:
-   - env: TOXENV=py38-dj30-wamaster-postgres
+   - env: TOXENV=py38-dj31-wamaster-postgres
 
 
 before_install:
