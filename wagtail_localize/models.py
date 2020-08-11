@@ -669,7 +669,7 @@ class Translation(models.Model):
         return po
 
     @transaction.atomic
-    def import_po(self, po, delete=False):
+    def import_po(self, po, delete=False, translation_type='manual', tool_name=""):
         """
         Imports translations from a PO file.
         """
@@ -698,6 +698,8 @@ class Translation(models.Model):
                     defaults={
                         "data": entry.msgstr,
                         "updated_at": timezone.now(),
+                        "translation_type": translation_type,
+                        "tool_name": tool_name,
                     },
                 )
 
@@ -707,6 +709,8 @@ class Translation(models.Model):
                     # Update the string_translation only if it has changed
                     if string_translation.data != entry.msgstr:
                         string_translation.data = entry.msgstr
+                        string_translation.translation_type = translation_type
+                        string_translation.tool_name = tool_name
                         string_translation.updated_at = timezone.now()
                         string_translation.save()
 
@@ -830,6 +834,13 @@ class TranslationContext(models.Model):
 
 
 class StringTranslation(models.Model):
+    TRANSLATION_TYPE_MANUAL = 'manual'
+    TRANSLATION_TYPE_MACHINE = 'machine'
+    TRANSLATION_TYPE_CHOICES = [
+        (TRANSLATION_TYPE_MANUAL, _("Manual")),
+        (TRANSLATION_TYPE_MACHINE, _("Machine")),
+    ]
+
     translation_of = models.ForeignKey(
         String, on_delete=models.CASCADE, related_name="translations"
     )
@@ -842,6 +853,8 @@ class StringTranslation(models.Model):
         related_name="translations",
     )
     data = models.TextField()
+    translation_type = models.CharField(max_length=20, choices=TRANSLATION_TYPE_CHOICES)
+    tool_name = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -858,6 +871,21 @@ class StringTranslation(models.Model):
         )
 
         return segment
+
+    def get_comment(self):
+        """
+        Returns a comment to display to the user containing info on how and when the string was translated.
+        """
+        DATE_FORMAT = '%-d %B %Y'
+
+        if self.tool_name:
+            return _("Translated with {tool_name} on {date}").format(tool_name=self.tool_name).format(date=self.updated_at.strftime(DATE_FORMAT))
+
+        elif self.translation_type == self.TRANSLATION_TYPE_MANUAL:
+            return _("Translated manually on {date}").format(date=self.updated_at.strftime(DATE_FORMAT))
+
+        elif self.translation_type == self.TRANSLATION_TYPE_MACHINE:
+            return _("Machine translated on {date}").format(date=self.updated_at.strftime(DATE_FORMAT))
 
 
 class Template(models.Model):
