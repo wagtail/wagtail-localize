@@ -563,7 +563,6 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 403)
 
-
     def test_get_submit_snippet_translation_when_already_translated(self):
         # Locales that have been translated into shouldn't be included
         translation = self.en_snippet.copy_for_translation(self.de_locale)

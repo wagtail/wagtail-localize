@@ -101,7 +101,6 @@ class TestStringRenderText(TestCase):
         self.assertEqual(string.render_text(), "\nfoo\nbar\n")
 
 
-
 class TextExtractStrings(TestCase):
     def test_extract_strings(self):
         template, strings = extract_strings(

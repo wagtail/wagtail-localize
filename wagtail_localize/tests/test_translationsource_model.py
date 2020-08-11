@@ -46,7 +46,6 @@ def prepare_source(source):
         prepare_source(related_source)
 
 
-
 class TestGetOrCreateFromInstance(TestCase):
     def setUp(self):
         self.snippet = TestSnippet.objects.create(field="This is some test content")

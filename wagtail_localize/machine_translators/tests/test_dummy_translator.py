@@ -30,7 +30,6 @@ class TestDummyTranslator(TestCase):
 
         self.assertEqual(translations[string].render_html(attrs), '.<b>test a is This</b>. <a href="https://en.wikipedia.org/wiki/World">world! Hello</a>')
 
-
     def test_can_translate(self):
         canada_french_locale = Locale.objects.create(language_code="fr-CA")
 
