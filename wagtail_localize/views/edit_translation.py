@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.admin.utils import quote
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.http import Http404
@@ -17,12 +18,25 @@ from rest_framework.response import Response
 from wagtail.admin import messages
 from wagtail.admin.edit_handlers import TabbedInterface
 from wagtail.admin.navigation import get_explorable_root_page
+from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.core.blocks import StructBlock
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
 from wagtail_localize.models import Translation, StringTranslation, StringSegment
+
+
+class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.ReadOnlyField(source='get_full_name')
+    avatar_url = serializers.SerializerMethodField('get_avatar_url')
+
+    def get_avatar_url(self, user):
+        return avatar_url(user, size=25)
+
+    class Meta:
+        model = get_user_model()
+        fields = ['full_name', 'avatar_url']
 
 
 class StringTranslationSerializer(serializers.ModelSerializer):
@@ -192,6 +206,15 @@ def edit_translation(request, translation, instance):
                 for page in instance.get_ancestors(inclusive=False).descendant_of(cca, inclusive=True)
             ]
 
+    last_published_at = None
+    last_published_by = None
+    if isinstance(instance, Page):
+        if instance.live_revision:
+            last_published_at = instance.live_revision.created_at
+            last_published_by = instance.live_revision.user
+        else:
+            last_published_at = instance.last_published_at
+
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
         # These props are passed directly to the TranslationEditor react component
         'props': json.dumps({
@@ -199,7 +222,8 @@ def edit_translation(request, translation, instance):
                 'title': str(instance),
                 'isLive': instance.live if isinstance(instance, Page) else True,
                 'isLocked': instance.locked if isinstance(instance, Page) else False,
-                'lastPublishedDate': instance.last_published_at.strftime('%-d %B %Y') if isinstance(instance, Page) and instance.last_published_at else None,
+                'lastPublishedDate': last_published_at.strftime('%-d %B %Y') if last_published_at is not None else None,
+                'lastPublishedBy': UserSerializer(last_published_by).data if last_published_by is not None else None,
                 'liveUrl': live_url,
             },
             'breadcrumb': breadcrumb,
