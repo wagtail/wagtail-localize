@@ -1,6 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import gettext from 'gettext';
 
+import Avatar from '../../../common/components/Avatar';
+
 import Header, {
     HeaderLinkAction,
     HeaderMeta,
@@ -21,7 +23,7 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
 }) => {
     // Build actions
     let actions = [];
-    if (object.liveUrl) {
+    if (object.isLive && object.liveUrl) {
         actions.push(
             <HeaderLinkAction
                 key="live"
@@ -33,15 +35,22 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
         );
     }
 
-    let status = '';
+    let status = <></>;
     if (object.isLive) {
         if (object.lastPublishedDate) {
-            status = gettext('Published on ') + object.lastPublishedDate;
+            status = <>{gettext('Published on ') + object.lastPublishedDate}</>;
         } else {
-            status = gettext('Published');
+            status = <>{gettext('Published')}</>;
+        }
+
+        if (object.lastPublishedBy) {
+            status = <>
+                <Avatar username={object.lastPublishedBy.full_name} avatarUrl={object.lastPublishedBy.avatar_url} />
+                {status}
+            </>;
         }
     } else {
-        status = gettext('Draft');
+        status = <>{gettext('Draft')}</>;
     }
 
     // Build meta

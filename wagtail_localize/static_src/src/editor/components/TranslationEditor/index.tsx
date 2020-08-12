@@ -9,6 +9,11 @@ import EditorHeader from './header';
 import EditorFooter from './footer';
 import EditorSegmentList from './segments';
 
+export interface User {
+    full_name: string;
+    avatar_url: string | null;
+}
+
 export interface Locale {
     code: string;
     displayName: string;
@@ -61,6 +66,7 @@ export interface EditorProps {
         isLive: boolean;
         isLocked: boolean;
         lastPublishedDate: string | null;
+        lastPublishedBy: User | null;
         liveUrl?: string;
     };
     breadcrumb: BreadcrumbItem[];
