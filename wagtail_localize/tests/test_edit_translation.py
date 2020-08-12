@@ -272,7 +272,11 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'string_id': string.id,
             'segment_id': string_segment.id,
             'data': 'Un champ de caractères',
-            'comment': 'Translated manually on 21 August 2020'
+            'comment': 'Translated manually on 21 August 2020',
+            'last_translated_by': {
+                'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
+                'full_name': ''
+            }
         })
 
         translation = StringTranslation.objects.get()
@@ -280,6 +284,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
         self.assertEqual(translation.context, string_segment.context)
         self.assertEqual(translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
         self.assertEqual(translation.tool_name, "")
+        self.assertEqual(translation.last_translated_by, self.user)
 
     def test_update_string_translation(self):
         StringTranslation.objects.create(
@@ -303,7 +308,11 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'string_id': string.id,
             'segment_id': string_segment.id,
             'data': 'Un champ de caractères',
-            'comment': 'Translated manually on 21 August 2020'
+            'comment': 'Translated manually on 21 August 2020',
+            'last_translated_by': {
+                'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
+                'full_name': ''
+            }
         })
 
         translation = StringTranslation.objects.get()
@@ -311,6 +320,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
         self.assertEqual(translation.context, string_segment.context)
         self.assertEqual(translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
         self.assertEqual(translation.tool_name, "")
+        self.assertEqual(translation.last_translated_by, self.user)
 
     def test_delete_string_translation(self):
         StringTranslation.objects.create(
@@ -333,7 +343,8 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'string_id': string.id,
             'segment_id': string_segment.id,
             'data': 'Not translated!',
-            'comment': 'Machine translated on 21 August 2020'
+            'comment': 'Machine translated on 21 August 2020',
+            'last_translated_by': None,
         })
 
         self.assertFalse(StringTranslation.objects.exists())

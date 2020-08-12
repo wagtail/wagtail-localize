@@ -46,7 +46,8 @@ export function reducer(state: EditorState, action: EditorAction) {
                 value: action.value,
                 isSaving: true,
                 isErrored: false,
-                comment: gettext('Saving...')
+                comment: gettext('Saving...'),
+                translatedBy: null
             });
             state = Object.assign({}, state, { stringTranslations });
             break;
@@ -57,7 +58,8 @@ export function reducer(state: EditorState, action: EditorAction) {
                 value: action.translation.data,
                 isSaving: false,
                 isErrored: false,
-                comment: action.translation.comment
+                comment: action.translation.comment,
+                translatedBy: action.translation.last_translated_by
             });
 
             state = Object.assign({}, state, { stringTranslations });

@@ -43,6 +43,7 @@ class StringTranslationSerializer(serializers.ModelSerializer):
     string_id = serializers.ReadOnlyField(source='translation_of_id')
     segment_id = serializers.SerializerMethodField('get_segment_id')
     comment = serializers.ReadOnlyField(source='get_comment')
+    last_translated_by = UserSerializer()
 
     def get_segment_id(self, translation):
         if 'translation_source' in self.context:
@@ -54,7 +55,7 @@ class StringTranslationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StringTranslation
-        fields = ['string_id', 'segment_id', 'data', 'comment']
+        fields = ['string_id', 'segment_id', 'data', 'comment', 'last_translated_by']
 
 
 class TabHelper:
@@ -296,6 +297,7 @@ def edit_string_translation(request, translation_id, string_segment_id):
                 'data': request.POST['value'],
                 'translation_type': StringTranslation.TRANSLATION_TYPE_MANUAL,
                 'tool_name': "",
+                'last_translated_by': request.user,
             }
         )
 
