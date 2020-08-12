@@ -50,6 +50,7 @@ export interface StringTranslationAPI {
     segment_id: number;
     data: string;
     comment: string;
+    last_translated_by: User | null;
 }
 
 export interface StringTranslation {
@@ -57,6 +58,7 @@ export interface StringTranslation {
     isSaving: boolean;
     isErrored: boolean;
     comment: string;
+    translatedBy: User | null;
 }
 
 export interface EditorProps {
@@ -100,7 +102,8 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
             value: translation.data,
             isSaving: false,
             isErrored: false,
-            comment: translation.comment
+            comment: translation.comment,
+            translatedBy: translation.last_translated_by,
         });
     });
 

@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import gettext from 'gettext';
 
-//import Icon from '../../../common/components/Icon';
+import Icon from '../../../common/components/Icon';
+import Avatar from '../../../common/components/Avatar';
 
 import {
     EditorProps,
@@ -133,7 +134,7 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
         (translation && translation.value) || ''
     );
 
-    let comment = '';
+    let comment = <></>;
     let buttons: (React.ReactFragment | string)[] = [];
     let value: React.ReactFragment | string = <></>;
 
@@ -167,7 +168,7 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
             </p>}
         </>;
     } else if (translation && translation.isSaving) {
-        comment = gettext('Saving...');
+        comment = <>{gettext('Saving...')} <Icon name="spinner" /></>;
         value = <div className="segments__segment-value-inner">{translation && translation.value}</div>;
     } else {
         const onClickEdit = () => {
@@ -176,7 +177,17 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
         };
 
         if (translation && translation.comment) {
-            comment = translation.comment;
+            comment = <>
+                {translation.comment}
+                {translation.isErrored ? <Icon name="warning" className="icon--red" /> : <Icon name="tick" className="icon--green" />}
+            </>;
+
+            if (translation.translatedBy) {
+                comment = <>
+                    <Avatar username={translation.translatedBy.full_name} avatarUrl={translation.translatedBy.avatar_url} />
+                    {comment}
+                </>;
+            }
         }
 
         if (!isLocked) {

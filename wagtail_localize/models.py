@@ -3,6 +3,7 @@ import uuid
 from collections import defaultdict
 
 import polib
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
@@ -864,6 +865,7 @@ class StringTranslation(models.Model):
     data = models.TextField()
     translation_type = models.CharField(max_length=20, choices=TRANSLATION_TYPE_CHOICES)
     tool_name = models.CharField(max_length=255, blank=True)
+    last_translated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

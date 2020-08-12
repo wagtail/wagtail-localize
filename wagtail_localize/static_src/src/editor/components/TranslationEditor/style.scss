@@ -62,11 +62,27 @@
         width: 100%;
         text-align: right;
         padding: 10px;
+
+        .icon {
+            width: 1.3em;
+            height: 1.3em;
+            vertical-align: text-bottom;
+            margin-left: 10px;
+
+            &--green {
+                color: #15704d;
+            }
+
+            &--red {
+                color: #cd3239;
+            }
+        }
     }
 
     &__segment-toolbar-buttons {
         padding: 0;
         margin: 0;
+        margin-left: 20px;
 
         > li {
             display: inline-block;
