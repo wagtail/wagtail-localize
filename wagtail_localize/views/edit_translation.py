@@ -1,16 +1,20 @@
 import json
+import tempfile
+from collections import defaultdict
 
+import polib
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
-from django.db import models
-from django.http import Http404
+from django.db import models, transaction
+from django.http import Http404, HttpResponse
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.encoding import force_text
 from django.utils.functional import cached_property
-from django.utils.text import capfirst
+from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers, status
 from rest_framework.decorators import api_view
@@ -19,12 +23,15 @@ from wagtail.admin import messages
 from wagtail.admin.edit_handlers import TabbedInterface
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
+from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.blocks import StructBlock
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
+from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import Translation, StringTranslation, StringSegment
+from wagtail_localize.segments import StringSegmentValue
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -216,6 +223,14 @@ def edit_translation(request, translation, instance):
         else:
             last_published_at = instance.last_published_at
 
+    machine_translator = None
+    translator = get_machine_translator()
+    if translator and translator.can_translate(translation.source.locale, translation.target_locale):
+        machine_translator = {
+            'name': force_text(translator.display_name),
+            'url': reverse('wagtail_localize:machine_translate', args=[translation.id]),
+        }
+
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
         # These props are passed directly to the TranslationEditor react component
         'props': json.dumps({
@@ -256,11 +271,14 @@ def edit_translation(request, translation, instance):
                 'canDelete': True,  # TODO
             },
             'links': {
+                'downloadPofile': reverse('wagtail_localize:download_pofile', args=[translation.id]),
+                'uploadPofile': reverse('wagtail_localize:upload_pofile', args=[translation.id]),
                 'unpublishUrl': reverse('wagtailadmin_pages:unpublish', args=[instance.id]) if isinstance(instance, Page) else None,
                 'lockUrl': reverse('wagtailadmin_pages:lock', args=[instance.id]) if isinstance(instance, Page) else None,
                 'unlockUrl': reverse('wagtailadmin_pages:unlock', args=[instance.id]) if isinstance(instance, Page) else None,
                 'deleteUrl': reverse('wagtailadmin_pages:delete', args=[instance.id]) if isinstance(instance, Page) else reverse('wagtailsnippets:delete', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.pk)]),
             },
+            'machineTranslator': machine_translator,
             'segments': [
                 {
                     'id': segment.id,
@@ -318,3 +336,138 @@ def edit_string_translation(request, translation_id, string_segment_id):
         else:
             # Note: this is still considered a success in the frontend
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+# TODO: Permission checks
+def download_pofile(request, translation_id):
+    translation = get_object_or_404(Translation, id=translation_id)
+
+    response = HttpResponse(str(translation.export_po()), content_type="text/x-gettext-translation")
+    response["Content-Disposition"] = (
+        "attachment; filename=%s-%s.po" % (
+            slugify(translation.source.object_repr),
+            translation.target_locale.language_code,
+        )
+    )
+    return response
+
+
+# TODO: Permission checks
+@require_POST
+def upload_pofile(request, translation_id):
+    translation = get_object_or_404(
+        Translation, id=translation_id
+    )
+    do_import = True
+
+    with tempfile.NamedTemporaryFile() as f:
+        # Note: polib.pofile accepts either a filename or contents. We cannot pass the
+        # contents directly into polib.pofile or users could upload a file containing
+        # a filename and this will be read by polib!
+        f.write(request.FILES["file"].read())
+        f.flush()
+
+        try:
+            po = polib.pofile(f.name)
+
+        except (OSError, UnicodeDecodeError):
+            # Annoyingly, POLib uses OSError for parser exceptions...
+            messages.error(
+                request,
+                _("Please upload a valid PO file.")
+            )
+            do_import = False
+
+    if do_import:
+        translation_id = po.metadata['X-WagtailLocalize-TranslationID']
+        if translation_id != str(translation.uuid):
+            messages.error(
+                request,
+                _("Cannot import PO file that was created for a different translation.")
+            )
+            do_import = False
+
+    if do_import:
+        translation.import_po(po, user=request.user, tool_name="PO File")
+
+        messages.success(
+            request,
+            _("Successfully imported translations from PO File.")
+        )
+
+    # Work out where to redirect to
+    next_url = get_valid_next_url_from_request(request)
+    if not next_url:
+        # Note: You should always provide a next URL when using this view!
+        next_url = reverse('wagtailadmin_home')
+
+    return redirect(next_url)
+
+
+# TODO: Permission checks
+@require_POST
+def machine_translate(request, translation_id):
+    translation = get_object_or_404(Translation, id=translation_id)
+
+    translator = get_machine_translator()
+    if translator is None:
+        raise Http404
+
+    if not translator.can_translate(translation.source.locale, translation.target_locale):
+        raise Http404
+
+    # Get segments
+    segments = defaultdict(list)
+    for string_segment in translation.source.stringsegment_set.all().select_related("context", "string"):
+        segment = StringSegmentValue(
+            string_segment.context.path, string_segment.string.as_value()
+        ).with_order(string_segment.order)
+        if string_segment.attrs:
+            segment.attrs = json.loads(string_segment.attrs)
+
+        # Don't translate if there already is a translation
+        if StringTranslation.objects.filter(
+            translation_of_id=string_segment.string_id,
+            locale=translation.target_locale,
+            context_id=string_segment.context_id,
+        ).exists():
+            continue
+
+        segments[segment.string].append((string_segment.string_id, string_segment.context_id))
+
+    if segments:
+        translations = translator.translate(translation.source.locale, translation.target_locale, segments.keys())
+
+        with transaction.atomic():
+            for string, contexts in segments.items():
+                for string_id, context_id in contexts:
+                    StringTranslation.objects.get_or_create(
+                        translation_of_id=string_id,
+                        locale=translation.target_locale,
+                        context_id=context_id,
+                        defaults={
+                            'data': translations[string].data,
+                            'translation_type': StringTranslation.TRANSLATION_TYPE_MACHINE,
+                            'tool_name': translator.display_name,
+                            'last_translated_by': request.user,
+                        }
+                    )
+
+        messages.success(
+            request,
+            _("Successfully translated with {}.").format(translator.display_name)
+        )
+
+    else:
+        messages.warning(
+            request,
+            _("There isn't anything left to translate.")
+        )
+
+    # Work out where to redirect to
+    next_url = get_valid_next_url_from_request(request)
+    if not next_url:
+        # Note: You should always provide a next URL when using this view!
+        next_url = reverse('wagtailadmin_home')
+
+    return redirect(next_url)

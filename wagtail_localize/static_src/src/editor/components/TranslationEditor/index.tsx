@@ -7,6 +7,7 @@ import { EditorState, reducer } from './reducer';
 import EditorHeader from './header';
 import EditorFooter from './footer';
 import EditorSegmentList from './segments';
+import EditorToolbox from './toolbox';
 
 export interface User {
     full_name: string;
@@ -84,11 +85,17 @@ export interface EditorProps {
         canDelete: boolean;
     };
     links: {
+        downloadPofile: string;
+        uploadPofile: string;
         unpublishUrl: string;
         lockUrl: string;
         unlockUrl: string;
         deleteUrl: string;
     }
+    machineTranslator: {
+        name: string;
+        url: string
+    } | null;
     segments: StringSegment[];
     initialStringTranslations: StringTranslationAPI[];
 }
@@ -117,20 +124,28 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
         tabs = <Tabs tabs={props.tabs}>
             {props.tabs.map(tab => {
                 return <TabContent tab={tab}>
+                    <EditorToolbox {...props} {...state} dispatch={dispatch} />
+
                     <Section
                         title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
                     >
+
                         <EditorSegmentList {...props} segments={props.segments.filter(segment => segment.location.tab == tab)} {...state} dispatch={dispatch} />
                     </Section>
                 </TabContent>
             })}
         </Tabs>;
     } else {
-        tabs = <Section
-            title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
-        >
-            <EditorSegmentList {...props} {...state} dispatch={dispatch} />
-        </Section>;
+        tabs = <>
+            <EditorToolbox {...props} {...state} dispatch={dispatch} />
+            <Section
+                title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
+            >
+
+
+                <EditorSegmentList {...props} {...state} dispatch={dispatch} />
+            </Section>
+        </>;
     }
 
     return (

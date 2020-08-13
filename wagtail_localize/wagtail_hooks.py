@@ -12,8 +12,7 @@ from wagtail.core.models import Locale, TranslatableMixin
 from wagtail.snippets.widgets import SnippetListingButton
 
 from .models import Translation, TranslationSource
-from .views import submit_translations, update_translations
-from .views.edit_translation import edit_translation, edit_string_translation
+from .views import edit_translation, submit_translations, update_translations
 
 
 @hooks.register("register_admin_urls")
@@ -23,7 +22,10 @@ def register_admin_urls():
         path("submit/page/<int:page_id>/", submit_translations.SubmitPageTranslationView.as_view(), name="submit_page_translation"),
         path("submit/snippet/<slug:app_label>/<slug:model_name>/<str:pk>/", submit_translations.SubmitSnippetTranslationView.as_view(), name="submit_snippet_translation"),
         path("update/<int:translation_source_id>/", update_translations.UpdateTranslationsView.as_view(), name="update_translations"),
-        path("translate/<int:translation_id>/strings/<int:string_segment_id>/edit/", edit_string_translation, name="edit_string_translation"),
+        path("translate/<int:translation_id>/strings/<int:string_segment_id>/edit/", edit_translation.edit_string_translation, name="edit_string_translation"),
+        path("translate/<int:translation_id>/pofile/download/", edit_translation.download_pofile, name="download_pofile"),
+        path("translate/<int:translation_id>/pofile/upload/", edit_translation.upload_pofile, name="upload_pofile"),
+        path("translate/<int:translation_id>/machine_translate/", edit_translation.machine_translate, name="machine_translate"),
     ]
 
     return [
@@ -109,7 +111,7 @@ def before_edit_page(request, page):
     # Overrides the edit page view if the page is the target of a translation
     try:
         translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=True)
-        return edit_translation(request, translation, page)
+        return edit_translation.edit_translation(request, translation, page)
 
     except Translation.DoesNotExist:
         pass
@@ -121,7 +123,7 @@ def before_edit_snippet(request, instance):
     if isinstance(instance, TranslatableMixin):
         try:
             translation = Translation.objects.get(source__object_id=instance.translation_key, target_locale_id=instance.locale_id, enabled=True)
-            return edit_translation(request, translation, instance)
+            return edit_translation.edit_translation(request, translation, instance)
 
         except Translation.DoesNotExist:
             pass
