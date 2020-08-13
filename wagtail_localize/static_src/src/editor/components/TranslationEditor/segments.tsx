@@ -227,8 +227,8 @@ const SegmentToolbar = styled.ul`
 
 const SegmentList = styled.ul`
     list-style-type: none;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 50px;
+    padding-right: 50px;
 `;
 
 interface EditorSegmentProps {

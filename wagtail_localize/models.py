@@ -671,7 +671,7 @@ class Translation(models.Model):
         return po
 
     @transaction.atomic
-    def import_po(self, po, delete=False, translation_type='manual', tool_name=""):
+    def import_po(self, po, delete=False, user=None, translation_type='manual', tool_name=""):
         """
         Imports translations from a PO file.
         """
@@ -703,6 +703,7 @@ class Translation(models.Model):
                         "updated_at": timezone.now(),
                         "translation_type": translation_type,
                         "tool_name": tool_name,
+                        'last_translated_by': user,
                     },
                 )
 
@@ -714,6 +715,7 @@ class Translation(models.Model):
                         string_translation.data = entry.msgstr
                         string_translation.translation_type = translation_type
                         string_translation.tool_name = tool_name
+                        string_translation.last_translated_by = user
                         string_translation.updated_at = timezone.now()
                         string_translation.save()
 
@@ -890,7 +892,7 @@ class StringTranslation(models.Model):
         DATE_FORMAT = '%-d %B %Y'
 
         if self.tool_name:
-            return _("Translated with {tool_name} on {date}").format(tool_name=self.tool_name).format(date=self.updated_at.strftime(DATE_FORMAT))
+            return _("Translated with {tool_name} on {date}").format(tool_name=self.tool_name, date=self.updated_at.strftime(DATE_FORMAT))
 
         elif self.translation_type == self.TRANSLATION_TYPE_MANUAL:
             return _("Translated manually on {date}").format(date=self.updated_at.strftime(DATE_FORMAT))
