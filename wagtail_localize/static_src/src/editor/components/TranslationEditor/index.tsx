@@ -3,7 +3,6 @@ import React, { FunctionComponent } from 'react';
 import Section from '../../../common/components/Section';
 import {Tabs, TabContent} from '../../../common/components/Tabs';
 
-import './style.scss';
 import { EditorState, reducer } from './reducer';
 import EditorHeader from './header';
 import EditorFooter from './footer';
