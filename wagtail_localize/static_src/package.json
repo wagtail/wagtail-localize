@@ -14,6 +14,7 @@
     "@types/react": "^16.8.19",
     "@types/react-dom": "^16.8.19",
     "@types/redux": "^3.6.0",
+    "@types/styled-components": "^5.1.2",
     "@typescript-eslint/eslint-plugin": "^1.12.0",
     "@typescript-eslint/parser": "^1.12.0",
     "css-loader": "^2.1.1",
@@ -30,14 +31,15 @@
     "sass": "^1.20.3",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
+    "styled-components": "^5.1.1",
     "ts-loader": "^6.0.2",
     "typescript": "^3.5.1",
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2"
   },
   "dependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "redux": "^4.0.5"
   }
 }
