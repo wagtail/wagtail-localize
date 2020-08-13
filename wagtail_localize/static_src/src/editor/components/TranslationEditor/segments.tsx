@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import styled from 'styled-components';
 import gettext from 'gettext';
 
 import Icon from '../../../common/components/Icon';
@@ -33,7 +34,7 @@ function saveTranslation(
     if (value) {
         // Create/update the translation
         const formData = new FormData();
-        formData.set('value', value);
+        formData.append('value', value);
 
         fetch(segment.editUrl, {
             credentials: 'same-origin',
@@ -92,6 +93,13 @@ interface SingleLineTextAreaProps {
     onChange?(newValue: string): void;
 }
 
+const StyledTextArea = styled.textarea`
+    border: none;
+    border-radius: 0;
+    resize: none;
+    white-space: normal;
+`;
+
 const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, onChange}) => {
     // Using a single line text area to get the wrapping behaviour we want. But it also allows the Grammarly plugin to work
 
@@ -111,8 +119,117 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, 
         }
     }, [value, textAreaElement]);
 
-    return <textarea rows={1} ref={textAreaElement} onChange={onChangeValue} value={value} style={{resize: 'none', whiteSpace: 'normal'}} />;
+
+    return <StyledTextArea rows={1} ref={textAreaElement} onChange={onChangeValue} value={value} />;
 }
+
+export const BlockLabel = styled.h3`
+    color: #007273;
+    border: 1px solid #f5f5f5;
+    padding-left: 11px;
+    padding-right: 11px;
+    padding-top: 7px;
+    padding-bottom: 9px;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: bold;
+`;
+
+const BlockSegments = styled.ul`
+    list-style-type: none;
+    border: 1px solid #eeeeee;
+    background-color: #f1f1f1;
+    padding: 0;
+    margin: 0;
+
+    > li {
+        &:not(:last-child) {
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        &:after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+    }
+`;
+
+const SegmentFieldLabel = styled.h4`
+    color: #007273;
+    margin-top: 0;
+    font-style: normal;
+    font-weight: bold;
+    padding-left: 40px;
+`;
+
+const SegmentSource = styled.p`
+    padding: 15px 20px;
+    font-style: italic;
+`;
+
+const SegmentValue = styled.div`
+    > p, > ${StyledTextArea} {
+        padding: .9em 1.2em;
+        font-size: 1.2em;
+        font-style: italic;
+        line-height: 1.5em;
+        font-style: italic;
+        font-weight: 600;
+    }
+`;
+
+const ActionButton = styled.button`
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #017373;
+    background-color: #e5f1f1;
+    border: 1px solid #6cafaf;
+    border-radius: 2px;
+    padding: 5px 10px;
+
+    &:hover {
+        background-color: darken(#e5f1f1, 10%);
+    }
+`;
+
+const SegmentToolbar = styled.ul`
+    box-sizing: border-box;
+    width: 100%;
+    text-align: right;
+    padding: 10px;
+    margin: 0;
+
+    > li {
+        display: inline-block;
+
+        &:not(:first-child) {
+            margin-left: 15px;
+        }
+    }
+
+    .icon {
+        width: 1.3em;
+        height: 1.3em;
+        vertical-align: text-bottom;
+        margin-left: 10px;
+
+        &--green {
+            color: #15704d;
+        }
+
+        &--red {
+            color: #cd3239;
+        }
+    }
+`;
+
+const SegmentList = styled.ul`
+    list-style-type: none;
+    padding-left: 40px;
+    padding-right: 40px;
+`;
 
 interface EditorSegmentProps {
     segment: StringSegment;
@@ -135,8 +252,8 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
     );
 
     let comment = <></>;
-    let buttons: (React.ReactFragment | string)[] = [];
-    let value: React.ReactFragment | string = <></>;
+    let buttons: React.ReactFragment[] = [];
+    let value: React.ReactFragment = <></>;
 
     if (isEditing && !isLocked) {
         const onClickSave = () => {
@@ -149,27 +266,20 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
         };
 
         buttons = [
-            <button
-                className="segments__button segments__button--cancel"
-                onClick={onClickCancel}>
+            <ActionButton onClick={onClickCancel}>
                 {gettext('Cancel')}
-            </button>,
-            <button
-                className="segments__button segments__button--save"
-                onClick={onClickSave}>
+            </ActionButton>,
+            <ActionButton onClick={onClickSave}>
                 {gettext('Save')}
-            </button>,
+            </ActionButton>,
         ];
 
-        value = <>
-            <SingleLineTextArea onChange={setEditingValue} value={editingValue} />
-            {segment.location.helpText && <p className="segments__segment-help">
-                {segment.location.helpText}
-            </p>}
-        </>;
+        value = <SingleLineTextArea onChange={setEditingValue} value={editingValue} />;
+
     } else if (translation && translation.isSaving) {
         comment = <>{gettext('Saving...')} <Icon name="spinner" /></>;
-        value = <div className="segments__segment-value-inner">{translation && translation.value}</div>;
+        value = <p>{translation && translation.value}</p>;
+
     } else {
         const onClickEdit = () => {
             setIsEditing(true);
@@ -192,35 +302,28 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
 
         if (!isLocked) {
             buttons.push(
-                <button
-                    className="segments__button segments__button--edit"
-                    onClick={onClickEdit}
-                >
+                <ActionButton onClick={onClickEdit}>
                     {translation ? gettext('Edit') : gettext('Translate')}
-                </button>
+                </ActionButton>
             );
         }
 
-        value = <div className="segments__segment-value-inner">{translation && translation.value}</div>;
+        value = <p>{translation && translation.value}</p>;
     }
 
     return (
-        <li className="segments__segment">
+        <li>
             {segment.location.subField && (
-                <h4 className="segments__segment-field-label">
+                <SegmentFieldLabel>
                     {segment.location.subField}
-                </h4>
+                </SegmentFieldLabel>
             )}
-            <p className="segments__segment-source">{segment.source}</p>
-            <div className="segments__segment-value">
-                {value}
-            </div>
-            <div className="segments__segment-toolbar">
-                <ul className="segments__segment-toolbar-buttons">
-                    <li>{comment}</li>
-                    {buttons.map(button => <li>{button}</li>)}
-                </ul>
-            </div>
+            <SegmentSource>{segment.source}</SegmentSource>
+            <SegmentValue>{value}</SegmentValue>
+            <SegmentToolbar>
+                <li>{comment}</li>
+                {buttons.map(button => <li>{button}</li>)}
+            </SegmentToolbar>
         </li>
     );
 };
@@ -266,17 +369,17 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
             });
 
             return (
-                <li className="segments__block">
-                    <h3 className="segments__block-label">{segments[0].location.field}</h3>
-                    <div className="segments__block-content">
-                        <ul>{segmentsRendered}</ul>
-                    </div>
+                <li>
+                    <BlockLabel>{segments[0].location.field}</BlockLabel>
+                    <BlockSegments>
+                        {segmentsRendered}
+                    </BlockSegments>
                 </li>
             );
         }
     );
 
-    return <ul className="segments">{segmentRendered}</ul>;
+    return <SegmentList>{segmentRendered}</SegmentList>;
 };
 
 export default EditorSegmentList;
