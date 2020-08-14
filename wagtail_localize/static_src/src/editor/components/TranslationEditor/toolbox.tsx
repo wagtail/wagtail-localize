@@ -4,6 +4,8 @@ import gettext from 'gettext';
 
 import Icon from '../../../common/components/Icon';
 
+import CloudIcon from './cloud-solid.svg';
+
 import {
     EditorProps,
 } from '.';
@@ -23,7 +25,8 @@ const ToolboxWrapper = styled.div`
 const ToolWrapper = styled.div`
     float: left;
     margin-left: 50px;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
+    min-height: 100px;
 `;
 
 const HiddenFileInput = styled.input`
@@ -35,6 +38,12 @@ const HiddenFileInput = styled.input`
     padding: 0;
     position: absolute;
     width: 1px;
+`;
+
+const StyledCloudIcon = styled(CloudIcon)`
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: text-top;
 `;
 
 interface EditorToolboxProps extends EditorProps, EditorState {
@@ -89,7 +98,7 @@ const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
             <form action={machineTranslator.url} method="post" encType="multipart/form-data">
                 <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
                 <input type="hidden" name="next" value={window.location.href} />
-                <button type="submit" className="button button-primary button--icon" disabled={!hasUntranslatedSegments}><Icon name="page" /> {gettext("Translate with ") + machineTranslator.name}</button>
+                <button type="submit" className="button button-primary button--icon" disabled={!hasUntranslatedSegments}><StyledCloudIcon /> {gettext("Translate with ") + machineTranslator.name}</button>
             </form>
         </ToolWrapper>}
     </ToolboxWrapper>;
