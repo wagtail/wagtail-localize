@@ -6,11 +6,88 @@ import Avatar from '../../../common/components/Avatar';
 import Header, {
     HeaderLinkAction,
     HeaderMeta,
-    HeaderMetaDropdown
 } from '../../../common/components/Header';
 
-import { EditorProps } from '.';
+import { EditorProps, Locale, Translation } from '.';
 import { EditorState } from './reducer';
+import Icon from '../../../common/components/Icon';
+
+interface LocaleMetaProps {
+    key: string;
+    sourceLocale: Locale;
+    targetLocale: Locale;
+    translations: Translation[];
+}
+
+const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({key, translations, sourceLocale, targetLocale}) => {
+
+
+    // Render source
+    const sourceTranslation = translations.filter(({ locale }) => locale.code == sourceLocale.code).pop();
+    let sourceRendered = (sourceTranslation && sourceTranslation.editUrl)
+        ? <a href={sourceTranslation.editUrl} className="button button-small button-nobg text-notransform">
+            {sourceLocale.displayName}
+        </a>
+
+        : <>{sourceLocale.displayName}</>;
+
+
+    // Render target
+    let targetRendered = <></>;
+
+    let translationOptions = translations
+    .filter(({ locale }) => locale.code != sourceLocale.code)
+    .map(({ locale, editUrl }) => {
+        return {
+            label: locale.displayName,
+            href: editUrl
+        };
+    });
+
+    if (translationOptions.length > 0) {
+        let items = translationOptions.map(({ label, href }) => {
+            return (
+                <li className="c-dropdown__item ">
+                    <a href={href} aria-label="" className="u-link is-live">
+                        {label}
+                    </a>
+                </li>
+            );
+        });
+
+        targetRendered = <div
+            className="c-dropdown t-inverted"
+            data-dropdown=""
+            style={{ display: 'inline-block' }}
+        >
+            <a
+                href="javascript:void(0)"
+                className="c-dropdown__button u-btn-current button button-small button-nobg text-notransform"
+            >
+                {targetLocale.displayName}
+                <div
+                    data-dropdown-toggle=""
+                    className="o-icon c-dropdown__toggle c-dropdown__togle--icon [ icon icon-arrow-down ]"
+                    style={{paddingLeft: '5px'}}
+                >
+                    <Icon name="arrow-down" />
+                    <Icon name="arrow-up" />
+                </div>
+            </a>
+            <div className="t-dark">
+                <ul className="c-dropdown__menu u-toggle  u-arrow u-arrow--tl u-background">
+                    {items}
+                </ul>
+            </div>
+        </div>;
+    } else {
+        targetRendered = <>{targetLocale.displayName}</>;
+    }
+
+    return <li className={`header-meta--${key}`}>
+        {sourceRendered}<Icon name="arrow-right" />{targetRendered}
+    </li>;
+}
 
 interface EditorHeaderProps extends EditorProps, EditorState {}
 
@@ -53,39 +130,11 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
         status = <>{gettext('Draft')}</>;
     }
 
-    // Build meta
+    // Meta
     let meta = [
         <HeaderMeta key="status" value={status} />,
-        <HeaderMeta key="source-locale" value={sourceLocale.displayName} />
+        <LocaleMeta key="locales" translations={translations} sourceLocale={sourceLocale} targetLocale={locale} />,
     ];
-
-    let translationOptions = translations
-        .filter(({ locale }) => locale.code != sourceLocale.code)
-        .map(({ locale, editUrl }) => {
-            return {
-                label: locale.displayName,
-                href: editUrl
-            };
-        });
-
-    if (translationOptions.length > 0) {
-        meta.push(
-            <HeaderMetaDropdown
-                key="target-locale"
-                label={locale.displayName}
-                icon="arrow-right"
-                options={translationOptions}
-            />
-        );
-    } else {
-        meta.push(
-            <HeaderMeta
-                key="target-locale"
-                icon="arrow-right"
-                value={locale.displayName}
-            />
-        );
-    }
 
     return (
         <Header
