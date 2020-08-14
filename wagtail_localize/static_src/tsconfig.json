@@ -5,10 +5,10 @@
         "noImplicitAny": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "typeRoots": ["./node_modules/@types", "./custom_typings"],
         "esModuleInterop": true
     },
     "files": [
-        "src/main.tsx"
+        "src/main.tsx",
+        "src/custom.d.ts"
     ]
 }
