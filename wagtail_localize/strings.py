@@ -53,7 +53,8 @@ class StringValue:
         # Remove last element which is an extra br tag
         elements.pop()
 
-        return cls(''.join(elements))
+        # Join the elements then pass through beautiful soup to normalize the HTML
+        return cls(str(BeautifulSoup(''.join(elements), 'html.parser')))
 
     @classmethod
     def from_html(cls, html):
