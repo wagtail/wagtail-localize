@@ -5,7 +5,7 @@ from wagtail_localize.segments import StringSegmentValue
 
 class TestStringSegmentValue(TestCase):
     def test_segment_value(self):
-        segment = StringSegmentValue.from_html(
+        segment = StringSegmentValue.from_source_html(
             "foo.bar",
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://example.com">A link and some more <b>Bold text</b></a>',
         )
@@ -50,7 +50,7 @@ class TestStringSegmentValue(TestCase):
         self.assertEqual(unwrapped.attrs, segment.attrs)
 
     def test_replace_html_attrs(self):
-        segment = StringSegmentValue.from_html(
+        segment = StringSegmentValue.from_source_html(
             "foo.bar",
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a id="a1">A link and some more <b>Bold text</b></a>',
         )

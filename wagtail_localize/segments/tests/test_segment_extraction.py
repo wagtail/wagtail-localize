@@ -37,7 +37,7 @@ RICH_TEXT_TEST_OUTPUT = [
         3,
     ),
     StringSegmentValue("", "This is a heading"),
-    StringSegmentValue.from_html(
+    StringSegmentValue.from_source_html(
         "",
         'This is a paragraph. &lt;foo&gt; <b>Bold text</b>',
     ),

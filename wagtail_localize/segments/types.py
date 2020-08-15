@@ -75,8 +75,8 @@ class StringSegmentValue(BaseValue):
         )
 
     @classmethod
-    def from_html(cls, path, html, **kwargs):
-        string, attrs = StringValue.from_html(html)
+    def from_source_html(cls, path, html, **kwargs):
+        string, attrs = StringValue.from_source_html(html)
         return cls(path, string, attrs=attrs, **kwargs)
 
     def render_text(self):
