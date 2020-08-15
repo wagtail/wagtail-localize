@@ -1,4 +1,3 @@
-from django import VERSION as DJANGO_VERSION
 from django.test import TestCase
 
 from wagtail_localize.strings import StringValue, extract_strings, restore_strings
@@ -29,32 +28,30 @@ class TestStringValueFromHTML(TestCase):
 class TestStringValueFromPlaintext(TestCase):
     def test_string_from_plaintext(self):
         string = StringValue.from_plaintext(
-            "This is a test <Foo> bar 'baz'",
+            "This is a test, \"foo\" bar 'baz'.!?;:",
         )
 
-        # Django 2.x HTML escape function escapes quotes differently
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                string.data,
-                "This is a test &lt;Foo&gt; bar &#x27;baz&#x27;",
-            )
-        else:
-            self.assertEqual(
-                string.data,
-                "This is a test &lt;Foo&gt; bar &#39;baz&#39;",
-            )
+        self.assertEqual(
+            string.data,
+            "This is a test, \"foo\" bar 'baz'.!?;:",
+        )
 
     def test_special_chars_escaped(self):
-        string = StringValue.from_plaintext("foo & bar")
+        string = StringValue.from_plaintext("<Foo> & bar")
 
-        self.assertEqual(string.data, "foo &amp; bar")
+        self.assertEqual(string.data, "&lt;Foo&gt; &amp; bar")
+
+    def test_unicode_chars_not_escaped(self):
+        # unicode characters should not be escaped as this would be horrible for translators!
+        string = StringValue.from_plaintext("セキレイ")
+        self.assertEqual(string.data, "セキレイ")
 
     def test_newlines_converted_to_br_tags(self):
         string = StringValue.from_plaintext("foo\nbar\nbaz")
-        self.assertEqual(string.data, "foo<br>bar<br>baz")
+        self.assertEqual(string.data, "foo<br/>bar<br/>baz")
 
         string = StringValue.from_plaintext("\nfoo\nbar\n")
-        self.assertEqual(string.data, "<br>foo<br>bar<br>")
+        self.assertEqual(string.data, "<br/>foo<br/>bar<br/>")
 
 
 class TestRenderHTML(TestCase):
