@@ -1,8 +1,9 @@
 from collections import Counter
 
 from django.utils.html import escape
+from django.utils.translation import gettext as _
 
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup, NavigableString, Tag
 
 
 # List of tags that are allowed in segments
@@ -32,6 +33,31 @@ def rstrip_keep(text):
     return new_text, suffix
 
 
+def validate_element(element):
+    """
+    Checks the given BeautifulSoup element for anything that we disallow from strings.
+    """
+    if isinstance(element, NavigableString):
+        return
+
+    # Validate tag and attributes
+    if isinstance(element, Tag) and element.name != '[document]':
+        # Block tags are not allowed in strings
+        if element.name not in INLINE_TAGS:
+            raise ValueError(_("<{}> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)").format(element.name))
+
+        # Elements can't have attributes, except for <a> tags
+        keys = set(element.attrs.keys())
+        if element.name == 'a' and 'id' in keys:
+            keys.remove('id')
+        if keys:
+            raise ValueError(_("Strings cannot have any HTML tags with attributes (except for 'id' in <a> tags)"))
+
+    # Traverse children
+    for child_element in element.children:
+        validate_element(child_element)
+
+
 class StringValue:
     """
     A fragment of HTML that only contains inline tags with all attributes stripped out.
@@ -57,7 +83,13 @@ class StringValue:
         return cls(str(BeautifulSoup(''.join(elements), 'html.parser')))
 
     @classmethod
-    def from_html(cls, html):
+    def from_source_html(cls, html):
+        """
+        Get a string from source HTML.
+
+        Source HTML is the HTML you get in Wagtail field data. This contains HTML attributes that
+        must first be stripped out before the string can be translated.
+        """
         # Extracts attributes from any tags (eg, href from <a> tags) and stores a version
         # with just the translatable HTML
         soup = BeautifulSoup(html, "html.parser")
@@ -84,7 +116,23 @@ class StringValue:
 
         walk(soup)
 
+        validate_element(soup)
+
         return cls(str(soup)), attrs
+
+    @classmethod
+    def from_translated_html(cls, html):
+        """
+        Get a String from translated HTML.
+
+        HTML attributes are stripped out before translation, so translated HTML does not
+        need to have them stripped out.
+        """
+        soup = BeautifulSoup(html, "html.parser")
+
+        validate_element(soup)
+
+        return cls(str(soup))
 
     def render_text(self):
         soup = BeautifulSoup(self.data, "html.parser")
@@ -127,6 +175,9 @@ class StringValue:
 
     def render_html(self, attrs):
         return str(self.render_soup(attrs))
+
+    def get_translatable_html(self):
+        return self.data
 
     def __eq__(self, other):
         return (
@@ -319,7 +370,7 @@ def extract_strings(html):
             text, suffix = rstrip_keep(text)
 
             element.attrs["position"] = len(strings)
-            strings.append(StringValue.from_html(text))
+            strings.append(StringValue.from_source_html(text))
 
             if prefix:
                 element.insert_before(prefix)

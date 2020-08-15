@@ -33,7 +33,7 @@ RICH_TEXT_TEST_FRENCH_SEGMENTS = [
         order=9,
     ),
     StringSegmentValue("", "Ceci est une rubrique", order=10),
-    StringSegmentValue.from_html(
+    StringSegmentValue.from_source_html(
         "",
         'Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b>',
         order=11,

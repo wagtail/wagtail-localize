@@ -22,7 +22,7 @@ class TestDummyTranslator(TestCase):
         })
 
     def test_translate_html(self):
-        string, attrs = StringValue.from_html('<a href="https://en.wikipedia.org/wiki/World">Hello world!</a>. <b>This is a test</b>.')
+        string, attrs = StringValue.from_source_html('<a href="https://en.wikipedia.org/wiki/World">Hello world!</a>. <b>This is a test</b>.')
 
         translations = DummyTranslator({}).translate(self.english_locale, self.french_locale, [
             string
