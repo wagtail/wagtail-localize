@@ -57,8 +57,8 @@ export function reducer(state: EditorState, action: EditorAction) {
             stringTranslations.set(action.segmentId, {
                 value: action.translation.data,
                 isSaving: false,
-                isErrored: false,
-                comment: action.translation.comment,
+                isErrored: !!action.translation.error,
+                comment: action.translation.error ? action.translation.error : action.translation.comment,
                 translatedBy: action.translation.last_translated_by
             });
 

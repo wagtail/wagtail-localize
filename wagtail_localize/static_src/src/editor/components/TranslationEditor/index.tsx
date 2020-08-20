@@ -49,6 +49,7 @@ export interface StringTranslationAPI {
     string_id: number;
     segment_id: number;
     data: string;
+    error: string;
     comment: string;
     last_translated_by: User | null;
 }
@@ -107,8 +108,8 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
         stringTranslations.set(translation.segment_id, {
             value: translation.data,
             isSaving: false,
-            isErrored: false,
-            comment: translation.comment,
+            isErrored: !!translation.error,
+            comment: translation.error ? translation.error : translation.comment,
             translatedBy: translation.last_translated_by,
         });
     });

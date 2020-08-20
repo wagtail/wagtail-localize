@@ -143,6 +143,12 @@ const BlockSegments = styled.ul`
     margin: 0;
 
     > li {
+        &.errored {
+            background-color: #fee7e8;
+            // !important required to override the border-bottom rule just below
+            border: 1px solid #cd3238 !important;
+        }
+
         &:not(:last-child) {
             border-bottom: 1px solid #eaeaea;
         }
@@ -312,7 +318,7 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
     }
 
     return (
-        <li>
+        <li className={(translation && translation.isErrored) ? 'errored' : ''}>
             {segment.location.subField && (
                 <SegmentFieldLabel>
                     {segment.location.subField}

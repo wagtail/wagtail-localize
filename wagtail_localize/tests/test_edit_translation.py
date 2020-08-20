@@ -227,6 +227,39 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertEqual(log.locale, self.fr_locale)
         self.assertEqual(log.page_revision, latest_revision)
 
+    def test_publish_page_translation_with_field_error(self):
+        translation = StringTranslation.objects.create(
+            translation_of=String.objects.get(data='A char field'),
+            context=TranslationContext.objects.get(path='test_charfield'),
+            locale=self.fr_locale,
+            data=(
+                'This value is way too long for a char field so it should fail to publish and add an error to the translation. '
+                'This value is way too long for a char field so it should fail to publish and add an error to the translation. '
+                'This value is way too long for a char field so it should fail to publish and add an error to the translation.'
+            ),
+            translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL
+        )
+
+        response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
+            'action': 'publish',
+        })
+
+        self.assertRedirects(response, reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        # Check error message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'error')
+        self.assertEqual(messages[0].message, "Please fix the validation errors and try again.\n\n\n\n\n")
+
+        # Check the page was not published
+        self.fr_page.refresh_from_db()
+        self.assertEqual(self.fr_page.test_charfield, 'A char field')
+
+        # Check specific error was added to the translation
+        translation.refresh_from_db()
+        self.assertTrue(translation.has_error)
+        self.assertEqual(translation.get_error(), "Ensure this value has at most 255 characters (it has 329).")
+
     def test_publish_snippet_translation(self):
         StringTranslation.objects.create(
             translation_of=String.objects.get(data="Test snippet"),
@@ -276,6 +309,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'string_id': string.id,
             'segment_id': string_segment.id,
             'data': 'Un champ de caractères',
+            'error': None,
             'comment': 'Translated manually on 21 August 2020',
             'last_translated_by': {
                 'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
@@ -312,6 +346,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'string_id': string.id,
             'segment_id': string_segment.id,
             'data': 'Un champ de caractères',
+            'error': None,
             'comment': 'Translated manually on 21 August 2020',
             'last_translated_by': {
                 'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
@@ -325,6 +360,44 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
         self.assertEqual(translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
         self.assertEqual(translation.tool_name, "")
         self.assertEqual(translation.last_translated_by, self.user)
+
+    def test_update_string_translation_with_bad_html(self):
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data='A char field'),
+            context=TranslationContext.objects.get(path='test_charfield'),
+            locale=self.fr_locale,
+            data='Not translated!',
+            translation_type=StringTranslation.TRANSLATION_TYPE_MACHINE
+        )
+
+        string = String.objects.get(data='A char field')
+        string_segment = string.segments.get()
+
+        response = self.client.put(reverse('wagtail_localize:edit_string_translation', args=[self.page_translation.id, string_segment.id]), {
+            'value': 'Un champ de caractères <script>Some nasty JS</script>',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.json(), {
+            'string_id': string.id,
+            'segment_id': string_segment.id,
+            'data': 'Un champ de caractères <script>Some nasty JS</script>',
+            'error': '<script> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)',
+            'comment': 'Translated manually on 21 August 2020',
+            'last_translated_by': {
+                'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
+                'full_name': ''
+            }
+        })
+
+        translation = StringTranslation.objects.get()
+        self.assertEqual(translation.translation_of, string)
+        self.assertEqual(translation.context, string_segment.context)
+        self.assertEqual(translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
+        self.assertEqual(translation.tool_name, "")
+        self.assertEqual(translation.last_translated_by, self.user)
+        self.assertTrue(translation.has_error)
 
     def test_delete_string_translation(self):
         StringTranslation.objects.create(
@@ -347,6 +420,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'string_id': string.id,
             'segment_id': string_segment.id,
             'data': 'Not translated!',
+            'error': None,
             'comment': 'Machine translated on 21 August 2020',
             'last_translated_by': None,
         })
