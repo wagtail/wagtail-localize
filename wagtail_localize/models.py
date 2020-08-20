@@ -5,6 +5,7 @@ from collections import defaultdict
 import polib
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.db.models import (
@@ -372,7 +373,6 @@ class TranslationSource(models.Model):
 
         return po
 
-    @transaction.atomic
     def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, string_translation_fallback_to_source=False):
         """
         Creates/updates a translation of the object into the specified locale
@@ -464,22 +464,40 @@ class TranslationSource(models.Model):
             )
             segments.append(segment_value)
 
-        # Ingest all translated segments
-        ingest_segments(original, translation, self.locale, locale, segments)
+        try:
+            with transaction.atomic():
+                # Ingest all translated segments
+                ingest_segments(original, translation, self.locale, locale, segments)
 
-        if isinstance(translation, Page):
-            # Make sure the slug is valid
-            translation.slug = slugify(translation.slug)
-            translation.save()
+                if isinstance(translation, Page):
+                    # Make sure the slug is valid
+                    translation.slug = slugify(translation.slug)
+                    translation.save()
 
-            # Create a new revision
-            page_revision = translation.save_revision(user=user)
+                    # Create a new revision
+                    page_revision = translation.save_revision(user=user)
 
-            if publish:
-                page_revision.publish()
-        else:
-            translation.save()
-            page_revision = None
+                    if publish:
+                        page_revision.publish()
+                else:
+                    translation.save()
+                    page_revision = None
+
+        except ValidationError as e:
+            # If the validation error's field matches the context of a translation,
+            # set that error message on that translation.
+            # TODO (someday): Add support for errors raised from streamfield
+            for field_name, errors in e.error_dict.items():
+                string_translation = StringTranslation.objects.filter(
+                    translation_of_id__in=string_segments.values_list('string_id', flat=True),
+                    context__path=field_name,
+                    locale=locale,
+                ).first()
+
+                if string_translation is not None:
+                    string_translation.set_field_error(errors)
+
+            raise
 
         # Log that the translation was made
         TranslationLog.objects.create(
@@ -588,6 +606,7 @@ class Translation(models.Model):
                     translation_of_id=OuterRef("string_id"),
                     context_id=OuterRef("context_id"),
                     locale_id=self.target_locale_id,
+                    has_error=False,
                 )
             )
         )
@@ -624,7 +643,7 @@ class Translation(models.Model):
             StringSegment.objects.filter(source=self.source)
             .order_by('order')
             .select_related("context", "string")
-            .annotate_translation(self.target_locale)
+            .annotate_translation(self.target_locale, include_errors=True)
         )
 
         for string_segment in string_segments:
@@ -704,6 +723,8 @@ class Translation(models.Model):
                         "translation_type": translation_type,
                         "tool_name": tool_name,
                         'last_translated_by': user,
+                        'has_error': False,
+                        'field_error': "",
                     },
                 )
 
@@ -871,6 +892,16 @@ class StringTranslation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    has_error = models.BooleanField(default=False)
+
+    # If there was a database-level validation error while saving the page/snippet, that
+    # error will be stored here. Example errors include, max length and invalid chars in
+    # a slug field.
+    # Note: this field depends on the context, so if the context is null this value shoul
+    # be ignored.
+    #
+    field_error = models.TextField(blank=True)
+
     class Meta:
         unique_together = [("locale", "translation_of", "context")]
 
@@ -884,6 +915,50 @@ class StringTranslation(models.Model):
         )
 
         return segment
+
+    def save(self, *args, **kwargs):
+        update_fields = kwargs.get('update_fields')
+        super().save(*args, **kwargs)
+
+        # Set has_error if the string is invalid.
+        # Since we allow translations to be made by external tools, we need to allow invalid
+        # HTML in the database so that it can be fixed in Wagtail. However, we do want to know
+        # if any strings are invalid so we don't use them on a page.
+        updating_data = update_fields is None or 'data' in update_fields
+        if updating_data and not self.has_error:
+            try:
+                StringValue.from_translated_html(self.data)
+            except ValueError:
+                self.has_error = True
+                self.save(update_fields=['has_error'])
+
+    def set_field_error(self, error):
+        """
+        This sets the two field_error_ fields to the value of the given ValidationError instance.
+
+        Note, this also persists so no need to save.
+        """
+        self.has_error = True
+        # TODO (someday): We currently only support one error at a time
+        self.field_error = error[0].messages[0]
+        self.save(update_fields=['has_error', 'field_error'])
+
+    def get_error(self):
+        """
+        Returns a string containing any validation errors on the saved value.
+        """
+        if not self.has_error:
+            return
+
+        # Check for HTML validation errors
+        try:
+            StringValue.from_translated_html(self.data)
+        except ValueError as e:
+            return e.args[0]
+
+        # Check if a database error was raised when we last attempted to publish
+        if self.context is not None and self.field_error:
+            return self.field_error
 
     def get_comment(self):
         """
@@ -935,19 +1010,27 @@ class BaseSegment(models.Model):
 
 
 class StringSegmentQuerySet(models.QuerySet):
-    def annotate_translation(self, locale):
+    def annotate_translation(self, locale, include_errors=False):
         """
         Adds a 'translation' field to the segments containing the
         text content of the segment translated into the specified
         locale.
+
+        By default, this would exclude any translations that have
+        an error. To include these, set `include_errors` to True.
         """
+        translations = StringTranslation.objects.filter(
+            translation_of_id=OuterRef("string_id"),
+            locale_id=pk(locale),
+            context_id=OuterRef("context_id"),
+        )
+
+        if not include_errors:
+            translations = translations.exclude(has_error=True)
+
         return self.annotate(
             translation=Subquery(
-                StringTranslation.objects.filter(
-                    translation_of_id=OuterRef("string_id"),
-                    locale_id=pk(locale),
-                    context_id=OuterRef("context_id"),
-                ).values("data")
+                translations.values("data")
             )
         )
 

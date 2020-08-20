@@ -2,7 +2,7 @@ from django import forms
 
 from django.contrib import messages
 from django.contrib.admin.utils import quote
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -89,7 +89,10 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
                 if form.cleaned_data['publish_translations']:
                     for translation in self.object.translations.select_related("target_locale"):
-                        translation.save_target(user=request.user, publish=True)
+                        try:
+                            translation.save_target(user=request.user, publish=True)
+                        except ValidationError:
+                            pass
 
                 # TODO: Button that links to page in translations report when we have it
                 messages.success(

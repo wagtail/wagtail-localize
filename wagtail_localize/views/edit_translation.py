@@ -5,7 +5,7 @@ from collections import defaultdict
 import polib
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models, transaction
 from django.http import Http404, HttpResponse
 from django.urls import reverse
@@ -49,6 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
 class StringTranslationSerializer(serializers.ModelSerializer):
     string_id = serializers.ReadOnlyField(source='translation_of_id')
     segment_id = serializers.SerializerMethodField('get_segment_id')
+    error = serializers.ReadOnlyField(source='get_error')
     comment = serializers.ReadOnlyField(source='get_comment')
     last_translated_by = UserSerializer()
 
@@ -62,7 +63,7 @@ class StringTranslationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StringTranslation
-        fields = ['string_id', 'segment_id', 'data', 'comment', 'last_translated_by']
+        fields = ['string_id', 'segment_id', 'data', 'error', 'comment', 'last_translated_by']
 
 
 class TabHelper:
@@ -182,15 +183,20 @@ def edit_translation(request, translation, instance):
                 if not page_perms.can_publish():
                     raise PermissionDenied
 
-            translation.save_target(user=request.user, publish=True)
+            try:
+                translation.save_target(user=request.user, publish=True)
 
-            # Refresh instance to title in success message is up to date
-            instance.refresh_from_db()
+            except ValidationError:
+                messages.error(request, _("Please fix the validation errors and try again."))
 
-            messages.success(request, _("Successfully published '{object}' in {locale}").format(
-                object=str(instance),
-                locale=translation.target_locale.get_display_name()
-            ))
+            else:
+                # Refresh instance to title in success message is up to date
+                instance.refresh_from_db()
+
+                messages.success(request, _("Successfully published '{object}' in {locale}").format(
+                    object=str(instance),
+                    locale=translation.target_locale.get_display_name()
+                ))
 
         return redirect(request.path)
 
@@ -316,6 +322,8 @@ def edit_string_translation(request, translation_id, string_segment_id):
                 'translation_type': StringTranslation.TRANSLATION_TYPE_MANUAL,
                 'tool_name': "",
                 'last_translated_by': request.user,
+                'has_error': False,
+                'field_error': "",
             }
         )
 
@@ -450,6 +458,8 @@ def machine_translate(request, translation_id):
                             'translation_type': StringTranslation.TRANSLATION_TYPE_MACHINE,
                             'tool_name': translator.display_name,
                             'last_translated_by': request.user,
+                            'has_error': False,
+                            'field_error': "",
                         }
                     )
 

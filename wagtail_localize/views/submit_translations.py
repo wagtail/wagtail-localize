@@ -2,7 +2,7 @@ from django import forms
 
 from django.contrib import messages
 from django.contrib.admin.utils import unquote
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -95,7 +95,10 @@ class TranslationCreator:
             )
 
             if created:
-                translation.save_target(user=self.user)
+                try:
+                    translation.save_target(user=self.user)
+                except ValidationError:
+                    pass
 
 
 class SubmitTranslationView(SingleObjectMixin, TemplateView):
