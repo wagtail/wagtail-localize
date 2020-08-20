@@ -120,18 +120,27 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
     };
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
-    let tabs = <></>;
-    if (props.tabs.length > 1) {
-        tabs = <Tabs tabs={props.tabs}>
-            {props.tabs.map(tab => {
-                return <TabContent tab={tab}>
-                    <EditorToolbox {...props} {...state} dispatch={dispatch} />
+    const tabData = props.tabs.map(label => {
+        const segments = props.segments.filter(segment => segment.location.tab == label);
+        const translations = segments.map(segment => state.stringTranslations.get(segment.id)).filter(translation => translation != null);
 
+        return {
+            label,
+            numErrors: translations.filter(translation => translation.isErrored).length,
+            segments,
+        };
+    }).filter(tab => tab.segments.length > 0);
+
+    let tabs = <></>;
+    if (tabData.length > 1) {
+        tabs = <Tabs tabs={tabData}>
+            {tabData.map(tab => {
+                return <TabContent {...tab}>
+                    <EditorToolbox {...props} {...state} dispatch={dispatch} />
                     <Section
                         title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
                     >
-
-                        <EditorSegmentList {...props} segments={props.segments.filter(segment => segment.location.tab == tab)} {...state} dispatch={dispatch} />
+                        <EditorSegmentList {...props} segments={tab.segments} {...state} dispatch={dispatch} />
                     </Section>
                 </TabContent>
             })}
@@ -142,8 +151,6 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
             <Section
                 title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
             >
-
-
                 <EditorSegmentList {...props} {...state} dispatch={dispatch} />
             </Section>
         </>;

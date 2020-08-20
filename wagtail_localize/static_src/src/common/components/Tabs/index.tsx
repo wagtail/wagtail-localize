@@ -2,23 +2,38 @@ import React, { FunctionComponent } from 'react';
 
 const CurrentTabContext = React.createContext<string>('');
 
+export interface Tab {
+    label: string;
+    numErrors?: number;
+}
+
 export interface TabsProps {
-    tabs: string[];
+    tabs: Tab[];
 }
 
 export const Tabs: FunctionComponent<TabsProps> = ({tabs, children}) => {
-    const [currentTab, setCurrentTab] = React.useState(tabs[0])
+    const [currentTab, setCurrentTab] = React.useState(tabs[0].label)
 
     return <>
         <ul className="tab-nav merged" role="tablist">
             {tabs.map(tab => {
                 const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
                     e.preventDefault();
-                    setCurrentTab(tab);
+                    setCurrentTab(tab.label);
                 };
 
-                return <li className={tab == currentTab ? 'active' : ''} role="tab" aria-controls={`tab-${tab.toLowerCase()}`}>
-                    <a href={`#tab-${tab.toLowerCase()}`} onClick={onClick} className={tab == currentTab ? 'active' : ''}>{tab}</a>
+                const classNames = [];
+
+                if (tab.label == currentTab) {
+                    classNames.push('active');
+                }
+
+                if (tab.numErrors) {
+                    classNames.push('errors');
+                }
+
+                return <li className={tab.label == currentTab ? 'active' : ''} role="tab" aria-controls={`tab-${tab.label.toLowerCase()}`}>
+                    <a href={`#tab-${tab.label.toLowerCase()}`} onClick={onClick} className={classNames.join(' ')} data-count={tab.numErrors || 0}>{tab.label}</a>
                 </li>
             })}
         </ul>
@@ -30,14 +45,10 @@ export const Tabs: FunctionComponent<TabsProps> = ({tabs, children}) => {
     </>;
 }
 
-export interface TabContentProps {
-    tab: string,
-}
-
-export const TabContent: FunctionComponent<TabContentProps> = ({tab, children}) => {
+export const TabContent: FunctionComponent<Tab> = ({label, children}) => {
     const currentTab = React.useContext(CurrentTabContext);
 
-    return <section id={`tab-${tab.toLowerCase()}`} className={tab == currentTab ? 'active' : ''}>
+    return <section id={`tab-${label.toLowerCase()}`} className={label == currentTab ? 'active' : ''}>
         {children}
     </section>
 }
