@@ -259,7 +259,7 @@ class TestImportPO(TestCase):
             )
         )
 
-        warnings = list(self.translation.import_po(po))
+        warnings = self.translation.import_po(po)
         self.assertEqual(warnings, [])
 
         translation = StringTranslation.objects.get(translation_of__data="This is some test content")
@@ -297,7 +297,7 @@ class TestImportPO(TestCase):
             "X-WagtailLocalize-TranslationID": str(self.translation.uuid),
         }
 
-        warnings = list(self.translation.import_po(po, delete=True))
+        warnings = self.translation.import_po(po, delete=True)
         self.assertEqual(warnings, [])
 
         # Should delete both the translations
@@ -320,7 +320,7 @@ class TestImportPO(TestCase):
             )
         )
 
-        warnings = list(self.translation.import_po(po))
+        warnings = self.translation.import_po(po)
         self.assertEqual(warnings, [])
 
         # Should delete both the translations
@@ -361,7 +361,7 @@ class TestImportPO(TestCase):
             )
         )
 
-        warnings = list(self.translation.import_po(po))
+        warnings = self.translation.import_po(po)
 
         self.assertEqual(warnings, [
             StringNotUsedInContext(0, "This string exists in the database but isn't relevant to this object", "test_charfield"),

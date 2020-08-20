@@ -674,9 +674,10 @@ class Translation(models.Model):
         Imports translations from a PO file.
         """
         seen_translation_ids = set()
+        warnings = []
 
         if 'X-WagtailLocalize-TranslationID' in po.metadata and po.metadata['X-WagtailLocalize-TranslationID'] != str(self.uuid):
-            return
+            return []
 
         for index, entry in enumerate(po):
             try:
@@ -689,7 +690,7 @@ class Translation(models.Model):
 
                 # Ignore if the string doesn't appear in this context, and if there is not an obsolete StringTranslation
                 if not StringSegment.objects.filter(string=string, context=context).exists() and not StringTranslation.objects.filter(translation_of=string, context=context).exists():
-                    yield StringNotUsedInContext(index, entry.msgid, entry.msgctxt)
+                    warnings.append(StringNotUsedInContext(index, entry.msgid, entry.msgctxt))
                     continue
 
                 string_translation, created = string.translations.get_or_create(
@@ -715,14 +716,16 @@ class Translation(models.Model):
                         string_translation.save()
 
             except TranslationContext.DoesNotExist:
-                yield UnknownContext(index, entry.msgctxt)
+                warnings.append(UnknownContext(index, entry.msgctxt))
 
             except String.DoesNotExist:
-                yield UnknownString(index, entry.msgid)
+                warnings.append(UnknownString(index, entry.msgid))
 
         # Delete any translations that weren't mentioned
         if delete:
             StringTranslation.objects.filter(context__object_id=self.source.object_id, locale=self.target_locale).exclude(id__in=seen_translation_ids).delete()
+
+        return warnings
 
     def save_target(self, user=None, publish=True):
         """
