@@ -12,6 +12,7 @@ from wagtail_localize.segments import (
     RelatedObjectSegmentValue,
 )
 
+from ..fields import get_translatable_fields
 from ..strings import extract_strings
 
 
@@ -92,7 +93,7 @@ class StreamFieldSegmentExtractor:
 def extract_segments(instance):
     segments = []
 
-    for translatable_field in getattr(instance, 'translatable_fields', []):
+    for translatable_field in get_translatable_fields(instance.__class__):
         if not translatable_field.is_translated(instance):
             continue
 

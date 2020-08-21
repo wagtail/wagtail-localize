@@ -1,7 +1,10 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.core.fields import StreamField
-from wagtail.core.models import TranslatableMixin
+from modelcluster.models import ClusterableModel, get_all_child_relations
+from treebeard.mp_tree import MP_Node
+
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import Page, TranslatableMixin
 
 
 class BaseTranslatableField:
@@ -34,6 +37,9 @@ class BaseTranslatableField:
         """
         return False
 
+    def __eq__(self, other):
+        return self.__class__ == other.__class__ and self.field_name == other.field_name
+
 
 class TranslatableField(BaseTranslatableField):
     """
@@ -53,6 +59,9 @@ class TranslatableField(BaseTranslatableField):
         # Streamfields need to be re-synchronised before translation so the structure and non-translatable content is copied over
         return isinstance(field, StreamField)
 
+    def __repr__(self):
+        return f"<TranslatableField {self.field_name}>"
+
 
 class SynchronizedField(BaseTranslatableField):
     """
@@ -62,12 +71,90 @@ class SynchronizedField(BaseTranslatableField):
     def is_synchronized(self, obj):
         return self.is_editable(obj)
 
+    def __repr__(self):
+        return f"<SynchronizedField {self.field_name}>"
+
+
+def get_translatable_fields(model):
+    if hasattr(model, 'translatable_fields'):
+        return model.translatable_fields
+
+    translatable_fields = []
+
+    for field in model._meta.get_fields():
+        # Ignore automatically generated IDs
+        if isinstance(field, models.AutoField):
+            continue
+
+        # Ignore non-editable fields
+        if not field.editable:
+            continue
+
+        # Ignore many to many fields (not supported yet)
+        # TODO: Add support for these
+        if isinstance(field, models.ManyToManyField):
+            continue
+
+        # Ignore fields defined by MP_Node mixin
+        if issubclass(model, MP_Node) and field.name in ['path', 'depth', 'numchild']:
+            continue
+
+        # Ignore some editable fields defined on Page
+        if issubclass(model, Page) and field.name in ['go_live_at', 'expire_at', 'first_published_at', 'content_type', 'owner']:
+            continue
+
+        # URL, Email and choices fields are an exception to the rule below.
+        # Text fields are translatable, but these are synchronised.
+        if isinstance(field, (models.URLField, models.EmailField)) or isinstance(field, models.CharField) and field.choices:
+            translatable_fields.append(SynchronizedField(field.name))
+
+        # Translatable text fields should be translatable
+        elif isinstance(field, (StreamField, RichTextField, models.TextField, models.CharField)):
+            translatable_fields.append(TranslatableField(field.name))
+
+        # Foreign keys to translatable models should be translated. Others should be synchronised
+        elif isinstance(field, models.ForeignKey):
+            # Ignore if this is a link to a parent model
+            if isinstance(field, ParentalKey):
+                continue
+
+            # Ignore parent links
+            if isinstance(field, models.OneToOneField) and field.remote_field.parent_link:
+                continue
+
+            # All FKs to translatable models should be translatable.
+            # With the exception of pages that are special because we can localize them at runtime easily.
+            # TODO: Perhaps we need a special type for pages where it links to the translation if availabe,
+            # but falls back to the source if it isn't translated yet?
+            if issubclass(field.related_model, TranslatableMixin) and not issubclass(field.related_model, Page):
+                translatable_fields.append(TranslatableField(field.name))
+            else:
+                translatable_fields.append(SynchronizedField(field.name))
+
+        # Fields that support extracting segments are translatable
+        elif hasattr(field, "get_translatable_segments"):
+            translatable_fields.append(TranslatableField(field.name))
+
+        else:
+            # Everything else is synchronised
+            translatable_fields.append(SynchronizedField(field.name))
+
+    # Add child relations for clusterable models
+    if issubclass(model, ClusterableModel):
+        for child_relation in get_all_child_relations(model):
+            if issubclass(child_relation.related_model, TranslatableMixin):
+                translatable_fields.append(TranslatableField(child_relation.name))
+            else:
+                translatable_fields.append(SynchronizedField(child_relation.name))
+
+    return translatable_fields
+
 
 def copy_synchronised_fields(source, target):
     """
     Copies data in synchronised fields from the source object to the target object.
     """
-    for translatable_field in getattr(source, 'translatable_fields', []):
+    for translatable_field in get_translatable_fields(source.__class__):
         if translatable_field.is_synchronized(source):
             field = translatable_field.get_field(target.__class__)
 
