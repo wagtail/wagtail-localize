@@ -177,3 +177,42 @@ class TestNonParentalChildObject(TranslatableMixin, Orderable):
 
 class TestHomePage(Page):
     pass
+
+
+class TestGenerateTranslatableFieldsPage(Page):
+    """
+    A page type that tests the builtin automatic generation of translatable fields.
+    """
+
+    test_charfield = models.CharField(max_length=255, blank=True)
+    test_charfield_with_choices = models.CharField(max_length=255, blank=True, choices=[('a', "A"), ('b', "B")])
+    test_textfield = models.TextField(blank=True)
+    test_emailfield = models.EmailField(blank=True)
+    test_slugfield = models.SlugField(blank=True)
+    test_urlfield = models.URLField(blank=True)
+
+    test_richtextfield = RichTextField(blank=True)
+    test_streamfield = StreamField(TestStreamBlock, blank=True)
+
+    test_snippet = models.ForeignKey(
+        TestSnippet, null=True, blank=True, on_delete=models.SET_NULL
+    )
+
+    test_nontranslatablesnippet = models.ForeignKey(
+        NonTranslatableSnippet, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    test_customfield = TestCustomField(blank=True)
+
+
+class TranslatableChildObject(TranslatableMixin, Orderable):
+    page = ParentalKey(TestGenerateTranslatableFieldsPage, related_name="test_translatable_childobjects")
+    field = models.TextField()
+
+    class Meta(TranslatableMixin.Meta, Orderable.Meta):
+        pass
+
+
+class NonTranslatableChildObject(Orderable):
+    page = ParentalKey(TestGenerateTranslatableFieldsPage, related_name="test_nontranslatable_childobjects")
+    field = models.TextField()
