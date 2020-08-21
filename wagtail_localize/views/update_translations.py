@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from wagtail.admin.views.pages import get_valid_next_url_from_request
+from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Page
 
 from wagtail_localize.models import TranslationSource

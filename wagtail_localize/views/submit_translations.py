@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _, gettext_lazy as __, ngettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from wagtail.admin.views.pages import get_valid_next_url_from_request
+from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Page, Locale, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
