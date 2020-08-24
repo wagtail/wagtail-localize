@@ -120,7 +120,7 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
             status = <>{gettext('Published')}</>;
         }
 
-        if (object.lastPublishedBy) {
+        if (object.lastPublishedBy && object.lastPublishedBy.avatar_url) {
             status = <>
                 <Avatar username={object.lastPublishedBy.full_name} avatarUrl={object.lastPublishedBy.avatar_url} />
                 {status}

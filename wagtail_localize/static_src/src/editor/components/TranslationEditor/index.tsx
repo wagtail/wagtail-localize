@@ -122,11 +122,11 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
 
     const tabData = props.tabs.map(label => {
         const segments = props.segments.filter(segment => segment.location.tab == label);
-        const translations = segments.map(segment => state.stringTranslations.get(segment.id)).filter(translation => translation != null);
+        const translations = segments.map(segment => state.stringTranslations.get(segment.id));
 
         return {
             label,
-            numErrors: translations.filter(translation => translation.isErrored).length,
+            numErrors: translations.filter(translation => translation && translation.isErrored).length,
             segments,
         };
     }).filter(tab => tab.segments.length > 0);

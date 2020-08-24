@@ -111,7 +111,7 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, 
     };
 
     // Resize the textarea whenever the value is changed
-    const textAreaElement = React.useRef<HTMLTextAreaElement>();
+    const textAreaElement = React.useRef<HTMLTextAreaElement>(null);
     React.useEffect(() => {
         if (textAreaElement.current) {
             textAreaElement.current.style.height = "";
@@ -239,7 +239,7 @@ const SegmentList = styled.ul`
 
 interface EditorSegmentProps {
     segment: StringSegment;
-    translation: StringTranslation | null;
+    translation?: StringTranslation;
     isLocked: boolean,
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
@@ -298,7 +298,7 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
                 {translation.isErrored ? <Icon name="warning" className="icon--red" /> : <Icon name="tick" className="icon--green" />}
             </>;
 
-            if (translation.translatedBy) {
+            if (translation.translatedBy && translation.translatedBy.avatar_url) {
                 comment = <>
                     <Avatar username={translation.translatedBy.full_name} avatarUrl={translation.translatedBy.avatar_url} />
                     {comment}
@@ -352,10 +352,14 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
         const field = segment.location.field;
         const blockId = segment.location.blockId || 'null';
         const key = `${field}/${blockId}`;
-        if (!segmentsByFieldBlock.has(key)) {
-            segmentsByFieldBlock.set(key, []);
+
+        let list = segmentsByFieldBlock.get(key);
+        if (!list) {
+            list = [];
+            segmentsByFieldBlock.set(key, list);
         }
-        segmentsByFieldBlock.get(key).push(segment);
+
+        list.push(segment);
     });
 
     const segmentRendered = Array.from(segmentsByFieldBlock.entries()).map(

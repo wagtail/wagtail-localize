@@ -8,7 +8,7 @@ interface AvatarProps {
 }
 
 const Avatar: FunctionComponent<AvatarProps> = ({username, avatarUrl}) => {
-    const ref = React.useRef<HTMLSpanElement>();
+    const ref = React.useRef<HTMLSpanElement>(null);
 
     React.useEffect(() => {
         // Activate tooltip

@@ -65,16 +65,21 @@ const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
 
     const hasUntranslatedSegments = Array.from(stringTranslations.keys()).length < segments.length;
 
-    const uploadPofileForm = React.useRef<HTMLFormElement>();
-    const uploadPofileFileInput = React.useRef<HTMLInputElement>();
+    const uploadPofileForm = React.useRef<HTMLFormElement>(null);
+    const uploadPofileFileInput = React.useRef<HTMLInputElement>(null);
 
     const onClickUploadPO = () => {
-        uploadPofileFileInput.current.click();
+        if (uploadPofileFileInput.current) {
+            uploadPofileFileInput.current.click();
+        }
     };
 
     const uploadPofile = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        uploadPofileForm.current.submit();
+
+        if (uploadPofileForm.current) {
+            uploadPofileForm.current.submit();
+        }
     }
 
     return <ToolboxWrapper>
