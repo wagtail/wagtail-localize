@@ -224,16 +224,31 @@ def edit_translation(request, translation, instance):
                 translation.save_target(user=request.user, publish=True)
 
             except ValidationError:
-                messages.error(request, _("Please fix the validation errors and try again."))
+                messages.error(request, _("New validation errors were found when publishing '{object}' in {locale}. Please fix them or click publish again to ignore these translations for now.").format(
+                    object=str(instance),
+                    locale=translation.target_locale.get_display_name()
+                ))
 
             else:
                 # Refresh instance to title in success message is up to date
                 instance.refresh_from_db()
 
-                messages.success(request, _("Successfully published '{object}' in {locale}").format(
-                    object=str(instance),
-                    locale=translation.target_locale.get_display_name()
-                ))
+                string_segments = translation.source.stringsegment_set.all().order_by('order')
+                string_translations = string_segments.get_translations(translation.target_locale)
+
+                # Using annotate_translation as this ignores errors by default (so both errors and missing segments treated the same)
+                if string_segments.annotate_translation(translation.target_locale).filter(translation__isnull=True).exists():
+                    # One or more strings had an error
+                    messages.warning(request, _("Published '{object}' in {locale} with missing translations - see below.").format(
+                        object=str(instance),
+                        locale=translation.target_locale.get_display_name()
+                    ))
+
+                else:
+                    messages.success(request, _("Published '{object}' in {locale}.").format(
+                        object=str(instance),
+                        locale=translation.target_locale.get_display_name()
+                    ))
 
         return redirect(request.path)
 

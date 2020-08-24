@@ -82,6 +82,9 @@ class EditTranslationTestData(WagtailTestUtils):
         self.fr_page = self.page.get_translation(self.fr_locale)
         self.fr_home_page = self.home_page.get_translation(self.fr_locale)
 
+        # Delete translation logs that were created in set up
+        TranslationLog.objects.all().delete()
+
 
 class TestGetEditTranslationView(EditTranslationTestData, TestCase):
 
@@ -226,6 +229,17 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
             translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL
         )
 
+        # Fill all the remaining fields so that we don't get a warning message
+        string_segments = self.page_translation.source.stringsegment_set.all().order_by('order')
+        for segment in string_segments.annotate_translation(self.fr_locale).filter(translation__isnull=True):
+            StringTranslation.objects.create(
+                translation_of=segment.string,
+                context=segment.context,
+                locale=self.fr_locale,
+                data=segment.string.data,
+                translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL
+            )
+
         response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
             'action': 'publish',
         })
@@ -237,9 +251,9 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertEqual(messages[0].level_tag, 'success')
 
         if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(messages[0].message, "Successfully published &#x27;The title&#x27; in French\n\n\n\n\n")
+            self.assertEqual(messages[0].message, "Published &#x27;The title&#x27; in French.\n\n\n\n\n")
         else:
-            self.assertEqual(messages[0].message, "Successfully published &#39;The title&#39; in French\n\n\n\n\n")
+            self.assertEqual(messages[0].message, "Published &#39;The title&#39; in French.\n\n\n\n\n")
 
         # Check the page was published
         self.fr_page.refresh_from_db()
@@ -248,12 +262,49 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertEqual(latest_revision.user, self.user)
 
         # Check translation log
-        log = TranslationLog.objects.order_by('id').last()
+        log = TranslationLog.objects.get()
         self.assertEqual(log.source, self.page_source)
         self.assertEqual(log.locale, self.fr_locale)
         self.assertEqual(log.page_revision, latest_revision)
 
-    def test_publish_page_translation_with_field_error(self):
+    def test_publish_page_translation_with_missing_translations(self):
+        # Same as the above test except we only fill in one field. We should be given a warning but the publish should be published.
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data='A char field'),
+            context=TranslationContext.objects.get(path='test_charfield'),
+            locale=self.fr_locale,
+            data='Un champ de caractères',
+            translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL
+        )
+
+        response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
+            'action': 'publish',
+        })
+
+        self.assertRedirects(response, reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        # Check warning message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'warning')
+
+        if DJANGO_VERSION >= (3, 0):
+            self.assertEqual(messages[0].message, "Published &#x27;The title&#x27; in French with missing translations - see below.\n\n\n\n\n")
+        else:
+            self.assertEqual(messages[0].message, "Published &#39;The title&#39; in French with missing translations - see below.\n\n\n\n\n")
+
+        # Check the page was published
+        self.fr_page.refresh_from_db()
+        self.assertEqual(self.fr_page.test_charfield, 'Un champ de caractères')
+        latest_revision = self.fr_page.get_latest_revision()
+        self.assertEqual(latest_revision.user, self.user)
+
+        # Check translation log
+        log = TranslationLog.objects.get()
+        self.assertEqual(log.source, self.page_source)
+        self.assertEqual(log.locale, self.fr_locale)
+        self.assertEqual(log.page_revision, latest_revision)
+
+    def test_publish_page_translation_with_new_field_error(self):
         translation = StringTranslation.objects.create(
             translation_of=String.objects.get(data='A char field'),
             context=TranslationContext.objects.get(path='test_charfield'),
@@ -275,9 +326,13 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         # Check error message
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, 'error')
-        self.assertEqual(messages[0].message, "Please fix the validation errors and try again.\n\n\n\n\n")
 
-        # Check the page was not published
+        if DJANGO_VERSION >= (3, 0):
+            self.assertEqual(messages[0].message, "New validation errors were found when publishing &#x27;The title&#x27; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n")
+        else:
+            self.assertEqual(messages[0].message, "New validation errors were found when publishing &#39;The title&#39; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n")
+
+        # Check that the test_charfield was not changed
         self.fr_page.refresh_from_db()
         self.assertEqual(self.fr_page.test_charfield, 'A char field')
 
@@ -285,6 +340,51 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         translation.refresh_from_db()
         self.assertTrue(translation.has_error)
         self.assertEqual(translation.get_error(), "Ensure this value has at most 255 characters (it has 329).")
+
+        # Check page was not published
+        self.assertFalse(TranslationLog.objects.exists())
+
+    def test_publish_page_translation_with_known_field_error(self):
+        # Same as previous test, except the error is already known at the point of publishing the page. So the page is published
+        # but the invalid field is ignored.
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data='A char field'),
+            context=TranslationContext.objects.get(path='test_charfield'),
+            locale=self.fr_locale,
+            data=(
+                'This value is way too long for a char field so it should fail to publish and add an error to the translation. '
+                'This value is way too long for a char field so it should fail to publish and add an error to the translation. '
+                'This value is way too long for a char field so it should fail to publish and add an error to the translation.'
+            ),
+            translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL,
+            has_error=True,
+            field_error="Ensure this value has at most 255 characters (it has 329).",
+        )
+
+        response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
+            'action': 'publish',
+        })
+
+        self.assertRedirects(response, reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        # Check warning message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'warning')
+
+        if DJANGO_VERSION >= (3, 0):
+            self.assertEqual(messages[0].message, "Published &#x27;The title&#x27; in French with missing translations - see below.\n\n\n\n\n")
+        else:
+            self.assertEqual(messages[0].message, "Published &#39;The title&#39; in French with missing translations - see below.\n\n\n\n\n")
+
+        # Check that the test_charfield was not changed
+        self.fr_page.refresh_from_db()
+        self.assertEqual(self.fr_page.test_charfield, 'A char field')
+
+        # Check translation log
+        log = TranslationLog.objects.get()
+        self.assertEqual(log.source, self.page_source)
+        self.assertEqual(log.locale, self.fr_locale)
+        self.assertEqual(log.page_revision, self.fr_page.get_latest_revision())
 
     def test_cant_publish_page_translation_without_perms(self):
         self.moderators_group.page_permissions.filter(permission_type='publish').delete()
@@ -312,16 +412,16 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertEqual(messages[0].level_tag, 'success')
 
         if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(messages[0].message, f"Successfully published &#x27;TestSnippet object ({self.fr_snippet.id})&#x27; in French\n\n\n\n\n")
+            self.assertEqual(messages[0].message, f"Published &#x27;TestSnippet object ({self.fr_snippet.id})&#x27; in French.\n\n\n\n\n")
         else:
-            self.assertEqual(messages[0].message, f"Successfully published &#39;TestSnippet object ({self.fr_snippet.id})&#39; in French\n\n\n\n\n")
+            self.assertEqual(messages[0].message, f"Published &#39;TestSnippet object ({self.fr_snippet.id})&#39; in French.\n\n\n\n\n")
 
         # Check the snippet was published
         self.fr_snippet.refresh_from_db()
         self.assertEqual(self.fr_snippet.field, 'Extrait de test')
 
         # Check translation log
-        log = TranslationLog.objects.order_by('id').last()
+        log = TranslationLog.objects.get()
         self.assertEqual(log.source, self.snippet_source)
         self.assertEqual(log.locale, self.fr_locale)
         self.assertIsNone(log.page_revision)
