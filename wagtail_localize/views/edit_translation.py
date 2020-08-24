@@ -27,6 +27,7 @@ from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.blocks import StructBlock
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
+from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
 from wagtail_localize.machine_translators import get_machine_translator
@@ -168,12 +169,48 @@ def get_segment_location_info(source_instance, tab_helper, segment):
 
 
 def edit_translation(request, translation, instance):
-    live_url = None
     if isinstance(instance, Page):
+        # Page
+        # Note: Edit permission is already checked by the edit page view
+
         page_perms = instance.permissions_for_user(request.user)
+
+        is_live = instance.live
+        is_locked = instance.locked
+
+        if instance.live_revision:
+            last_published_at = instance.live_revision.created_at
+            last_published_by = instance.live_revision.user
+        else:
+            last_published_at = instance.last_published_at
+            last_published_by = None
 
         if instance.live:
             live_url = instance.full_url
+        else:
+            live_url = None
+
+        can_publish = page_perms.can_publish()
+        can_unpublish = page_perms.can_unpublish()
+        can_lock = page_perms.can_lock()
+        can_unlock = page_perms.can_unlock()
+        can_delete = page_perms.can_delete()
+
+    else:
+        # Snippet
+        # Note: Edit permission is already checked by the edit snippet view
+
+        is_live = True
+        is_locked = False
+        last_published_at = None
+        last_published_by = None
+        live_url = None
+
+        can_publish = True
+        can_unpublish = False
+        can_lock = False
+        can_unlock = False
+        can_delete = request.user.has_perm(get_permission_name('delete', instance.__class__))
 
     source_instance = translation.source.get_source_instance()
 
@@ -220,15 +257,6 @@ def edit_translation(request, translation, instance):
                 for page in instance.get_ancestors(inclusive=False).descendant_of(cca, inclusive=True)
             ]
 
-    last_published_at = None
-    last_published_by = None
-    if isinstance(instance, Page):
-        if instance.live_revision:
-            last_published_at = instance.live_revision.created_at
-            last_published_by = instance.live_revision.user
-        else:
-            last_published_at = instance.last_published_at
-
     machine_translator = None
     translator = get_machine_translator()
     if translator and translator.can_translate(translation.source.locale, translation.target_locale):
@@ -242,8 +270,8 @@ def edit_translation(request, translation, instance):
         'props': json.dumps({
             'object': {
                 'title': str(instance),
-                'isLive': instance.live if isinstance(instance, Page) else True,
-                'isLocked': instance.locked if isinstance(instance, Page) else False,
+                'isLive': is_live,
+                'isLocked': is_locked,
                 'lastPublishedDate': last_published_at.strftime('%-d %B %Y') if last_published_at is not None else None,
                 'lastPublishedBy': UserSerializer(last_published_by).data if last_published_by is not None else None,
                 'liveUrl': live_url,
@@ -270,11 +298,11 @@ def edit_translation(request, translation, instance):
                 for translated_instance in instance.get_translations().select_related('locale')
             ],
             'perms': {
-                'canPublish': not isinstance(instance, Page) or page_perms.can_publish(),
-                'canUnpublish': isinstance(instance, Page) and page_perms.can_publish(),
-                'canLock': isinstance(instance, Page) and page_perms.can_lock(),
-                'canUnlock': isinstance(instance, Page) and page_perms.can_unlock(),
-                'canDelete': True,  # TODO
+                'canPublish': can_publish,
+                'canUnpublish': can_unpublish,
+                'canLock': can_lock,
+                'canUnlock': can_unlock,
+                'canDelete': can_delete,
             },
             'links': {
                 'downloadPofile': reverse('wagtail_localize:download_pofile', args=[translation.id]),
@@ -304,6 +332,17 @@ def edit_translation(request, translation, instance):
     })
 
 
+def user_can_edit_instance(user, instance):
+    if isinstance(instance, Page):
+        # Page
+        page_perms = instance.permissions_for_user(user)
+        return page_perms.can_edit()
+
+    else:
+        # Snippet
+        return user_can_edit_snippet_type(user, instance.__class__)
+
+
 @api_view(['PUT', 'DELETE'])
 def edit_string_translation(request, translation_id, string_segment_id):
     translation = get_object_or_404(Translation, id=translation_id)
@@ -311,6 +350,10 @@ def edit_string_translation(request, translation_id, string_segment_id):
 
     if string_segment.context.object_id != translation.source.object_id:
         raise Http404
+
+    instance = translation.get_target_instance()
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
 
     if request.method == 'PUT':
         string_translation, created = StringTranslation.objects.update_or_create(
@@ -346,9 +389,12 @@ def edit_string_translation(request, translation_id, string_segment_id):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-# TODO: Permission checks
 def download_pofile(request, translation_id):
     translation = get_object_or_404(Translation, id=translation_id)
+
+    instance = translation.get_target_instance()
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
 
     response = HttpResponse(str(translation.export_po()), content_type="text/x-gettext-translation")
     response["Content-Disposition"] = (
@@ -360,12 +406,14 @@ def download_pofile(request, translation_id):
     return response
 
 
-# TODO: Permission checks
 @require_POST
 def upload_pofile(request, translation_id):
-    translation = get_object_or_404(
-        Translation, id=translation_id
-    )
+    translation = get_object_or_404(Translation, id=translation_id)
+
+    instance = translation.get_target_instance()
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
+
     do_import = True
 
     with tempfile.NamedTemporaryFile() as f:
@@ -412,10 +460,13 @@ def upload_pofile(request, translation_id):
     return redirect(next_url)
 
 
-# TODO: Permission checks
 @require_POST
 def machine_translate(request, translation_id):
     translation = get_object_or_404(Translation, id=translation_id)
+
+    instance = translation.get_target_instance()
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
 
     translator = get_machine_translator()
     if translator is None:

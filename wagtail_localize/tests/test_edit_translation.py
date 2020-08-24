@@ -5,6 +5,8 @@ import tempfile
 import polib
 from django import VERSION as DJANGO_VERSION
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -33,6 +35,14 @@ class EditTranslationTestData(WagtailTestUtils):
     def setUp(self):
         self.login()
         self.user = get_user_model().objects.get()
+
+        # Convert the user into an editor
+        self.moderators_group = Group.objects.get(name="Moderators")
+        for permission in Permission.objects.filter(content_type=ContentType.objects.get_for_model(TestSnippet)):
+            self.moderators_group.permissions.add(permission)
+        self.user.is_superuser = False
+        self.user.groups.add(self.moderators_group)
+        self.user.save()
 
         # Create page
         self.snippet = TestSnippet.objects.create(field="Test snippet")
@@ -139,6 +149,11 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(props['segments'][9]['location'], {'tab': 'Content', 'field': 'Test textblock', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
         # TODO: Examples that use fieldHelpText and subField
 
+    def test_cant_edit_page_translation_without_perms(self):
+        self.moderators_group.page_permissions.all().delete()
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        self.assertEqual(response.status_code, 403)
+
     def test_edit_snippet_translation(self):
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
         self.assertEqual(response.status_code, 200)
@@ -187,6 +202,17 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
 
         # Test locations
         self.assertEqual(props['segments'][0]['location'], {'tab': '', 'field': 'Field', 'blockId': None, 'fieldHelpText': '', 'subField': None})
+
+    def test_cant_edit_snippet_translation_without_perms(self):
+        self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
+        response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
+
+        # User should be redirected to dashboard with an error
+        self.assertRedirects(response, reverse('wagtailadmin_home'))
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'error')
+        self.assertEqual(messages[0].message, "Sorry, you do not have permission to access this area.\n\n\n\n\n")
 
 
 @freeze_time('2020-08-21')
@@ -260,6 +286,13 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertTrue(translation.has_error)
         self.assertEqual(translation.get_error(), "Ensure this value has at most 255 characters (it has 329).")
 
+    def test_cant_publish_page_translation_without_perms(self):
+        self.moderators_group.page_permissions.filter(permission_type='publish').delete()
+        response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
+            'action': 'publish',
+        })
+        self.assertEqual(response.status_code, 403)
+
     def test_publish_snippet_translation(self):
         StringTranslation.objects.create(
             translation_of=String.objects.get(data="Test snippet"),
@@ -293,7 +326,22 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertEqual(log.locale, self.fr_locale)
         self.assertIsNone(log.page_revision)
 
+    def test_cant_publish_snippet_translation_without_perms(self):
+        self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
 
+        response = self.client.post(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]), {
+            'action': 'publish',
+        })
+
+        # User should be redirected to dashboard with an error
+        self.assertRedirects(response, reverse('wagtailadmin_home'))
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'error')
+        self.assertEqual(messages[0].message, "Sorry, you do not have permission to access this area.\n\n\n\n\n")
+
+
+@freeze_time('2020-08-21')
 class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
     def test_create_string_translation(self):
         string = String.objects.get(data='A char field')
@@ -435,6 +483,30 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_cant_edit_translation_without_page_perms(self):
+        string = String.objects.get(data='A char field')
+        string_segment = string.segments.get()
+
+        self.moderators_group.page_permissions.all().delete()
+
+        response = self.client.put(reverse('wagtail_localize:edit_string_translation', args=[self.page_translation.id, string_segment.id]), {
+            'value': 'Un champ de caractères',
+        })
+
+        self.assertEquals(response.status_code, 403)
+
+    def test_cant_edit_translation_without_snippet_perms(self):
+        string = String.objects.get(data='Test snippet')
+        string_segment = string.segments.get()
+
+        self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
+
+        response = self.client.put(reverse('wagtail_localize:edit_string_translation', args=[self.snippet_translation.id, string_segment.id]), {
+            'value': 'Un champ de caractères',
+        })
+
+        self.assertEquals(response.status_code, 403)
+
 
 class TestDownloadPOFileView(EditTranslationTestData, TestCase):
     def test_download_pofile_page(self):
@@ -485,6 +557,16 @@ class TestDownloadPOFileView(EditTranslationTestData, TestCase):
 
         self.assertContains(response, 'msgctxt "field"\nmsgid "Test snippet"\nmsgstr ""')
         self.assertContains(response, 'msgctxt "field"\n#~ msgid "A string that is no longer used on the snippet"\n#~ msgstr "Une chaîne qui n\'est plus utilisée sur l\'extrait"')
+
+    def test_cant_download_pofile_without_page_perms(self):
+        self.moderators_group.page_permissions.all().delete()
+        response = self.client.get(reverse('wagtail_localize:download_pofile', args=[self.page_translation.id]))
+        self.assertEquals(response.status_code, 403)
+
+    def test_cant_download_pofile_without_snippet_perms(self):
+        self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
+        response = self.client.get(reverse('wagtail_localize:download_pofile', args=[self.snippet_translation.id]))
+        self.assertEquals(response.status_code, 403)
 
 
 class TestUploadPOFileView(EditTranslationTestData, TestCase):
@@ -788,6 +870,42 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
         # Nothing should be imported
         self.assertFalse(StringTranslation.objects.exists())
 
+    def test_cant_upload_pofile_without_page_perms(self):
+        self.moderators_group.page_permissions.all().delete()
+
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(self.page_translation.uuid),
+        }
+
+        response = self.client.post(reverse('wagtail_localize:upload_pofile', args=[self.page_translation.id]), {
+            'file': SimpleUploadedFile("translations.po", str(po).encode('utf-8'), content_type="text/x-gettext-translation"),
+            'next': reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]),
+        })
+
+        self.assertEquals(response.status_code, 403)
+
+    def test_cant_upload_pofile_without_snippet_perms(self):
+        self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
+
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(self.snippet_translation.uuid),
+        }
+
+        response = self.client.post(reverse('wagtail_localize:upload_pofile', args=[self.snippet_translation.id]), {
+            'file': SimpleUploadedFile("translations.po", str(po).encode('utf-8'), content_type="text/x-gettext-translation"),
+            'next': reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]),
+        })
+
+        self.assertEquals(response.status_code, 403)
+
 
 class TestMachineTranslateView(EditTranslationTestData, TestCase):
     def test_machine_translate_page(self):
@@ -936,3 +1054,21 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
         self.assertEqual(translation.data, 'Extrait de test')
         self.assertEqual(translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
         self.assertEqual(translation.tool_name, "")
+
+    def test_cant_machine_translate_without_page_perms(self):
+        self.moderators_group.page_permissions.all().delete()
+
+        response = self.client.post(reverse('wagtail_localize:machine_translate', args=[self.page_translation.id]), {
+            'next': reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]),
+        })
+
+        self.assertEquals(response.status_code, 403)
+
+    def test_cant_machine_translate_without_snippet_perms(self):
+        self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
+
+        response = self.client.post(reverse('wagtail_localize:machine_translate', args=[self.snippet_translation.id]), {
+            'next': reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]),
+        })
+
+        self.assertEquals(response.status_code, 403)
