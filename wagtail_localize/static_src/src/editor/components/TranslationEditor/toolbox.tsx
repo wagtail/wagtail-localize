@@ -15,6 +15,8 @@ import {
 } from './reducer';
 
 const ToolboxWrapper = styled.div`
+    padding-top: 20px;
+
     &:after {
         content: '';
         display: table;
