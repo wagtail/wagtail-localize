@@ -13,13 +13,13 @@ import { EditorState } from './reducer';
 import Icon from '../../../common/components/Icon';
 
 interface LocaleMetaProps {
-    key: string;
+    name: string;
     sourceLocale: Locale;
     targetLocale: Locale;
     translations: Translation[];
 }
 
-const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({key, translations, sourceLocale, targetLocale}) => {
+const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({name, translations, sourceLocale, targetLocale}) => {
 
 
     // Render source
@@ -84,7 +84,7 @@ const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({key, translations, sour
         targetRendered = <>{targetLocale.displayName}</>;
     }
 
-    return <li className={`header-meta--${key}`}>
+    return <li className={`header-meta--${name}`}>
         {sourceRendered}<Icon name="arrow-right" />{targetRendered}
     </li>;
 }
@@ -132,8 +132,8 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
 
     // Meta
     let meta = [
-        <HeaderMeta key="status" value={status} />,
-        <LocaleMeta key="locales" translations={translations} sourceLocale={sourceLocale} targetLocale={locale} />,
+        <HeaderMeta name="status" value={status} />,
+        <LocaleMeta name="locales" translations={translations} sourceLocale={sourceLocale} targetLocale={locale} />,
     ];
 
     return (

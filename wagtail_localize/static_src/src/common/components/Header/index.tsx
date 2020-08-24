@@ -69,18 +69,18 @@ export const HeaderLinkAction: FunctionComponent<HeaderLinkActionProps> = ({
 };
 
 interface HeaderMetaProps {
-    key: string;
+    name: string;
     value: string | React.ReactFragment;
     icon?: string;
 }
 
 export const HeaderMeta: FunctionComponent<HeaderMetaProps> = ({
-    key,
+    name,
     value,
     icon
 }) => {
     return (
-        <li className={`header-meta--${key}`}>
+        <li className={`header-meta--${name}`}>
             {icon && <Icon name={icon} />} {value}
         </li>
     );
@@ -92,7 +92,7 @@ interface HeaderDropdownLinkOption {
 }
 
 interface HeaderMetaDropdownProps {
-    key: string;
+    name: string;
     label: string;
     options: HeaderDropdownLinkOption[];
     icon?: string;
@@ -101,7 +101,7 @@ interface HeaderMetaDropdownProps {
 }
 
 export const HeaderMetaDropdown: FunctionComponent<HeaderMetaDropdownProps> = ({
-    key,
+    name,
     label,
     options,
     icon,
@@ -126,7 +126,7 @@ export const HeaderMetaDropdown: FunctionComponent<HeaderMetaDropdownProps> = ({
 
     return (
         <HeaderMeta
-            key={key}
+            name={name}
             icon={icon}
             value={
                 <div
