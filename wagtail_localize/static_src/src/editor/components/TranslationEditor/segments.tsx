@@ -92,6 +92,7 @@ interface SingleLineTextAreaProps {
     value: string;
     onChange?(newValue: string): void;
     onHitEnter?(): void;
+    focusOnMount?: boolean;
 }
 
 const StyledTextArea = styled.textarea`
@@ -101,7 +102,7 @@ const StyledTextArea = styled.textarea`
     white-space: normal;
 `;
 
-const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, onChange, onHitEnter}) => {
+const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, onChange, onHitEnter, focusOnMount}) => {
     // Using a single line text area to get the wrapping behaviour we want. But it also allows the Grammarly plugin to work
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -127,6 +128,12 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, 
         }
     }, [value, textAreaElement]);
 
+    // Focus the textarea when it is mounted
+    React.useEffect(() => {
+        if (focusOnMount && textAreaElement.current) {
+            textAreaElement.current.focus();
+        }
+    }, [textAreaElement]);
 
     return <StyledTextArea rows={1} ref={textAreaElement} onChange={onChangeValue} onKeyDown={onKeyDown} value={value} />;
 }
@@ -288,7 +295,7 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
             </ActionButton>,
         ];
 
-        value = <SingleLineTextArea onChange={setEditingValue} onHitEnter={onClickSave} value={editingValue} />;
+        value = <SingleLineTextArea onChange={setEditingValue} onHitEnter={onClickSave} value={editingValue} focusOnMount={true} />;
 
     } else if (translation && translation.isSaving) {
         comment = <>{gettext('Saving...')} <Icon name="spinner" /></>;
