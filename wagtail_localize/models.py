@@ -488,14 +488,25 @@ class TranslationSource(models.Model):
             # set that error message on that translation.
             # TODO (someday): Add support for errors raised from streamfield
             for field_name, errors in e.error_dict.items():
-                string_translation = StringTranslation.objects.filter(
-                    translation_of_id__in=string_segments.values_list('string_id', flat=True),
-                    context__path=field_name,
-                    locale=locale,
-                ).first()
+                try:
+                    context = TranslationContext.objects.get(
+                        object=self.object,
+                        path=field_name
+                    )
 
-                if string_translation is not None:
-                    string_translation.set_field_error(errors)
+                    string_translation = StringTranslation.objects.get(
+                        translation_of_id__in=string_segments.values_list('string_id', flat=True),
+                        context=context,
+                        locale=locale,
+                    )
+
+                except (TranslationContext.DoesNotExist, StringTranslation.DoesNotExist):
+                    # TODO (someday): How would we handle validation errors for non-translatable fields?
+                    pass
+
+                else:
+                    if string_translation is not None:
+                        string_translation.set_field_error(errors)
 
             raise
 
