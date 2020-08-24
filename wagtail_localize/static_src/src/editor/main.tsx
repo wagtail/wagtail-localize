@@ -6,7 +6,7 @@ import TranslationEditor from './components/TranslationEditor';
 document.addEventListener('DOMContentLoaded', () => {
     const element = document.querySelector('.js-translation-editor');
 
-    if (element instanceof HTMLElement) {
+    if (element instanceof HTMLElement && element.dataset.props) {
         const csrfTokenElement = element.querySelector(
             '[name="csrfmiddlewaretoken"]'
         );
