@@ -37,6 +37,12 @@ export interface Translation {
     editUrl?: string;
 }
 
+export interface PreviewMode {
+    mode: string;
+    label: string;
+    url: string;
+}
+
 export interface StringSegment {
     id: number;
     contentPath: string;
@@ -99,6 +105,7 @@ export interface EditorProps {
         unlockUrl: string;
         deleteUrl: string;
     };
+    previewModes: PreviewMode[];
     machineTranslator: {
         name: string;
         url: string;

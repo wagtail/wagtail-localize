@@ -374,32 +374,10 @@ class TranslationSource(models.Model):
 
         return po
 
-    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, string_translation_fallback_to_source=False):
+    def get_segments_for_translation(self, locale, string_translation_fallback_to_source=False):
         """
-        Creates/updates a translation of the object into the specified locale
-        based on the content of this source and the translated strings
-        currently in translation memory.
+        Returns a list of segments that can be passed into "ingest_segments" to translate an object.
         """
-        original = self.as_instance()
-        created = False
-
-        # Only pages can be saved as draft
-        if not publish and not isinstance(original, Page):
-            raise CannotSaveDraftError
-
-        try:
-            translation = self.get_translated_instance(locale)
-        except models.ObjectDoesNotExist:
-            if isinstance(original, Page):
-                translation = original.copy_for_translation(locale, copy_parents=copy_parent_pages)
-            else:
-                translation = original.copy_for_translation(locale)
-
-            created = True
-
-        copy_synchronised_fields(original, translation)
-
-        # Fetch all translated segments
         string_segments = (
             StringSegment.objects.filter(source=self)
             .annotate_translation(locale)
@@ -459,6 +437,35 @@ class TranslationSource(models.Model):
             )
             segments.append(segment_value)
 
+        return segments
+
+    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, string_translation_fallback_to_source=False):
+        """
+        Creates/updates a translation of the object into the specified locale
+        based on the content of this source and the translated strings
+        currently in translation memory.
+        """
+        original = self.as_instance()
+        created = False
+
+        # Only pages can be saved as draft
+        if not publish and not isinstance(original, Page):
+            raise CannotSaveDraftError
+
+        try:
+            translation = self.get_translated_instance(locale)
+        except models.ObjectDoesNotExist:
+            if isinstance(original, Page):
+                translation = original.copy_for_translation(locale, copy_parents=copy_parent_pages)
+            else:
+                translation = original.copy_for_translation(locale)
+
+            created = True
+
+        copy_synchronised_fields(original, translation)
+
+        segments = self.get_segments_for_translation(locale, string_translation_fallback_to_source=string_translation_fallback_to_source)
+
         try:
             with transaction.atomic():
                 # Ingest all translated segments
@@ -490,7 +497,7 @@ class TranslationSource(models.Model):
                     )
 
                     string_translation = StringTranslation.objects.get(
-                        translation_of_id__in=string_segments.values_list('string_id', flat=True),
+                        translation_of_id__in=StringSegment.objects.filter(source=self).values_list('string_id', flat=True),
                         context=context,
                         locale=locale,
                     )
@@ -511,6 +518,24 @@ class TranslationSource(models.Model):
         )
 
         return translation, created
+
+    def get_ephemeral_translated_instance(self, locale, string_translation_fallback_to_source=False):
+        """
+        Returns an instance with the translations added which is not intended to be saved.
+
+        This is used for previewing pages with draft translations applied.
+        """
+        original = self.as_instance()
+        translation = self.get_translated_instance(locale)
+
+        copy_synchronised_fields(original, translation)
+
+        segments = self.get_segments_for_translation(locale, string_translation_fallback_to_source=string_translation_fallback_to_source)
+
+        # Ingest all translated segments
+        ingest_segments(original, translation, self.locale, locale, segments)
+
+        return translation
 
 
 class POImportWarning:

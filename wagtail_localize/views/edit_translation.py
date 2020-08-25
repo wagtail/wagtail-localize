@@ -339,6 +339,14 @@ def edit_translation(request, translation, instance):
                 'unlockUrl': reverse('wagtailadmin_pages:unlock', args=[instance.id]) if isinstance(instance, Page) else None,
                 'deleteUrl': reverse('wagtailadmin_pages:delete', args=[instance.id]) if isinstance(instance, Page) else reverse('wagtailsnippets:delete', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.pk)]),
             },
+            'previewModes': [
+                {
+                    'mode': mode,
+                    'label': force_text(label),
+                    'url': reverse('wagtail_localize:preview_translation', args=[translation.id]) if mode == instance.default_preview_mode else reverse('wagtail_localize:preview_translation', args=[translation.id, mode]),
+                }
+                for mode, label in (instance.preview_modes if isinstance(instance, Page) else [])
+            ],
             'machineTranslator': machine_translator,
             'segments': [
                 {
@@ -368,6 +376,28 @@ def user_can_edit_instance(user, instance):
     else:
         # Snippet
         return user_can_edit_snippet_type(user, instance.__class__)
+
+
+def preview_translation(request, translation_id, mode=None):
+    translation = get_object_or_404(Translation, id=translation_id)
+
+    instance = translation.get_target_instance()
+
+    if not isinstance(instance, Page):
+        raise Http404
+
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
+
+    if mode is None:
+        mode = instance.default_preview_mode
+
+    if mode not in dict(instance.preview_modes):
+        raise Http404
+
+    translation = translation.source.get_ephemeral_translated_instance(translation.target_locale, string_translation_fallback_to_source=True)
+
+    return translation.make_preview_request(request, mode)
 
 
 @api_view(['PUT', 'DELETE'])

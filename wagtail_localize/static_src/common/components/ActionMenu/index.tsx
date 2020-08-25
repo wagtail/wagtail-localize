@@ -1,4 +1,6 @@
 import React, { FunctionComponent } from 'react';
+import gettext from 'gettext';
+
 import Icon from '../Icon';
 
 interface ActionMenuButtonActionProps {
@@ -59,14 +61,22 @@ export const ActionMenuLinkAction: FunctionComponent<
     );
 };
 
+export interface PreviewMode {
+    mode: string;
+    label: string;
+    url: string;
+}
+
 interface ActionMenuProps {
     defaultAction: React.ReactNode;
     actions: React.ReactNode[];
+    previewModes?: PreviewMode[];
 }
 
 const ActionMenu: FunctionComponent<ActionMenuProps> = ({
     defaultAction,
-    actions
+    actions,
+    previewModes
 }) => {
     const wrappedActions = actions.map(action => <li>{action}</li>);
 
@@ -89,22 +99,74 @@ const ActionMenu: FunctionComponent<ActionMenuProps> = ({
                         <ul>{wrappedActions}</ul>
                     </div>
                 </li>
-                <li className="preview">
-                    <button
-                        className="button action-preview button--icon"
-                        data-action="/admin/pages/60/edit/preview/"
-                        data-auto-update="false"
-                    >
-                        <svg
-                            className="icon icon-view icon"
-                            aria-hidden="true"
-                            focusable="false"
+
+                {/* Single-mode preview */}
+                {previewModes && previewModes.length == 1 && (
+                    <li className="preview">
+                        <a
+                            className="button button--icon"
+                            href={previewModes[0].url}
+                            target="_blank"
                         >
-                            <use href="#icon-view"></use>
-                        </svg>
-                        Preview
-                    </button>
-                </li>
+                            <svg
+                                className="icon icon-view icon"
+                                aria-hidden="true"
+                                focusable="false"
+                            >
+                                <use href="#icon-view"></use>
+                            </svg>
+                            {gettext('Preview')}
+                        </a>
+                    </li>
+                )}
+
+                {/* Multi-mode preview */}
+                {previewModes && previewModes.length > 1 && (
+                    <li className="preview">
+                        <div className="dropdown dropup dropdown-button match-width">
+                            <a
+                                className="button button--icon"
+                                href={previewModes[0].url}
+                                target="_blank"
+                            >
+                                <svg
+                                    className="icon icon-view icon"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <use href="#icon-view"></use>
+                                </svg>
+                                {gettext('Preview')}
+                            </a>
+
+                            <div className="dropdown-toggle">
+                                <svg
+                                    className="icon icon-arrow-up icon"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <use href="#icon-arrow-up"></use>
+                                </svg>
+                            </div>
+
+                            <ul>
+                                {previewModes.map(({ label, url }) => {
+                                    return (
+                                        <li>
+                                            <a
+                                                className="button"
+                                                href={url}
+                                                target="_blank"
+                                            >
+                                                {label}
+                                            </a>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    </li>
+                )}
             </ul>
         </nav>
     );
