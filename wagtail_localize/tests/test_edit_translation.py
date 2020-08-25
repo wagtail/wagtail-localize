@@ -12,6 +12,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
 from wagtail.core.blocks import StreamValue
@@ -131,6 +132,10 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(props['links']['unlockUrl'], reverse('wagtailadmin_pages:unlock', args=[self.fr_page.id]))
         self.assertEqual(props['links']['deleteUrl'], reverse('wagtailadmin_pages:delete', args=[self.fr_page.id]))
 
+        self.assertEqual(props['previewModes'], [
+            {'mode': '', 'label': 'Default', 'url': reverse('wagtail_localize:preview_translation', args=[self.page_translation.id])}
+        ])
+
         self.assertEqual(props['initialStringTranslations'], [])
 
         # Check segments
@@ -155,6 +160,32 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
         self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Test textblock', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
         # TODO: Examples that use fieldHelpText and subField
+
+    def test_edit_page_translation_with_multi_mode_preview(self):
+        # Add some extra preview modes to the page
+        previous_preview_modes = TestPage.preview_modes
+        TestPage.preview_modes = [
+            ('', _("Default")),
+            ('first-mode', _("First mode")),
+            ('second-mode', _("Second mode")),
+        ]
+
+        try:
+            response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        finally:
+            TestPage.preview_modes = previous_preview_modes
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'wagtail_localize/admin/edit_translation.html')
+
+        # Check props
+        props = json.loads(response.context['props'])
+
+        self.assertEqual(props['previewModes'], [
+            {'mode': '', 'label': 'Default', 'url': reverse('wagtail_localize:preview_translation', args=[self.page_translation.id])},
+            {'mode': 'first-mode', 'label': 'First mode', 'url': reverse('wagtail_localize:preview_translation', args=[self.page_translation.id, 'first-mode'])},
+            {'mode': 'second-mode', 'label': 'Second mode', 'url': reverse('wagtail_localize:preview_translation', args=[self.page_translation.id, 'second-mode'])},
+        ])
 
     def test_cant_edit_page_translation_without_perms(self):
         self.moderators_group.page_permissions.all().delete()
@@ -196,6 +227,8 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertIsNone(props['links']['lockUrl'])
         self.assertIsNone(props['links']['unlockUrl'])
         self.assertEqual(props['links']['deleteUrl'], reverse('wagtailsnippets:delete', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
+
+        self.assertEqual(props['previewModes'], [])
 
         self.assertEqual(props['initialStringTranslations'], [])
 
@@ -443,6 +476,23 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, 'error')
         self.assertEqual(messages[0].message, "Sorry, you do not have permission to access this area.\n\n\n\n\n")
+
+
+class TestPreviewTranslationView(EditTranslationTestData, TestCase):
+    def test_preview_translation(self):
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data='A char field'),
+            context=TranslationContext.objects.get(path='test_charfield'),
+            locale=self.fr_locale,
+            data='Un champ de caractères',
+            translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL
+        )
+
+        response = self.client.get(reverse('wagtail_localize:preview_translation', args=[self.page_translation.id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, TestPage.template)
+        self.assertContains(response, 'Un champ de caractères')
 
 
 @freeze_time('2020-08-21')

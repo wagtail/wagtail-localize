@@ -26,6 +26,8 @@ def register_admin_urls():
         path("translate/<int:translation_id>/pofile/download/", edit_translation.download_pofile, name="download_pofile"),
         path("translate/<int:translation_id>/pofile/upload/", edit_translation.upload_pofile, name="upload_pofile"),
         path("translate/<int:translation_id>/machine_translate/", edit_translation.machine_translate, name="machine_translate"),
+        path("translate/<int:translation_id>/preview/", edit_translation.preview_translation, name="preview_translation"),
+        path("translate/<int:translation_id>/preview/<str:mode>/", edit_translation.preview_translation, name="preview_translation"),
     ]
 
     return [

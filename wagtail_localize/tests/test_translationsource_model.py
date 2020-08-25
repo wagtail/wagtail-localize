@@ -491,3 +491,81 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(e.exception.segment.context.path, "test_snippet")
         self.assertEqual(e.exception.segment.object_id, self.snippet.translation_key)
         self.assertEqual(e.exception.locale, self.dest_locale)
+
+
+class TestGetEphemeralTranslatedInstance(TestCase):
+    def setUp(self):
+        self.page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="This is some test content",
+            test_textfield="This is some more test content",
+        )
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
+        self.source_locale = Locale.objects.get(language_code="en")
+        self.dest_locale = Locale.objects.create(language_code="fr")
+
+        # Translate the page
+        self.translated_page = self.page.copy_for_translation(self.dest_locale)
+
+        # Add a test child object and update the test_textfield. Then update the translation source
+        self.page.test_childobjects.add(TestChildObject(field="This is a test child object"))
+        self.page.test_textfield = "Updated textfield"
+        self.page.save_revision().publish()
+        self.source.update_from_db()
+
+        # Add translation for test_charfield
+        self.translation = StringTranslation.objects.create(
+            translation_of=String.objects.get(data="This is some test content"),
+            locale=self.dest_locale,
+            context=TranslationContext.objects.get(
+                object_id=self.page.translation_key, path="test_charfield"
+            ),
+            data="Ceci est du contenu de test",
+        )
+
+        # Add translation for child object
+        self.translation = StringTranslation.objects.create(
+            translation_of=String.objects.get(data="This is a test child object"),
+            locale=self.dest_locale,
+            context=TranslationContext.objects.get(
+                object_id=self.page.translation_key, path="test_childobjects.{}.field".format(self.page.test_childobjects.get().translation_key)
+            ),
+            data="Ceci est un objet enfant de test",
+        )
+
+    def test_get_ephemeral_translated_instance(self):
+        new_page = self.source.get_ephemeral_translated_instance(self.dest_locale, string_translation_fallback_to_source=True)
+
+        self.assertEqual(new_page.id, self.translated_page.id)
+        self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
+        self.assertEqual(new_page.test_textfield, "Updated textfield")
+        self.assertEqual(new_page.test_childobjects.get().field, "Ceci est un objet enfant de test")
+        self.assertFalse(
+            self.source.translation_logs.filter(locale=self.dest_locale).exists()
+        )
+
+        # Check the saved page has not been changed
+        self.translated_page.refresh_from_db()
+        self.assertEqual(self.translated_page.title, "Test page")
+        self.assertEqual(self.translated_page.test_charfield, "This is some test content")
+        self.assertEqual(self.translated_page.test_textfield, "This is some more test content")
+        self.assertFalse(self.translated_page.test_childobjects.exists())
+
+    def test_without_string_translation_fallback_to_source(self):
+        # Should raise an error because we haven't translated test_textfield
+        with self.assertRaises(MissingTranslationError):
+            self.source.get_ephemeral_translated_instance(self.dest_locale)
+
+        # Add a translation for test_textfield to make the error go away
+        self.translation = StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Updated textfield"),
+            locale=self.dest_locale,
+            context=TranslationContext.objects.get(
+                object_id=self.page.translation_key, path="test_textfield"
+            ),
+            data="Champ de texte mis à jour",
+        )
+
+        new_page = self.source.get_ephemeral_translated_instance(self.dest_locale)
+        self.assertEqual(new_page.test_textfield, "Champ de texte mis à jour")
