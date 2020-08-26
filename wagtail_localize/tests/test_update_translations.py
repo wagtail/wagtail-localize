@@ -6,7 +6,7 @@ from django.urls import reverse
 from wagtail.core.models import Page, Locale
 from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_localize.models import Translation, TranslationSource
+from wagtail_localize.models import Translation, TranslationSource, StringSegment
 from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet
 
 
@@ -263,6 +263,24 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_get_with_disabled_translation(self):
+        self.page_translation.enabled = False
+        self.page_translation.save()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(
+            response.context['translations'],
+            []
+        )
+
     def test_post_update_page_translation(self):
         self.en_blog_post.test_charfield = "Edited blog post"
         self.en_blog_post.save_revision().publish()
@@ -275,6 +293,10 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         )
 
         self.assertRedirects(response, reverse('wagtailadmin_explore', args=[self.en_blog_index.id]))
+
+        # Check that the new string was submitted
+        string_segment = StringSegment.objects.get(context__path='test_charfield')
+        self.assertEqual(string_segment.string.data, "Edited blog post")
 
         # The FR version shouldn't be updated yet
         self.fr_blog_post.refresh_from_db()
@@ -336,3 +358,50 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         # The FR version should be updated
         self.fr_snippet.refresh_from_db()
         self.assertEqual(self.fr_snippet.field, "Edited snippet")
+
+    def test_post_with_disabled_translation(self):
+        self.page_translation.enabled = False
+        self.page_translation.save()
+
+        self.en_blog_post.test_charfield = "Edited blog post"
+        self.en_blog_post.save_revision().publish()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            )
+        )
+
+        self.assertRedirects(response, reverse('wagtailadmin_explore', args=[self.en_blog_index.id]))
+
+        # Check that the new string was submitted
+        string_segment = StringSegment.objects.get(context__path='test_charfield')
+        self.assertEqual(string_segment.string.data, "Edited blog post")
+
+        # The FR version shouldn't be updated
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "Test content")
+
+    def test_post_with_disabled_translation_with_publish_translations(self):
+        self.page_translation.enabled = False
+        self.page_translation.save()
+
+        self.en_blog_post.test_charfield = "Edited blog post"
+        self.en_blog_post.save_revision().publish()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {
+                'publish_translations': 'on'
+            }
+        )
+
+        self.assertRedirects(response, reverse('wagtailadmin_explore', args=[self.en_blog_index.id]))
+
+        # The FR version shouldn't be updated
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "Test content")

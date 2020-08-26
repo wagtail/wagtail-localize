@@ -66,7 +66,7 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
 
         # If the page is the source for translations, show "Update translations" button
         source = TranslationSource.objects.get_for_instance_or_none(page)
-        if source is not None:
+        if source is not None and source.translations.filter(enabled=True).exists():
             url = reverse("wagtail_localize:update_translations", args=[source.id])
             if next_url is not None:
                 url += '?' + urlencode({'next': next_url})
@@ -98,7 +98,7 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
 
         # If the snippet is the source for translations, show "Update translations" button
         source = TranslationSource.objects.get_for_instance_or_none(snippet)
-        if source is not None:
+        if source is not None and source.translations.filter(enabled=True).exists():
             url = reverse('wagtail_localize:update_translations', args=[source.id])
             if next_url is not None:
                 url += '?' + urlencode({'next': next_url})
