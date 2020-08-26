@@ -15,10 +15,19 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     locale
 }) => {
     let actions = [
-        <a className="button action-secondary" href="#">
-            <Icon name="cross" />
-            {gettext('Disable')}
-        </a>
+        <form method="POST" action={links.stopTranslationUrl}>
+            <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+            <input type="hidden" name="next" value={window.location.href} />
+
+            <button
+                type="submit"
+                className="button action-secondary"
+                aria-label={gettext('Stop translation')}
+            >
+                <Icon name="cross" />
+                {gettext('Stop translation')}
+            </button>
+        </form>
     ];
 
     if (perms.canDelete) {

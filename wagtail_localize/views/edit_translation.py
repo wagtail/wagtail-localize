@@ -338,6 +338,7 @@ def edit_translation(request, translation, instance):
                 'lockUrl': reverse('wagtailadmin_pages:lock', args=[instance.id]) if isinstance(instance, Page) else None,
                 'unlockUrl': reverse('wagtailadmin_pages:unlock', args=[instance.id]) if isinstance(instance, Page) else None,
                 'deleteUrl': reverse('wagtailadmin_pages:delete', args=[instance.id]) if isinstance(instance, Page) else reverse('wagtailsnippets:delete', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.pk)]),
+                'stopTranslationUrl': reverse('wagtail_localize:stop_translation', args=[translation.id]),
             },
             'previewModes': [
                 {
@@ -398,6 +399,30 @@ def preview_translation(request, translation_id, mode=None):
     translation = translation.source.get_ephemeral_translated_instance(translation.target_locale, string_translation_fallback_to_source=True)
 
     return translation.make_preview_request(request, mode)
+
+
+@require_POST
+def stop_translation(request, translation_id):
+    translation = get_object_or_404(Translation, id=translation_id)
+
+    instance = translation.get_target_instance()
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
+
+    translation.enabled = False
+    translation.save(update_fields=['enabled'])
+
+    next_url = get_valid_next_url_from_request(request)
+    if not next_url:
+        # Note: You should always provide a next URL when using this view!
+        next_url = reverse('wagtailadmin_home')
+
+    messages.success(
+        request,
+        _("Translation has been stopped.")
+    )
+
+    return redirect(next_url)
 
 
 @api_view(['PUT', 'DELETE'])

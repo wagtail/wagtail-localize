@@ -28,6 +28,7 @@ def register_admin_urls():
         path("translate/<int:translation_id>/machine_translate/", edit_translation.machine_translate, name="machine_translate"),
         path("translate/<int:translation_id>/preview/", edit_translation.preview_translation, name="preview_translation"),
         path("translate/<int:translation_id>/preview/<str:mode>/", edit_translation.preview_translation, name="preview_translation"),
+        path("translate/<int:translation_id>/disable/", edit_translation.stop_translation, name="stop_translation"),
     ]
 
     return [
