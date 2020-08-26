@@ -17,8 +17,10 @@ from django.db.models import (
     Sum,
     Subquery,
     Exists,
-    OuterRef
+    OuterRef,
+    Q
 )
+from django.db.models.signals import post_delete
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.text import capfirst, slugify
@@ -28,7 +30,7 @@ from modelcluster.models import (
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
-from wagtail.core.models import Page
+from wagtail.core.models import Page, get_translatable_models
 
 from .fields import copy_synchronised_fields
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
@@ -1169,3 +1171,24 @@ class RelatedObjectSegment(BaseSegment):
         )
 
         return segment
+
+
+def disable_translation_on_delete(instance, **kwargs):
+    """
+    When either a source or destination object is deleted, disable the translation record.
+    """
+    Translation.objects.filter(
+        source__object_id=instance.translation_key,
+        enabled=True
+    ).filter(
+        # Disable translations where this object was the source
+        Q(source__locale_id=instance.locale_id)
+
+        # Disable translations where this object was the destination
+        | Q(target_locale_id=instance.locale_id)
+    ).update(enabled=False)
+
+
+def register_post_delete_signal_handlers():
+    for model in get_translatable_models():
+        post_delete.connect(disable_translation_on_delete, sender=model)
