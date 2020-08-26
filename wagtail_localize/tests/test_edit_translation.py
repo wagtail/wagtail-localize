@@ -525,6 +525,24 @@ class TestStopTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(messages[0].message, "Translation has been stopped.\n\n\n\n\n")
 
 
+class TestRestartTranslation(EditTranslationTestData, TestCase):
+    def test_restart_page_translation(self):
+        self.page_translation.enabled = False
+        self.page_translation.save()
+        response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
+            'localize-restart-translation': 'yes',
+        })
+
+        self.assertRedirects(response, reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        self.page_translation.refresh_from_db()
+        self.assertTrue(self.page_translation.enabled)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'success')
+        self.assertEqual(messages[0].message, "Translation has been restarted.\n\n\n\n\n")
+
+
 @freeze_time('2020-08-21')
 class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
     def test_create_string_translation(self):

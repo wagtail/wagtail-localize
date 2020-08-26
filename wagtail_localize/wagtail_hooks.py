@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 from django.views.i18n import JavaScriptCatalog
 
 from wagtail.admin import widgets as wagtailadmin_widgets
+from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.core import hooks
 from wagtail.core.models import Locale, TranslatableMixin
 from wagtail.snippets.widgets import SnippetListingButton
@@ -111,6 +112,15 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
 
 @hooks.register("before_edit_page")
 def before_edit_page(request, page):
+    # Check if the user has clicked the "Restart Translation" menu item
+    if request.method == 'POST' and 'localize-restart-translation' in request.POST:
+        try:
+            translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=False)
+        except Translation.DoesNotExist:
+            pass
+        else:
+            return edit_translation.restart_page_translation(request, translation, page)
+
     # Overrides the edit page view if the page is the target of a translation
     try:
         translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=True)
@@ -118,6 +128,18 @@ def before_edit_page(request, page):
 
     except Translation.DoesNotExist:
         pass
+
+
+class RestartTranslationActionMenuItem(ActionMenuItem):
+    label = _("Restart translation")
+    name = "localize-restart-translation"
+    icon_name = "undo"
+    classname = 'action-secondary'
+
+
+@hooks.register("register_page_action_menu_item")
+def register_restart_translation_action_menu_item():
+    return RestartTranslationActionMenuItem(order=0)
 
 
 @hooks.register("before_edit_snippet")
