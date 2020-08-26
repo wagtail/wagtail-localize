@@ -7,8 +7,10 @@ from django.utils.translation import gettext as _
 from django.views.i18n import JavaScriptCatalog
 
 from wagtail.admin import widgets as wagtailadmin_widgets
+from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.core import hooks
 from wagtail.core.models import Locale, TranslatableMixin
+from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
 from wagtail.snippets.widgets import SnippetListingButton
 
 from .models import Translation, TranslationSource
@@ -111,6 +113,15 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
 
 @hooks.register("before_edit_page")
 def before_edit_page(request, page):
+    # Check if the user has clicked the "Restart Translation" menu item
+    if request.method == 'POST' and 'localize-restart-translation' in request.POST:
+        try:
+            translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=False)
+        except Translation.DoesNotExist:
+            pass
+        else:
+            return edit_translation.restart_translation(request, translation, page)
+
     # Overrides the edit page view if the page is the target of a translation
     try:
         translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=True)
@@ -120,13 +131,69 @@ def before_edit_page(request, page):
         pass
 
 
+class RestartTranslationPageActionMenuItem(PageActionMenuItem):
+    label = _("Restart translation")
+    name = "localize-restart-translation"
+    icon_name = "undo"
+    classname = 'action-secondary'
+
+    def is_shown(self, request, context):
+        # Only show this menu item on the edit view where there was a previous translation record
+        if context['view'] != 'edit':
+            return False
+
+        return Translation.objects.filter(
+            source__object_id=context['page'].translation_key,
+            target_locale_id=context['page'].locale_id,
+            enabled=False
+        ).exists()
+
+
+@hooks.register("register_page_action_menu_item")
+def register_restart_translation_page_action_menu_item():
+    return RestartTranslationPageActionMenuItem(order=0)
+
+
 @hooks.register("before_edit_snippet")
 def before_edit_snippet(request, instance):
-    # Overrides the edit snippet view if the snippet is translatable and the target of a translation
     if isinstance(instance, TranslatableMixin):
+        # Check if the user has clicked the "Restart Translation" menu item
+        if request.method == 'POST' and 'localize-restart-translation' in request.POST:
+            try:
+                translation = Translation.objects.get(source__object_id=instance.translation_key, target_locale_id=instance.locale_id, enabled=False)
+            except Translation.DoesNotExist:
+                pass
+            else:
+                return edit_translation.restart_translation(request, translation, instance)
+
+        # Overrides the edit snippet view if the snippet is translatable and the target of a translation
         try:
             translation = Translation.objects.get(source__object_id=instance.translation_key, target_locale_id=instance.locale_id, enabled=True)
             return edit_translation.edit_translation(request, translation, instance)
 
         except Translation.DoesNotExist:
             pass
+
+
+class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
+    label = _("Restart translation")
+    name = "localize-restart-translation"
+    icon_name = "undo"
+    classname = 'action-secondary'
+
+    def is_shown(self, request, context):
+        # Only show this menu item on the edit view where there was a previous translation record
+        if context['view'] != 'edit':
+            return False
+
+        return Translation.objects.filter(
+            source__object_id=context['instance'].translation_key,
+            target_locale_id=context['instance'].locale_id,
+            enabled=False
+        ).exists()
+
+
+@hooks.register("register_snippet_action_menu_item")
+def register_restart_translation_snippet_action_menu_item(model):
+    if issubclass(model, TranslatableMixin):
+        return RestartTranslationSnippetActionMenuItem(order=0)
