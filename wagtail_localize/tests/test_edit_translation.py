@@ -525,6 +525,76 @@ class TestStopTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(messages[0].message, "Translation has been stopped.\n\n\n\n\n")
 
 
+class TestRestartTranslation(EditTranslationTestData, TestCase):
+    def test_restart_page_translation(self):
+        self.page_translation.enabled = False
+        self.page_translation.save()
+        response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
+            'localize-restart-translation': 'yes',
+        })
+
+        self.assertRedirects(response, reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        self.page_translation.refresh_from_db()
+        self.assertTrue(self.page_translation.enabled)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'success')
+        self.assertEqual(messages[0].message, "Translation has been restarted.\n\n\n\n\n")
+
+    def test_restart_snippet_translation(self):
+        self.snippet_translation.enabled = False
+        self.snippet_translation.save()
+        response = self.client.post(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]), {
+            'localize-restart-translation': 'yes',
+        })
+
+        self.assertRedirects(response, reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
+
+        self.snippet_translation.refresh_from_db()
+        self.assertTrue(self.snippet_translation.enabled)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'success')
+        self.assertEqual(messages[0].message, "Translation has been restarted.\n\n\n\n\n")
+
+
+class TestRestartTranslationButton(EditTranslationTestData, TestCase):
+    def test_page(self):
+        self.page_translation.enabled = False
+        self.page_translation.save()
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        self.assertContains(response, "Restart translation")
+
+    def test_doesnt_show_when_no_translation_for_page(self):
+        self.page_translation.delete()
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        self.assertNotContains(response, "Restart translation")
+
+    def test_snippet(self):
+        self.snippet_translation.enabled = False
+        self.snippet_translation.save()
+
+        response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
+
+        self.assertContains(response, "Restart translation")
+
+    def test_doesnt_show_when_no_translation_for_snippet(self):
+        self.snippet_translation.delete()
+
+        response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
+
+        self.assertNotContains(response, "Restart translation")
+
+    def test_doesnt_show_on_create_for_snippet(self):
+        response = self.client.get(reverse('wagtailsnippets:add', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name]))
+        self.assertNotContains(response, "Restart translation")
+
+
 @freeze_time('2020-08-21')
 class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
     def test_create_string_translation(self):

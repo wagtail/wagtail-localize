@@ -425,6 +425,23 @@ def stop_translation(request, translation_id):
     return redirect(next_url)
 
 
+@require_POST
+def restart_translation(request, translation, instance):
+    # This view is hooked in using the before_edit_page hook so we don't need to check for edit permission
+    translation.enabled = True
+    translation.save(update_fields=['enabled'])
+
+    messages.success(
+        request,
+        _("Translation has been restarted.")
+    )
+
+    if isinstance(instance, Page):
+        return redirect('wagtailadmin_pages:edit', instance.id)
+    else:
+        return redirect('wagtailsnippets:edit', instance._meta.app_label, instance._meta.model_name, quote(instance.pk))
+
+
 @api_view(['PUT', 'DELETE'])
 def edit_string_translation(request, translation_id, string_segment_id):
     translation = get_object_or_404(Translation, id=translation_id)
