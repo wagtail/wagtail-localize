@@ -495,6 +495,36 @@ class TestPreviewTranslationView(EditTranslationTestData, TestCase):
         self.assertContains(response, 'Un champ de caractères')
 
 
+class TestStopTranslationView(EditTranslationTestData, TestCase):
+    def test_stop_translation(self):
+        response = self.client.post(reverse('wagtail_localize:stop_translation', args=[self.page_translation.id]), {
+            'next': reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]),
+        })
+
+        self.assertRedirects(response, reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        self.page_translation.refresh_from_db()
+        self.assertFalse(self.page_translation.enabled)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'success')
+        self.assertEqual(messages[0].message, "Translation has been stopped.\n\n\n\n\n")
+
+    def test_stop_translation_without_next_url(self):
+        # You should always call this view with a next URL. But if you forget, it should redirect to the dashboard.
+
+        response = self.client.post(reverse('wagtail_localize:stop_translation', args=[self.page_translation.id]))
+
+        self.assertRedirects(response, reverse('wagtailadmin_home'))
+
+        self.page_translation.refresh_from_db()
+        self.assertFalse(self.page_translation.enabled)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'success')
+        self.assertEqual(messages[0].message, "Translation has been stopped.\n\n\n\n\n")
+
+
 @freeze_time('2020-08-21')
 class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
     def test_create_string_translation(self):

@@ -104,6 +104,7 @@ export interface EditorProps {
         lockUrl: string;
         unlockUrl: string;
         deleteUrl: string;
+        stopTranslationUrl: string;
     };
     previewModes: PreviewMode[];
     machineTranslator: {
