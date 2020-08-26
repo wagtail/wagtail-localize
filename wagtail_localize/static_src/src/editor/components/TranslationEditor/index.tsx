@@ -14,6 +14,11 @@ export interface User {
     avatar_url: string | null;
 }
 
+export interface Tab {
+    label: string;
+    slug: string;
+}
+
 export interface Locale {
     code: string;
     displayName: string;
@@ -73,7 +78,7 @@ export interface EditorProps {
         liveUrl?: string;
     };
     breadcrumb: BreadcrumbItem[];
-    tabs: string[];
+    tabs: Tab[];
     sourceLocale: Locale;
     locale: Locale;
     translations: Translation[];
@@ -120,14 +125,14 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
     };
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
-    const tabData = props.tabs.map(label => {
-        const segments = props.segments.filter(segment => segment.location.tab == label);
+    const tabData = props.tabs.map(tab => {
+        const segments = props.segments.filter(segment => segment.location.tab == tab.slug);
         const translations = segments.map(segment => state.stringTranslations.get(segment.id));
 
         return {
-            label,
             numErrors: translations.filter(translation => translation && translation.isErrored).length,
             segments,
+            ...tab,
         };
     }).filter(tab => tab.segments.length > 0);
 

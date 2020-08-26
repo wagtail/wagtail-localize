@@ -27,6 +27,7 @@ from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.blocks import StructBlock
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
+from wagtail.core.utils import cautious_slugify
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
@@ -91,6 +92,16 @@ class TabHelper:
         else:
             return [_("Content")]
 
+    @property
+    def tabs_with_slugs(self):
+        return [
+            {
+                'label': label,
+                'slug': cautious_slugify(label),
+            }
+            for label in self.tabs
+        ]
+
     @cached_property
     def field_tab_mapping(self):
         if isinstance(self.edit_handler, TabbedInterface):
@@ -117,7 +128,7 @@ def get_segment_location_info(source_instance, tab_helper, segment):
     field = segment.source.specific_content_type.model_class()._meta.get_field(context_path_components[0])
 
     # Work out which tab the segment is on from edit handler
-    tab = tab_helper.get_field_tab(field.name)
+    tab = cautious_slugify(tab_helper.get_field_tab(field.name))
 
     if isinstance(field, StreamField):
         stream_value = field.value_from_object(source_instance)
@@ -292,7 +303,7 @@ def edit_translation(request, translation, instance):
                 'liveUrl': live_url,
             },
             'breadcrumb': breadcrumb,
-            'tabs': tab_helper.tabs,
+            'tabs': tab_helper.tabs_with_slugs,
             'sourceLocale': {
                 'code': translation.source.locale.language_code,
                 'displayName': translation.source.locale.get_display_name(),
