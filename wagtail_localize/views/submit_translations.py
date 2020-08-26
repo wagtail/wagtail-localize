@@ -88,17 +88,21 @@ class TranslationCreator:
 
         # Set up translation records
         for target_locale in self.target_locales:
-            # Create translation if it doesn't exist yet
-            translation, created = Translation.objects.get_or_create(
+            # Create translation if it doesn't exist yet, re-enable if translation was disabled
+            # Note that the form won't show this locale as an option if the translation existed
+            # in this langauge, so this shouldn't overwrite any unmanaged translations.
+            translation, created = Translation.objects.update_or_create(
                 source=source,
                 target_locale=target_locale,
+                defaults={
+                    'enabled': True
+                }
             )
 
-            if created:
-                try:
-                    translation.save_target(user=self.user)
-                except ValidationError:
-                    pass
+            try:
+                translation.save_target(user=self.user)
+            except ValidationError:
+                pass
 
 
 class SubmitTranslationView(SingleObjectMixin, TemplateView):

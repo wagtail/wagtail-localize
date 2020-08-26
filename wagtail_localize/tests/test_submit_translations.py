@@ -6,7 +6,7 @@ from django.urls import reverse
 from wagtail.core.models import Page, Locale
 from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_localize.models import Translation
+from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet
 
 
@@ -400,6 +400,71 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         )
 
         self.assertEqual(response.status_code, 403)
+
+    def test_post_submit_page_translation_reactivates_deleted_translation(self):
+        # Create a disabled translation record
+        # This simulates the case where the page was previously translated into that locale but later deleted
+        source, created = TranslationSource.get_or_create_from_instance(self.en_blog_index)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+            enabled=False,
+        )
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_index.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+        )
+
+        # Check that the translation was reactivated
+        # Note, .get() here tests that another translation record wasn't created
+        translation = Translation.objects.get()
+        self.assertEqual(translation.source, source)
+        self.assertEqual(translation.target_locale, self.fr_locale)
+        self.assertTrue(translation.enabled)
+
+        # The translated page should've been created and published
+        translated_page = self.en_blog_index.get_translation(self.fr_locale)
+        self.assertTrue(translated_page.live)
+
+    def test_post_submit_page_translation_doesnt_reactivate_deactivated_translation(self):
+        # Like the previous test, this creates a disabled translation record, but this
+        # time, the translation has not been deleted. It should not reactivate in this case
+        source, created = TranslationSource.get_or_create_from_instance(self.en_blog_index)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        translation.save_target()
+
+        translation.enabled = False
+        translation.save(update_fields=['enabled'])
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_index.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        # Form error
+        self.assertEqual(response.status_code, 200)
+
+        # Note, .get() here tests that another translation record wasn't created
+        translation = Translation.objects.get()
+        self.assertFalse(translation.enabled)
+
+        # The translated page should've been created and published
+        translated_page = self.en_blog_index.get_translation(self.fr_locale)
+        self.assertTrue(translated_page.live)
 
 
 @override_settings(
