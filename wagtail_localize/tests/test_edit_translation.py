@@ -107,7 +107,11 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {'isRoot': False, 'title': 'Welcome to your new Wagtail site!', 'exploreUrl': reverse('wagtailadmin_explore', args=[self.fr_home_page.id])},
         ])
 
-        self.assertEqual(props['tabs'], ['Content', 'Promote', 'Settings'])
+        self.assertEqual(props['tabs'], [
+            {'label': 'Content', 'slug': 'content'},
+            {'label': 'Promote', 'slug': 'promote'},
+            {'label': 'Settings', 'slug': 'settings'}
+        ])
 
         self.assertEqual(props['sourceLocale'], {'code': 'en', 'displayName': 'English'})
         self.assertEqual(props['locale'], {'code': 'fr', 'displayName': 'French'})
@@ -147,9 +151,9 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': 'Content', 'field': 'Test charfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
-        self.assertEqual(props['segments'][7]['location'], {'tab': 'Content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
-        self.assertEqual(props['segments'][9]['location'], {'tab': 'Content', 'field': 'Test textblock', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Test charfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Test textblock', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
         # TODO: Examples that use fieldHelpText and subField
 
     def test_cant_edit_page_translation_without_perms(self):
@@ -173,7 +177,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertIsNone(props['object']['lastPublishedDate'])
         self.assertIsNone(props['object']['liveUrl'])
         self.assertEqual(props['breadcrumb'], [])
-        self.assertEqual(props['tabs'], [''])
+        self.assertEqual(props['tabs'], [{'label': '', 'slug': ''}])
 
         self.assertEqual(props['sourceLocale'], {'code': 'en', 'displayName': 'English'})
         self.assertEqual(props['locale'], {'code': 'fr', 'displayName': 'French'})

@@ -5,6 +5,7 @@ const CurrentTabContext = React.createContext<string>('');
 
 export interface Tab {
     label: string;
+    slug: string;
     numErrors?: number;
 }
 
@@ -13,7 +14,7 @@ export interface TabsProps {
 }
 
 export const Tabs: FunctionComponent<TabsProps> = ({tabs, children}) => {
-    const [currentTab, setCurrentTab] = React.useState(tabs[0].label)
+    const [currentTab, setCurrentTab] = React.useState(tabs[0].slug)
 
     // Remove bottom margin that Wagtail adds by default
     // This makes it tricky to align the toolbox consistently when there are both tabs and no tabs
@@ -26,12 +27,12 @@ export const Tabs: FunctionComponent<TabsProps> = ({tabs, children}) => {
             {tabs.map(tab => {
                 const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
                     e.preventDefault();
-                    setCurrentTab(tab.label);
+                    setCurrentTab(tab.slug);
                 };
 
                 const classNames = [];
 
-                if (tab.label == currentTab) {
+                if (tab.slug == currentTab) {
                     classNames.push('active');
                 }
 
@@ -39,8 +40,8 @@ export const Tabs: FunctionComponent<TabsProps> = ({tabs, children}) => {
                     classNames.push('errors');
                 }
 
-                return <li className={tab.label == currentTab ? 'active' : ''} role="tab" aria-controls={`tab-${tab.label.toLowerCase()}`}>
-                    <a href={`#tab-${tab.label.toLowerCase()}`} onClick={onClick} className={classNames.join(' ')} data-count={tab.numErrors || 0}>{tab.label}</a>
+                return <li className={tab.slug == currentTab ? 'active' : ''} role="tab" aria-controls={`tab-${tab.slug}`}>
+                    <a href={`#tab-${tab.slug}`} onClick={onClick} className={classNames.join(' ')} data-count={tab.numErrors || 0}>{tab.label}</a>
                 </li>
             })}
         </ULWithoutMargin>
@@ -52,7 +53,7 @@ export const Tabs: FunctionComponent<TabsProps> = ({tabs, children}) => {
     </>;
 }
 
-export const TabContent: FunctionComponent<Tab> = ({label, children}) => {
+export const TabContent: FunctionComponent<Tab> = ({slug, children}) => {
     const currentTab = React.useContext(CurrentTabContext);
 
     // Remove top padding that Wagtail adds by default
@@ -61,7 +62,7 @@ export const TabContent: FunctionComponent<Tab> = ({label, children}) => {
         padding-top: 0 !important;
     `;
 
-    return <SectionWithoutPadding id={`tab-${label.toLowerCase()}`} className={label == currentTab ? 'active' : ''}>
+    return <SectionWithoutPadding id={`tab-${slug}`} className={slug == currentTab ? 'active' : ''}>
         {children}
     </SectionWithoutPadding>
 }
