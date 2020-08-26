@@ -19,6 +19,8 @@ from django.db.models import (
     Exists,
     OuterRef
 )
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.text import capfirst, slugify
@@ -1169,3 +1171,11 @@ class RelatedObjectSegment(BaseSegment):
         )
 
         return segment
+
+
+@receiver(post_delete, sender=Page)
+def post_delete_page(instance, **kwargs):
+    translation = Translation.objects.filter(source__object_id=instance.translation_key, target_locale_id=instance.locale_id, enabled=True).first()
+    if translation:
+        translation.enabled = False
+        translation.save(update_fields=['enabled'])
