@@ -39,9 +39,10 @@ export type EditorAction =
     | TranslationSaveServerErrorAction;
 
 export function reducer(state: EditorState, action: EditorAction) {
+    let stringTranslations = new Map(state.stringTranslations);
+
     switch (action.type) {
         case EDIT_STRING_TRANSLATION: {
-            let stringTranslations = new Map(state.stringTranslations);
             stringTranslations.set(action.segmentId, {
                 value: action.value,
                 isSaving: true,
@@ -49,11 +50,9 @@ export function reducer(state: EditorState, action: EditorAction) {
                 comment: gettext('Saving...'),
                 translatedBy: null
             });
-            state = Object.assign({}, state, { stringTranslations });
             break;
         }
         case TRANSLATION_SAVED: {
-            let stringTranslations = new Map(state.stringTranslations);
             stringTranslations.set(action.segmentId, {
                 value: action.translation.data,
                 isSaving: false,
@@ -61,18 +60,13 @@ export function reducer(state: EditorState, action: EditorAction) {
                 comment: action.translation.error ? action.translation.error : action.translation.comment,
                 translatedBy: action.translation.last_translated_by
             });
-
-            state = Object.assign({}, state, { stringTranslations });
             break;
         }
         case TRANSLATION_DELETED: {
-            let stringTranslations = new Map(state.stringTranslations);
             stringTranslations.delete(action.segmentId);
-            state = Object.assign({}, state, { stringTranslations });
             break;
         }
         case TRANSLATION_SAVE_SERVER_ERROR: {
-            let stringTranslations = new Map(state.stringTranslations);
             const translation = stringTranslations.get(action.segmentId);
 
             if (translation) {
@@ -85,10 +79,9 @@ export function reducer(state: EditorState, action: EditorAction) {
                     })
                 );
             }
-
-            state = Object.assign({}, state, { stringTranslations });
             break;
         }
     }
-    return state;
+
+    return Object.assign({}, state, { stringTranslations });
 }
