@@ -529,3 +529,116 @@ class TestSaveTarget(TestCase):
 
         with self.assertRaises(CannotSaveDraftError):
             translation.save_target(publish=False)
+
+
+class TestDeleteSourceDisablesTranslation(TestCase):
+    def setUp(self):
+        self.fr_locale = Locale.objects.create(language_code="fr")
+
+    def test_page(self):
+        page = create_test_page(
+            title="Test page",
+            slug="test-slug",
+            test_charfield="Test content",
+            test_textfield="More test content"
+        )
+
+        source = TranslationSource.objects.get()
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        translation.refresh_from_db()
+        self.assertTrue(translation.enabled)
+
+        page.delete()
+
+        translation.refresh_from_db()
+        self.assertFalse(translation.enabled)
+
+    def test_snippet(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        translation.refresh_from_db()
+        self.assertTrue(translation.enabled)
+
+        snippet.delete()
+
+        translation.refresh_from_db()
+        self.assertFalse(translation.enabled)
+
+
+class TestDeleteDestinationDisablesTranslation(TestCase):
+    def setUp(self):
+        self.fr_locale = Locale.objects.create(language_code="fr")
+        self.es_locale = Locale.objects.create(language_code="es")
+
+    def test_page(self):
+        page = create_test_page(
+            title="Test page",
+            slug="test-slug",
+            test_charfield="Test content",
+            test_textfield="More test content"
+        )
+
+        source = TranslationSource.objects.get()
+        fr_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        fr_translation.save_target()
+
+        # Create a separate spanish translation to make sure that isn't disabled
+        es_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.es_locale,
+        )
+        es_translation.save_target()
+
+        fr_translation.refresh_from_db()
+        es_translation.refresh_from_db()
+        self.assertTrue(fr_translation.enabled)
+        self.assertTrue(es_translation.enabled)
+
+        page.get_translation(self.fr_locale).delete()
+
+        fr_translation.refresh_from_db()
+        es_translation.refresh_from_db()
+        self.assertFalse(fr_translation.enabled)
+        self.assertTrue(es_translation.enabled)
+
+    def test_snippet(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+        fr_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        fr_translation.save_target()
+
+        # Create a separate spanish translation to make sure that isn't disabled
+        es_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.es_locale,
+        )
+        es_translation.save_target()
+
+        fr_translation.refresh_from_db()
+        es_translation.refresh_from_db()
+        self.assertTrue(fr_translation.enabled)
+        self.assertTrue(es_translation.enabled)
+
+        snippet.get_translation(self.fr_locale).delete()
+
+        fr_translation.refresh_from_db()
+        es_translation.refresh_from_db()
+        self.assertFalse(fr_translation.enabled)
+        self.assertTrue(es_translation.enabled)
