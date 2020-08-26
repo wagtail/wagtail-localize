@@ -72,7 +72,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                     "locale": translation.target_locale,
                     "edit_url": self.get_edit_url(translation.get_target_instance()),
                 }
-                for translation in self.object.translations.select_related("target_locale")
+                for translation in self.object.translations.filter(enabled=True).select_related("target_locale")
             ],
             "form": self.get_form(),
             "next_url": self.get_success_url(),
@@ -88,7 +88,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                 self.object.update_from_db()
 
                 if form.cleaned_data['publish_translations']:
-                    for translation in self.object.translations.select_related("target_locale"):
+                    for translation in self.object.translations.filter(enabled=True).select_related("target_locale"):
                         try:
                             translation.save_target(user=request.user, publish=True)
                         except ValidationError:
