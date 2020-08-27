@@ -157,18 +157,14 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
                 segments_by_child[child_translation_key].append(segment)
 
             for child_translation_key, child_segments in segments_by_child.items():
-                original_child_object = original_manager.filter(
+                # The child objects must be synchronised before calling this function, so we
+                # can assume that both exist
+                original_child_object = original_manager.get(
                     translation_key=child_translation_key
-                ).first()
-                translated_child_object = translated_manager.filter(
+                )
+                translated_child_object = translated_manager.get(
                     translation_key=child_translation_key
-                ).first()
-
-                if not translated_child_object:
-                    # TODO: Here, we expect that the inline child to already exist as Wagtail copies it
-                    # when creating the translated page. When we add editing, we will need to support
-                    # adding new inline objects manually.
-                    continue
+                )
 
                 ingest_segments(
                     original_child_object,
@@ -177,4 +173,3 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
                     tgt_locale,
                     child_segments,
                 )
-                translated_child_object.save()

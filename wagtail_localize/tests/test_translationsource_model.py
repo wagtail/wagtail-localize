@@ -17,7 +17,7 @@ from wagtail_localize.models import (
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject, TestSynchronizedChildObject, TestNonParentalChildObject
 
 
 def create_test_page(**kwargs):
@@ -304,6 +304,21 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         )
 
     def test_update_synchronised_fields(self):
+        # Add a couple of initial child objects.
+        # The first one will be deleted in the source page after initial translation. The sync should carry this deletion across.
+        # The second won't be deleted so should remain in the translation
+        self.page.test_synchronized_childobjects.add(
+            TestSynchronizedChildObject(
+                field="Test child object that existed before initial translation and was deleted"
+            )
+        )
+
+        self.page.test_synchronized_childobjects.add(
+            TestSynchronizedChildObject(
+                field="Test child object that existed before initial translation and was not deleted"
+            )
+        )
+
         translated = self.page.copy_for_translation(self.dest_locale)
 
         self.page.test_synchronized_charfield = "Test synchronised content"
@@ -317,11 +332,32 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.page.test_synchronized_snippet = synchronized_snippet
         self.page.test_synchronized_customfield = "Test synchronised content"
 
+        # Add some child objects
+        self.page.test_childobjects.add(
+            TestChildObject(
+                field="A test child object"
+            )
+        )
+
+        # Remove one of the child objects to test that deletions are syncrhonised
+        self.page.test_synchronized_childobjects.remove(self.page.test_synchronized_childobjects.get(field="Test child object that existed before initial translation and was deleted"))
+        self.page.test_synchronized_childobjects.add(
+            TestSynchronizedChildObject(
+                field="A test synchronized object"
+            )
+        )
+
+        # Non-parental child objects are created differently because modelcluster doesn't help us
+        TestNonParentalChildObject.objects.create(
+            page=self.page,
+            field="A non-parental child object"
+        )
+
         # Save the page
         revision = self.page.save_revision()
         revision.publish()
         self.page.refresh_from_db()
-        source_with_translated_content, created = TranslationSource.update_or_create_from_instance(self.page)
+        source_with_changed_content, created = TranslationSource.update_or_create_from_instance(self.page)
 
         # Check translation hasn't been updated yet
         translated.refresh_from_db()
@@ -336,8 +372,9 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         (
             new_page,
             created,
-        ) = source_with_translated_content.create_or_update_translation(
-            self.dest_locale
+        ) = source_with_changed_content.create_or_update_translation(
+            self.dest_locale,
+            string_translation_fallback_to_source=True,
         )
 
         self.assertFalse(created)
@@ -367,6 +404,22 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(
             new_page.test_synchronized_customfield, "Test synchronised content"
         )
+
+        # Translatable child objects should always be synchronised
+        # Locale should be updated but translation key should be the same
+        translatable_child_object = new_page.test_childobjects.get()
+        self.assertEqual(translatable_child_object.field, "A test child object")
+        self.assertEqual(translatable_child_object.locale, self.dest_locale)
+        self.assertTrue(translatable_child_object.has_translation(self.source_locale))
+
+        # Test both the non deleted and new synchronised child objects remain
+        self.assertEqual(
+            set(new_page.test_synchronized_childobjects.values_list('field', flat=True)),
+            {"A test synchronized object", "Test child object that existed before initial translation and was not deleted"}
+        )
+
+        # Non parental child objects should be ignored
+        self.assertFalse(new_page.test_nonparentalchildobjects.exists())
 
     def test_update_streamfields(self):
         # Streamfields are special in that they contain content that needs to be synchronised as well as

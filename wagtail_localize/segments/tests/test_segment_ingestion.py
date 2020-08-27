@@ -6,6 +6,7 @@ from django.test import TestCase
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page, Locale
 
+from wagtail_localize.fields import copy_synchronised_fields
 from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
@@ -192,6 +193,8 @@ class TestSegmentIngestion(TestCase):
         child_translation_key = TestChildObject.objects.get().translation_key
 
         translated_page = page.copy_for_translation(self.locale)
+
+        copy_synchronised_fields(page, translated_page)
 
         ingest_segments(
             page,

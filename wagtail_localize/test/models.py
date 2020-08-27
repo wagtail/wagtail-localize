@@ -124,7 +124,7 @@ class TestPage(Page):
         SynchronizedField("test_synchronized_richtextfield"),
         SynchronizedField("test_synchronized_streamfield"),
         SynchronizedField("test_synchronized_snippet"),
-        # FIXME SynchronizedField("test_synchronized_childobjects"),
+        SynchronizedField("test_synchronized_childobjects"),
         SynchronizedField("test_synchronized_customfield"),
     ]
 
@@ -165,9 +165,10 @@ class TestSynchronizedChildObject(Orderable):
     translatable_fields = [TranslatableField("field")]
 
 
+# FIXME: Rename me
 class TestNonParentalChildObject(TranslatableMixin, Orderable):
     page = models.ForeignKey(
-        TestPage, on_delete=models.CASCADE, related_name="test_nonparentalchildobjects"
+        TestPage, on_delete=models.CASCADE, related_name="test_nonparentalchildobjects"  # FIXME: inconsistent related_name
     )
     field = models.TextField()
 

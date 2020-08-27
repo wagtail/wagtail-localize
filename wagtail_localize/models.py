@@ -30,6 +30,7 @@ from modelcluster.models import (
 )
 from wagtail.core.models import Page
 
+from .fields import copy_synchronised_fields
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
@@ -396,13 +397,7 @@ class TranslationSource(models.Model):
 
             created = True
 
-        # Copy synchronised fields
-        for field in getattr(translation, 'translatable_fields', []):
-            if field.is_synchronized(original):
-                # TODO: Use Django to set the field so the attname is correct
-                setattr(
-                    translation, field.field_name, getattr(original, field.field_name)
-                )
+        copy_synchronised_fields(original, translation)
 
         # Fetch all translated segments
         string_segments = (
