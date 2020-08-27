@@ -10,6 +10,8 @@ jobs:
       - run: pipenv install -e .[testing]
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
       - run: pipenv install -e ./wagtail
+      - run: git clone git@github.com:kaedroho/django-modelcluster.git -b copy-child-relation
+      - run: pipenv install -e ./django-modelcluster
       - run: cd wagtail && git status 
       - run: pipenv run flake8 wagtail_localize
       - run: pipenv run python testmanage.py test
