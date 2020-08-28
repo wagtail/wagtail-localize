@@ -5,6 +5,9 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable, TranslatableMixin
+from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import register_snippet
 
 from wagtail_localize.fields import TranslatableField, SynchronizedField
@@ -69,6 +72,10 @@ class TestStreamBlock(blocks.StreamBlock):
     test_nestedstreamblock = TestNestedStreamBlock()
     test_customstructblock = CustomStructBlock()
     test_customblockwithoutextractmethod = CustomBlockWithoutExtractMethod()
+    test_pagechooserblock = blocks.PageChooserBlock()
+    test_imagechooserblock = ImageChooserBlock()
+    test_documentchooserblock = DocumentChooserBlock()
+    test_snippetchooserblock = SnippetChooserBlock(TestSnippet)
 
 
 class TestCustomField(models.TextField):
@@ -105,6 +112,12 @@ class TestPage(Page):
     test_synchronized_richtextfield = RichTextField(blank=True)
     test_synchronized_streamfield = StreamField(TestStreamBlock, blank=True)
 
+    test_synchronized_image = models.ForeignKey(
+        'wagtailimages.Image', null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    test_synchronized_document = models.ForeignKey(
+        'wagtaildocs.Document', null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
     test_synchronized_snippet = models.ForeignKey(
         TestSnippet, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -129,6 +142,8 @@ class TestPage(Page):
         SynchronizedField("test_synchronized_urlfield"),
         SynchronizedField("test_synchronized_richtextfield"),
         SynchronizedField("test_synchronized_streamfield"),
+        SynchronizedField("test_synchronized_image"),
+        SynchronizedField("test_synchronized_document"),
         SynchronizedField("test_synchronized_snippet"),
         SynchronizedField("test_synchronized_childobjects"),
         SynchronizedField("test_synchronized_customfield"),

@@ -1,1 +1,1 @@
-from .types import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue  # noqa
+from .types import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue  # noqa

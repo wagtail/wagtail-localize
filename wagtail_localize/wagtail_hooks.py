@@ -33,6 +33,7 @@ def register_admin_urls():
         path("submit/snippet/<slug:app_label>/<slug:model_name>/<str:pk>/", submit_translations.SubmitSnippetTranslationView.as_view(), name="submit_snippet_translation"),
         path("update/<int:translation_source_id>/", update_translations.UpdateTranslationsView.as_view(), name="update_translations"),
         path("translate/<int:translation_id>/strings/<int:string_segment_id>/edit/", edit_translation.edit_string_translation, name="edit_string_translation"),
+        path("translate/<int:translation_id>/overrides/<int:overridable_segment_id>/edit/", edit_translation.edit_override, name="edit_override"),
         path("translate/<int:translation_id>/pofile/download/", edit_translation.download_pofile, name="download_pofile"),
         path("translate/<int:translation_id>/pofile/upload/", edit_translation.upload_pofile, name="upload_pofile"),
         path("translate/<int:translation_id>/machine_translate/", edit_translation.machine_translate, name="machine_translate"),

@@ -18,9 +18,12 @@ from freezegun import freeze_time
 from rest_framework.test import APITestCase
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page, Locale
+from wagtail.documents.models import Document
+from wagtail.images.models import Image
+from wagtail.images.tests.utils import get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_localize.models import String, StringTranslation, Translation, TranslationContext, TranslationLog, TranslationSource
+from wagtail_localize.models import SegmentOverride, String, StringTranslation, Translation, TranslationContext, TranslationLog, TranslationSource, OverridableSegment
 from wagtail_localize.test.models import TestPage, TestSnippet
 from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
@@ -58,6 +61,7 @@ class EditTranslationTestData(WagtailTestUtils):
             test_charfield="A char field",
             test_textfield="A text field",
             test_emailfield="email@example.com",
+            test_synchronized_emailfield="email@example.com",
             test_slugfield="a-slug-field",
             test_urlfield="https://www.example.com",
             test_richtextfield=RICH_TEXT_DATA,
@@ -86,6 +90,17 @@ class EditTranslationTestData(WagtailTestUtils):
         self.page_translation.save_target()
         self.fr_page = self.page.get_translation(self.fr_locale)
         self.fr_home_page = self.home_page.get_translation(self.fr_locale)
+
+        # Create a segment override
+        self.overridable_segment = OverridableSegment.objects.get(
+            source=self.page_source,
+            context__path='test_synchronized_emailfield'
+        )
+        self.segment_override = SegmentOverride.objects.create(
+            locale=self.fr_locale,
+            context=self.overridable_segment.context,
+            data_json='"overridden@example.com"',
+        )
 
         # Delete translation logs that were created in set up
         TranslationLog.objects.all().delete()
@@ -141,10 +156,11 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         ])
 
         self.assertEqual(props['initialStringTranslations'], [])
+        self.assertEqual(props['initialOverrides'], [{'data': 'overridden@example.com', 'error': None, 'segment_id': self.overridable_segment.id}])
 
         # Check segments
         self.assertEqual(
-            [(segment['contentPath'], segment['source']) for segment in props['segments']],
+            [(segment['contentPath'], segment['source']) for segment in props['segments'] if segment['type'] == 'string'],
             [
                 ('test_charfield', 'A char field'),
                 ('test_textfield', 'A text field'),
@@ -158,12 +174,67 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                 (f'test_streamfield.{STREAM_BLOCK_ID}', 'This is a text block'),
             ]
         )
+        self.assertEqual(
+            [(segment['contentPath'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
+            [
+                ('test_synchronized_emailfield', 'email@example.com'),
+            ]
+        )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Char field', 'blockId': None, 'fieldHelpText': '', 'subField': None})
-        self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
-        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Char field', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None, 'widget': None})
         # TODO: Examples that use fieldHelpText and subField
+
+    def test_override_types(self):
+        # Similar to above but adds some more overridable things to test with
+        self.page.test_synchronized_image = Image.objects.create(
+            title="Test image",
+            file=get_test_image_file()
+        )
+        self.page.test_synchronized_document = Document.objects.create(
+            title="Test document",
+            file=get_test_image_file()
+        )
+        self.page.test_synchronized_snippet = self.snippet
+
+        url_block_id = uuid.uuid4()
+        page_block_id = uuid.uuid4()
+        image_block_id = uuid.uuid4()
+        document_block_id = uuid.uuid4()
+        snippet_block_id = uuid.uuid4()
+        stream_data = [
+            {"id": str(url_block_id), "type": "test_urlblock", "value": "https://wagtail.io/"},
+            {"id": str(page_block_id), "type": "test_pagechooserblock", "value": self.page.id},
+            {"id": str(image_block_id), "type": "test_imagechooserblock", "value": self.page.test_synchronized_image.id},
+            {"id": str(document_block_id), "type": "test_documentchooserblock", "value": self.page.test_synchronized_document.id},
+            {"id": str(snippet_block_id), "type": "test_snippetchooserblock", "value": self.snippet.id},
+        ]
+
+        self.page.test_streamfield = TestPage.test_streamfield.field.to_python(json.dumps(stream_data))
+
+        self.page.save_revision().publish()
+        TranslationSource.update_or_create_from_instance(self.page)
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        self.assertEqual(response.status_code, 200)
+
+        # Check props
+        props = json.loads(response.context['props'])
+
+        self.assertEqual(
+            [(segment['contentPath'], segment['location']['widget'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
+            [
+                (f'test_streamfield.{url_block_id}', {'type': 'text'}, "https://wagtail.io/"),
+                (f'test_streamfield.{image_block_id}', {'type': 'image_chooser'}, self.page.test_synchronized_image.id),
+                (f'test_streamfield.{document_block_id}', {'type': 'document_chooser'}, self.page.test_synchronized_document.id),
+                ('test_synchronized_emailfield', {'type': 'text'}, 'email@example.com'),
+                ('test_synchronized_image', {'type': 'image_chooser'}, self.page.test_synchronized_image.id),
+                ('test_synchronized_document', {'type': 'document_chooser'}, self.page.test_synchronized_document.id),
+                ('test_synchronized_snippet', {'type': 'unknown'}, self.snippet.id),
+            ]
+        )
 
     def test_edit_page_translation_with_multi_mode_preview(self):
         # Add some extra preview modes to the page
@@ -245,7 +316,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': '', 'field': 'Field', 'blockId': None, 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': '', 'field': 'Field', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
 
     def test_cant_edit_snippet_translation_without_perms(self):
         self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
@@ -425,6 +496,38 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertEqual(log.source, self.page_source)
         self.assertEqual(log.locale, self.fr_locale)
         self.assertEqual(log.page_revision, self.fr_page.get_latest_revision())
+
+    def test_publish_page_translation_with_invalid_segment_override(self):
+        # Set the email address override to something invalid
+        self.segment_override.data_json = '"Definitely not an email address"'
+        self.segment_override.save()
+
+        response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
+            'action': 'publish',
+        })
+
+        self.assertRedirects(response, reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        # Check error message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, 'error')
+
+        if DJANGO_VERSION >= (3, 0):
+            self.assertEqual(messages[0].message, "New validation errors were found when publishing &#x27;The title&#x27; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n")
+        else:
+            self.assertEqual(messages[0].message, "New validation errors were found when publishing &#39;The title&#39; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n")
+
+        # Check that the test_synchronized_emailfield was not changed
+        self.fr_page.refresh_from_db()
+        self.assertEqual(self.fr_page.test_synchronized_emailfield, 'email@example.com')
+
+        # Check specific error was added to the override
+        self.segment_override.refresh_from_db()
+        self.assertTrue(self.segment_override.has_error)
+        self.assertEqual(self.segment_override.get_error(), "Enter a valid email address.")
+
+        # Check page was not published
+        self.assertFalse(TranslationLog.objects.exists())
 
     def test_cant_publish_page_translation_without_perms(self):
         self.moderators_group.page_permissions.filter(permission_type='publish').delete()
@@ -762,6 +865,99 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
 
         response = self.client.put(reverse('wagtail_localize:edit_string_translation', args=[self.snippet_translation.id, string_segment.id]), {
             'value': 'Un champ de caractères',
+        })
+
+        self.assertEquals(response.status_code, 403)
+
+
+@freeze_time('2020-08-21')
+class TestEditOverrideAPIView(EditTranslationTestData, APITestCase):
+    def test_create_override(self):
+        self.segment_override.delete()
+
+        response = self.client.put(reverse('wagtail_localize:edit_override', args=[self.page_translation.id, self.overridable_segment.id]), {
+            'value': 'overridden_by_view@example.com',
+        })
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.json(), {
+            'segment_id': self.overridable_segment.id,
+            'error': None,
+            'data': 'overridden_by_view@example.com',
+        })
+
+        override = SegmentOverride.objects.get()
+        self.assertEqual(override.context, self.overridable_segment.context)
+        self.assertEqual(override.locale, self.fr_locale)
+        self.assertEqual(override.data_json, '"overridden_by_view@example.com"')
+
+    def test_update_override(self):
+        response = self.client.put(reverse('wagtail_localize:edit_override', args=[self.page_translation.id, self.overridable_segment.id]), {
+            'value': 'updated_by_view@example.com',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.json(), {
+            'segment_id': self.overridable_segment.id,
+            'error': None,
+            'data': 'updated_by_view@example.com',
+        })
+
+        override = SegmentOverride.objects.get()
+        self.assertEqual(override.id, self.segment_override.id)
+        self.assertEqual(override.context, self.overridable_segment.context)
+        self.assertEqual(override.locale, self.fr_locale)
+        self.assertEqual(override.data_json, '"updated_by_view@example.com"')
+
+    def test_update_override_with_invalid_value(self):
+        # Overrides are not currently validated on save.
+        # But they are validated when the page/snippet is published.
+        # TODO (someday): Would be nice to have the validation here
+        response = self.client.put(reverse('wagtail_localize:edit_override', args=[self.page_translation.id, self.overridable_segment.id]), {
+            'value': 'Definitely not an email address',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.json(), {
+            'segment_id': self.overridable_segment.id,
+            'error': None,
+            'data': 'Definitely not an email address',
+        })
+
+        override = SegmentOverride.objects.get()
+        self.assertEqual(override.id, self.segment_override.id)
+        self.assertEqual(override.context, self.overridable_segment.context)
+        self.assertEqual(override.locale, self.fr_locale)
+        self.assertEqual(override.data_json, '"Definitely not an email address"')
+
+    def test_delete_override(self):
+        response = self.client.delete(reverse('wagtail_localize:edit_override', args=[self.page_translation.id, self.overridable_segment.id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.json(), {
+            'segment_id': self.overridable_segment.id,
+            'error': None,
+            'data': 'overridden@example.com',
+        })
+
+        self.assertFalse(SegmentOverride.objects.exists())
+
+    def test_delete_non_existent_override(self):
+        self.segment_override.delete()
+
+        response = self.client.delete(reverse('wagtail_localize:edit_override', args=[self.page_translation.id, self.overridable_segment.id]), follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_cant_edit_overrides_without_page_perms(self):
+        self.moderators_group.page_permissions.all().delete()
+
+        response = self.client.put(reverse('wagtail_localize:edit_override', args=[self.page_translation.id, self.overridable_segment.id]), {
+            'value': 'updated_by_view@example.com',
         })
 
         self.assertEquals(response.status_code, 403)

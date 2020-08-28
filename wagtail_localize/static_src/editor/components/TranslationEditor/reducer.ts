@@ -1,9 +1,15 @@
 import gettext from 'gettext';
 
-import { StringTranslationAPI, StringTranslation } from '.';
+import {
+    StringTranslationAPI,
+    StringTranslation,
+    SegmentOverride,
+    SegmentOverrideAPI
+} from '.';
 
 export interface EditorState {
     stringTranslations: Map<number, StringTranslation>;
+    segmentOverrides: Map<number, SegmentOverride>;
 }
 
 export const EDIT_STRING_TRANSLATION = 'edit-string-translation';
@@ -32,16 +38,55 @@ export interface TranslationSaveServerErrorAction {
     segmentId: number;
 }
 
+export const EDIT_OVERRIDE = 'edit-override';
+export interface EditOverrideAction {
+    type: typeof EDIT_OVERRIDE;
+    segmentId: number;
+    value: any;
+}
+
+export const DELETE_OVERRIDE = 'delete-override';
+export interface DeleteOverrideAction {
+    type: typeof DELETE_OVERRIDE;
+    segmentId: number;
+}
+
+export const OVERRIDE_SAVED = 'override-saved';
+export interface OverrideSavedAction {
+    type: typeof OVERRIDE_SAVED;
+    segmentId: number;
+    override: SegmentOverrideAPI;
+}
+
+export const OVERRIDE_DELETED = 'override-deleted';
+export interface OverrideDeletedAction {
+    type: typeof OVERRIDE_DELETED;
+    segmentId: number;
+}
+
+export const OVERRIDE_SAVE_SERVER_ERROR = 'override-save-server-error';
+export interface OverrideSaveServerErrorAction {
+    type: typeof OVERRIDE_SAVE_SERVER_ERROR;
+    segmentId: number;
+}
+
 export type EditorAction =
     | EditStringTranslationAction
     | TranslationSavedAction
     | TranslationDeletedAction
-    | TranslationSaveServerErrorAction;
+    | TranslationSaveServerErrorAction
+    | EditOverrideAction
+    | DeleteOverrideAction
+    | OverrideSavedAction
+    | OverrideDeletedAction
+    | OverrideSaveServerErrorAction;
 
 export function reducer(state: EditorState, action: EditorAction) {
     let stringTranslations = new Map(state.stringTranslations);
+    let segmentOverrides = new Map(state.segmentOverrides);
 
     switch (action.type) {
+        // Translation actions
         case EDIT_STRING_TRANSLATION: {
             stringTranslations.set(action.segmentId, {
                 value: action.value,
@@ -83,7 +128,58 @@ export function reducer(state: EditorState, action: EditorAction) {
             }
             break;
         }
+
+        // Override actions
+
+        case EDIT_OVERRIDE: {
+            segmentOverrides.set(action.segmentId, {
+                value: action.value,
+                isSaving: true,
+                isErrored: false,
+                comment: gettext('Changed')
+            });
+            break;
+        }
+        case DELETE_OVERRIDE: {
+            const override = segmentOverrides.get(action.segmentId);
+
+            if (override) {
+                segmentOverrides.set(
+                    action.segmentId,
+                    Object.assign({}, override, {
+                        isSaving: true
+                    })
+                );
+            }
+            break;
+        }
+        case OVERRIDE_SAVED: {
+            segmentOverrides.set(action.segmentId, {
+                value: action.override.data,
+                isSaving: false,
+                isErrored: !!action.override.error,
+                comment: action.override.error || gettext('Changed')
+            });
+            break;
+        }
+        case OVERRIDE_DELETED: {
+            segmentOverrides.delete(action.segmentId);
+            break;
+        }
+        case OVERRIDE_SAVE_SERVER_ERROR: {
+            const override = segmentOverrides.get(action.segmentId);
+
+            if (override) {
+                segmentOverrides.set(
+                    action.segmentId,
+                    Object.assign({}, override, {
+                        isSaving: false
+                    })
+                );
+            }
+            break;
+        }
     }
 
-    return Object.assign({}, state, { stringTranslations });
+    return Object.assign({}, state, { stringTranslations, segmentOverrides });
 }
