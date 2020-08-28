@@ -8,6 +8,8 @@ from wagtail.core.rich_text import RichText
 
 from wagtail_localize.strings import restore_strings
 
+from .types import OverridableSegmentValue
+
 
 def organise_template_segments(segments):
     # The first segment is always the template, followed by the texts in order of their position
@@ -20,10 +22,18 @@ def organise_template_segments(segments):
     )
 
 
-def handle_related_object(related_object, src_locale, tgt_locale, segments):
-    # FIXME: Check that segments is a single item list
-    related_object_value = segments[0]
-    return related_object_value.get_instance(tgt_locale)
+def handle_related_object(related_model, src_locale, tgt_locale, segments):
+    if len(segments) > 1:
+        raise ValueError("Related object field can only have a single segment. Found {}".format(len(segments)))
+
+    segment = segments[0]
+
+    if isinstance(segment, OverridableSegmentValue):
+        return related_model.objects.get(pk=segment.data)
+
+    else:
+        # Assume it's a RelatedObjectValue
+        return segment.get_instance(tgt_locale)
 
 
 class StreamFieldSegmentsWriter:
@@ -36,8 +46,17 @@ class StreamFieldSegmentsWriter:
         if hasattr(block_type, "restore_translated_segments"):
             return block_type.restore_translated_segments(block_value, segments)
 
-        elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock)):
-            return segments[0].render_text()
+        elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock, blocks.URLBlock, blocks.EmailBlock)):
+            if len(segments) > 1:
+                raise ValueError("TextBlock/CharBlock can only have a single segment. Found {}".format(len(segments)))
+
+            segment = segments[0]
+
+            if isinstance(segment, OverridableSegmentValue):
+                return segment.data
+            else:
+                # Assume it's a StringSegmentValue
+                return segment.render_text()
 
         elif isinstance(block_type, blocks.RichTextBlock):
             format, template, strings = organise_template_segments(segments)
@@ -65,7 +84,7 @@ class StreamFieldSegmentsWriter:
 
     def handle_related_object_block(self, related_object, segments):
         return handle_related_object(
-            related_object, self.src_locale, self.tgt_locale, segments
+            related_object.__class__, self.src_locale, self.tgt_locale, segments
         )
 
     def handle_struct_block(self, struct_block, segments):
@@ -137,12 +156,20 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
             setattr(translated_obj, field_name, html)
 
         elif isinstance(field, (models.TextField, models.CharField)):
-            setattr(translated_obj, field_name, field_segments[0].render_text())
+            if len(field_segments) > 1:
+                raise ValueError("TextField/CharField can only have a single segment. Found {}".format(len(field_segments)))
+
+            segment = field_segments[0]
+
+            if isinstance(segment, OverridableSegmentValue):
+                setattr(translated_obj, field_name, segment.data)
+            else:
+                # Assume it's a StringSegmentValue
+                setattr(translated_obj, field_name, segment.render_text())
 
         elif isinstance(field, models.ForeignKey):
-            related_original = getattr(original_obj, field_name)
             related_translated = handle_related_object(
-                related_original, src_locale, tgt_locale, field_segments
+                field.related_model, src_locale, tgt_locale, field_segments
             )
             setattr(translated_obj, field_name, related_translated)
 
