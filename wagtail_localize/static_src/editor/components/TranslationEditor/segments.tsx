@@ -5,11 +5,20 @@ import gettext from 'gettext';
 import Icon from '../../../common/components/Icon';
 import Avatar from '../../../common/components/Avatar';
 
+import PageChooser from '../../../common/components/PageChooser';
+import ImageChooser from '../../../common/components/ImageChooser';
+import DocumentChooser from '../../../common/components/DocumentChooser';
+
 import {
     EditorProps,
     StringSegment,
+    SynchronisedValueSegment,
+    Segment,
     StringTranslation,
-    StringTranslationAPI
+    StringTranslationAPI,
+    SegmentOverride,
+    SegmentOverrideAPI,
+    Locale
 } from '.';
 import {
     EditorState,
@@ -17,7 +26,12 @@ import {
     EDIT_STRING_TRANSLATION,
     TRANSLATION_SAVE_SERVER_ERROR,
     TRANSLATION_SAVED,
-    TRANSLATION_DELETED
+    TRANSLATION_DELETED,
+    EDIT_OVERRIDE,
+    OVERRIDE_SAVED,
+    OVERRIDE_SAVE_SERVER_ERROR,
+    DELETE_OVERRIDE,
+    OVERRIDE_DELETED
 } from './reducer';
 
 function saveTranslation(
@@ -86,6 +100,84 @@ function saveTranslation(
             }
         });
     }
+}
+
+function saveOverride(
+    segment: SynchronisedValueSegment,
+    value: any,
+    csrfToken: string,
+    dispatch: React.Dispatch<EditorAction>
+) {
+    dispatch({
+        type: EDIT_OVERRIDE,
+        segmentId: segment.id,
+        value: value
+    });
+
+    // Create/update the translation
+    const formData = new FormData();
+    formData.append('value', value);
+
+    fetch(segment.editUrl, {
+        credentials: 'same-origin',
+        method: 'PUT',
+        body: formData,
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+        .then(response => {
+            if (response.status == 200 || response.status == 201) {
+                return response.json();
+            } else {
+                throw new Error('Unrecognised HTTP status returned');
+            }
+        })
+        .then((override: SegmentOverrideAPI) => {
+            dispatch({
+                type: OVERRIDE_SAVED,
+                segmentId: segment.id,
+                override
+            });
+        })
+        .catch(() => {
+            dispatch({
+                type: OVERRIDE_SAVE_SERVER_ERROR,
+                segmentId: segment.id
+            });
+        });
+}
+
+function deleteOverride(
+    segment: SynchronisedValueSegment,
+    csrfToken: string,
+    dispatch: React.Dispatch<EditorAction>
+) {
+    dispatch({
+        type: DELETE_OVERRIDE,
+        segmentId: segment.id
+    });
+
+    // Delete the override
+    fetch(segment.editUrl, {
+        credentials: 'same-origin',
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    }).then(response => {
+        if (response.status == 200 || response.status == 404) {
+            dispatch({
+                type: OVERRIDE_DELETED,
+                segmentId: segment.id
+            });
+        } else {
+            dispatch({
+                type: OVERRIDE_SAVE_SERVER_ERROR,
+                segmentId: segment.id
+            });
+        }
+    });
 }
 
 interface SingleLineTextAreaProps {
@@ -278,7 +370,7 @@ const SegmentList = styled.ul`
     padding-right: 50px;
 `;
 
-interface EditorSegmentProps {
+interface EditorStringSegmentProps {
     segment: StringSegment;
     translation?: StringTranslation;
     isLocked: boolean;
@@ -286,7 +378,7 @@ interface EditorSegmentProps {
     csrfToken: string;
 }
 
-const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
+const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
     segment,
     translation,
     isLocked,
@@ -411,6 +503,238 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
     );
 };
 
+interface EditorSynchronisedValueSegmentProps {
+    segment: SynchronisedValueSegment;
+    override?: SegmentOverride;
+    sourceLocale: Locale;
+    isLocked: boolean;
+    dispatch: React.Dispatch<EditorAction>;
+    csrfToken: string;
+}
+
+const EditorSynchronisedValueSegment: FunctionComponent<
+    EditorSynchronisedValueSegmentProps
+> = ({ segment, override, sourceLocale, isLocked, dispatch, csrfToken }) => {
+    let comment = <></>;
+    let buttons: React.ReactFragment[] = [];
+    let value: React.ReactFragment = <></>;
+
+    if (override) {
+        comment = (
+            <>
+                {override.comment}
+                {override.isErrored ? (
+                    <Icon name="warning" className="icon--red" />
+                ) : (
+                    <Icon name="tick" className="icon--green" />
+                )}
+            </>
+        );
+    } else {
+        comment = (
+            <>
+                {gettext('Uses %s version').replace(
+                    '%s',
+                    sourceLocale.displayName
+                )}{' '}
+                <Icon name="tick" className="icon--green" />
+            </>
+        );
+    }
+
+    if (segment.location.widget.type == 'text') {
+        const [isEditing, setIsEditing] = React.useState(false);
+        const [editingValue, setEditingValue] = React.useState(
+            (override && override.value) || segment.value
+        );
+
+        if (isEditing && !isLocked) {
+            const onClickSave = () => {
+                setIsEditing(false);
+                saveOverride(segment, editingValue, csrfToken, dispatch);
+            };
+
+            const onClickCancel = () => {
+                setIsEditing(false);
+            };
+
+            buttons = [
+                <ActionButton onClick={onClickCancel}>
+                    {gettext('Cancel')}
+                </ActionButton>,
+                <ActionButton onClick={onClickSave}>
+                    {gettext('Save')}
+                </ActionButton>
+            ];
+
+            value = (
+                <SingleLineTextArea
+                    onChange={setEditingValue}
+                    onHitEnter={onClickSave}
+                    value={editingValue}
+                    focusOnMount={true}
+                />
+            );
+        } else {
+            const onClickEdit = () => {
+                setIsEditing(true);
+                setEditingValue((override && override.value) || segment.value);
+            };
+
+            if (!isLocked) {
+                buttons.push(
+                    <ActionButton onClick={onClickEdit}>
+                        {gettext('Edit')}
+                    </ActionButton>
+                );
+            }
+
+            value = <p>{(override && override.value) || segment.value}</p>;
+        }
+    } else if (segment.location.widget.type == 'page_chooser') {
+        const onClickChangePage = () => {
+            (window as any).ModalWorkflow({
+                url: (window as any).chooserUrls.pageChooser,
+                onload: (window as any).PAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
+                responses: {
+                    pageChosen: function(pageData: any) {
+                        saveOverride(segment, pageData.id, csrfToken, dispatch);
+                    }
+                }
+            });
+        };
+        if (!isLocked) {
+            buttons.push(
+                <ActionButton onClick={onClickChangePage}>
+                    {gettext('Change page')}
+                </ActionButton>
+            );
+        }
+
+        const Wrapper = styled.div`
+            padding: 0.9em 1.2em;
+        `;
+
+        value = (
+            <Wrapper>
+                <PageChooser
+                    pageId={(override && override.value) || segment.value}
+                />
+            </Wrapper>
+        );
+    } else if (segment.location.widget.type == 'image_chooser') {
+        const onClickChangeImage = () => {
+            (window as any).ModalWorkflow({
+                url: (window as any).chooserUrls.imageChooser,
+                onload: (window as any).IMAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
+                responses: {
+                    imageChosen: function(imageData: any) {
+                        saveOverride(
+                            segment,
+                            imageData.id,
+                            csrfToken,
+                            dispatch
+                        );
+                    }
+                }
+            });
+        };
+        if (!isLocked) {
+            buttons.push(
+                <ActionButton onClick={onClickChangeImage}>
+                    {gettext('Change image')}
+                </ActionButton>
+            );
+        }
+
+        const Wrapper = styled.div`
+            padding: 0.9em 1.2em;
+        `;
+
+        value = (
+            <Wrapper>
+                <ImageChooser
+                    imageId={(override && override.value) || segment.value}
+                />
+            </Wrapper>
+        );
+    } else if (segment.location.widget.type == 'document_chooser') {
+        const onClickChangeDocument = () => {
+            (window as any).ModalWorkflow({
+                url: (window as any).chooserUrls.documentChooser,
+                onload: (window as any).DOCUMENT_CHOOSER_MODAL_ONLOAD_HANDLERS,
+                responses: {
+                    documentChosen: function(documentData: any) {
+                        saveOverride(
+                            segment,
+                            documentData.id,
+                            csrfToken,
+                            dispatch
+                        );
+                    }
+                }
+            });
+        };
+        if (!isLocked) {
+            buttons.push(
+                <ActionButton onClick={onClickChangeDocument}>
+                    {gettext('Change document')}
+                </ActionButton>
+            );
+        }
+
+        const Wrapper = styled.div`
+            padding: 0.9em 1.2em;
+        `;
+
+        value = (
+            <Wrapper>
+                <DocumentChooser
+                    documentId={(override && override.value) || segment.value}
+                />
+            </Wrapper>
+        );
+    } else {
+        value = <p>{segment.value}</p>;
+    }
+
+    if (override) {
+        const onClickUseEnglishVersion = () => {
+            deleteOverride(segment, csrfToken, dispatch);
+        };
+        buttons.push(
+            <ActionButton onClick={onClickUseEnglishVersion}>
+                {/* FIXME use a formatted string */}
+                {gettext('Revert to ') +
+                    sourceLocale.displayName +
+                    gettext(' version')}
+            </ActionButton>
+        );
+    }
+
+    let className = '';
+    if (override && override.isErrored) {
+        className = 'errored';
+    }
+
+    return (
+        <li className={className}>
+            {segment.location.subField && (
+                <SegmentFieldLabel>
+                    {segment.location.subField}
+                </SegmentFieldLabel>
+            )}
+            <SegmentValue>{value}</SegmentValue>
+            <SegmentToolbar>
+                <li>{comment}</li>
+                {buttons.map(button => (
+                    <li>{button}</li>
+                ))}
+            </SegmentToolbar>
+        </li>
+    );
+};
+
 interface EditorSegmentListProps extends EditorProps, EditorState {
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
@@ -418,13 +742,15 @@ interface EditorSegmentListProps extends EditorProps, EditorState {
 
 const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
     object: { isLocked },
+    sourceLocale,
     segments,
     stringTranslations,
+    segmentOverrides,
     dispatch,
     csrfToken
 }) => {
     // Group segments by field/block
-    const segmentsByFieldBlock: Map<string, StringSegment[]> = new Map();
+    const segmentsByFieldBlock: Map<string, Segment[]> = new Map();
     segments.forEach(segment => {
         const field = segment.location.field;
         const blockId = segment.location.blockId || 'null';
@@ -443,16 +769,32 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
         ([fieldBlock, segments]) => {
             // Render segments in field/block
             const segmentsRendered = segments.map(segment => {
-                return (
-                    <EditorSegment
-                        key={segment.id}
-                        segment={segment}
-                        translation={stringTranslations.get(segment.id)}
-                        isLocked={isLocked}
-                        dispatch={dispatch}
-                        csrfToken={csrfToken}
-                    />
-                );
+                switch (segment.type) {
+                    case 'string': {
+                        return (
+                            <EditorStringSegment
+                                key={segment.id}
+                                segment={segment}
+                                translation={stringTranslations.get(segment.id)}
+                                isLocked={isLocked}
+                                dispatch={dispatch}
+                                csrfToken={csrfToken}
+                            />
+                        );
+                    }
+                    case 'synchronised_value': {
+                        return (
+                            <EditorSynchronisedValueSegment
+                                segment={segment}
+                                override={segmentOverrides.get(segment.id)}
+                                sourceLocale={sourceLocale}
+                                isLocked={isLocked}
+                                dispatch={dispatch}
+                                csrfToken={csrfToken}
+                            />
+                        );
+                    }
+                }
             });
 
             return (

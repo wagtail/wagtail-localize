@@ -313,7 +313,6 @@ class TestSegmentIngestionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.expectedFailure  # Not supported
     def test_emailblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
@@ -344,7 +343,6 @@ class TestSegmentIngestionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.expectedFailure  # Not supported
     def test_urlblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(

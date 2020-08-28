@@ -34,7 +34,7 @@ from wagtail.core.models import Page, get_translatable_models
 from wagtail.core.utils import find_available_slug
 
 from .fields import copy_synchronised_fields
-from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
+from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue
@@ -328,6 +328,7 @@ class TranslationSource(models.Model):
         seen_string_segment_ids = []
         seen_template_segment_ids = []
         seen_related_object_segment_ids = []
+        seen_overridable_segment_ids = []
 
         for segment in extract_segments(self.as_instance()):
             if isinstance(segment, TemplateSegmentValue):
@@ -338,6 +339,10 @@ class TranslationSource(models.Model):
                 seen_related_object_segment_ids.append(
                     RelatedObjectSegment.from_value(self, segment).id
                 )
+            elif isinstance(segment, OverridableSegmentValue):
+                seen_overridable_segment_ids.append(
+                    OverridableSegment.from_value(self, segment).id
+                )
             else:
                 seen_string_segment_ids.append(
                     StringSegment.from_value(self, self.locale, segment).id
@@ -347,6 +352,7 @@ class TranslationSource(models.Model):
         self.stringsegment_set.exclude(id__in=seen_string_segment_ids).delete()
         self.templatesegment_set.exclude(id__in=seen_template_segment_ids).delete()
         self.relatedobjectsegment_set.exclude(id__in=seen_related_object_segment_ids).delete()
+        self.overridablesegment_set.exclude(id__in=seen_overridable_segment_ids).delete()
 
     def export_po(self):
         """
@@ -399,6 +405,13 @@ class TranslationSource(models.Model):
             .select_related("context")
         )
 
+        overridable_segments = (
+            OverridableSegment.objects.filter(source=self)
+            .annotate_override_json(locale)
+            .filter(override_json__isnull=False)
+            .select_related("context")
+        )
+
         segments = []
 
         for string_segment in string_segments:
@@ -443,6 +456,14 @@ class TranslationSource(models.Model):
                 continue
             else:
                 raise MissingRelatedObjectError(related_object_segment, locale)
+
+        for overridable_segment in overridable_segments:
+            segment_value = OverridableSegmentValue(
+                overridable_segment.context.path,
+                json.loads(overridable_segment.override_json),
+                order=overridable_segment.order,
+            )
+            segments.append(segment_value)
 
         return segments
 
@@ -503,19 +524,34 @@ class TranslationSource(models.Model):
                         path=field_name
                     )
 
+                except TranslationContext.DoesNotExist:
+                    # TODO (someday): How would we handle validation errors for non-translatable fields?
+                    continue
+
+                # Check for string translation
+                try:
                     string_translation = StringTranslation.objects.get(
                         translation_of_id__in=StringSegment.objects.filter(source=self).values_list('string_id', flat=True),
                         context=context,
                         locale=locale,
                     )
 
-                except (TranslationContext.DoesNotExist, StringTranslation.DoesNotExist):
-                    # TODO (someday): How would we handle validation errors for non-translatable fields?
+                    string_translation.set_field_error(errors)
+
+                except StringTranslation.DoesNotExist:
                     pass
 
-                else:
-                    if string_translation is not None:
-                        string_translation.set_field_error(errors)
+                # Check for segment override
+                try:
+                    segment_override = SegmentOverride.objects.get(
+                        context=context,
+                        locale=locale,
+                    )
+
+                    segment_override.set_field_error(errors)
+
+                except SegmentOverride.DoesNotExist:
+                    pass
 
             raise
 
@@ -1038,6 +1074,53 @@ class Template(models.Model):
         return template
 
 
+class SegmentOverride(models.Model):
+    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE, related_name="overrides")
+    context = models.ForeignKey(
+        TranslationContext,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="overrides",
+    )
+    last_translated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_json = models.TextField()
+    has_error = models.BooleanField(default=False)
+
+    # If there was a database-level validation error while saving the page/snippet, that
+    # error will be stored here. Example errors include, max length and invalid chars in
+    # a slug field.
+    # Note: this field depends on the context, so if the context is null this value shoul
+    # be ignored.
+    #
+    field_error = models.TextField(blank=True)
+
+    @property
+    def data(self):
+        return json.loads(self.data_json)
+
+    def set_field_error(self, error):
+        """
+        This sets the two field_error_ fields to the value of the given ValidationError instance.
+
+        Note, this also persists so no need to save.
+        """
+        self.has_error = True
+        # TODO (someday): We currently only support one error at a time
+        self.field_error = error[0].messages[0]
+        self.save(update_fields=['has_error', 'field_error'])
+
+    def get_error(self):
+        """
+        Returns a string containing any validation errors on the saved value.
+        """
+        # Check if a database error was raised when we last attempted to publish
+        if self.has_error and self.context is not None and self.field_error:
+            return self.field_error
+
+
 class BaseSegment(models.Model):
     source = models.ForeignKey(TranslationSource, on_delete=models.CASCADE)
     context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
@@ -1173,6 +1256,71 @@ class RelatedObjectSegment(BaseSegment):
                 content_type=value.content_type,
                 translation_key=value.translation_key,
             )[0],
+        )
+
+        return segment
+
+
+class OverridableSegmentQuerySet(models.QuerySet):
+    def annotate_override_json(self, locale, include_errors=False):
+        """
+        Adds an 'override_json' field to the segments containing the
+        JSON-formatted data for segments that have been overriden.
+
+        By default, this would exclude any overrides that have
+        an error. To include these, set `include_errors` to True.
+        """
+        overrides = SegmentOverride.objects.filter(
+            locale_id=pk(locale),
+            context_id=OuterRef("context_id"),
+        )
+
+        if not include_errors:
+            overrides = overrides.exclude(has_error=True)
+
+        return self.annotate(
+            override_json=Subquery(
+                overrides.values("data_json")
+            )
+        )
+
+    def get_overrides(self, locale):
+        """
+        Returns a queryset of SegmentOverrides that override any of the
+        segments in this queryset.
+        """
+        return SegmentOverride.objects.filter(
+            id__in=self.annotate(
+                override_id=Subquery(
+                    SegmentOverride.objects.filter(
+                        locale_id=pk(locale),
+                        context_id=OuterRef("context_id"),
+                    ).values("id")
+                )
+            ).values_list('override_id', flat=True)
+        )
+
+
+class OverridableSegment(BaseSegment):
+    data_json = models.TextField()
+
+    objects = OverridableSegmentQuerySet.as_manager()
+
+    @property
+    def data(self):
+        return json.loads(self.data_json)
+
+    @classmethod
+    def from_value(cls, source, value):
+        context, context_created = TranslationContext.objects.get_or_create(
+            object_id=source.object_id, path=value.path,
+        )
+
+        segment, created = cls.objects.get_or_create(
+            source=source,
+            context=context,
+            order=value.order,
+            data_json=json.dumps(value.data),
         )
 
         return segment
