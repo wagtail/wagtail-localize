@@ -15,7 +15,7 @@ except ImportError:
 
 setup(
     name="wagtail-localize",
-    version="0.4",
+    version="0.5a0",
     description="Wagtail Internationalisation Framework",
     author="Karl Hobley",
     author_email="karl@kaed.uk",
@@ -35,10 +35,10 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    install_requires=["Django>=2.1,<3.1", "Wagtail>=2.6,<2.10", "polib>=1.1,<2.0"],
+    install_requires=["Django>=3.0,<3.1", "Wagtail>=2.11,<2.12", "polib>=1.1,<2.0"],
     extras_require={
         "testing": ["dj-database-url==0.5.0", "freezegun==0.3.15"],
-        "google_translate": ["googletrans>=2.4,<3.0",],
+        "google_translate": ["googletrans>=2.4,<3.0"],
     },
     zip_safe=False,
 )
