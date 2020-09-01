@@ -1,5 +1,11 @@
 # Wagtail localize
 
+Supported versions:
+
+Python: 3.7 and 3.8
+Django: 2.2, 3.0 and 3.1
+Wagtail: 2.11
+
 ## Installation and setup
 
 Install with pip:
