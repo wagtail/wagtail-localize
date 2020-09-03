@@ -276,6 +276,7 @@ def edit_translation(request, translation, instance):
         if cca:
             breadcrumb = [
                 {
+                    'id': page.id,
                     'isRoot': page.is_root(),
                     'title': page.title,
                     'exploreUrl': reverse('wagtailadmin_explore_root') if page.is_root() else reverse('wagtailadmin_explore', args=[page.id]),

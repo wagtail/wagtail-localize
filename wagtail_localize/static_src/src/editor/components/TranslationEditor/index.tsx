@@ -25,6 +25,7 @@ export interface Locale {
 }
 
 export interface BreadcrumbItem {
+    id: number;
     isRoot: boolean;
     title: string;
     exploreUrl: string;
@@ -140,7 +141,7 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
     if (tabData.length > 1) {
         tabs = <Tabs tabs={tabData}>
             {tabData.map(tab => {
-                return <TabContent {...tab}>
+                return <TabContent key={tab.slug} {...tab}>
                     <EditorToolbox {...props} {...state} dispatch={dispatch} />
                     <Section
                         title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}

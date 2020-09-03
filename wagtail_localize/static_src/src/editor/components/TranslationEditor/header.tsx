@@ -132,8 +132,8 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
 
     // Meta
     let meta = [
-        <HeaderMeta name="status" value={status} />,
-        <LocaleMeta name="locales" translations={translations} sourceLocale={sourceLocale} targetLocale={locale} />,
+        <HeaderMeta key="status" name="status" value={status} />,
+        <LocaleMeta key="locales" name="locales" translations={translations} sourceLocale={sourceLocale} targetLocale={locale} />,
     ];
 
     return (

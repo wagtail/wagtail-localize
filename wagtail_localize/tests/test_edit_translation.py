@@ -103,8 +103,8 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(props['object']['liveUrl'], 'http://localhost/fr/test/')
 
         self.assertEqual(props['breadcrumb'], [
-            {'isRoot': True, 'title': 'Root', 'exploreUrl': reverse('wagtailadmin_explore_root')},
-            {'isRoot': False, 'title': 'Welcome to your new Wagtail site!', 'exploreUrl': reverse('wagtailadmin_explore', args=[self.fr_home_page.id])},
+            {'id': 1, 'isRoot': True, 'title': 'Root', 'exploreUrl': reverse('wagtailadmin_explore_root')},
+            {'id': self.fr_home_page.id, 'isRoot': False, 'title': 'Welcome to your new Wagtail site!', 'exploreUrl': reverse('wagtailadmin_explore', args=[self.fr_home_page.id])},
         ])
 
         self.assertEqual(props['tabs'], [
