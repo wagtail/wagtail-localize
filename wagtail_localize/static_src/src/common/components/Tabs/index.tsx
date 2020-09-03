@@ -40,7 +40,7 @@ export const Tabs: FunctionComponent<TabsProps> = ({tabs, children}) => {
                     classNames.push('errors');
                 }
 
-                return <li className={tab.slug == currentTab ? 'active' : ''} role="tab" aria-controls={`tab-${tab.slug}`}>
+                return <li key={tab.slug} className={tab.slug == currentTab ? 'active' : ''} role="tab" aria-controls={`tab-${tab.slug}`}>
                     <a href={`#tab-${tab.slug}`} onClick={onClick} className={classNames.join(' ')} data-count={tab.numErrors || 0}>{tab.label}</a>
                 </li>
             })}

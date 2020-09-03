@@ -116,7 +116,7 @@ export const HeaderMetaDropdown: FunctionComponent<HeaderMetaDropdownProps> = ({
 
     let items = options.map(({ label, href }) => {
         return (
-            <li className="c-dropdown__item ">
+            <li key={href} className="c-dropdown__item ">
                 <a href={href} aria-label="" className="u-link is-live">
                     {label}
                 </a>
@@ -160,6 +160,7 @@ export const HeaderMetaDropdown: FunctionComponent<HeaderMetaDropdownProps> = ({
 };
 
 export interface BreadcrumbItem {
+    id: number;
     isRoot: boolean;
     title: string;
     exploreUrl: string;
@@ -216,12 +217,12 @@ const Header: FunctionComponent<HeaderProps> = ({
 
                     if (page.isRoot) {
                         // Root section is shown as a 'site' icon in place of the title
-                        return <li className="home"><a href={page.exploreUrl} className="icon icon-site text-replace">{page.title}</a></li>;
+                        return <li key={page.id} className="home"><a href={page.exploreUrl} className="icon icon-site text-replace">{page.title}</a></li>;
                     } else if (isFirst) {
                         // For limited-permission users whose breadcrumb starts further down from the root, the first item displays as a 'home' icon in place of the title
-                        return <li className="home"><a href={page.exploreUrl} className="icon icon-home text-replace">{page.title}</a></li>;
+                        return <li key={page.id} className="home"><a href={page.exploreUrl} className="icon icon-home text-replace">{page.title}</a></li>;
                     } else {
-                        return <li><a href={page.exploreUrl}>{page.title}</a></li>
+                        return <li key={page.id}><a href={page.exploreUrl}>{page.title}</a></li>
                     }
                 })}
             </ul>

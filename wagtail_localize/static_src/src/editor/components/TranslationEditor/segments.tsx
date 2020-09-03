@@ -272,7 +272,7 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
     );
 
     let comment = <></>;
-    let buttons: React.ReactFragment[] = [];
+    let buttons: React.ReactElement[] = [];
     let value: React.ReactFragment = <></>;
 
     if (isEditing && !isLocked) {
@@ -286,12 +286,16 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
         };
 
         buttons = [
-            <ActionButton onClick={onClickCancel}>
-                {gettext('Cancel')}
-            </ActionButton>,
-            <ActionButton onClick={onClickSave}>
-                {gettext('Save')}
-            </ActionButton>,
+            <li key="cancel">
+                <ActionButton onClick={onClickCancel}>
+                    {gettext('Cancel')}
+                </ActionButton>,
+            </li>,
+            <li key="save">
+                <ActionButton onClick={onClickSave}>
+                    {gettext('Save')}
+                </ActionButton>
+            </li>
         ];
 
         value = <SingleLineTextArea onChange={setEditingValue} onHitEnter={onClickSave} value={editingValue} focusOnMount={true} />;
@@ -322,9 +326,11 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
 
         if (!isLocked) {
             buttons.push(
-                <ActionButton onClick={onClickEdit}>
-                    {translation ? gettext('Edit') : gettext('Translate')}
-                </ActionButton>
+                <li key="edit">
+                    <ActionButton onClick={onClickEdit}>
+                        {translation ? gettext('Edit') : gettext('Translate')}
+                    </ActionButton>
+                </li>
             );
         }
 
@@ -341,8 +347,8 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
             <SegmentSource>{segment.source}</SegmentSource>
             <SegmentValue>{value}</SegmentValue>
             <SegmentToolbar>
-                <li>{comment}</li>
-                {buttons.map(button => <li>{button}</li>)}
+                <li key="comment">{comment}</li>
+                {buttons}
             </SegmentToolbar>
         </li>
     );
@@ -377,7 +383,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
     });
 
     const segmentRendered = Array.from(segmentsByFieldBlock.entries()).map(
-        ([, segments]) => {
+        ([fieldBlock, segments]) => {
             // Render segments in field/block
             const segmentsRendered = segments.map(segment => {
                 return (
@@ -393,7 +399,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
             });
 
             return (
-                <li>
+                <li key={fieldBlock}>
                     <BlockLabel>{segments[0].location.field}</BlockLabel>
                     <BlockSegments>
                         {segmentsRendered}
