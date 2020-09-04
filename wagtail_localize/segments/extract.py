@@ -23,7 +23,11 @@ class StreamFieldSegmentExtractor:
         if hasattr(block_type, "get_translatable_segments"):
             return block_type.get_translatable_segments(block_value)
 
-        elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock)):
+        elif isinstance(block_type, (blocks.URLBlock, blocks.EmailBlock)):
+            # TODO: Make overridable
+            return []
+
+        elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock, blocks.BlockQuoteBlock)):
             return [StringSegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
@@ -45,7 +49,13 @@ class StreamFieldSegmentExtractor:
         elif isinstance(block_type, blocks.StreamBlock):
             return self.handle_stream_block(block_value)
 
-        elif isinstance(block_type, (blocks.ChoiceBlock, EmbedBlock)):
+        elif isinstance(block_type, (
+            blocks.FloatBlock, blocks.DecimalBlock, blocks.RegexBlock,
+            blocks.BooleanBlock, blocks.DateBlock, blocks.TimeBlock,
+            blocks.DateTimeBlock, blocks.IntegerBlock, blocks.ChoiceBlock,
+            blocks.MultipleChoiceBlock, blocks.RawHTMLBlock, EmbedBlock)
+        ):
+            # Ignored
             return []
 
         else:
