@@ -1,15 +1,9 @@
+dist: focal
 language: python
 cache: pip
 
-addons:
-  postgresql: "11.2"
-
 services:
   - postgresql
-
-env:
-  global:
-    - PGPORT=5433
 
 matrix:
   include:
@@ -40,19 +34,8 @@ matrix:
   allow_failures:
    - env: TOXENV=py38-dj31-wamaster-postgres
 
-
-before_install:
-  - sudo apt-get update
-  - sudo apt-get --yes remove postgresql\*
-  - sudo apt-get install -y postgresql-11 postgresql-client-11
-  - sudo cp /etc/postgresql/{9.6,11}/main/pg_hba.conf
-  - sudo service postgresql restart 11
-
 install:
   - pip install tox
-
-before_script:
-  - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
 
 script:
   - tox
