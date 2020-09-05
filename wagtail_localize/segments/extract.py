@@ -59,7 +59,7 @@ class StreamFieldSegmentExtractor:
         if related_object is None or not isinstance(related_object, TranslatableMixin):
             return []
 
-        return RelatedObjectSegmentValue.from_instance("", related_object)
+        return [RelatedObjectSegmentValue.from_instance("", related_object)]
 
     def handle_struct_block(self, struct_block):
         segments = []
