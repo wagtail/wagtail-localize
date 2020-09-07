@@ -7,16 +7,26 @@ jobs:
     steps:
       - type: cache-restore
         key: pip
+      - type: cache-restore
+        key: pipfile-lock
+
       - checkout
       - run: git clone git@github.com:wagtail/django-modelcluster.git
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
+
       - run: pipenv install flake8 -e .[testing] ./wagtail ./django-modelcluster
-      - run: pipenv run flake8 wagtail_localize
-      - run: pipenv run python testmanage.py test
+
       - type: cache-save
         key: pip
         paths:
           - "~/.cache/pip"
+      - type: cache-save
+        key: pipfile-lock
+        paths:
+          - "Pipfile.lock"
+
+      - run: pipenv run flake8 wagtail_localize
+      - run: pipenv run python testmanage.py test
 
   nightly-wagtail-test:
     docker:
