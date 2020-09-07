@@ -6,7 +6,13 @@ import ActionMenu from '../../../common/components/ActionMenu';
 
 import { EditorProps } from '.';
 
-const EditorFooter: FunctionComponent<EditorProps> = ({ csrfToken, object: {isLocked}, perms, links, locale }) => {
+const EditorFooter: FunctionComponent<EditorProps> = ({
+    csrfToken,
+    object: { isLocked },
+    perms,
+    links,
+    locale
+}) => {
     let actions = [
         <a className="button action-secondary" href="#">
             <Icon name="cross" />
@@ -16,10 +22,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({ csrfToken, object: {isLo
 
     if (perms.canDelete) {
         actions.push(
-            <a
-                className="button action-secondary"
-                href={links.deleteUrl}
-            >
+            <a className="button action-secondary" href={links.deleteUrl}>
                 <Icon name="bin" />
                 {gettext('Delete')}
             </a>
@@ -29,7 +32,11 @@ const EditorFooter: FunctionComponent<EditorProps> = ({ csrfToken, object: {isLo
     if (perms.canLock && !isLocked) {
         actions.push(
             <form method="POST" action={links.lockUrl}>
-                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+                <input
+                    type="hidden"
+                    name="csrfmiddlewaretoken"
+                    value={csrfToken}
+                />
                 <input type="hidden" name="next" value={window.location.href} />
 
                 <button
@@ -40,14 +47,18 @@ const EditorFooter: FunctionComponent<EditorProps> = ({ csrfToken, object: {isLo
                     <Icon name="lock" />
                     {gettext('Lock')}
                 </button>
-                </form>
+            </form>
         );
     }
 
     if (perms.canUnlock && isLocked) {
         actions.push(
             <form method="POST" action={links.unlockUrl}>
-                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+                <input
+                    type="hidden"
+                    name="csrfmiddlewaretoken"
+                    value={csrfToken}
+                />
                 <input type="hidden" name="next" value={window.location.href} />
 
                 <button
@@ -64,10 +75,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({ csrfToken, object: {isLo
 
     if (perms.canUnpublish) {
         actions.push(
-            <a
-                className="button action-secondary"
-                href={links.unpublishUrl}
-            >
+            <a className="button action-secondary" href={links.unpublishUrl}>
                 <Icon name="download-alt" />
                 {gettext('Unpublish')}
             </a>
@@ -77,7 +85,11 @@ const EditorFooter: FunctionComponent<EditorProps> = ({ csrfToken, object: {isLo
     if (perms.canPublish) {
         actions.push(
             <form method="POST">
-                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+                <input
+                    type="hidden"
+                    name="csrfmiddlewaretoken"
+                    value={csrfToken}
+                />
                 <input type="hidden" name="next" value={window.location.href} />
 
                 <button
@@ -87,7 +99,10 @@ const EditorFooter: FunctionComponent<EditorProps> = ({ csrfToken, object: {isLo
                     className="button button-longrunning "
                     data-clicked-text={gettext('Publishing…')}
                 >
-                    <Icon name="upload" className={'button-longrunning__icon'} />
+                    <Icon
+                        name="upload"
+                        className={'button-longrunning__icon'}
+                    />
                     <Icon name="spinner" />
                     <em>{gettext('Publish in ') + locale.displayName}</em>
                 </button>

@@ -1,13 +1,13 @@
 import React, { FunctionComponent } from 'react';
 
-declare var $:any;
+declare var $: any;
 
 interface AvatarProps {
     username: string;
     avatarUrl: string;
 }
 
-const Avatar: FunctionComponent<AvatarProps> = ({username, avatarUrl}) => {
+const Avatar: FunctionComponent<AvatarProps> = ({ username, avatarUrl }) => {
     const ref = React.useRef<HTMLSpanElement>(null);
 
     React.useEffect(() => {
@@ -19,14 +19,16 @@ const Avatar: FunctionComponent<AvatarProps> = ({username, avatarUrl}) => {
                     return username;
                 },
                 trigger: 'hover',
-                placement: 'bottom',
+                placement: 'bottom'
             });
         }
     }, [ref]);
 
-    return <span ref={ref} className="avatar small">
-        <img src={avatarUrl} alt={username} />
-    </span>;
-}
+    return (
+        <span ref={ref} className="avatar small">
+            <img src={avatarUrl} alt={username} />
+        </span>
+    );
+};
 
 export default Avatar;

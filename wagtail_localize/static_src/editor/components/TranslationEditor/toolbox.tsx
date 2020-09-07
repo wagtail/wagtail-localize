@@ -6,13 +6,8 @@ import Icon from '../../../common/components/Icon';
 
 import CloudIcon from './cloud-solid.svg';
 
-import {
-    EditorProps,
-} from '.';
-import {
-    EditorState,
-    EditorAction,
-} from './reducer';
+import { EditorProps } from '.';
+import { EditorState, EditorAction } from './reducer';
 
 const ToolboxWrapper = styled.div`
     padding-top: 20px;
@@ -54,18 +49,19 @@ interface EditorToolboxProps extends EditorProps, EditorState {
 }
 
 const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
-    object: {isLocked},
+    object: { isLocked },
     links,
     machineTranslator,
     csrfToken,
     stringTranslations,
-    segments,
+    segments
 }) => {
     if (isLocked) {
         return <></>;
     }
 
-    const hasUntranslatedSegments = Array.from(stringTranslations.keys()).length < segments.length;
+    const hasUntranslatedSegments =
+        Array.from(stringTranslations.keys()).length < segments.length;
 
     const uploadPofileForm = React.useRef<HTMLFormElement>(null);
     const uploadPofileFileInput = React.useRef<HTMLInputElement>(null);
@@ -82,33 +78,95 @@ const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
         if (uploadPofileForm.current) {
             uploadPofileForm.current.submit();
         }
-    }
+    };
 
-    return <ToolboxWrapper>
-        <ToolWrapper>
-            <p>{gettext("Download PO file and input translations offline")}</p>
-            <a className="button button-primary button--icon" href={links.downloadPofile} download><Icon name="download" /> {gettext("Download PO file")}</a>
-        </ToolWrapper>
+    return (
+        <ToolboxWrapper>
+            <ToolWrapper>
+                <p>
+                    {gettext('Download PO file and input translations offline')}
+                </p>
+                <a
+                    className="button button-primary button--icon"
+                    href={links.downloadPofile}
+                    download
+                >
+                    <Icon name="download" /> {gettext('Download PO file')}
+                </a>
+            </ToolWrapper>
 
-        <ToolWrapper>
-            <p>{gettext("Upload translated PO file to submit translations")}</p>
-            <button className="button button-primary button--icon" onClick={onClickUploadPO}><Icon name="upload" /> {gettext("Upload PO file")}</button>
-            <form ref={uploadPofileForm} action={links.uploadPofile} method="post" encType="multipart/form-data">
-                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-                <input type="hidden" name="next" value={window.location.href} />
-                <HiddenFileInput ref={uploadPofileFileInput} onChange={uploadPofile} type="file" name="file" />
-            </form>
-        </ToolWrapper>
+            <ToolWrapper>
+                <p>
+                    {gettext(
+                        'Upload translated PO file to submit translations'
+                    )}
+                </p>
+                <button
+                    className="button button-primary button--icon"
+                    onClick={onClickUploadPO}
+                >
+                    <Icon name="upload" /> {gettext('Upload PO file')}
+                </button>
+                <form
+                    ref={uploadPofileForm}
+                    action={links.uploadPofile}
+                    method="post"
+                    encType="multipart/form-data"
+                >
+                    <input
+                        type="hidden"
+                        name="csrfmiddlewaretoken"
+                        value={csrfToken}
+                    />
+                    <input
+                        type="hidden"
+                        name="next"
+                        value={window.location.href}
+                    />
+                    <HiddenFileInput
+                        ref={uploadPofileFileInput}
+                        onChange={uploadPofile}
+                        type="file"
+                        name="file"
+                    />
+                </form>
+            </ToolWrapper>
 
-        {machineTranslator && <ToolWrapper>
-            <p>{gettext("Translate all missing strings with ") + machineTranslator.name}</p>
-            <form action={machineTranslator.url} method="post" encType="multipart/form-data">
-                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-                <input type="hidden" name="next" value={window.location.href} />
-                <button type="submit" className="button button-primary button--icon" disabled={!hasUntranslatedSegments}><StyledCloudIcon /> {gettext("Translate with ") + machineTranslator.name}</button>
-            </form>
-        </ToolWrapper>}
-    </ToolboxWrapper>;
+            {machineTranslator && (
+                <ToolWrapper>
+                    <p>
+                        {gettext('Translate all missing strings with ') +
+                            machineTranslator.name}
+                    </p>
+                    <form
+                        action={machineTranslator.url}
+                        method="post"
+                        encType="multipart/form-data"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrfmiddlewaretoken"
+                            value={csrfToken}
+                        />
+                        <input
+                            type="hidden"
+                            name="next"
+                            value={window.location.href}
+                        />
+                        <button
+                            type="submit"
+                            className="button button-primary button--icon"
+                            disabled={!hasUntranslatedSegments}
+                        >
+                            <StyledCloudIcon />{' '}
+                            {gettext('Translate with ') +
+                                machineTranslator.name}
+                        </button>
+                    </form>
+                </ToolWrapper>
+            )}
+        </ToolboxWrapper>
+    );
 };
 
 export default EditorToolbox;
