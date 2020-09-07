@@ -9,6 +9,23 @@ jobs:
       - run: pipenv install flake8
       - run: pipenv run flake8 wagtail_localize
 
+  prettier:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout:
+
+      - type: cache-restore
+        key: node-modules
+
+      - run: npm ci
+      - run: npm run lint
+
+      - type: cache-save
+        key: node-modules
+        paths:
+          - "~/.npm"
+
   test:
     docker:
       - image: circleci/python:3.8
@@ -45,6 +62,7 @@ workflows:
     test:
       jobs:
         - flake8
+        - prettier
         - test
 
     nightly:
