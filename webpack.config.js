@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/main.tsx',
+  entry: './wagtail_localize/static_src/main.tsx',
   module: {
     rules: [
       {
@@ -46,7 +46,7 @@ module.exports = {
     'gettext': 'gettext',
   },
   output: {
-    path: path.resolve(__dirname, '../static/wagtail_localize/js'),
+    path: path.resolve(__dirname, 'wagtail_localize/static/wagtail_localize/js'),
     filename: 'wagtail-localize.js'
   }
 };
