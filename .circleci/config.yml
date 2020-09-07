@@ -10,19 +10,14 @@ jobs:
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
 
       - type: cache-restore
-        key: pip
-      - type: cache-restore
-        key: pipfile-lock
+        key: pipenv
 
       - run: pipenv install flake8 -e .[testing] ./wagtail ./django-modelcluster
 
       - type: cache-save
-        key: pip
+        key: pipenv
         paths:
           - "~/.cache/pip"
-      - type: cache-save
-        key: pipfile-lock
-        paths:
           - "Pipfile.lock"
 
       - run: pipenv run flake8 wagtail_localize
