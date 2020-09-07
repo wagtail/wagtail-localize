@@ -77,7 +77,31 @@ export interface SynchronisedValueSegment extends SegmentCommon {
     editUrl: string;
 }
 
-export type Segment = StringSegment | SynchronisedValueSegment;
+export interface RelatedObjectSegment extends SegmentCommon {
+    type: 'related_object';
+    source: {
+        title: string;
+        isLive: boolean;
+        liveUrl?: string;
+        editUrl?: string;
+        createTranslationRequestUrl?: string;
+    } | null;
+    dest: {
+        title: string;
+        isLive: boolean;
+        liveUrl?: string;
+        editUrl?: string;
+    } | null;
+    translationProgress: {
+        totalSegments: number;
+        translatedSegments: number;
+    } | null; // Null if translated without wagtail-localize
+}
+
+export type Segment =
+    | StringSegment
+    | SynchronisedValueSegment
+    | RelatedObjectSegment;
 
 export interface StringTranslationAPI {
     string_id: number;

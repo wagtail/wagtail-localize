@@ -1242,6 +1242,9 @@ class RelatedObjectSegment(BaseSegment):
         TranslatableObject, on_delete=models.CASCADE, related_name="references"
     )
 
+    def get_source_instance(self):
+        return self.object.get_instance_or_none(self.source.locale)
+
     @classmethod
     def from_value(cls, source, value):
         context, context_created = TranslationContext.objects.get_or_create(
