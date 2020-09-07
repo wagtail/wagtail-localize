@@ -193,6 +193,34 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(props['segments'][10]['location'], {'tab': 'content', 'field': 'Test structblock', 'blockId': str(STREAM_STRUCT_BLOCK_ID), 'fieldHelpText': '', 'subField': 'Field a', 'widget': None})
         # TODO: Example that uses fieldHelpText
 
+        # Check related object
+        related_object_segment = props['segments'][10]
+        self.assertEqual(related_object_segment['type'], 'related_object')
+        self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
+        self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(related_object_segment['source']['title'], str(self.snippet))
+        self.assertEqual(related_object_segment['dest']['title'], str(self.fr_snippet))
+        self.assertEqual(related_object_segment['translationProgress'], {'totalSegments': 1, 'translatedSegments': 0})
+
+    def test_manually_translated_related_object(self):
+        # Related objects don't have to be translated by Wagtail localize so test with the snippet's translation record deleted
+        self.snippet_translation.delete()
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'wagtail_localize/admin/edit_translation.html')
+
+        props = json.loads(response.context['props'])
+
+        # Check related object
+        related_object_segment = props['segments'][10]
+        self.assertEqual(related_object_segment['type'], 'related_object')
+        self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
+        self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(related_object_segment['source']['title'], str(self.snippet))
+        self.assertEqual(related_object_segment['dest']['title'], str(self.fr_snippet))
+        self.assertIsNone(related_object_segment['translationProgress'])
+
     def test_override_types(self):
         # Similar to above but adds some more overridable things to test with
         self.page.test_synchronized_image = Image.objects.create(
