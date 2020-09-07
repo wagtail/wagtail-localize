@@ -209,24 +209,48 @@ const Header: FunctionComponent<HeaderProps> = ({
     let breadcrumbRendered = <></>;
     if (breadcrumb && breadcrumb.length > 0) {
         let breadcrumbFirst = true;
-        breadcrumbRendered = <nav aria-label={gettext("Breadcrumb")}>
-            <ul className="breadcrumb">
-                {breadcrumb.map(page => {
-                    const isFirst = breadcrumbFirst;
-                    breadcrumbFirst = false;
+        breadcrumbRendered = (
+            <nav aria-label={gettext('Breadcrumb')}>
+                <ul className="breadcrumb">
+                    {breadcrumb.map(page => {
+                        const isFirst = breadcrumbFirst;
+                        breadcrumbFirst = false;
 
-                    if (page.isRoot) {
-                        // Root section is shown as a 'site' icon in place of the title
-                        return <li key={page.id} className="home"><a href={page.exploreUrl} className="icon icon-site text-replace">{page.title}</a></li>;
-                    } else if (isFirst) {
-                        // For limited-permission users whose breadcrumb starts further down from the root, the first item displays as a 'home' icon in place of the title
-                        return <li key={page.id} className="home"><a href={page.exploreUrl} className="icon icon-home text-replace">{page.title}</a></li>;
-                    } else {
-                        return <li key={page.id}><a href={page.exploreUrl}>{page.title}</a></li>
-                    }
-                })}
-            </ul>
-        </nav>;
+                        if (page.isRoot) {
+                            // Root section is shown as a 'site' icon in place of the title
+                            return (
+                                <li key={page.id} className="home">
+                                    <a
+                                        href={page.exploreUrl}
+                                        className="icon icon-site text-replace"
+                                    >
+                                        {page.title}
+                                    </a>
+                                </li>
+                            );
+                        } else if (isFirst) {
+                            // For limited-permission users whose breadcrumb starts further down from the root, the first item displays as a 'home' icon in place of the title
+                            return (
+                                <li key={page.id} className="home">
+                                    <a
+                                        href={page.exploreUrl}
+                                        className="icon icon-home text-replace"
+                                    >
+                                        {page.title}
+                                    </a>
+                                </li>
+                            );
+                        } else {
+                            return (
+                                <li key={page.id}>
+                                    <a href={page.exploreUrl}>{page.title}</a>
+                                </li>
+                            );
+                        }
+                    })}
+                </ul>
+            </nav>
+        );
     }
 
     return (

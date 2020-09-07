@@ -57,7 +57,9 @@ export function reducer(state: EditorState, action: EditorAction) {
                 value: action.translation.data,
                 isSaving: false,
                 isErrored: !!action.translation.error,
-                comment: action.translation.error ? action.translation.error : action.translation.comment,
+                comment: action.translation.error
+                    ? action.translation.error
+                    : action.translation.comment,
                 translatedBy: action.translation.last_translated_by
             });
             break;

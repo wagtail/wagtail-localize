@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --mode=production",
     "start": "webpack --mode=development --watch",
-    "lint": "prettier --write src/**/*.{ts,tsx,scss}"
+    "format": "prettier --write wagtail_localize/**/*.{ts,tsx,scss}"
   },
   "author": "",
   "license": "ISC",

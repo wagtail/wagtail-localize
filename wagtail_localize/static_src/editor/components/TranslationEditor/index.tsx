@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
 import Section from '../../../common/components/Section';
-import {Tabs, TabContent} from '../../../common/components/Tabs';
+import { Tabs, TabContent } from '../../../common/components/Tabs';
 
 import { EditorState, reducer } from './reducer';
 import EditorHeader from './header';
@@ -44,7 +44,7 @@ export interface StringSegment {
     location: {
         tab: string;
         field: string;
-        blockId: string|null;
+        blockId: string | null;
         subField: string | null;
         helpText: string;
     };
@@ -98,10 +98,10 @@ export interface EditorProps {
         lockUrl: string;
         unlockUrl: string;
         deleteUrl: string;
-    }
+    };
     machineTranslator: {
         name: string;
-        url: string
+        url: string;
     } | null;
     segments: StringSegment[];
     initialStringTranslations: StringTranslationAPI[];
@@ -115,8 +115,10 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
             value: translation.data,
             isSaving: false,
             isErrored: !!translation.error,
-            comment: translation.error ? translation.error : translation.comment,
-            translatedBy: translation.last_translated_by,
+            comment: translation.error
+                ? translation.error
+                : translation.comment,
+            translatedBy: translation.last_translated_by
         });
     });
 
@@ -126,40 +128,67 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
     };
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
-    const tabData = props.tabs.map(tab => {
-        const segments = props.segments.filter(segment => segment.location.tab == tab.slug);
-        const translations = segments.map(segment => state.stringTranslations.get(segment.id));
+    const tabData = props.tabs
+        .map(tab => {
+            const segments = props.segments.filter(
+                segment => segment.location.tab == tab.slug
+            );
+            const translations = segments.map(segment =>
+                state.stringTranslations.get(segment.id)
+            );
 
-        return {
-            numErrors: translations.filter(translation => translation && translation.isErrored).length,
-            segments,
-            ...tab,
-        };
-    }).filter(tab => tab.segments.length > 0);
+            return {
+                numErrors: translations.filter(
+                    translation => translation && translation.isErrored
+                ).length,
+                segments,
+                ...tab
+            };
+        })
+        .filter(tab => tab.segments.length > 0);
 
     let tabs = <></>;
     if (tabData.length > 1) {
-        tabs = <Tabs tabs={tabData}>
-            {tabData.map(tab => {
-                return <TabContent key={tab.slug} {...tab}>
-                    <EditorToolbox {...props} {...state} dispatch={dispatch} />
-                    <Section
-                        title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
-                    >
-                        <EditorSegmentList {...props} segments={tab.segments} {...state} dispatch={dispatch} />
-                    </Section>
-                </TabContent>
-            })}
-        </Tabs>;
+        tabs = (
+            <Tabs tabs={tabData}>
+                {tabData.map(tab => {
+                    return (
+                        <TabContent key={tab.slug} {...tab}>
+                            <EditorToolbox
+                                {...props}
+                                {...state}
+                                dispatch={dispatch}
+                            />
+                            <Section
+                                title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
+                            >
+                                <EditorSegmentList
+                                    {...props}
+                                    segments={tab.segments}
+                                    {...state}
+                                    dispatch={dispatch}
+                                />
+                            </Section>
+                        </TabContent>
+                    );
+                })}
+            </Tabs>
+        );
     } else {
-        tabs = <>
-            <EditorToolbox {...props} {...state} dispatch={dispatch} />
-            <Section
-                title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
-            >
-                <EditorSegmentList {...props} {...state} dispatch={dispatch} />
-            </Section>
-        </>;
+        tabs = (
+            <>
+                <EditorToolbox {...props} {...state} dispatch={dispatch} />
+                <Section
+                    title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
+                >
+                    <EditorSegmentList
+                        {...props}
+                        {...state}
+                        dispatch={dispatch}
+                    />
+                </Section>
+            </>
+        );
     }
 
     return (

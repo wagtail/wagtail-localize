@@ -102,11 +102,16 @@ const StyledTextArea = styled.textarea`
     white-space: normal;
 `;
 
-const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, onChange, onHitEnter, focusOnMount}) => {
+const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({
+    value,
+    onChange,
+    onHitEnter,
+    focusOnMount
+}) => {
     // Using a single line text area to get the wrapping behaviour we want. But it also allows the Grammarly plugin to work
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key == "Enter" && onHitEnter) {
+        if (e.key == 'Enter' && onHitEnter) {
             e.preventDefault();
             onHitEnter();
         }
@@ -115,7 +120,7 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, 
     const onChangeValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if (onChange) {
             // Since we only want the wrapping behaviour and not newlines, we need to strip them out
-            onChange(e.target.value.replace(/(\r\n|\n|\r)/gm, ""));
+            onChange(e.target.value.replace(/(\r\n|\n|\r)/gm, ''));
         }
     };
 
@@ -123,8 +128,9 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, 
     const textAreaElement = React.useRef<HTMLTextAreaElement>(null);
     React.useEffect(() => {
         if (textAreaElement.current) {
-            textAreaElement.current.style.height = "";
-            textAreaElement.current.style.height = textAreaElement.current.scrollHeight + "px";
+            textAreaElement.current.style.height = '';
+            textAreaElement.current.style.height =
+                textAreaElement.current.scrollHeight + 'px';
         }
     }, [value, textAreaElement]);
 
@@ -135,8 +141,16 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({value, 
         }
     }, [textAreaElement]);
 
-    return <StyledTextArea rows={1} ref={textAreaElement} onChange={onChangeValue} onKeyDown={onKeyDown} value={value} />;
-}
+    return (
+        <StyledTextArea
+            rows={1}
+            ref={textAreaElement}
+            onChange={onChangeValue}
+            onKeyDown={onKeyDown}
+            value={value}
+        />
+    );
+};
 
 export const BlockLabel = styled.h3`
     color: #007273;
@@ -189,8 +203,9 @@ const SegmentSource = styled.p`
 `;
 
 const SegmentValue = styled.div`
-    > p, > ${StyledTextArea} {
-        padding: .9em 1.2em;
+    > p,
+    > ${StyledTextArea} {
+        padding: 0.9em 1.2em;
         font-size: 1.2em;
         font-style: italic;
         line-height: 1.5em;
@@ -254,7 +269,7 @@ const SegmentList = styled.ul`
 interface EditorSegmentProps {
     segment: StringSegment;
     translation?: StringTranslation;
-    isLocked: boolean,
+    isLocked: boolean;
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
 }
@@ -289,7 +304,8 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
             <li key="cancel">
                 <ActionButton onClick={onClickCancel}>
                     {gettext('Cancel')}
-                </ActionButton>,
+                </ActionButton>
+                ,
             </li>,
             <li key="save">
                 <ActionButton onClick={onClickSave}>
@@ -298,12 +314,21 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
             </li>
         ];
 
-        value = <SingleLineTextArea onChange={setEditingValue} onHitEnter={onClickSave} value={editingValue} focusOnMount={true} />;
-
+        value = (
+            <SingleLineTextArea
+                onChange={setEditingValue}
+                onHitEnter={onClickSave}
+                value={editingValue}
+                focusOnMount={true}
+            />
+        );
     } else if (translation && translation.isSaving) {
-        comment = <>{gettext('Saving...')} <Icon name="spinner" /></>;
+        comment = (
+            <>
+                {gettext('Saving...')} <Icon name="spinner" />
+            </>
+        );
         value = <p>{translation && translation.value}</p>;
-
     } else {
         const onClickEdit = () => {
             setIsEditing(true);
@@ -311,16 +336,30 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
         };
 
         if (translation && translation.comment) {
-            comment = <>
-                {translation.comment}
-                {translation.isErrored ? <Icon name="warning" className="icon--red" /> : <Icon name="tick" className="icon--green" />}
-            </>;
+            comment = (
+                <>
+                    {translation.comment}
+                    {translation.isErrored ? (
+                        <Icon name="warning" className="icon--red" />
+                    ) : (
+                        <Icon name="tick" className="icon--green" />
+                    )}
+                </>
+            );
 
-            if (translation.translatedBy && translation.translatedBy.avatar_url) {
-                comment = <>
-                    <Avatar username={translation.translatedBy.full_name} avatarUrl={translation.translatedBy.avatar_url} />
-                    {comment}
-                </>;
+            if (
+                translation.translatedBy &&
+                translation.translatedBy.avatar_url
+            ) {
+                comment = (
+                    <>
+                        <Avatar
+                            username={translation.translatedBy.full_name}
+                            avatarUrl={translation.translatedBy.avatar_url}
+                        />
+                        {comment}
+                    </>
+                );
             }
         }
 
@@ -338,7 +377,7 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
     }
 
     return (
-        <li className={(translation && translation.isErrored) ? 'errored' : ''}>
+        <li className={translation && translation.isErrored ? 'errored' : ''}>
             {segment.location.subField && (
                 <SegmentFieldLabel>
                     {segment.location.subField}
@@ -360,7 +399,7 @@ interface EditorSegmentListProps extends EditorProps, EditorState {
 }
 
 const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
-    object: {isLocked},
+    object: { isLocked },
     segments,
     stringTranslations,
     dispatch,
@@ -401,9 +440,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
             return (
                 <li key={fieldBlock}>
                     <BlockLabel>{segments[0].location.field}</BlockLabel>
-                    <BlockSegments>
-                        {segmentsRendered}
-                    </BlockSegments>
+                    <BlockSegments>{segmentsRendered}</BlockSegments>
                 </li>
             );
         }

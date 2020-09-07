@@ -5,7 +5,7 @@ import Avatar from '../../../common/components/Avatar';
 
 import Header, {
     HeaderLinkAction,
-    HeaderMeta,
+    HeaderMeta
 } from '../../../common/components/Header';
 
 import { EditorProps, Locale, Translation } from '.';
@@ -19,30 +19,39 @@ interface LocaleMetaProps {
     translations: Translation[];
 }
 
-const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({name, translations, sourceLocale, targetLocale}) => {
-
-
+const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({
+    name,
+    translations,
+    sourceLocale,
+    targetLocale
+}) => {
     // Render source
-    const sourceTranslation = translations.filter(({ locale }) => locale.code == sourceLocale.code).pop();
-    let sourceRendered = (sourceTranslation && sourceTranslation.editUrl)
-        ? <a href={sourceTranslation.editUrl} className="button button-small button-nobg text-notransform">
-            {sourceLocale.displayName}
-        </a>
-
-        : <>{sourceLocale.displayName}</>;
-
+    const sourceTranslation = translations
+        .filter(({ locale }) => locale.code == sourceLocale.code)
+        .pop();
+    let sourceRendered =
+        sourceTranslation && sourceTranslation.editUrl ? (
+            <a
+                href={sourceTranslation.editUrl}
+                className="button button-small button-nobg text-notransform"
+            >
+                {sourceLocale.displayName}
+            </a>
+        ) : (
+            <>{sourceLocale.displayName}</>
+        );
 
     // Render target
     let targetRendered = <></>;
 
     let translationOptions = translations
-    .filter(({ locale }) => locale.code != sourceLocale.code)
-    .map(({ locale, editUrl }) => {
-        return {
-            label: locale.displayName,
-            href: editUrl
-        };
-    });
+        .filter(({ locale }) => locale.code != sourceLocale.code)
+        .map(({ locale, editUrl }) => {
+            return {
+                label: locale.displayName,
+                href: editUrl
+            };
+        });
 
     if (translationOptions.length > 0) {
         let items = translationOptions.map(({ label, href }) => {
@@ -55,39 +64,45 @@ const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({name, translations, sou
             );
         });
 
-        targetRendered = <div
-            className="c-dropdown t-inverted"
-            data-dropdown=""
-            style={{ display: 'inline-block' }}
-        >
-            <a
-                href="javascript:void(0)"
-                className="c-dropdown__button u-btn-current button button-small button-nobg text-notransform"
+        targetRendered = (
+            <div
+                className="c-dropdown t-inverted"
+                data-dropdown=""
+                style={{ display: 'inline-block' }}
             >
-                {targetLocale.displayName}
-                <div
-                    data-dropdown-toggle=""
-                    className="o-icon c-dropdown__toggle c-dropdown__togle--icon [ icon icon-arrow-down ]"
-                    style={{paddingLeft: '5px'}}
+                <a
+                    href="javascript:void(0)"
+                    className="c-dropdown__button u-btn-current button button-small button-nobg text-notransform"
                 >
-                    <Icon name="arrow-down" />
-                    <Icon name="arrow-up" />
+                    {targetLocale.displayName}
+                    <div
+                        data-dropdown-toggle=""
+                        className="o-icon c-dropdown__toggle c-dropdown__togle--icon [ icon icon-arrow-down ]"
+                        style={{ paddingLeft: '5px' }}
+                    >
+                        <Icon name="arrow-down" />
+                        <Icon name="arrow-up" />
+                    </div>
+                </a>
+                <div className="t-dark">
+                    <ul className="c-dropdown__menu u-toggle  u-arrow u-arrow--tl u-background">
+                        {items}
+                    </ul>
                 </div>
-            </a>
-            <div className="t-dark">
-                <ul className="c-dropdown__menu u-toggle  u-arrow u-arrow--tl u-background">
-                    {items}
-                </ul>
             </div>
-        </div>;
+        );
     } else {
         targetRendered = <>{targetLocale.displayName}</>;
     }
 
-    return <li className={`header-meta--${name}`}>
-        {sourceRendered}<Icon name="arrow-right" />{targetRendered}
-    </li>;
-}
+    return (
+        <li className={`header-meta--${name}`}>
+            {sourceRendered}
+            <Icon name="arrow-right" />
+            {targetRendered}
+        </li>
+    );
+};
 
 interface EditorHeaderProps extends EditorProps, EditorState {}
 
@@ -121,10 +136,15 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
         }
 
         if (object.lastPublishedBy && object.lastPublishedBy.avatar_url) {
-            status = <>
-                <Avatar username={object.lastPublishedBy.full_name} avatarUrl={object.lastPublishedBy.avatar_url} />
-                {status}
-            </>;
+            status = (
+                <>
+                    <Avatar
+                        username={object.lastPublishedBy.full_name}
+                        avatarUrl={object.lastPublishedBy.avatar_url}
+                    />
+                    {status}
+                </>
+            );
         }
     } else {
         status = <>{gettext('Draft')}</>;
@@ -133,7 +153,13 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
     // Meta
     let meta = [
         <HeaderMeta key="status" name="status" value={status} />,
-        <LocaleMeta key="locales" name="locales" translations={translations} sourceLocale={sourceLocale} targetLocale={locale} />,
+        <LocaleMeta
+            key="locales"
+            name="locales"
+            translations={translations}
+            sourceLocale={sourceLocale}
+            targetLocale={locale}
+        />
     ];
 
     return (
