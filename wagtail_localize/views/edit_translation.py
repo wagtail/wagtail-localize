@@ -266,6 +266,8 @@ def edit_translation(request, translation, instance):
     string_segments = translation.source.stringsegment_set.all().order_by('order')
     string_translations = string_segments.get_translations(translation.target_locale)
 
+    related_object_segments = translation.source.relatedobjectsegment_set.all().order_by('order')
+
     tab_helper = TabHelper(source_instance)
 
     breadcrumb = []
@@ -291,6 +293,91 @@ def edit_translation(request, translation, instance):
             'name': force_text(translator.display_name),
             'url': reverse('wagtail_localize:machine_translate', args=[translation.id]),
         }
+
+    string_segment_data = [
+        {
+            'type': 'string',
+            'id': segment.id,
+            'contentPath': segment.context.path,
+            'source': segment.string.data,
+            'location': get_segment_location_info(source_instance, tab_helper, segment),
+            'editUrl': reverse('wagtail_localize:edit_string_translation', kwargs={'translation_id': translation.id, 'string_segment_id': segment.id}),
+            'order': segment.order,
+        }
+        for segment in string_segments
+    ]
+
+    def get_source_object_info(segment):
+        instance = segment.get_source_instance()
+
+        if isinstance(instance, Page):
+            return {
+                'title': str(instance),
+                'isLive': instance.live,
+                'liveUrl': instance.full_url,
+                'editUrl': reverse('wagtailadmin_pages:edit', args=[instance.id]),
+                'createTranslationRequestUrl': reverse('wagtail_localize:submit_page_translation', args=[instance.id]),
+            }
+
+        else:
+            return {
+                'title': str(instance),
+                'isLive': True,
+                'editUrl': reverse('wagtailsnippets:edit', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)]),
+                'createTranslationRequestUrl': reverse('wagtail_localize:submit_snippet_translation', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)]),
+            }
+
+    def get_dest_object_info(segment):
+        instance = segment.object.get_instance_or_none(translation.target_locale)
+        if not instance:
+            return
+
+        if isinstance(instance, Page):
+            return {
+                'title': str(instance),
+                'isLive': instance.live,
+                'liveUrl': instance.full_url,
+                'editUrl': reverse('wagtailadmin_pages:edit', args=[instance.id]),
+            }
+
+        else:
+            return {
+                'title': str(instance),
+                'isLive': True,
+                'editUrl': reverse('wagtailsnippets:edit', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)]),
+            }
+
+    def get_translation_progress(segment, locale):
+        # TODO: handle manually translated things
+        try:
+            translation = Translation.objects.get(source__object_id=segment.object_id, target_locale=locale, enabled=True)
+
+        except Translation.DoesNotExist:
+            return
+
+        total_segments, translated_segments = translation.get_progress()
+
+        return {
+            'totalSegments': total_segments,
+            'translatedSegments': translated_segments,
+        }
+
+    related_object_segment_data = [
+        {
+            'type': 'related_object',
+            'id': segment.id,
+            'contentPath': segment.context.path,
+            'location': get_segment_location_info(source_instance, tab_helper, segment),
+            'order': segment.order,
+            'source': get_source_object_info(segment),
+            'dest': get_dest_object_info(segment),
+            'translationProgress': get_translation_progress(segment, translation.target_locale),
+        }
+        for segment in related_object_segments
+    ]
+
+    segments = string_segment_data + related_object_segment_data
+    segments.sort(key=lambda segment: segment['order'])
 
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
         # These props are passed directly to the TranslationEditor react component
@@ -349,16 +436,7 @@ def edit_translation(request, translation, instance):
                 for mode, label in (instance.preview_modes if isinstance(instance, Page) else [])
             ],
             'machineTranslator': machine_translator,
-            'segments': [
-                {
-                    'id': segment.id,
-                    'contentPath': segment.context.path,
-                    'source': segment.string.data,
-                    'location': get_segment_location_info(source_instance, tab_helper, segment),
-                    'editUrl': reverse('wagtail_localize:edit_string_translation', kwargs={'translation_id': translation.id, 'string_segment_id': segment.id}),
-                }
-                for segment in string_segments
-            ],
+            'segments': segments,
 
             # We serialize the translation data using Django REST Framework.
             # This gives us a consistent representation with the APIs so we
