@@ -3,7 +3,7 @@ version: 2
 jobs:
   backend:
     docker:
-      - image: circleci/python:3.6.4
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run: pipenv install flake8
@@ -18,7 +18,7 @@ jobs:
 
   nightly-wagtail-test:
     docker:
-      - image: circleci/python:3.7.3
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
