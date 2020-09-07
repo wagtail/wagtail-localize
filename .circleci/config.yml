@@ -6,8 +6,8 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - run: pipenv install flake8
-      - run: pipenv run flake8 wagtail_localize
+      - run: pip install flake8
+      - run: flake8 wagtail_localize
 
   prettier:
     docker:
@@ -35,17 +35,18 @@ jobs:
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
 
       - type: cache-restore
-        key: pipenv
+        key: pip
 
-      - run: pipenv install -e .[testing] ./wagtail ./django-modelcluster
+      - run: pip install -e .[testing]
+      - run: pip install ./wagtail
+      - run: pip install ./django-modelcluster
 
       - type: cache-save
-        key: pipenv
+        key: pip
         paths:
           - "~/.cache/pip"
-          - "Pipfile.lock"
 
-      - run: pipenv run python testmanage.py test
+      - run: python testmanage.py test
 
   nightly-wagtail-test:
     docker:
@@ -54,8 +55,12 @@ jobs:
       - checkout
       - run: git clone git@github.com:wagtail/django-modelcluster.git
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
-      - run: pipenv install -e .[testing] ./wagtail ./django-modelcluster
-      - run: pipenv run python testmanage.py test
+
+      - run: pip install -e .[testing]
+      - run: pip install ./wagtail
+      - run: pip install ./django-modelcluster
+
+      - run: python testmanage.py test
 
 workflows:
     version: 2
