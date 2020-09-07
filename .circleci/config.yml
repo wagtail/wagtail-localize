@@ -18,7 +18,7 @@ jobs:
       - type: cache-restore
         key: node-modules
 
-      - run: npm ci
+      - run: npm install
       - run: npm run lint
 
       - type: cache-save
