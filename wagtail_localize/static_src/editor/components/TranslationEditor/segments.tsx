@@ -9,7 +9,9 @@ import {
     EditorProps,
     StringSegment,
     StringTranslation,
-    StringTranslationAPI
+    StringTranslationAPI,
+    RelatedObjectSegment,
+    Segment
 } from '.';
 import {
     EditorState,
@@ -266,7 +268,7 @@ const SegmentList = styled.ul`
     padding-right: 50px;
 `;
 
-interface EditorSegmentProps {
+interface EditorStringSegmentProps {
     segment: StringSegment;
     translation?: StringTranslation;
     isLocked: boolean;
@@ -274,7 +276,7 @@ interface EditorSegmentProps {
     csrfToken: string;
 }
 
-const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
+const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
     segment,
     translation,
     isLocked,
@@ -393,6 +395,79 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
     );
 };
 
+interface EditorRelatedObjectSegmentProps {
+    segment: RelatedObjectSegment;
+}
+
+const EditorRelatedObjectSegment: FunctionComponent<
+    EditorRelatedObjectSegmentProps
+> = ({ segment }) => {
+    const openEditUrl = () => {
+        if (segment.dest) {
+            window.open(segment.dest.editUrl);
+        }
+    };
+
+    const openCreateTranslationRequestUrl = () => {
+        if (!!segment.source && segment.source.createTranslationRequestUrl) {
+            window.open(segment.source.createTranslationRequestUrl);
+        }
+    };
+
+    return (
+        <li>
+            {segment.location.subField && (
+                <SegmentFieldLabel>
+                    {segment.location.subField}
+                </SegmentFieldLabel>
+            )}
+            <SegmentValue>
+                <p>
+                    {segment.source
+                        ? segment.source.title
+                        : gettext('[DELETED]')}
+                </p>
+            </SegmentValue>
+            <SegmentToolbar>
+                <li>
+                    {!!segment.dest ? (
+                        <>
+                            {segment.translationProgress.translatedSegments} /{' '}
+                            {segment.translationProgress.totalSegments}{' '}
+                            {gettext('segments translated')}
+                            {segment.translationProgress.translatedSegments ==
+                                segment.translationProgress.totalSegments && (
+                                <Icon name="tick" className="icon--green" />
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            {gettext('Not translated')}{' '}
+                            <Icon name="warning" className="icon--red" />
+                        </>
+                    )}
+                </li>
+                <li>
+                    {segment.dest && segment.dest.editUrl && (
+                        <ActionButton onClick={openEditUrl}>
+                            {gettext('Edit')}
+                        </ActionButton>
+                    )}
+                    {!segment.dest &&
+                        !!segment.source &&
+                        segment.source.createTranslationRequestUrl && (
+                            <ActionButton
+                                onClick={openCreateTranslationRequestUrl}
+                            >
+                                {gettext('Translate')}
+                            </ActionButton>
+                        )}
+                </li>
+            </SegmentToolbar>
+        </li>
+    );
+};
+
 interface EditorSegmentListProps extends EditorProps, EditorState {
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
@@ -406,7 +481,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
     csrfToken
 }) => {
     // Group segments by field/block
-    const segmentsByFieldBlock: Map<string, StringSegment[]> = new Map();
+    const segmentsByFieldBlock: Map<string, Segment[]> = new Map();
     segments.forEach(segment => {
         const field = segment.location.field;
         const blockId = segment.location.blockId || 'null';
@@ -425,16 +500,23 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
         ([fieldBlock, segments]) => {
             // Render segments in field/block
             const segmentsRendered = segments.map(segment => {
-                return (
-                    <EditorSegment
-                        key={segment.id}
-                        segment={segment}
-                        translation={stringTranslations.get(segment.id)}
-                        isLocked={isLocked}
-                        dispatch={dispatch}
-                        csrfToken={csrfToken}
-                    />
-                );
+                switch (segment.type) {
+                    case 'string': {
+                        return (
+                            <EditorStringSegment
+                                key={segment.id}
+                                segment={segment}
+                                translation={stringTranslations.get(segment.id)}
+                                isLocked={isLocked}
+                                dispatch={dispatch}
+                                csrfToken={csrfToken}
+                            />
+                        );
+                    }
+                    case 'related_object': {
+                        return <EditorRelatedObjectSegment segment={segment} />;
+                    }
+                }
             });
 
             return (

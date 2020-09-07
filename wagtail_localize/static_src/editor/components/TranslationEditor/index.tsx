@@ -43,10 +43,9 @@ export interface PreviewMode {
     url: string;
 }
 
-export interface StringSegment {
+export interface SegmentCommon {
     id: number;
     contentPath: string;
-    source: string;
     location: {
         tab: string;
         field: string;
@@ -54,8 +53,36 @@ export interface StringSegment {
         subField: string | null;
         helpText: string;
     };
+}
+
+export interface StringSegment extends SegmentCommon {
+    type: 'string';
+    source: string;
     editUrl: string;
 }
+
+export interface RelatedObjectSegment extends SegmentCommon {
+    type: 'related_object';
+    source: {
+        title: string;
+        isLive: boolean;
+        liveUrl?: string;
+        editUrl?: string;
+        createTranslationRequestUrl?: string;
+    } | null;
+    dest: {
+        title: string;
+        isLive: boolean;
+        liveUrl?: string;
+        editUrl?: string;
+    } | null;
+    translationProgress: {
+        totalSegments: number;
+        translatedSegments: number;
+    };
+}
+
+export type Segment = StringSegment | RelatedObjectSegment;
 
 export interface StringTranslationAPI {
     string_id: number;
@@ -110,7 +137,7 @@ export interface EditorProps {
         name: string;
         url: string;
     } | null;
-    segments: StringSegment[];
+    segments: Segment[];
     initialStringTranslations: StringTranslationAPI[];
 }
 
