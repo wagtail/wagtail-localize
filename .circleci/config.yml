@@ -24,7 +24,7 @@ jobs:
       - type: cache-save
         key: node-modules
         paths:
-          - "~/.npm"
+          - "node_modules"
 
   test:
     docker:
