@@ -1,7 +1,15 @@
 version: 2
 
 jobs:
-  backend:
+  flake8:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run: pipenv install flake8
+      - run: pipenv run flake8 wagtail_localize
+
+  test:
     docker:
       - image: circleci/python:3.8
     steps:
@@ -12,7 +20,7 @@ jobs:
       - type: cache-restore
         key: pipenv
 
-      - run: pipenv install flake8 -e .[testing] ./wagtail ./django-modelcluster
+      - run: pipenv install -e .[testing] ./wagtail ./django-modelcluster
 
       - type: cache-save
         key: pipenv
@@ -20,7 +28,6 @@ jobs:
           - "~/.cache/pip"
           - "Pipfile.lock"
 
-      - run: pipenv run flake8 wagtail_localize
       - run: pipenv run python testmanage.py test
 
   nightly-wagtail-test:
@@ -37,7 +44,8 @@ workflows:
     version: 2
     test:
       jobs:
-        - backend
+        - flake8
+        - test
 
     nightly:
       jobs:
