@@ -16,13 +16,16 @@ jobs:
       - checkout:
 
       - type: cache-restore
-        key: node-modules
+        keys: 
+          - node-modules-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          - node-modules-{{ .Branch }}-
+          - node-modules-master-
 
       - run: npm install
       - run: npm run lint
 
       - type: cache-save
-        key: node-modules
+        key: node-modules-{{ .Branch }}-{{ checksum "package-lock.json" }}
         paths:
           - "node_modules"
 
@@ -35,14 +38,16 @@ jobs:
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
 
       - type: cache-restore
-        key: pip
+        keys:
+         - pip-{{ .Branch }}-
+         - pip-master-
 
       - run: pip install -e .[testing]
       - run: pip install ./wagtail
       - run: pip install ./django-modelcluster
 
       - type: cache-save
-        key: pip
+        key: pip-{{ .Branch }}-{{ epoch }}
         paths:
           - "~/.cache/pip"
 
