@@ -5,12 +5,18 @@ jobs:
     docker:
       - image: circleci/python:3.8
     steps:
+      - type: cache-restore
+        key: pip
       - checkout
       - run: git clone git@github.com:wagtail/django-modelcluster.git
       - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
       - run: pipenv install flake8 -e .[testing] ./wagtail ./django-modelcluster
       - run: pipenv run flake8 wagtail_localize
       - run: pipenv run python testmanage.py test
+      - type: cache-save
+        key: pip
+        paths:
+          - "~/.cache/pip"
 
   nightly-wagtail-test:
     docker:
