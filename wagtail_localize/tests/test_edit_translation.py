@@ -514,7 +514,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'error': None,
             'comment': 'Translated manually on 21 August 2020',
             'last_translated_by': {
-                'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
+                'avatar_url': '//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm',
                 'full_name': ''
             }
         })
@@ -551,7 +551,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'error': None,
             'comment': 'Translated manually on 21 August 2020',
             'last_translated_by': {
-                'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
+                'avatar_url': '//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm',
                 'full_name': ''
             }
         })
@@ -588,7 +588,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             'error': '<script> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)',
             'comment': 'Translated manually on 21 August 2020',
             'last_translated_by': {
-                'avatar_url': '//www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=50&d=mm',
+                'avatar_url': '//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm',
                 'full_name': ''
             }
         })
