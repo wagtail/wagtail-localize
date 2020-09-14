@@ -108,7 +108,7 @@ def get_translatable_fields(model):
         if isinstance(field, (models.URLField, models.EmailField)) or isinstance(field, models.CharField) and field.choices:
             translatable_fields.append(SynchronizedField(field.name))
 
-        # Translatable text fields should be translatable
+        # Other text fields should be translatable
         elif isinstance(field, (StreamField, RichTextField, models.TextField, models.CharField)):
             translatable_fields.append(TranslatableField(field.name))
 

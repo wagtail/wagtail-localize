@@ -20,7 +20,7 @@ from rest_framework import serializers, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.admin import messages
-from wagtail.admin.edit_handlers import TabbedInterface
+from wagtail.admin.edit_handlers import ObjectList, TabbedInterface
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -81,16 +81,19 @@ class TabHelper:
 
     @cached_property
     def tabs(self):
+        tabs = []
+
         if isinstance(self.edit_handler, TabbedInterface):
-            tabs = []
-
             for tab in self.edit_handler.children:
-                tabs.append(force_text(tab.heading))
+                # Note: On snippets, the TabbedInterface children are individual
+                # fields but on pages they are whole tabs.
+                if isinstance(tab, ObjectList):
+                    tabs.append(force_text(tab.heading))
 
-            return tabs
+        if not tabs:
+            tabs = [_("Content")]
 
-        else:
-            return [_("Content")]
+        return tabs
 
     @property
     def tabs_with_slugs(self):
@@ -235,6 +238,7 @@ def edit_translation(request, translation, instance):
                 translation.save_target(user=request.user, publish=True)
 
             except ValidationError:
+                # FIXME Show non-field errors somewhere
                 messages.error(request, _("New validation errors were found when publishing '{object}' in {locale}. Please fix them or click publish again to ignore these translations for now.").format(
                     object=str(instance),
                     locale=translation.target_locale.get_display_name()
@@ -247,8 +251,13 @@ def edit_translation(request, translation, instance):
                 string_segments = translation.source.stringsegment_set.all().order_by('order')
                 string_translations = string_segments.get_translations(translation.target_locale)
 
+                related_object_segments = translation.source.relatedobjectsegment_set.all().order_by('order')
+
                 # Using annotate_translation as this ignores errors by default (so both errors and missing segments treated the same)
-                if string_segments.annotate_translation(translation.target_locale).filter(translation__isnull=True).exists():
+                if (
+                    string_segments.annotate_translation(translation.target_locale).filter(translation__isnull=True).exists()
+                    or not all(segment.object.has_translation(translation.target_locale) for segment in related_object_segments)
+                ):
                     # One or more strings had an error
                     messages.warning(request, _("Published '{object}' in {locale} with missing translations - see below.").format(
                         object=str(instance),

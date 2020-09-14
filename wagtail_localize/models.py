@@ -31,6 +31,7 @@ from modelcluster.models import (
     model_from_serializable_data,
 )
 from wagtail.core.models import Page
+from wagtail.core.utils import find_available_slug
 
 from .fields import copy_synchronised_fields
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
@@ -376,7 +377,7 @@ class TranslationSource(models.Model):
 
         return po
 
-    def get_segments_for_translation(self, locale, string_translation_fallback_to_source=False):
+    def get_segments_for_translation(self, locale, error_on_missing=False):
         """
         Returns a list of segments that can be passed into "ingest_segments" to translate an object.
         """
@@ -403,7 +404,7 @@ class TranslationSource(models.Model):
         for string_segment in string_segments:
             if string_segment.translation:
                 string = StringValue(string_segment.translation)
-            elif string_translation_fallback_to_source:
+            elif not error_on_missing:
                 string = StringValue(string_segment.string.data)
             else:
                 raise MissingTranslationError(string_segment, locale)
@@ -428,8 +429,14 @@ class TranslationSource(models.Model):
             segments.append(segment_value)
 
         for related_object_segment in related_object_segments:
+            # Check if there is a translation for this segment
             if not related_object_segment.object.has_translation(locale):
-                raise MissingRelatedObjectError(related_object_segment, locale)
+                if error_on_missing:
+                    raise MissingRelatedObjectError(related_object_segment, locale)
+
+                else:
+                    # Skip this segment, this will reuse what is already in the database
+                    continue
 
             segment_value = RelatedObjectSegmentValue(
                 related_object_segment.context.path,
@@ -441,7 +448,7 @@ class TranslationSource(models.Model):
 
         return segments
 
-    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, string_translation_fallback_to_source=False):
+    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, error_on_missing=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -466,7 +473,7 @@ class TranslationSource(models.Model):
 
         copy_synchronised_fields(original, translation)
 
-        segments = self.get_segments_for_translation(locale, string_translation_fallback_to_source=string_translation_fallback_to_source)
+        segments = self.get_segments_for_translation(locale, error_on_missing=error_on_missing)
 
         try:
             with transaction.atomic():
@@ -475,7 +482,7 @@ class TranslationSource(models.Model):
 
                 if isinstance(translation, Page):
                     # Make sure the slug is valid
-                    translation.slug = slugify(translation.slug)
+                    translation.slug = find_available_slug(translation.get_parent(), slugify(translation.slug))
                     translation.save()
 
                     # Create a new revision
@@ -789,7 +796,7 @@ class Translation(models.Model):
         """
         Saves the target page/snippet using the current translations.
         """
-        self.source.create_or_update_translation(self.target_locale, user=user, publish=publish, string_translation_fallback_to_source=True, copy_parent_pages=True)
+        self.source.create_or_update_translation(self.target_locale, user=user, publish=publish, copy_parent_pages=True)
 
 
 class TranslationLog(models.Model):
