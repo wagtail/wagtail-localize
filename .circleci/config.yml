@@ -16,7 +16,7 @@ jobs:
       - checkout:
 
       - type: cache-restore
-        keys: 
+        keys:
           - node-modules-{{ .Branch }}-{{ checksum "package-lock.json" }}
           - node-modules-{{ .Branch }}-
           - node-modules-master-
@@ -34,8 +34,7 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - run: git clone git@github.com:wagtail/django-modelcluster.git
-      - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
+      - run: git clone git@github.com:wagtail/wagtail.git
 
       - type: cache-restore
         keys:
@@ -44,7 +43,6 @@ jobs:
 
       - run: pip install -e .[testing]
       - run: pip install ./wagtail
-      - run: pip install ./django-modelcluster
 
       - type: cache-save
         key: pip-{{ .Branch }}-{{ epoch }}
@@ -58,12 +56,10 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - run: git clone git@github.com:wagtail/django-modelcluster.git
-      - run: git clone git@github.com:kaedroho/wagtail.git -b internationalisation
+      - run: git clone git@github.com:wagtail/wagtail.git
 
       - run: pip install -e .[testing]
       - run: pip install ./wagtail
-      - run: pip install ./django-modelcluster
 
       - run: python testmanage.py test
 
