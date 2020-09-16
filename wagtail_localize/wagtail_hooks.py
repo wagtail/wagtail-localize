@@ -10,7 +10,15 @@ from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.core import hooks
 from wagtail.core.models import Locale, TranslatableMixin
-from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
+
+# The `wagtail.snippets.action_menu` module is introduced in https://github.com/wagtail/wagtail/pull/6384
+# FIXME: Remove this check when this module is merged into master
+try:
+    from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
+    SNIPPET_RESTART_TRANSLATION_ENABLED = True
+except ImportError:
+    SNIPPET_RESTART_TRANSLATION_ENABLED = False
+
 from wagtail.snippets.widgets import SnippetListingButton
 
 from .models import Translation, TranslationSource
@@ -175,25 +183,25 @@ def before_edit_snippet(request, instance):
             pass
 
 
-class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
-    label = _("Restart translation")
-    name = "localize-restart-translation"
-    icon_name = "undo"
-    classname = 'action-secondary'
+if SNIPPET_RESTART_TRANSLATION_ENABLED:
+    class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
+        label = _("Restart translation")
+        name = "localize-restart-translation"
+        icon_name = "undo"
+        classname = 'action-secondary'
 
-    def is_shown(self, request, context):
-        # Only show this menu item on the edit view where there was a previous translation record
-        if context['view'] != 'edit':
-            return False
+        def is_shown(self, request, context):
+            # Only show this menu item on the edit view where there was a previous translation record
+            if context['view'] != 'edit':
+                return False
 
-        return Translation.objects.filter(
-            source__object_id=context['instance'].translation_key,
-            target_locale_id=context['instance'].locale_id,
-            enabled=False
-        ).exists()
+            return Translation.objects.filter(
+                source__object_id=context['instance'].translation_key,
+                target_locale_id=context['instance'].locale_id,
+                enabled=False
+            ).exists()
 
-
-@hooks.register("register_snippet_action_menu_item")
-def register_restart_translation_snippet_action_menu_item(model):
-    if issubclass(model, TranslatableMixin):
-        return RestartTranslationSnippetActionMenuItem(order=0)
+    @hooks.register("register_snippet_action_menu_item")
+    def register_restart_translation_snippet_action_menu_item(model):
+        if issubclass(model, TranslatableMixin):
+            return RestartTranslationSnippetActionMenuItem(order=0)

@@ -1,6 +1,7 @@
 import json
 import uuid
 import tempfile
+import unittest
 
 import polib
 from django import VERSION as DJANGO_VERSION
@@ -21,6 +22,7 @@ from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import String, StringTranslation, Translation, TranslationContext, TranslationLog, TranslationSource
 from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
 
 RICH_TEXT_DATA = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a>.</li><li>Special characters: \'"!? セキレイ</li></ul>'
@@ -575,6 +577,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         self.assertNotContains(response, "Restart translation")
 
+    @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_snippet(self):
         self.snippet_translation.enabled = False
         self.snippet_translation.save()
@@ -583,6 +586,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         self.assertContains(response, "Restart translation")
 
+    @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_when_no_translation_for_snippet(self):
         self.snippet_translation.delete()
 
@@ -590,6 +594,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         self.assertNotContains(response, "Restart translation")
 
+    @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_on_create_for_snippet(self):
         response = self.client.get(reverse('wagtailsnippets:add', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name]))
         self.assertNotContains(response, "Restart translation")
