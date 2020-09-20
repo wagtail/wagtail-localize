@@ -331,3 +331,14 @@ class TestSegmentExtractionWithStreamField(TestCase):
                 )
             ],
         )
+
+    def test_customblockwithoutextractmethod(self):
+        block_id = uuid.uuid4()
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_customblockwithoutextractmethod",
+            {},
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(segments, [])

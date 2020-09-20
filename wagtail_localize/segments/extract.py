@@ -4,7 +4,6 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import TranslatableMixin
-from wagtail.embeds.blocks import EmbedBlock
 
 from wagtail_localize.segments import (
     StringSegmentValue,
@@ -50,21 +49,8 @@ class StreamFieldSegmentExtractor:
         elif isinstance(block_type, blocks.StreamBlock):
             return self.handle_stream_block(block_value)
 
-        elif isinstance(block_type, (
-            blocks.FloatBlock, blocks.DecimalBlock, blocks.RegexBlock,
-            blocks.BooleanBlock, blocks.DateBlock, blocks.TimeBlock,
-            blocks.DateTimeBlock, blocks.IntegerBlock, blocks.ChoiceBlock,
-            blocks.MultipleChoiceBlock, blocks.RawHTMLBlock, EmbedBlock)
-        ):
-            # Ignored
-            return []
-
-        else:
-            raise Exception(
-                "Unrecognised StreamField block type '{}'. Have you implemented get_translatable_segments on this class?".format(
-                    block_type.__class__.__name__
-                )
-            )
+        # Ignore everything else
+        return []
 
     def handle_related_object_block(self, related_object):
         if related_object is None or not isinstance(related_object, TranslatableMixin):
