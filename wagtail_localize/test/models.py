@@ -51,6 +51,10 @@ class CustomStructBlock(blocks.StructBlock):
         return value
 
 
+class CustomBlockWithoutExtractMethod(blocks.Block):
+    pass
+
+
 class TestStreamBlock(blocks.StreamBlock):
     test_charblock = blocks.CharBlock(max_length=255)
     test_textblock = blocks.TextBlock()
@@ -63,6 +67,7 @@ class TestStreamBlock(blocks.StreamBlock):
     test_listblock = blocks.ListBlock(blocks.TextBlock())
     test_nestedstreamblock = TestNestedStreamBlock()
     test_customstructblock = CustomStructBlock()
+    test_customblockwithoutextractmethod = CustomBlockWithoutExtractMethod()
 
 
 class TestCustomField(models.TextField):
