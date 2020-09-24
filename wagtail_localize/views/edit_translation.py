@@ -148,7 +148,7 @@ def get_segment_location_info(source_instance, tab_helper, segment):
 
         return {
             'tab': tab,
-            'field': capfirst(block_type.label),
+            'field': capfirst(str(block_type.label)),
             'blockId': block_id,
             'fieldHelpText': '',
             'subField': block_field,
