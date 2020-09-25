@@ -31,6 +31,7 @@ from modelcluster.models import (
     model_from_serializable_data,
 )
 from wagtail.core.models import Page, get_translatable_models
+from wagtail.core.utils import find_available_slug
 
 from .fields import copy_synchronised_fields
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
@@ -475,7 +476,7 @@ class TranslationSource(models.Model):
 
                 if isinstance(translation, Page):
                     # Make sure the slug is valid
-                    translation.slug = slugify(translation.slug)
+                    translation.slug = find_available_slug(translation.get_parent(), slugify(translation.slug), ignore_page_id=translation.id)
                     translation.save()
 
                     # Create a new revision
