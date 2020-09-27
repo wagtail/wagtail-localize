@@ -283,7 +283,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertIsNone(props['object']['lastPublishedDate'])
         self.assertIsNone(props['object']['liveUrl'])
         self.assertEqual(props['breadcrumb'], [])
-        self.assertEqual(props['tabs'], [{'label': '', 'slug': ''}])
+        self.assertEqual(props['tabs'], [{'label': 'Content', 'slug': 'content'}])
 
         self.assertEqual(props['sourceLocale'], {'code': 'en', 'displayName': 'English'})
         self.assertEqual(props['locale'], {'code': 'fr', 'displayName': 'French'})
