@@ -305,7 +305,6 @@ const EditorSegment: FunctionComponent<EditorSegmentProps> = ({
                 <ActionButton onClick={onClickCancel}>
                     {gettext('Cancel')}
                 </ActionButton>
-                ,
             </li>,
             <li key="save">
                 <ActionButton onClick={onClickSave}>
