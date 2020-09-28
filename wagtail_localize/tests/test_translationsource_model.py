@@ -260,6 +260,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             slug="child-page",
             parent=self.page,
             test_charfield="This is some test content",
+            test_snippet=self.snippet,
         )
         child_source, created = TranslationSource.get_or_create_from_instance(child_page)
 
@@ -283,6 +284,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(new_page.get_parent(), translated_parent)
         self.assertEqual(new_page.title, "Child page")
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
+        self.assertEqual(new_page.test_snippet, self.translated_snippet)
         self.assertEqual(new_page.translation_key, child_page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
         self.assertTrue(
@@ -297,6 +299,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertFalse(created)
         self.assertEqual(new_page.title, "Test page")
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
+        self.assertEqual(new_page.test_snippet, self.translated_snippet)
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
         self.assertTrue(
@@ -374,7 +377,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             created,
         ) = source_with_changed_content.create_or_update_translation(
             self.dest_locale,
-            string_translation_fallback_to_source=True,
+            fallback=True,
         )
 
         self.assertFalse(created)
@@ -492,6 +495,24 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(e.exception.segment.object_id, self.snippet.translation_key)
         self.assertEqual(e.exception.locale, self.dest_locale)
 
+    def test_create_not_ready_with_fallback_true(self):
+        # Same as previous two tests, except we pass `fallback=True` this time
+        # so it falls back to the source value instead of raising an exception.
+        self.translation.delete()
+        self.translated_snippet.delete()
+
+        translated_page, created = self.source.create_or_update_translation(self.dest_locale, fallback=True)
+
+        self.assertEqual(translated_page.test_snippet, self.snippet)
+        self.assertEqual(translated_page.test_charfield, "This is some test content")
+
+    def test_create_with_fallback_true(self):
+        # Like the previous test, but this time we have valid data, so it shouldn't fallback
+        translated_page, created = self.source.create_or_update_translation(self.dest_locale, fallback=True)
+
+        self.assertEqual(translated_page.test_snippet, self.translated_snippet)
+        self.assertEqual(translated_page.test_charfield, "Ceci est du contenu de test")
+
 
 class TestGetEphemeralTranslatedInstance(TestCase):
     def setUp(self):
@@ -535,7 +556,7 @@ class TestGetEphemeralTranslatedInstance(TestCase):
         )
 
     def test_get_ephemeral_translated_instance(self):
-        new_page = self.source.get_ephemeral_translated_instance(self.dest_locale, string_translation_fallback_to_source=True)
+        new_page = self.source.get_ephemeral_translated_instance(self.dest_locale, fallback=True)
 
         self.assertEqual(new_page.id, self.translated_page.id)
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
@@ -552,7 +573,7 @@ class TestGetEphemeralTranslatedInstance(TestCase):
         self.assertEqual(self.translated_page.test_textfield, "This is some more test content")
         self.assertFalse(self.translated_page.test_childobjects.exists())
 
-    def test_without_string_translation_fallback_to_source(self):
+    def test_without_fallback(self):
         # Should raise an error because we haven't translated test_textfield
         with self.assertRaises(MissingTranslationError):
             self.source.get_ephemeral_translated_instance(self.dest_locale)
