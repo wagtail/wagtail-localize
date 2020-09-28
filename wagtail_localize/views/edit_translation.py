@@ -396,7 +396,7 @@ def preview_translation(request, translation_id, mode=None):
     if mode not in dict(instance.preview_modes):
         raise Http404
 
-    translation = translation.source.get_ephemeral_translated_instance(translation.target_locale, string_translation_fallback_to_source=True)
+    translation = translation.source.get_ephemeral_translated_instance(translation.target_locale, fallback=True)
 
     return translation.make_preview_request(request, mode)
 

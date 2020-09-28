@@ -376,7 +376,7 @@ class TranslationSource(models.Model):
 
         return po
 
-    def get_segments_for_translation(self, locale, string_translation_fallback_to_source=False):
+    def get_segments_for_translation(self, locale, fallback=False):
         """
         Returns a list of segments that can be passed into "ingest_segments" to translate an object.
         """
@@ -403,7 +403,7 @@ class TranslationSource(models.Model):
         for string_segment in string_segments:
             if string_segment.translation:
                 string = StringValue(string_segment.translation)
-            elif string_translation_fallback_to_source:
+            elif fallback:
                 string = StringValue(string_segment.string.data)
             else:
                 raise MissingTranslationError(string_segment, locale)
@@ -428,20 +428,24 @@ class TranslationSource(models.Model):
             segments.append(segment_value)
 
         for related_object_segment in related_object_segments:
-            if not related_object_segment.object.has_translation(locale):
-                raise MissingRelatedObjectError(related_object_segment, locale)
+            if related_object_segment.object.has_translation(locale):
+                segment_value = RelatedObjectSegmentValue(
+                    related_object_segment.context.path,
+                    related_object_segment.object.content_type,
+                    related_object_segment.object.translation_key,
+                    order=related_object_segment.order,
+                )
+                segments.append(segment_value)
 
-            segment_value = RelatedObjectSegmentValue(
-                related_object_segment.context.path,
-                related_object_segment.object.content_type,
-                related_object_segment.object.translation_key,
-                order=related_object_segment.order,
-            )
-            segments.append(segment_value)
+            elif fallback:
+                # Skip this segment, this will reuse what is already in the database
+                continue
+            else:
+                raise MissingRelatedObjectError(related_object_segment, locale)
 
         return segments
 
-    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, string_translation_fallback_to_source=False):
+    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, fallback=False):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -466,7 +470,7 @@ class TranslationSource(models.Model):
 
         copy_synchronised_fields(original, translation)
 
-        segments = self.get_segments_for_translation(locale, string_translation_fallback_to_source=string_translation_fallback_to_source)
+        segments = self.get_segments_for_translation(locale, fallback=fallback)
 
         try:
             with transaction.atomic():
@@ -521,7 +525,7 @@ class TranslationSource(models.Model):
 
         return translation, created
 
-    def get_ephemeral_translated_instance(self, locale, string_translation_fallback_to_source=False):
+    def get_ephemeral_translated_instance(self, locale, fallback=False):
         """
         Returns an instance with the translations added which is not intended to be saved.
 
@@ -532,7 +536,7 @@ class TranslationSource(models.Model):
 
         copy_synchronised_fields(original, translation)
 
-        segments = self.get_segments_for_translation(locale, string_translation_fallback_to_source=string_translation_fallback_to_source)
+        segments = self.get_segments_for_translation(locale, fallback=fallback)
 
         # Ingest all translated segments
         ingest_segments(original, translation, self.locale, locale, segments)
@@ -789,7 +793,7 @@ class Translation(models.Model):
         """
         Saves the target page/snippet using the current translations.
         """
-        self.source.create_or_update_translation(self.target_locale, user=user, publish=publish, string_translation_fallback_to_source=True, copy_parent_pages=True)
+        self.source.create_or_update_translation(self.target_locale, user=user, publish=publish, fallback=True, copy_parent_pages=True)
 
 
 class TranslationLog(models.Model):
