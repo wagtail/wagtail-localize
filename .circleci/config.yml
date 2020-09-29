@@ -63,6 +63,10 @@ jobs:
 
       - run: python testmanage.py test
 
+      - run:
+          when: on_fail
+          command: python ./.circleci/report_nightly_build_failure.py
+
 workflows:
     version: 2
     test:
