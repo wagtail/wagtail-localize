@@ -20,7 +20,8 @@ from django.db.models import (
     OuterRef,
     Q
 )
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.text import capfirst, slugify
@@ -34,6 +35,7 @@ from wagtail.core.models import Page, get_translatable_models
 from wagtail.core.utils import find_available_slug
 
 from .fields import copy_synchronised_fields
+from .locales.components import register_locale_component
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
@@ -500,6 +502,10 @@ class TranslationSource(models.Model):
                 ingest_segments(original, translation, self.locale, locale, segments)
 
                 if isinstance(translation, Page):
+                    # Convert the page into a regular page
+                    # TODO: Audit logging, etc
+                    translation.alias_of_id = None
+
                     # Make sure the slug is valid
                     translation.slug = find_available_slug(translation.get_parent(), slugify(translation.slug), ignore_page_id=translation.id)
                     translation.save()
@@ -1345,3 +1351,18 @@ def disable_translation_on_delete(instance, **kwargs):
 def register_post_delete_signal_handlers():
     for model in get_translatable_models():
         post_delete.connect(disable_translation_on_delete, sender=model)
+
+
+@register_locale_component
+class LocaleSynchronization(models.Model):
+    locale = models.OneToOneField('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
+    sync_from = models.ForeignKey('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
+
+    def sync_trees(self, *, page_index=None):
+        from .synctree import synchronize_tree
+        synchronize_tree(self.sync_from, self.locale, page_index=page_index)
+
+
+@receiver(post_save, sender=LocaleSynchronization)
+def sync_trees_on_locale_sync_save(instance, **kwargs):
+    instance.sync_trees()

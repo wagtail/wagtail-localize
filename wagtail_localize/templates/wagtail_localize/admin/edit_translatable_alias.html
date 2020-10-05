@@ -1,0 +1,17 @@
+{% extends "wagtailadmin/pages/edit.html" %}
+{% load i18n %}
+
+{% block form %}
+    <div class="nice-padding" style="padding-top: 20px;">
+        {% url 'wagtailadmin_pages:edit' page.alias_of_id as edit_original_page_url %}
+        <p>
+            {% blocktrans with edit_original_page_url=edit_original_page_url original_locale=page.alias_of.locale.get_display_name %}
+                This page hasn't been translated yet. It is mirroring the <a href="{{ edit_original_page_url }}" target="_blank">{{ original_locale }} page.</a>.
+            {% endblocktrans %}
+        </p>
+
+        <p>
+            <a class="button button-secondary" href="{% url 'wagtail_localize:submit_page_translation' page.alias_of_id %}?select_locale={{ page.locale.language_code }}&next={% url 'wagtailadmin_pages:edit' page.id %}">{% trans "Translate this page" %}</a>
+        </p>
+    </div>
+{% endblock %}
