@@ -24,6 +24,9 @@ from wagtail.snippets.widgets import SnippetListingButton
 from .models import Translation, TranslationSource
 from .views import edit_translation, submit_translations, update_translations
 
+# Import synctree so it can register its signal handler
+from . import synctree  # noqa
+
 
 @hooks.register("register_admin_urls")
 def register_admin_urls():
@@ -63,7 +66,7 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
     if page_perms.user.has_perm('wagtail_localize.submit_translation') and not page.is_root():
         # If there's at least one locale that we haven't translated into yet, show "Translate this page" button
         has_locale_to_translate_to = Locale.objects.exclude(
-            id__in=page.get_translations(inclusive=True).values_list('locale_id', flat=True)
+            id__in=page.get_translations(inclusive=True).exclude(alias_of__isnull=False).values_list('locale_id', flat=True)
         ).exists()
 
         if has_locale_to_translate_to:
@@ -122,6 +125,10 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
 
 @hooks.register("before_edit_page")
 def before_edit_page(request, page):
+    # If the page is an alias of a page in another locale, override the edit page so that we can show a "Translate this page" option
+    if page.alias_of and page.alias_of.locale is not page.locale:
+        return edit_translation.edit_translatable_alias_page(request, page)
+
     # Check if the user has clicked the "Restart Translation" menu item
     if request.method == 'POST' and 'localize-restart-translation' in request.POST:
         try:
