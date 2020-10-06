@@ -6,11 +6,11 @@ import polib
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import Http404, HttpResponse
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.utils.encoding import force_text
 from django.utils.functional import cached_property
 from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext as _
@@ -85,7 +85,7 @@ class TabHelper:
             tabs = []
 
             for tab in self.edit_handler.children:
-                tabs.append(force_text(tab.heading))
+                tabs.append(tab.heading)
 
             return tabs
 
@@ -107,9 +107,8 @@ class TabHelper:
         if isinstance(self.edit_handler, TabbedInterface):
             field_tabs = {}
             for tab in self.edit_handler.children:
-                tab_name = force_text(tab.heading)
                 for tab_field in tab.required_fields():
-                    field_tabs[tab_field] = tab_name
+                    field_tabs[tab_field] = tab.heading
 
             return field_tabs
         else:
@@ -148,7 +147,7 @@ def get_segment_location_info(source_instance, tab_helper, segment):
 
         return {
             'tab': tab,
-            'field': capfirst(str(block_type.label)),
+            'field': capfirst(block_type.label),
             'blockId': block_id,
             'fieldHelpText': '',
             'subField': block_field,
@@ -163,18 +162,18 @@ def get_segment_location_info(source_instance, tab_helper, segment):
 
         return {
             'tab': tab,
-            'field': capfirst(force_text(field.related_model._meta.verbose_name)),
+            'field': capfirst(field.related_model._meta.verbose_name),
             'blockId': context_path_components[1],
-            'fieldHelpText': force_text(child_field.help_text),
-            'subField': capfirst(force_text(child_field.verbose_name)),
+            'fieldHelpText': child_field.help_text,
+            'subField': capfirst(child_field.verbose_name),
         }
 
     else:
         return {
             'tab': tab,
-            'field': capfirst(force_text(field.verbose_name)),
+            'field': capfirst(field.verbose_name),
             'blockId': None,
-            'fieldHelpText': force_text(field.help_text),
+            'fieldHelpText': field.help_text,
             'subField': None,
         }
 
@@ -288,7 +287,7 @@ def edit_translation(request, translation, instance):
     translator = get_machine_translator()
     if translator and translator.can_translate(translation.source.locale, translation.target_locale):
         machine_translator = {
-            'name': force_text(translator.display_name),
+            'name': translator.display_name,
             'url': reverse('wagtail_localize:machine_translate', args=[translation.id]),
         }
 
@@ -343,7 +342,7 @@ def edit_translation(request, translation, instance):
             'previewModes': [
                 {
                     'mode': mode,
-                    'label': force_text(label),
+                    'label': label,
                     'url': reverse('wagtail_localize:preview_translation', args=[translation.id]) if mode == instance.default_preview_mode else reverse('wagtail_localize:preview_translation', args=[translation.id, mode]),
                 }
                 for mode, label in (instance.preview_modes if isinstance(instance, Page) else [])
@@ -364,7 +363,7 @@ def edit_translation(request, translation, instance):
             # This gives us a consistent representation with the APIs so we
             # can dynamically update translations in the view.
             'initialStringTranslations': StringTranslationSerializer(string_translations, many=True, context={'translation_source': translation.source}).data,
-        })
+        }, cls=DjangoJSONEncoder)
     })
 
 
