@@ -13,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as __
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
 from wagtail.core.blocks import StreamValue
@@ -158,18 +158,18 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Test charfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Char field', 'blockId': None, 'fieldHelpText': '', 'subField': None})
         self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
-        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Test textblock', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
         # TODO: Examples that use fieldHelpText and subField
 
     def test_edit_page_translation_with_multi_mode_preview(self):
         # Add some extra preview modes to the page
         previous_preview_modes = TestPage.preview_modes
         TestPage.preview_modes = [
-            ('', _("Default")),
-            ('first-mode', _("First mode")),
-            ('second-mode', _("Second mode")),
+            ('', __("Default")),
+            ('first-mode', __("First mode")),
+            ('second-mode', __("Second mode")),
         ]
 
         try:

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as __
 
 from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
@@ -12,7 +13,7 @@ from wagtail_localize.segments import StringSegmentValue
 
 @register_snippet
 class TestSnippet(TranslatableMixin, models.Model):
-    field = models.TextField()
+    field = models.TextField(__("field"))
 
     translatable_fields = [TranslatableField("field")]
 
@@ -57,7 +58,7 @@ class CustomBlockWithoutExtractMethod(blocks.Block):
 
 class TestStreamBlock(blocks.StreamBlock):
     test_charblock = blocks.CharBlock(max_length=255)
-    test_textblock = blocks.TextBlock()
+    test_textblock = blocks.TextBlock(label=__("text block"))
     test_emailblock = blocks.EmailBlock()
     test_urlblock = blocks.URLBlock()
     test_richtextblock = blocks.RichTextBlock()
@@ -80,7 +81,7 @@ class TestCustomField(models.TextField):
 
 
 class TestPage(Page):
-    test_charfield = models.CharField(max_length=255, blank=True)
+    test_charfield = models.CharField(__("char field"), max_length=255, blank=True)
     test_textfield = models.TextField(blank=True)
     test_emailfield = models.EmailField(blank=True)
     test_slugfield = models.SlugField(blank=True)
