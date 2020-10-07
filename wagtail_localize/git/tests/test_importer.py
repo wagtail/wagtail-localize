@@ -1,13 +1,14 @@
 import logging
-import unittest
+from unittest import mock
 
 import polib
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 
 from wagtail.core.models import Page, Locale
 from wagtail_localize.models import TranslationSource, Translation, MissingRelatedObjectError
-from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.test.models import TestPage
 
 from wagtail_localize.git.importer import Importer
 from wagtail_localize.git.models import Resource, SyncLog
@@ -43,6 +44,7 @@ class TestImporter(TestCase):
             slug="test-page",
             test_charfield="The test translatable field",
             test_synchronized_charfield="The test synchronized field",
+            test_textfield="The other test translatable field",
         )
         self.resource = Resource.get_for_object(self.source.object)
         self.locale = Locale.objects.create(language_code="fr")
@@ -52,7 +54,6 @@ class TestImporter(TestCase):
         )
 
     def test_importer(self):
-        # Create a new page
         po = create_test_po(
             [
                 (
@@ -119,108 +120,43 @@ class TestImporter(TestCase):
         self.assertEqual(log_resource.resource, self.resource)
         self.assertEqual(log_resource.locale, self.locale)
 
-    @unittest.expectedFailure  # FIXME
-    def test_importer_creates_parent_if_parent_not_translated(self):
-        child_page, child_source = create_test_page(
-            title="Test child page",
-            slug="test-child-page",
-            test_charfield="The test child's translatable field",
-            test_synchronized_charfield="The test synchronized field",
-            parent=self.page,
-        )
-        child_resource = Resource.get_for_object(child_source.object)
-
-        # Create translated child page
+    def test_importer_warnings(self):
         po = create_test_po(
             [
+                # Unknown string
                 (
                     "test_charfield",
-                    "The test child&#39;s translatable field",
+                    "Unknown string",
                     "Le champ traduisible de test",
-                )
+                ),
+                # Unknown context
+                (
+                    "unknown_context",
+                    "The test translatable field",
+                    "Le champ testable à traduire avec un contenu mis à jour",
+                ),
+                # String not used in context
+                (
+                    "test_charfield",
+                    "The other test translatable field",
+                    "Le champ traduisible de test",
+                ),
             ]
         )
 
-        importer = Importer("0" * 40, logging.getLogger("dummy"))
+        logger = mock.MagicMock()
+        importer = Importer("0" * 40, logger)
         importer.import_resource(self.translation, po)
 
-        # Check translated page and its parent were created
-        self.assertTrue(
-            child_page.get_translations().filter(locale=self.locale).exists()
-        )
-        self.assertTrue(
-            self.page.get_translations().filter(locale=self.locale).exists()
-        )
-        self.assertFalse(self.page.get_translations().filter(locale=self.locale).live)
+        # Check that the warnings were logged
+        logger.warning.assert_any_call("While translating 'Test page' into French: Unrecognised string 'Unknown string'")
+        logger.warning.assert_any_call("While translating 'Test page' into French: Unrecognised context 'unknown_context'")
+        logger.warning.assert_any_call("While translating 'Test page' into French: The string 'The other test translatable field' is not used in context  'test_charfield'")
 
-        # Check log
-        log = SyncLog.objects.get()
-        self.assertEqual(log.action, SyncLog.ACTION_PULL)
-        self.assertEqual(log.commit_id, "0" * 40)
-        log_resource = log.resources.get()
-        self.assertEqual(log_resource.resource, child_resource)
-        self.assertEqual(log_resource.locale, self.locale)
+    @mock.patch('wagtail_localize.models.Translation.save_target')
+    def test_importer_missing_related_object(self, save_target):
+        save_target.side_effect = MissingRelatedObjectError('segment', self.locale)
 
-        # Create parent page
-        po = create_test_po(
-            [("test_charfield", "The test translatable field", "",)]
-        )
-
-        importer = Importer("0" * 39 + "1", logging.getLogger("dummy"))
-        importer.import_resource(self.translation, po)
-
-        # Check both translated pages were created
-        translated_parent = self.page.get_translations().get(locale=self.locale)
-        self.assertEqual(
-            translated_parent.translation_key, self.page.translation_key
-        )
-        self.assertEqual(
-            translated_parent.test_charfield, "Le champ traduisible de test"
-        )
-        self.assertEqual(
-            translated_parent.test_synchronized_charfield,
-            "The test synchronized field",
-        )
-
-        translated_child = child_page.get_translations().get(locale=self.locale)
-        self.assertEqual(
-            translated_child.translation_key, child_page.translation_key
-        )
-        self.assertEqual(
-            translated_child.test_charfield, "Le champ traduisible de test"
-        )
-        self.assertEqual(
-            translated_child.test_synchronized_charfield,
-            "The test synchronized field",
-        )
-
-        # Check log
-        log = SyncLog.objects.exclude(id=log.id).get()
-        self.assertEqual(log.action, SyncLog.ACTION_PULL)
-        self.assertEqual(log.commit_id, "0" * 39 + "1")
-        log_resource = log.resources.get()
-        self.assertEqual(log_resource.resource, self.resource)
-        self.assertEqual(log_resource.locale, self.locale)
-
-    @unittest.expectedFailure  # FIXME
-    def test_importer_doesnt_import_if_dependency_not_translated(self):
-        self.page.test_snippet = TestSnippet.objects.create(field="Test content")
-        self.page.save()
-
-        # Create translation for snippet
-        snippet_source, created = TranslationSource.get_or_create_from_instance(self.page.test_snippet)
-        snippet_translation = Translation.objects.create(
-            source=snippet_source,
-            target_locale=self.locale,
-        )
-        snippet_resource = Resource.get_for_object(snippet_source.object)
-
-        # Re submit translation for page so it is linked to the snippet
-        page_source, created = TranslationSource.get_or_create_from_instance(self.page)
-        self.translation.source = page_source
-        self.translation.save()
-
-        # Create page
         po = create_test_po(
             [
                 (
@@ -231,55 +167,33 @@ class TestImporter(TestCase):
             ]
         )
 
-        importer = Importer("0" * 40, logging.getLogger("dummy"))
+        logger = mock.MagicMock()
+        importer = Importer("0" * 40, logger)
         importer.import_resource(self.translation, po)
 
-        # Check translated page was not created
-        self.assertFalse(
-            self.page.get_translations().filter(locale=self.locale).exists()
-        )
+        # Check a warning was logged
+        logger.warning.assert_called_with("Unable to translate 'Test page' into French: Missing related object")
 
-        # Manually updating the page should fail
-        with self.assertRaises(MissingRelatedObjectError):
-            self.translation.save_target()
+    @mock.patch('wagtail_localize.models.Translation.save_target')
+    def test_importer_validation_error(self, save_target):
+        save_target.side_effect = ValidationError({'slug': "This slug is already in use."})
 
-        # Check log
-        log = SyncLog.objects.get()
-        self.assertEqual(log.action, SyncLog.ACTION_PULL)
-        self.assertEqual(log.commit_id, "0" * 40)
-        log_resource = log.resources.get()
-        self.assertEqual(log_resource.resource, self.resource)
-        self.assertEqual(log_resource.locale, self.locale)
-
-        # Translate snippet
         po = create_test_po(
-            [("field", "Test content", "Tester le contenu",)]
+            [
+                (
+                    "test_charfield",
+                    "The test translatable field",
+                    "Le champ traduisible de test",
+                )
+            ]
         )
 
-        importer = Importer("0" * 39 + "1", logging.getLogger("dummy"))
-        importer.import_resource(snippet_translation, po)
+        logger = mock.MagicMock()
+        importer = Importer("0" * 40, logger)
+        importer.import_resource(self.translation, po)
 
-        # Check translated snippet was created, but note that the page is not automatically created at this point
-        translated_snippet = self.page.test_snippet.get_translation(self.locale)
-        self.assertEqual(translated_snippet.field, "Tester le contenu")
-        self.assertFalse(
-            self.page.get_translations().filter(locale=self.locale).exists()
-        )
-
-        # Check log
-        log = SyncLog.objects.exclude(id=log.id).get()
-        self.assertEqual(log.action, SyncLog.ACTION_PULL)
-        self.assertEqual(log.commit_id, "0" * 39 + "1")
-        log_resource = log.resources.get()
-        self.assertEqual(log_resource.resource, snippet_resource)
-        self.assertEqual(log_resource.locale, self.locale)
-
-        # Now if we manually update the page, it should translate it
-        self.translation.save_target()
-
-        # The translated page should've been created and linked with the snippet
-        translated_page = self.page.get_translation(self.locale)
-        self.assertEqual(translated_page.test_snippet, translated_snippet)
+        # Check a warning was logged
+        logger.warning.assert_called_with("Unable to translate 'Test page' into French: ValidationError({'slug': ['This slug is already in use.']})")
 
 
 class TestImporterRichText(TestCase):
