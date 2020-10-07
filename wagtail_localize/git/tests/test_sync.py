@@ -4,14 +4,14 @@ from unittest import mock
 from pathlib import PurePosixPath
 
 import pygit2
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from wagtail.core.models import Page, Locale
 
 from wagtail_localize.models import TranslationSource, Translation, StringTranslation
 from wagtail_localize.test.models import TestPage
 
 from wagtail_localize.git.models import SyncLog, Resource
-from wagtail_localize.git.sync import _push, _pull
+from wagtail_localize.git.sync import _push, _pull, get_sync_manager
 
 from .utils import GitRepositoryUtils
 
@@ -254,3 +254,58 @@ class TestPush(TestCase):
 
         # FIXME: Need to properly mock out repo.get_changed_files to test this properly
         self.assertFalse(log.resources.exists())
+
+
+class TestSyncManager(GitRepositoryUtils, TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.remote_repo_dir, self.remote_repo = self.make_repo()
+        self.remote_repo.gitpython.index.commit("Initial commit")
+        self.remote_repo.gitpython.create_head("master")
+        self.local_repo_dir, self.local_repo = self.clone_repo(self.remote_repo_dir)
+
+        self.settings = {
+            'WAGTAILLOCALIZE_GIT_URL': self.remote_repo_dir,
+            'WAGTAILLOCALIZE_GIT_CLONE_DIR': self.local_repo_dir,
+        }
+
+    @mock.patch('wagtail_localize.git.sync._push')
+    @mock.patch('wagtail_localize.git.sync._pull')
+    def test_sync(self, _pull, _push):
+        # Add a commit to the remote repo
+        commit = self.remote_repo.gitpython.index.commit("A new commit")
+
+        with override_settings(**self.settings):
+            sync_manager = get_sync_manager()
+            sync_manager.sync()
+
+        # Should call _pull and _push
+        _pull.assert_called()
+        _push.assert_called()
+
+        # The commit should've been pulled
+        self.assertEqual(self.local_repo.gitpython.head.commit, commit)
+
+    @mock.patch('wagtail_localize.git.sync.SyncManager.sync')
+    def test_trigger(self, sync):
+        with override_settings(**self.settings):
+            sync_manager = get_sync_manager()
+            sync_manager.trigger()
+
+        # Should just call sync
+        sync.assert_called()
+
+    def test_is_queued(self):
+        with override_settings(**self.settings):
+            sync_manager = get_sync_manager()
+
+            # Default sync manager always returns false
+            self.assertFalse(sync_manager.is_queued())
+
+    def test_is_running(self):
+        with override_settings(**self.settings):
+            sync_manager = get_sync_manager()
+
+            # Default sync manager always returns false
+            self.assertFalse(sync_manager.is_running())
