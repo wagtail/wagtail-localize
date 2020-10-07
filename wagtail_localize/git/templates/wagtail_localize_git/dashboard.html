@@ -11,7 +11,7 @@
         {% elif sync_queued %}
             Synchronisation with Pontoon queued
         {% else %}
-            <form method="post" action="{% url 'wagtail_localize_pontoon:force_sync' %}">
+            <form method="post" action="{% url 'wagtail_localize_git:force_sync' %}">
                 {% csrf_token %}
                 <button type="submit" class="button button-primary">Force Sync</button>
             </form>

@@ -190,7 +190,7 @@ def get_sync_manager():
     sync_manager_class_path = getattr(
         settings,
         "WAGTAILLOCALIZE_GIT_SYNC_MANAGER_CLASS",
-        "wagtail_localize_pontoon.sync.SyncManager",
+        "wagtail_localize.git.sync.SyncManager",
     )
     sync_manager = import_string(sync_manager_class_path)
     return sync_manager()

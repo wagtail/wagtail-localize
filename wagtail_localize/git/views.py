@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 
 from wagtail_localize.models import Translation
@@ -6,6 +7,7 @@ from .models import Resource, SyncLog, SyncLogResource
 from .sync import get_sync_manager
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def dashboard(request):
     sync_manager = get_sync_manager()
     return render(
@@ -31,6 +33,7 @@ def dashboard(request):
     )
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def force_sync(request):
     sync_manager = get_sync_manager()
     if not sync_manager.is_queued():
