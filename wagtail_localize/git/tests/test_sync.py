@@ -1,15 +1,19 @@
 import sys
+import unittest
 from unittest import mock
 from pathlib import PurePosixPath
 
+import pygit2
 from django.test import TestCase
 from wagtail.core.models import Page, Locale
 
-from wagtail_localize.models import TranslationSource, Translation
+from wagtail_localize.models import TranslationSource, Translation, StringTranslation
 from wagtail_localize.test.models import TestPage
 
-from wagtail_localize.git.models import SyncLog
-from wagtail_localize.git.sync import _push
+from wagtail_localize.git.models import SyncLog, Resource
+from wagtail_localize.git.sync import _push, _pull
+
+from .utils import GitRepositoryUtils
 
 
 def create_test_page(**kwargs):
@@ -19,6 +23,148 @@ def create_test_page(**kwargs):
     revision.publish()
     source, created = TranslationSource.get_or_create_from_instance(page)
     return page, source
+
+
+class TestPull(GitRepositoryUtils, TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.locale_en = Locale.objects.get(language_code="en")
+        self.locale_fr = Locale.objects.create(language_code="fr")
+
+    def make_test_resource(self):
+        # Set up a test translation
+        page, source = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="Some test translatable content",
+        )
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.locale_fr,
+        )
+        resource = Resource.get_for_object(source.object)
+
+        return page, source, translation, resource
+
+    def make_test_repo(self):
+        repo_dir, repo = self.make_repo()
+        repo.gitpython.index.commit("Initial commit")
+        repo.gitpython.create_head("master")
+        return repo
+
+    def commit_translation(self, repo, resource, translation, modify_locale_po=None, commit_message=None):
+        translation_po = translation.export_po()
+
+        if modify_locale_po:
+            modify_locale_po(translation_po)
+
+        index = pygit2.Index()
+        self.add_file_to_index(repo, index, f"templates/{resource.path}.pot", str(translation.source.export_po()))
+        self.add_file_to_index(repo, index, f"locales/fr/{resource.path}.po", str(translation_po))
+        return self.make_commit_from_index(repo, index, commit_message or "Added a translation")
+
+    def test_pull(self):
+        page, source, translation, resource = self.make_test_resource()
+
+        # Set up repo
+        repo = self.make_test_repo()
+
+        # page into repo and commit
+        push_commit_id = self.commit_translation(repo, resource, translation)
+
+        # Add a SyncLog entry
+        # Wagtail uses the synclog to know when to detect changes from
+        SyncLog.objects.create(action=SyncLog.ACTION_PUSH, commit_id=push_commit_id)
+
+        # Let's simulate Pontoon modifying the git repo
+        def add_french_string(translation_po):
+            translation_po[0].msgstr = "Certains tests de contenu traduisible"
+        pontoon_commit_id = self.commit_translation(repo, resource, translation, modify_locale_po=add_french_string, commit_message="(Pontoon) Edited a translation")
+
+        # Run the pull code
+        logger = mock.MagicMock()
+        _pull(repo, logger)
+
+        # Check a new sync log was created
+        sync_log = SyncLog.objects.get(action=SyncLog.ACTION_PULL)
+        self.assertEqual(sync_log.commit_id, pontoon_commit_id)
+
+        # Check the translated string was inserted
+        string_translation = StringTranslation.objects.get()
+        self.assertEqual(string_translation.translation_of.data, "Some test translatable content")
+        self.assertEqual(string_translation.locale, self.locale_fr)
+        self.assertEqual(string_translation.context.object, source.object)
+        self.assertEqual(string_translation.context.path, 'test_charfield')
+        self.assertEqual(string_translation.data, "Certains tests de contenu traduisible")
+        self.assertEqual(string_translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
+        self.assertEqual(string_translation.tool_name, "Pontoon")
+        self.assertFalse(string_translation.has_error)
+
+    def test_pull_with_string_error(self):
+        page, source, translation, resource = self.make_test_resource()
+
+        # Set up repo
+        repo = self.make_test_repo()
+
+        # page into repo and commit
+        push_commit_id = self.commit_translation(repo, resource, translation)
+
+        # Add a SyncLog entry
+        # Wagtail uses the synclog to know when to detect changes from
+        SyncLog.objects.create(action=SyncLog.ACTION_PUSH, commit_id=push_commit_id)
+
+        # Let's simulate Pontoon modifying the git repo
+        # This time, we will insert invalid HTML
+        def add_french_string(translation_po):
+            translation_po[0].msgstr = "<script>foo()</script>"
+        pontoon_commit_id = self.commit_translation(repo, resource, translation, modify_locale_po=add_french_string, commit_message="(Pontoon) Edited a translation")
+
+        # Run the pull code
+        logger = mock.MagicMock()
+        _pull(repo, logger)
+
+        # Check a new sync log was created
+        sync_log = SyncLog.objects.get(action=SyncLog.ACTION_PULL)
+        self.assertEqual(sync_log.commit_id, pontoon_commit_id)
+
+        # Check the translated string was inserted, but the error was detected
+        string_translation = StringTranslation.objects.get()
+        self.assertEqual(string_translation.translation_of.data, "Some test translatable content")
+        self.assertEqual(string_translation.data, "<script>foo()</script>")
+        self.assertEqual(string_translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
+        self.assertEqual(string_translation.tool_name, "Pontoon")
+        self.assertTrue(string_translation.has_error)
+
+    def test_pull_without_changes(self):
+        page, source, translation, resource = self.make_test_resource()
+
+        # Set up repo
+        repo = self.make_test_repo()
+
+        # page into repo and commit
+        push_commit_id = self.commit_translation(repo, resource, translation)
+
+        # Add a SyncLog entry
+        # Wagtail uses the synclog to know when to detect changes from
+        SyncLog.objects.create(action=SyncLog.ACTION_PUSH, commit_id=push_commit_id)
+
+        # Run the pull code
+        logger = mock.MagicMock()
+        _pull(repo, logger)
+
+        # No sync log should've been created
+        self.assertFalse(SyncLog.objects.filter(action=SyncLog.ACTION_PULL).exists())
+
+    @unittest.expectedFailure
+    def test_pull_empty_repo(self):
+        # Set up remote repos
+        remote_repo_dir, remote_repo = self.make_repo()
+        local_repo_dir, local_repo = self.clone_repo(remote_repo_dir)
+
+        logger = mock.MagicMock()
+
+        _pull(local_repo, logger)
 
 
 class TestPush(TestCase):

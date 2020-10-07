@@ -30,7 +30,7 @@ def _pull(repo, logger):
 
     importer = Importer(current_commit_id, logger)
     for filename, old_content, new_content in repo.get_changed_files(
-        last_commit_id, repo.get_head_commit_id()
+        last_commit_id, current_commit_id
     ):
         logger.info(f"Pull: Importing changes in file '{filename}'")
         po = polib.pofile(new_content.decode("utf-8"))
