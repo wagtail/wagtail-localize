@@ -351,6 +351,7 @@ def edit_translation(request, translation, instance):
     tab_helper = TabHelper(source_instance)
 
     breadcrumb = []
+    title_segment_id = None
     if isinstance(instance, Page):
         # find the closest common ancestor of the pages that this user has direct explore permission
         # (i.e. add/edit/publish/lock) over; this will be the root of the breadcrumb
@@ -365,6 +366,12 @@ def edit_translation(request, translation, instance):
                 }
                 for page in instance.get_ancestors(inclusive=False).descendant_of(cca, inclusive=True)
             ]
+
+        # Set to the ID of a string segment that represents the title.
+        # If this segment has a translation, the title will be replaced with that translation.
+        title_segment = string_segments.filter(context__path='title').first()
+        if title_segment:
+            title_segment_id = title_segment.id
 
     machine_translator = None
     translator = get_machine_translator()
@@ -476,6 +483,7 @@ def edit_translation(request, translation, instance):
         'props': json.dumps({
             'object': {
                 'title': str(instance),
+                'titleSegmentId': title_segment_id,
                 'isLive': is_live,
                 'isLocked': is_locked,
                 'lastPublishedDate': last_published_at.strftime('%-d %B %Y') if last_published_at is not None else None,
