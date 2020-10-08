@@ -172,3 +172,28 @@ class RelatedObjectSegmentValue(BaseValue):
         return "<RelatedObjectSegmentValue {} {} {}>".format(
             self.path, self.content_type, self.translation_key
         )
+
+
+class OverridableSegmentValue(BaseValue):
+    def __init__(self, path, data, **kwargs):
+        self.data = data
+
+        super().__init__(path, **kwargs)
+
+    def clone(self):
+        return OverridableSegmentValue(
+            self.path, self.data, order=self.order
+        )
+
+    def is_empty(self):
+        return self.data in ["", None]
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, OverridableSegmentValue)
+            and self.path == other.path
+            and self.data == other.data
+        )
+
+    def __repr__(self):
+        return "<OverridableSegmentValue {} '{}'>".format(self.path, self.data)

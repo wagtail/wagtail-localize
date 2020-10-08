@@ -24,15 +24,19 @@ from wagtail.admin.edit_handlers import TabbedInterface
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core.blocks import StructBlock
+from wagtail.core import blocks
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
 from wagtail.core.utils import cautious_slugify
+from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.documents.models import AbstractDocument
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.models import AbstractImage
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
 from wagtail_localize.machine_translators import get_machine_translator
-from wagtail_localize.models import Translation, StringTranslation, StringSegment
+from wagtail_localize.models import Translation, StringTranslation, StringSegment, OverridableSegment, SegmentOverride
 from wagtail_localize.segments import StringSegmentValue
 
 
@@ -66,6 +70,26 @@ class StringTranslationSerializer(serializers.ModelSerializer):
     class Meta:
         model = StringTranslation
         fields = ['string_id', 'segment_id', 'data', 'error', 'comment', 'last_translated_by']
+
+
+class SegmentOverrideSerializer(serializers.ModelSerializer):
+    segment_id = serializers.SerializerMethodField('get_segment_id')
+    error = serializers.ReadOnlyField(source='get_error')
+
+    def get_segment_id(self, override):
+        if 'translation_source' in self.context:
+            translation_source = self.context['translation_source']
+
+            try:
+                return translation_source.overridablesegment_set.only('id').get(
+                    context_id=override.context_id,
+                ).id
+            except OverridableSegment.DoesNotExist:
+                return
+
+    class Meta:
+        model = SegmentOverride
+        fields = ['segment_id', 'data', 'error']
 
 
 class TabHelper:
@@ -122,13 +146,65 @@ class TabHelper:
             return self.tabs[0]
 
 
-def get_segment_location_info(source_instance, tab_helper, segment):
-    context = segment.context
-    context_path_components = context.path.split('.')
-    field = segment.source.specific_content_type.model_class()._meta.get_field(context_path_components[0])
+def get_segment_location_info(source_instance, tab_helper, content_path, widget=False):
+    context_path_components = content_path.split('.')
+    field = source_instance._meta.get_field(context_path_components[0])
 
     # Work out which tab the segment is on from edit handler
     tab = cautious_slugify(tab_helper.get_field_tab(field.name))
+
+    def widget_from_field(field):
+        if isinstance(field, models.ForeignKey):
+            if issubclass(field.related_model, Page):
+                # TODO: Allowed page types
+                return {
+                    'type': 'page_chooser'
+                }
+
+            elif issubclass(field.related_model, AbstractDocument):
+                return {
+                    'type': 'document_chooser'
+                }
+
+            elif issubclass(field.related_model, AbstractImage):
+                return {
+                    'type': 'image_chooser'
+                }
+
+        elif isinstance(field, (models.CharField, models.TextField, models.EmailField, models.URLField)):
+            return {
+                'type': 'text',
+            }
+
+        return {
+            'type': 'unknown'
+        }
+
+    def widget_from_block(block):
+        if isinstance(block, blocks.PageChooserBlock):
+            # TODO: Allowed page types
+            return {
+                'type': 'page_chooser'
+            }
+
+        elif isinstance(block, DocumentChooserBlock):
+            return {
+                'type': 'document_chooser'
+            }
+
+        elif isinstance(block, ImageChooserBlock):
+            return {
+                'type': 'image_chooser'
+            }
+
+        elif isinstance(block, (blocks.CharBlock, blocks.TextBlock, blocks.EmailBlock, blocks.URLBlock)):
+            return {
+                'type': 'text',
+            }
+
+        return {
+            'type': 'unknown'
+        }
 
     if isinstance(field, StreamField):
         stream_value = field.value_from_object(source_instance)
@@ -140,7 +216,7 @@ def get_segment_location_info(source_instance, tab_helper, segment):
         block_value = stream_blocks_by_id[block_id]
         block_type = stream_value.stream_block.child_blocks[block_value.block_type]
 
-        if isinstance(block_type, StructBlock):
+        if isinstance(block_type, blocks.StructBlock):
             block_field_name = context_path_components[2]
             block_field = block_type.child_blocks[block_field_name].label
         else:
@@ -152,6 +228,7 @@ def get_segment_location_info(source_instance, tab_helper, segment):
             'blockId': block_id,
             'fieldHelpText': '',
             'subField': block_field,
+            'widget': widget_from_block(block_type.child_blocks[block_field_name]) if widget else None,
         }
 
     elif (
@@ -167,6 +244,7 @@ def get_segment_location_info(source_instance, tab_helper, segment):
             'blockId': context_path_components[1],
             'fieldHelpText': force_text(child_field.help_text),
             'subField': capfirst(force_text(child_field.verbose_name)),
+            'widget': widget_from_field(child_field) if widget else None,
         }
 
     else:
@@ -176,6 +254,7 @@ def get_segment_location_info(source_instance, tab_helper, segment):
             'blockId': None,
             'fieldHelpText': force_text(field.help_text),
             'subField': None,
+            'widget': widget_from_field(field) if widget else None,
         }
 
 
@@ -266,6 +345,9 @@ def edit_translation(request, translation, instance):
     string_segments = translation.source.stringsegment_set.all().order_by('order')
     string_translations = string_segments.get_translations(translation.target_locale)
 
+    overridable_segments = translation.source.overridablesegment_set.all().order_by('order')
+    segment_overrides = overridable_segments.get_overrides(translation.target_locale)
+
     tab_helper = TabHelper(source_instance)
 
     breadcrumb = []
@@ -291,6 +373,34 @@ def edit_translation(request, translation, instance):
             'name': force_text(translator.display_name),
             'url': reverse('wagtail_localize:machine_translate', args=[translation.id]),
         }
+
+    string_segment_data = [
+        {
+            'type': 'string',
+            'id': segment.id,
+            'contentPath': segment.context.path,
+            'source': segment.string.data,
+            'location': get_segment_location_info(source_instance, tab_helper, segment.context.path),
+            'editUrl': reverse('wagtail_localize:edit_string_translation', kwargs={'translation_id': translation.id, 'string_segment_id': segment.id}),
+            'order': segment.order,
+        }
+        for segment in string_segments
+    ]
+    syncronised_value_segment_data = [
+        {
+            'type': 'synchronised_value',
+            'id': segment.id,
+            'contentPath': segment.context.path,
+            'location': get_segment_location_info(source_instance, tab_helper, segment.context.path, widget=True),
+            'value': segment.data,
+            'editUrl': reverse('wagtail_localize:edit_override', kwargs={'translation_id': translation.id, 'overridable_segment_id': segment.id}),
+            'order': segment.order,
+        }
+        for segment in overridable_segments
+    ]
+
+    segments = string_segment_data + syncronised_value_segment_data
+    segments.sort(key=lambda segment: segment['order'])
 
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
         # These props are passed directly to the TranslationEditor react component
@@ -349,21 +459,13 @@ def edit_translation(request, translation, instance):
                 for mode, label in (instance.preview_modes if isinstance(instance, Page) else [])
             ],
             'machineTranslator': machine_translator,
-            'segments': [
-                {
-                    'id': segment.id,
-                    'contentPath': segment.context.path,
-                    'source': segment.string.data,
-                    'location': get_segment_location_info(source_instance, tab_helper, segment),
-                    'editUrl': reverse('wagtail_localize:edit_string_translation', kwargs={'translation_id': translation.id, 'string_segment_id': segment.id}),
-                }
-                for segment in string_segments
-            ],
+            'segments': segments,
 
             # We serialize the translation data using Django REST Framework.
             # This gives us a consistent representation with the APIs so we
             # can dynamically update translations in the view.
             'initialStringTranslations': StringTranslationSerializer(string_translations, many=True, context={'translation_source': translation.source}).data,
+            'initialOverrides': SegmentOverrideSerializer(segment_overrides, many=True, context={'translation_source': translation.source}).data,
         })
     })
 
@@ -482,6 +584,45 @@ def edit_string_translation(request, translation_id, string_segment_id):
             string_translation.delete()
 
             return Response(StringTranslationSerializer(string_translation, context={'translation_source': translation.source}).data, status=status.HTTP_200_OK)
+
+        else:
+            # Note: this is still considered a success in the frontend
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['PUT', 'DELETE'])
+def edit_override(request, translation_id, overridable_segment_id):
+    translation = get_object_or_404(Translation, id=translation_id)
+    overridable_segment = get_object_or_404(OverridableSegment, id=overridable_segment_id)
+
+    if overridable_segment.context.object_id != translation.source.object_id:
+        raise Http404
+
+    instance = translation.get_target_instance()
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
+
+    if request.method == 'PUT':
+        override, created = SegmentOverride.objects.update_or_create(
+            locale_id=translation.target_locale_id,
+            context_id=overridable_segment.context_id,
+            defaults={
+                'data': request.POST['value'],
+            }
+        )
+
+        return Response(SegmentOverrideSerializer(override, context={'translation_source': translation.source}).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    elif request.method == 'DELETE':
+        override = SegmentOverride.objects.filter(
+            locale_id=translation.target_locale_id,
+            context_id=overridable_segment.context_id,
+        ).first()
+
+        if override:
+            override.delete()
+
+            return Response(SegmentOverrideSerializer(override, context={'translation_source': translation.source}).data, status=status.HTTP_200_OK)
 
         else:
             # Note: this is still considered a success in the frontend

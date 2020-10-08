@@ -9,6 +9,7 @@ from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
     RelatedObjectSegmentValue,
+    OverridableSegmentValue,
 )
 
 from ..fields import get_translatable_fields
@@ -16,16 +17,19 @@ from ..strings import extract_strings
 
 
 class StreamFieldSegmentExtractor:
-    def __init__(self, field):
+    def __init__(self, field, include_overridables=False):
         self.field = field
+        self.include_overridables = include_overridables
 
     def handle_block(self, block_type, block_value):
         if hasattr(block_type, "get_translatable_segments"):
             return block_type.get_translatable_segments(block_value)
 
         elif isinstance(block_type, (blocks.URLBlock, blocks.EmailBlock)):
-            # TODO: Make overridable
-            return []
+            if self.include_overridables:
+                return [OverridableSegmentValue("", block_value)]
+            else:
+                return []
 
         elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock, blocks.BlockQuoteBlock)):
             return [StringSegmentValue("", block_value)]
@@ -53,10 +57,13 @@ class StreamFieldSegmentExtractor:
         return []
 
     def handle_related_object_block(self, related_object):
-        if related_object is None or not isinstance(related_object, TranslatableMixin):
+        if related_object is None:
             return []
 
-        return [RelatedObjectSegmentValue.from_instance("", related_object)]
+        if isinstance(related_object, TranslatableMixin):
+            return [RelatedObjectSegmentValue.from_instance("", related_object)]
+        else:
+            return [OverridableSegmentValue("", related_object.pk)]
 
     def handle_struct_block(self, struct_block):
         segments = []
@@ -90,52 +97,73 @@ def extract_segments(instance):
     segments = []
 
     for translatable_field in get_translatable_fields(instance.__class__):
-        if not translatable_field.is_translated(instance):
-            continue
-
         field = translatable_field.get_field(instance.__class__)
+        is_translatable = translatable_field.is_translated(instance)
+        is_synchronized = translatable_field.is_synchronized(instance)
 
         if hasattr(field, "get_translatable_segments"):
-            segments.extend(
-                segment.wrap(field.name)
-                for segment in field.get_translatable_segments(
-                    field.value_from_object(instance)
+            if is_translatable:
+                segments.extend(
+                    segment.wrap(field.name)
+                    for segment in field.get_translatable_segments(
+                        field.value_from_object(instance)
+                    )
                 )
-            )
 
         elif isinstance(field, StreamField):
-            segments.extend(
-                segment.wrap(field.name)
-                for segment in StreamFieldSegmentExtractor(field).handle_stream_block(
-                    field.value_from_object(instance)
+            if is_translatable:
+                segments.extend(
+                    segment.wrap(field.name)
+                    for segment in StreamFieldSegmentExtractor(field, include_overridables=is_synchronized).handle_stream_block(
+                        field.value_from_object(instance)
+                    )
                 )
-            )
 
         elif isinstance(field, RichTextField):
-            template, strings = extract_strings(field.value_from_object(instance))
+            if is_translatable:
+                template, strings = extract_strings(field.value_from_object(instance))
 
-            field_segments = [TemplateSegmentValue("", "html", template, len(strings))] + [
-                StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
-            ]
+                field_segments = [TemplateSegmentValue("", "html", template, len(strings))] + [
+                    StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
+                ]
 
-            segments.extend(segment.wrap(field.name) for segment in field_segments)
+                segments.extend(segment.wrap(field.name) for segment in field_segments)
+
+            if is_synchronized:
+                pass  # TODO: Extract images and links
 
         elif isinstance(field, (models.TextField, models.CharField)):
             if not field.choices:
-                segments.append(
-                    StringSegmentValue(field.name, field.value_from_object(instance))
-                )
+                if is_translatable:
+                    segments.append(
+                        StringSegmentValue(field.name, field.value_from_object(instance))
+                    )
 
-        elif isinstance(field, (models.ForeignKey)) and issubclass(
-            field.related_model, TranslatableMixin
-        ):
-            related_instance = getattr(instance, field.name)
+                elif is_synchronized:
+                    segments.append(
+                        OverridableSegmentValue(field.name, field.value_from_object(instance))
+                    )
 
-            if related_instance:
-                segments.append(
-                    RelatedObjectSegmentValue.from_instance(field.name, related_instance)
-                )
+        elif isinstance(field, (models.ForeignKey)):
+            if is_translatable:
+                if not issubclass(field.related_model, TranslatableMixin):
+                    # TODO: ImproperlyConfiguredError
+                    raise Exception
 
+                related_instance = getattr(instance, field.name)
+
+                if related_instance:
+                    segments.append(
+                        RelatedObjectSegmentValue.from_instance(field.name, related_instance)
+                    )
+
+            elif is_synchronized:
+                related_instance = getattr(instance, field.name)
+
+                if related_instance:
+                    segments.append(
+                        OverridableSegmentValue(field.name, related_instance.pk)
+                    )
         elif (
             isinstance(field, (models.ManyToOneRel))
             and isinstance(field.remote_field, ParentalKey)
@@ -143,11 +171,15 @@ def extract_segments(instance):
         ):
             manager = getattr(instance, field.name)
 
-            for child_instance in manager.all():
-                segments.extend(
-                    segment.wrap(str(child_instance.translation_key)).wrap(field.name)
-                    for segment in extract_segments(child_instance)
-                )
+            if is_translatable:
+                for child_instance in manager.all():
+                    segments.extend(
+                        segment.wrap(str(child_instance.translation_key)).wrap(field.name)
+                        for segment in extract_segments(child_instance)
+                    )
+
+            elif is_synchronized:
+                pass  # TODO
 
     class Counter:
         def __init__(self):

@@ -20,5 +20,8 @@
     {% include "wagtailadmin/pages/_editor_js.html" %}
 
     <script type="text/javascript" src="{% url 'wagtail_localize:javascript_catalog' %}"></script>
+    <script type="text/javascript" src="{% versioned_static 'wagtailadmin/js/page-chooser-modal.js' %}"></script>
+    <script type="text/javascript" src="{% versioned_static 'wagtailimages/js/image-chooser-modal.js' %}"></script>
+    <script type="text/javascript" src="{% versioned_static 'wagtaildocs/js/document-chooser-modal.js' %}"></script>
     <script type="text/javascript" src="{% versioned_static 'wagtail_localize/js/wagtail-localize.js' %}"></script>
 {% endblock %}

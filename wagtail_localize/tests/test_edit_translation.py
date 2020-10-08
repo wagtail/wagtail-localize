@@ -158,9 +158,9 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Test charfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
-        self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None})
-        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Test textblock', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Test charfield', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Test textblock', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None, 'widget': None})
         # TODO: Examples that use fieldHelpText and subField
 
     def test_edit_page_translation_with_multi_mode_preview(self):
@@ -243,7 +243,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': '', 'field': 'Field', 'blockId': None, 'fieldHelpText': '', 'subField': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': '', 'field': 'Field', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
 
     def test_cant_edit_snippet_translation_without_perms(self):
         self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()

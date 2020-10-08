@@ -43,19 +43,40 @@ export interface PreviewMode {
     url: string;
 }
 
-export interface StringSegment {
+export interface SegmentCommon {
     id: number;
     contentPath: string;
-    source: string;
     location: {
         tab: string;
         field: string;
         blockId: string | null;
         subField: string | null;
         helpText: string;
+
+        widget: {
+            type:
+                | 'text'
+                | 'page_chooser'
+                | 'image_chooser'
+                | 'document_chooser'
+                | 'unknown';
+        };
     };
+}
+
+export interface StringSegment extends SegmentCommon {
+    type: 'string';
+    source: string;
     editUrl: string;
 }
+
+export interface SynchronisedValueSegment extends SegmentCommon {
+    type: 'synchronised_value';
+    value: any;
+    editUrl: string;
+}
+
+export type Segment = StringSegment | SynchronisedValueSegment;
 
 export interface StringTranslationAPI {
     string_id: number;
@@ -72,6 +93,17 @@ export interface StringTranslation {
     isErrored: boolean;
     comment: string;
     translatedBy: User | null;
+}
+
+export interface SegmentOverrideAPI {
+    segment_id: number;
+    data: any;
+    error: string;
+}
+
+export interface SegmentOverride {
+    value: any;
+    isSaving: boolean;
 }
 
 export interface EditorProps {
@@ -111,8 +143,9 @@ export interface EditorProps {
         name: string;
         url: string;
     } | null;
-    segments: StringSegment[];
+    segments: Segment[];
     initialStringTranslations: StringTranslationAPI[];
+    initialOverrides: SegmentOverrideAPI[];
 }
 
 const TranslationEditor: FunctionComponent<EditorProps> = props => {
@@ -130,10 +163,21 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
         });
     });
 
+    // Same with initialSegmentOverrides
+    const segmentOverrides: Map<number, SegmentOverride> = new Map();
+    props.initialOverrides.forEach(override => {
+        segmentOverrides.set(override.segment_id, {
+            value: override.data,
+            isSaving: false
+        });
+    });
+
     // Set up initial state
     const initialState: EditorState = {
-        stringTranslations
+        stringTranslations,
+        segmentOverrides
     };
+
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
     const tabData = props.tabs
@@ -141,8 +185,10 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
             const segments = props.segments.filter(
                 segment => segment.location.tab == tab.slug
             );
-            const translations = segments.map(segment =>
-                state.stringTranslations.get(segment.id)
+            const translations = segments.map(
+                segment =>
+                    segment.type == 'string' &&
+                    state.stringTranslations.get(segment.id)
             );
 
             return {

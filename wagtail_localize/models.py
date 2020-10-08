@@ -33,7 +33,7 @@ from modelcluster.models import (
 from wagtail.core.models import Page, get_translatable_models
 
 from .fields import copy_synchronised_fields
-from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue
+from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue
@@ -327,6 +327,7 @@ class TranslationSource(models.Model):
         seen_string_segment_ids = []
         seen_template_segment_ids = []
         seen_related_object_segment_ids = []
+        seen_overridable_segment_ids = []
 
         for segment in extract_segments(self.as_instance()):
             if isinstance(segment, TemplateSegmentValue):
@@ -337,6 +338,10 @@ class TranslationSource(models.Model):
                 seen_related_object_segment_ids.append(
                     RelatedObjectSegment.from_value(self, segment).id
                 )
+            elif isinstance(segment, OverridableSegmentValue):
+                seen_overridable_segment_ids.append(
+                    OverridableSegment.from_value(self, segment).id
+                )
             else:
                 seen_string_segment_ids.append(
                     StringSegment.from_value(self, self.locale, segment).id
@@ -346,6 +351,7 @@ class TranslationSource(models.Model):
         self.stringsegment_set.exclude(id__in=seen_string_segment_ids).delete()
         self.templatesegment_set.exclude(id__in=seen_template_segment_ids).delete()
         self.relatedobjectsegment_set.exclude(id__in=seen_related_object_segment_ids).delete()
+        self.overridablesegment_set.exclude(id__in=seen_overridable_segment_ids).delete()
 
     def export_po(self):
         """
@@ -398,6 +404,13 @@ class TranslationSource(models.Model):
             .select_related("context")
         )
 
+        overridable_segments = (
+            OverridableSegment.objects.filter(source=self)
+            .annotate_override(locale)
+            .filter(override__isnull=False)
+            .select_related("context")
+        )
+
         segments = []
 
         for string_segment in string_segments:
@@ -442,6 +455,14 @@ class TranslationSource(models.Model):
                 continue
             else:
                 raise MissingRelatedObjectError(related_object_segment, locale)
+
+        for overridable_segment in overridable_segments:
+            segment_value = OverridableSegmentValue(
+                overridable_segment.context.path,
+                overridable_segment.override,
+                order=overridable_segment.order,
+            )
+            segments.append(segment_value)
 
         return segments
 
@@ -1037,6 +1058,20 @@ class Template(models.Model):
         return template
 
 
+class SegmentOverride(models.Model):
+    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE, related_name="overrides")
+    context = models.ForeignKey(
+        TranslationContext,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="overrides",
+    )
+    data = models.JSONField()
+
+    # TODO Created at / created by
+
+
 class BaseSegment(models.Model):
     source = models.ForeignKey(TranslationSource, on_delete=models.CASCADE)
     context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
@@ -1172,6 +1207,61 @@ class RelatedObjectSegment(BaseSegment):
                 content_type=value.content_type,
                 translation_key=value.translation_key,
             )[0],
+        )
+
+        return segment
+
+
+class OverridableSegmentQuerySet(models.QuerySet):
+    def annotate_override(self, locale):
+        """
+        Adds an 'override' field to the segments containing the
+        overridden data for segments that have been overriden.
+        """
+        overrides = SegmentOverride.objects.filter(
+            locale_id=pk(locale),
+            context_id=OuterRef("context_id"),
+        )
+
+        return self.annotate(
+            override=Subquery(
+                overrides.values("data")
+            )
+        )
+
+    def get_overrides(self, locale):
+        """
+        Returns a queryset of SegmentOverrides that override any of the
+        segments in this queryset.
+        """
+        return SegmentOverride.objects.filter(
+            id__in=self.annotate(
+                override_id=Subquery(
+                    SegmentOverride.objects.filter(
+                        locale_id=pk(locale),
+                        context_id=OuterRef("context_id"),
+                    ).values("id")
+                )
+            ).values_list('override_id', flat=True)
+        )
+
+
+class OverridableSegment(BaseSegment):
+    data = models.JSONField()
+
+    objects = OverridableSegmentQuerySet.as_manager()
+
+    @classmethod
+    def from_value(cls, source, value):
+        context, context_created = TranslationContext.objects.get_or_create(
+            object_id=source.object_id, path=value.path,
+        )
+
+        segment, created = cls.objects.get_or_create(
+            source=source,
+            context=context,
+            order=value.order,
+            data=value.data,
         )
 
         return segment
