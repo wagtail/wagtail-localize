@@ -503,6 +503,10 @@ class TranslationSource(models.Model):
                 ingest_segments(original, translation, self.locale, locale, segments)
 
                 if isinstance(translation, Page):
+                    # Convert the page into a regular page
+                    # TODO: Audit logging, etc
+                    translation.alias_of_id = None
+
                     # Make sure the slug is valid
                     translation.slug = find_available_slug(translation.get_parent(), slugify(translation.slug), ignore_page_id=translation.id)
                     translation.save()
