@@ -111,7 +111,8 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
     breadcrumb,
     sourceLocale,
     locale,
-    translations
+    translations,
+    stringTranslations
 }) => {
     // Build actions
     let actions = [];
@@ -162,9 +163,22 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
         />
     ];
 
+    // Title
+    // Allow the title to be overridden by the segment that represents the "title" field on Pages.
+    let title = object.title;
+    if (object.titleSegmentId) {
+        Array.from(stringTranslations.entries()).forEach(
+            ([segmentId, stringTranslation]) => {
+                if (segmentId == object.titleSegmentId) {
+                    title = stringTranslation.value;
+                }
+            }
+        );
+    }
+
     return (
         <Header
-            title={object.title}
+            title={title}
             breadcrumb={breadcrumb}
             actions={actions}
             meta={meta}
