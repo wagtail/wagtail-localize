@@ -247,12 +247,25 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         self.assertTrue(created)
         self.assertEqual(new_page.title, "Test page")
+        self.assertEqual(new_page.slug, 'test-page-fr')
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
         self.assertTrue(
             self.source.translation_logs.filter(locale=self.dest_locale).exists()
         )
+
+    def test_create_finds_available_slug(self):
+        # Create a page with the `test-page-fr` slug already
+        create_test_page(
+            title="Test Page FR",
+            slug="test-page-fr",
+        )
+
+        new_page, created = self.source.create_or_update_translation(self.dest_locale)
+
+        self.assertTrue(created)
+        self.assertEqual(new_page.slug, 'test-page-fr-1')
 
     def test_create_child(self):
         child_page = create_test_page(
