@@ -466,7 +466,7 @@ def edit_translation(request, translation, instance):
             'type': 'related_object',
             'id': segment.id,
             'contentPath': segment.context.path,
-            'location': get_segment_location_info(source_instance, tab_helper, segment),
+            'location': get_segment_location_info(source_instance, tab_helper, segment.context.path),
             'order': segment.order,
             'source': get_source_object_info(segment),
             'dest': get_dest_object_info(segment),
