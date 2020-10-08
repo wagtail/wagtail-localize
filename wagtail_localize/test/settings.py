@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["localhost", "testserver"]
 
 INSTALLED_APPS = [
     "wagtail_localize",
+    "wagtail_localize.git",
     "wagtail_localize.test",
     "wagtail.contrib.search_promotions",
     "wagtail.contrib.forms",
@@ -154,7 +155,7 @@ STATICFILES_DIRS = [os.path.join(PROJECT_DIR, "static")]
 STATIC_ROOT = os.path.join(PROJECT_DIR, "collect_static")
 STATIC_URL = "/static/"
 
-MEDIA_ROOT = os.path.join(PROJECT_DIR, "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 
