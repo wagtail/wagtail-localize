@@ -18,9 +18,11 @@ from django.db.models import (
     Subquery,
     Exists,
     OuterRef,
-    Q
+    Q,
+    F
 )
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.text import capfirst, slugify
@@ -1011,6 +1013,28 @@ class StringTranslation(models.Model):
 
         elif self.translation_type == self.TRANSLATION_TYPE_MACHINE:
             return _("Machine translated on {date}").format(date=self.updated_at.strftime(DATE_FORMAT))
+
+
+@receiver(post_save, sender=StringTranslation)
+def post_save_string_translation(instance, **kwargs):
+    # If the StringTranslation is for a page title, update that page's draft_title field
+    if instance.context.path == 'title':
+        # Note: if this StringTranslation isn't for a page, this should do nothing
+        Page.objects.filter(
+            translation_key=instance.context.object_id,
+            locale_id=instance.locale_id
+        ).update(draft_title=instance.data)
+
+
+@receiver(post_delete, sender=StringTranslation)
+def post_delete_string_translation(instance, **kwargs):
+    # If the StringTranslation is for a page title, reset that page's draft title to the main title
+    if instance.context.path == 'title':
+        # Note: if this StringTranslation isn't for a page, this should do nothing
+        Page.objects.filter(
+            translation_key=instance.context.object_id,
+            locale_id=instance.locale_id
+        ).update(draft_title=F('title'))
 
 
 class Template(models.Model):

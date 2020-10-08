@@ -78,6 +78,7 @@ export interface EditorProps {
     csrfToken: string;
     object: {
         title: string;
+        titleSegmentId: number | null;
         isLive: boolean;
         isLocked: boolean;
         lastPublishedDate: string | null;
