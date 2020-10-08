@@ -24,6 +24,9 @@ from wagtail.snippets.widgets import SnippetListingButton
 from .models import Translation, TranslationSource
 from .views import edit_translation, submit_translations, update_translations
 
+# Import synctree so it can register its signal handler
+from . import synctree  # noqa
+
 
 @hooks.register("register_admin_urls")
 def register_admin_urls():

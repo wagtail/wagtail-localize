@@ -164,7 +164,7 @@ WAGTAIL_SITE_NAME = "Wagtail localize test project"
 
 WAGTAIL_I18N_ENABLED = True
 
-LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [("en", "English"), ("fr", "French"), ("es", "Spanish")]
+LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [("en", "English"), ("fr", "French"), ("fr-CA", "French (Canada)"), ("es", "Spanish")]
 
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
     'CLASS': 'wagtail_localize.machine_translators.dummy.DummyTranslator',
