@@ -271,6 +271,16 @@ const BlockSegments = styled.ul`
             border: 1px solid #cd3238 !important;
         }
 
+        &.incomplete {
+            // !important required to override the border-bottom rule just below
+            border-left: 5px solid #f37e77 !important;
+        }
+
+        &.complete {
+            // !important required to override the border-bottom rule just below
+            border-left: 5px solid #007d7e !important;
+        }
+
         &:not(:last-child) {
             border-bottom: 1px solid #eaeaea;
         }
@@ -468,8 +478,15 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
         value = <p>{translation && translation.value}</p>;
     }
 
+    let className = 'complete';
+    if (!translation) {
+        className = 'incomplete';
+    } else if (translation.isErrored) {
+        className = 'errored';
+    }
+
     return (
-        <li className={translation && translation.isErrored ? 'errored' : ''}>
+        <li className={className}>
             {segment.location.subField && (
                 <SegmentFieldLabel>
                     {segment.location.subField}
