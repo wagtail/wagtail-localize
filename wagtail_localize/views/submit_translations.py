@@ -41,8 +41,14 @@ class SubmitTranslationForm(forms.Form):
         if hide_include_subtree:
             self.fields["include_subtree"].widget = forms.HiddenInput()
 
+        existing_translations = instance.get_translations(inclusive=True)
+
+        # Don't count page aliases as existing translations. We can convert aliases into properly translated pages
+        if isinstance(instance, Page):
+            existing_translations = existing_translations.exclude(alias_of__isnull=False)
+
         self.fields["locales"].queryset = Locale.objects.exclude(
-            id__in=instance.get_translations(inclusive=True).exclude(alias_of__isnull=False).values_list('locale_id', flat=True)
+            id__in=existing_translations.values_list('locale_id', flat=True)
         )
 
         # Using len() instead of count() here as we're going to evaluate this queryset
