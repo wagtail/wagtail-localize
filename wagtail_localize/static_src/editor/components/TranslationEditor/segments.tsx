@@ -485,6 +485,10 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
     );
 };
 
+const ChooserWrapper = styled.div`
+    padding: 0.9em 1.2em;
+`;
+
 interface EditorSynchronisedValueSegmentProps {
     segment: SynchronisedValueSegment;
     override?: SegmentOverride;
@@ -589,16 +593,12 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             );
         }
 
-        const Wrapper = styled.div`
-            padding: 0.9em 1.2em;
-        `;
-
         value = (
-            <Wrapper>
+            <ChooserWrapper>
                 <PageChooser
                     pageId={(override && override.value) || segment.value}
                 />
-            </Wrapper>
+            </ChooserWrapper>
         );
     } else if (segment.location.widget.type == 'image_chooser') {
         const onClickChangeImage = () => {
@@ -625,16 +625,12 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             );
         }
 
-        const Wrapper = styled.div`
-            padding: 0.9em 1.2em;
-        `;
-
         value = (
-            <Wrapper>
+            <ChooserWrapper>
                 <ImageChooser
                     imageId={(override && override.value) || segment.value}
                 />
-            </Wrapper>
+            </ChooserWrapper>
         );
     } else if (segment.location.widget.type == 'document_chooser') {
         const onClickChangeDocument = () => {
@@ -661,16 +657,12 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             );
         }
 
-        const Wrapper = styled.div`
-            padding: 0.9em 1.2em;
-        `;
-
         value = (
-            <Wrapper>
+            <ChooserWrapper>
                 <DocumentChooser
                     documentId={(override && override.value) || segment.value}
                 />
-            </Wrapper>
+            </ChooserWrapper>
         );
     } else {
         value = <p>{segment.value}</p>;
@@ -831,6 +823,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                     case 'synchronised_value': {
                         return (
                             <EditorSynchronisedValueSegment
+                                key={segment.id}
                                 segment={segment}
                                 override={segmentOverrides.get(segment.id)}
                                 sourceLocale={sourceLocale}
@@ -841,7 +834,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                         );
                     }
                     case 'related_object': {
-                        return <EditorRelatedObjectSegment segment={segment} />;
+                        return <EditorRelatedObjectSegment key={segment.id} segment={segment} />;
                     }
                 }
             });
