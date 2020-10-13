@@ -125,7 +125,13 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
         if self.request.method == 'POST':
             return SubmitTranslationForm(self.object, self.request.POST)
         else:
-            return SubmitTranslationForm(self.object)
+            initial = None
+            if self.request.GET.get('select_locale', None):
+                select_locale = Locale.objects.filter(language_code=self.request.GET['select_locale']).first()
+                if select_locale:
+                    initial = {'locales': [select_locale]}
+
+            return SubmitTranslationForm(self.object, initial=initial)
 
     def get_success_url(self):
         return get_valid_next_url_from_request(self.request)

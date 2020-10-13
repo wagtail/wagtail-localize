@@ -124,9 +124,11 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
 
 @hooks.register("before_edit_page")
 def before_edit_page(request, page):
+    # If the page is an alias of a page in another locale, override the edit page so that we can show a "Translate this page" option
+    if page.alias_of and page.alias_of.locale is not page.locale:
+        return edit_translation.edit_translatable_alias_page(request, page)
+
     # Check if the user has clicked the "Restart Translation" menu item
-    if request.method == 'POST' and 'localize-restart-translation' in request.POST:
-        try:
             translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=False)
         except Translation.DoesNotExist:
             pass

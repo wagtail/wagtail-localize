@@ -1,0 +1,17 @@
+{% extends "wagtailadmin/pages/edit.html" %}
+{% load i18n %}
+
+{% block form %}
+    <div class="nice-padding" style="padding-top: 20px;">
+        <p>{% trans "This page is an alias of another page. foo" %}</p>
+
+        <p>
+            <a class="button button-secondary" href="{% url 'wagtailadmin_pages:edit' page.alias_of_id %}">{% trans "Edit original page" %}</a>
+
+            <a class="button button-secondary" href="{% url 'wagtail_localize:submit_page_translation' page.alias_of_id %}?select_locale={{ page.locale.language_code }}">{% trans "Translate this page" %}</a>
+
+            {% url 'wagtailadmin_pages:edit' page.id as this_url %}
+            <a class="button button-secondary" href="{% url 'wagtailadmin_pages:convert_alias' page.id %}?next={{ this_url|urlencode }}">{% trans "Convert this alias into a regular page" %}</a>
+        </p>
+    </div>
+{% endblock %}
