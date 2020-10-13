@@ -568,14 +568,14 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
 
-        self.assertContains(response, "Restart translation")
+        self.assertContains(response, "Restart translation mode")
 
     def test_doesnt_show_when_no_translation_for_page(self):
         self.page_translation.delete()
 
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
 
-        self.assertNotContains(response, "Restart translation")
+        self.assertNotContains(response, "Restart translation mode")
 
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_snippet(self):
@@ -584,7 +584,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
 
-        self.assertContains(response, "Restart translation")
+        self.assertContains(response, "Restart translation mode")
 
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_when_no_translation_for_snippet(self):
@@ -592,7 +592,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
 
-        self.assertNotContains(response, "Restart translation")
+        self.assertNotContains(response, "Restart translation mode")
 
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_on_create_for_snippet(self):
