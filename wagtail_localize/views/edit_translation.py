@@ -849,3 +849,14 @@ def machine_translate(request, translation_id):
         next_url = reverse('wagtailadmin_home')
 
     return redirect(next_url)
+
+
+def edit_translatable_alias_page(request, page):
+    return render(request, 'wagtail_localize/admin/edit_translatable_alias.html', {
+        'page': page,
+        'page_for_status': page,
+        'content_type': page.cached_content_type,
+        'next': get_valid_next_url_from_request(request),
+        'locale': page.locale,
+        'translations': page.get_translations(),
+    })
