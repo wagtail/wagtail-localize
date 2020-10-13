@@ -22,10 +22,10 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
             <button
                 type="submit"
                 className="button action-secondary"
-                aria-label={gettext('Stop translation')}
+                aria-label={gettext('End translation mode')}
             >
                 <Icon name="cross" />
-                {gettext('Stop translation')}
+                {gettext('End translation mode')}
             </button>
         </form>
     ];

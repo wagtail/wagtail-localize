@@ -121,7 +121,7 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
 
 @hooks.register("before_edit_page")
 def before_edit_page(request, page):
-    # Check if the user has clicked the "Restart Translation" menu item
+    # Check if the user has clicked the "Restart Translation mode" menu item
     if request.method == 'POST' and 'localize-restart-translation' in request.POST:
         try:
             translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=False)
@@ -140,7 +140,7 @@ def before_edit_page(request, page):
 
 
 class RestartTranslationPageActionMenuItem(PageActionMenuItem):
-    label = _("Restart translation")
+    label = _("Restart translation mode")
     name = "localize-restart-translation"
     icon_name = "undo"
     classname = 'action-secondary'
@@ -165,7 +165,7 @@ def register_restart_translation_page_action_menu_item():
 @hooks.register("before_edit_snippet")
 def before_edit_snippet(request, instance):
     if isinstance(instance, TranslatableMixin):
-        # Check if the user has clicked the "Restart Translation" menu item
+        # Check if the user has clicked the "Restart Translation mode" menu item
         if request.method == 'POST' and 'localize-restart-translation' in request.POST:
             try:
                 translation = Translation.objects.get(source__object_id=instance.translation_key, target_locale_id=instance.locale_id, enabled=False)
@@ -185,7 +185,7 @@ def before_edit_snippet(request, instance):
 
 if SNIPPET_RESTART_TRANSLATION_ENABLED:
     class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
-        label = _("Restart translation")
+        label = _("Restart translation mode")
         name = "localize-restart-translation"
         icon_name = "undo"
         classname = 'action-secondary'
