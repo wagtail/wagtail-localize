@@ -20,7 +20,7 @@ from rest_framework import serializers, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.admin import messages
-from wagtail.admin.edit_handlers import TabbedInterface
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -105,16 +105,23 @@ class TabHelper:
 
     @cached_property
     def tabs(self):
+        tabs = []
+
         if isinstance(self.edit_handler, TabbedInterface):
-            tabs = []
-
             for tab in self.edit_handler.children:
-                tabs.append(tab.heading)
+                # On Pages, the TabbedInterface children are instances of ObjectList
+                # which contain the fields
+                # On Snippets, the fields can be added directly into the TabbedInterface
+                # In this case, we do not want to add any tabs and instead just fall back
+                # to the default "Content" tab added below.
+                if isinstance(tab, ObjectList):
+                    tabs.append(tab.heading)
 
-            return tabs
+        # Add a default "Content" tab if this object doesn't have any tabs
+        if not tabs:
+            tabs = [_("Content")]
 
-        else:
-            return [_("Content")]
+        return tabs
 
     @property
     def tabs_with_slugs(self):
