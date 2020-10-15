@@ -201,6 +201,8 @@ const BlockSegments = styled.ul`
 `;
 
 const SegmentFieldLabel = styled.h4`
+    margin: 0;
+    padding: 15px 20px;
     color: #007273;
     font-style: normal;
     font-weight: bold;
