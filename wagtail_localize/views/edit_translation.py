@@ -640,5 +640,11 @@ def edit_translatable_alias_page(request, page):
         'content_type': page.cached_content_type,
         'next': get_valid_next_url_from_request(request),
         'locale': page.locale,
-        'translations': page.get_translations(),
+        'translations': [
+            {
+                'locale': translation.locale,
+                'url': reverse('wagtailadmin_pages:edit', args=[translation.id]),
+            }
+            for translation in page.get_translations().only('id', 'locale').select_related('locale')
+        ],
     })
