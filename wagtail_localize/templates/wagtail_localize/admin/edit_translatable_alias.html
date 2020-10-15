@@ -3,7 +3,7 @@
 
 {% block form %}
     <div class="nice-padding" style="padding-top: 20px;">
-        <p>{% trans "This page is an alias of another page. foo" %}</p>
+        <p>{% trans "This page is an alias of another page." %}</p>
 
         <p>
             <a class="button button-secondary" href="{% url 'wagtailadmin_pages:edit' page.alias_of_id %}">{% trans "Edit original page" %}</a>
