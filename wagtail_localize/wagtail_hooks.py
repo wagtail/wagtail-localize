@@ -129,6 +129,8 @@ def before_edit_page(request, page):
         return edit_translation.edit_translatable_alias_page(request, page)
 
     # Check if the user has clicked the "Restart Translation" menu item
+    if request.method == 'POST' and 'localize-restart-translation' in request.POST:
+        try:
             translation = Translation.objects.get(source__object_id=page.translation_key, target_locale_id=page.locale_id, enabled=False)
         except Translation.DoesNotExist:
             pass
