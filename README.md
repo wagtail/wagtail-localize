@@ -48,11 +48,14 @@ LANGUAGES = [
 ]
 ```
 
-To enable Google Translate as a machine translator, add the following to your settings:
+To enable DeepL as a machine translator, add the following to your settings:
 
 ```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'wagtail_localize.machine_translators.google_translate.GoogleTranslateTranslator',
+    'CLASS': 'wagtail_localize.machine_translators.deepl.DeepLTranslator',
+    'OPTIONS': {
+        'AUTH_KEY': '<Your DeepL key here>',
+    }
 }
 ```
 
