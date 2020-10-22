@@ -9,6 +9,8 @@ from wagtail.tests.utils import WagtailTestUtils
 from wagtail_localize.models import Translation, TranslationSource, StringSegment
 from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet
 
+from .utils import assert_permission_denied
+
 
 def make_test_page(parent, cls=None, **kwargs):
     cls = cls or TestPage
@@ -261,7 +263,7 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
             )
         )
 
-        self.assertEqual(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_get_with_disabled_translation(self):
         self.page_translation.enabled = False
