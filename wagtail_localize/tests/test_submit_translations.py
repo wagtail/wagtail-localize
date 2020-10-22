@@ -9,6 +9,8 @@ from wagtail.tests.utils import WagtailTestUtils
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet
 
+from .utils import assert_permission_denied
+
 
 def make_test_page(parent, cls=None, **kwargs):
     cls = cls or TestPage
@@ -194,7 +196,7 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             )
         )
 
-        self.assertEqual(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_get_submit_page_translation_on_root_page(self):
         response = self.client.get(
@@ -402,7 +404,7 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
-        self.assertEqual(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_post_submit_page_translation_reactivates_deleted_translation(self):
         # Create a disabled translation record
@@ -629,7 +631,7 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
             )
         )
 
-        self.assertEqual(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_get_submit_snippet_translation_when_already_translated(self):
         # Locales that have been translated into shouldn't be included
@@ -726,4 +728,4 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
-        self.assertEqual(response.status_code, 403)
+        assert_permission_denied(self, response)
