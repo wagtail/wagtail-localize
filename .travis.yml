@@ -5,6 +5,9 @@ cache: pip
 services:
   - postgresql
 
+addons:
+  postgresql: "13"
+
 matrix:
   include:
    - env: TOXENV=py37-dj22-wamaster-postgres
