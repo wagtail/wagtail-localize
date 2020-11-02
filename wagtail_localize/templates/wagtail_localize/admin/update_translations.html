@@ -7,7 +7,12 @@
     {% include "wagtailadmin/shared/header.html" with title=view.get_title subtitle=view.get_subtitle icon="doc-empty-inverse" %}
 
     <div class="nice-padding">
-        <p>{% trans "You are about to update the following translations:" %}</p>
+        <div class="help-block help-info">
+            <p><b>{% trans "Why would I sync my page?" %}</b></p>
+            <p>{% trans "Changes are not automatically applied between translated pages. Syncing will add new content for translation and remove deleted content." %}</p>
+        </div>
+
+        <p>{% blocktrans with last_sync_date=last_sync_date %}The last sync date was {{ last_sync_date }}. You are about to sync the following:{% endblocktrans %}</p>
         <ul>
             {% for translation in translations %}
                 <li>

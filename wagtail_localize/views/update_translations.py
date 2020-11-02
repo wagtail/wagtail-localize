@@ -74,6 +74,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                 }
                 for translation in self.object.translations.filter(enabled=True).select_related("target_locale")
             ],
+            "last_sync_date": self.object.last_updated_at,
             "form": self.get_form(),
             "next_url": self.get_success_url(),
             "back_url": self.get_success_url() or self.get_default_success_url(),
