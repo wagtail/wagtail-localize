@@ -24,6 +24,8 @@ from wagtail_localize.models import String, StringTranslation, Translation, Tran
 from wagtail_localize.test.models import TestPage, TestSnippet
 from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
+from .utils import assert_permission_denied
+
 
 RICH_TEXT_DATA = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a>.</li><li>Special characters: \'"!? セキレイ</li></ul>'
 
@@ -192,7 +194,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
     def test_cant_edit_page_translation_without_perms(self):
         self.moderators_group.page_permissions.all().delete()
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
-        self.assertEqual(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_edit_snippet_translation(self):
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
@@ -249,8 +251,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
 
-        # User should be redirected to dashboard with an error
-        self.assertRedirects(response, reverse('wagtailadmin_home'))
+        assert_permission_denied(self, response)
 
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, 'error')
@@ -430,7 +431,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         response = self.client.post(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]), {
             'action': 'publish',
         })
-        self.assertEqual(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_publish_snippet_translation(self):
         StringTranslation.objects.create(
@@ -472,8 +473,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
             'action': 'publish',
         })
 
-        # User should be redirected to dashboard with an error
-        self.assertRedirects(response, reverse('wagtailadmin_home'))
+        assert_permission_denied(self, response)
 
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, 'error')
@@ -820,12 +820,12 @@ class TestDownloadPOFileView(EditTranslationTestData, TestCase):
     def test_cant_download_pofile_without_page_perms(self):
         self.moderators_group.page_permissions.all().delete()
         response = self.client.get(reverse('wagtail_localize:download_pofile', args=[self.page_translation.id]))
-        self.assertEquals(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_cant_download_pofile_without_snippet_perms(self):
         self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
         response = self.client.get(reverse('wagtail_localize:download_pofile', args=[self.snippet_translation.id]))
-        self.assertEquals(response.status_code, 403)
+        assert_permission_denied(self, response)
 
 
 class TestUploadPOFileView(EditTranslationTestData, TestCase):
@@ -1145,7 +1145,7 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
             'next': reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]),
         })
 
-        self.assertEquals(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_cant_upload_pofile_without_snippet_perms(self):
         self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
@@ -1163,7 +1163,7 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
             'next': reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]),
         })
 
-        self.assertEquals(response.status_code, 403)
+        assert_permission_denied(self, response)
 
 
 class TestMachineTranslateView(EditTranslationTestData, TestCase):
@@ -1321,7 +1321,7 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
             'next': reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]),
         })
 
-        self.assertEquals(response.status_code, 403)
+        assert_permission_denied(self, response)
 
     def test_cant_machine_translate_without_snippet_perms(self):
         self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()
@@ -1330,4 +1330,4 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
             'next': reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]),
         })
 
-        self.assertEquals(response.status_code, 403)
+        assert_permission_denied(self, response)
