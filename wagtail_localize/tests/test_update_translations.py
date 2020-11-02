@@ -78,7 +78,7 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
 
         self.assertContains(response, (
             f'<a href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" aria-label="" class="u-link is-live ">\n'
-            '                    Update translations\n                </a>'
+            '                    Sync translated pages\n                </a>'
         ))
 
     def test_hides_if_page_hasnt_got_translations(self):
@@ -88,7 +88,7 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        self.assertNotContains(response, "Update translations")
+        self.assertNotContains(response, "Sync translated pages")
 
     def test_hides_if_user_doesnt_have_permission(self):
         strip_user_perms()
@@ -97,7 +97,7 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        self.assertNotContains(response, "Update translations")
+        self.assertNotContains(response, "Sync translated pages")
 
 
 @override_settings(
@@ -138,7 +138,7 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
         )
 
         self.assertContains(response, (
-            f'href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F">Update translations</a>'
+            f'href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F">Sync translated snippets</a>'
         ))
 
     def test_hides_if_snippet_hasnt_got_translations(self):
@@ -148,7 +148,7 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'testsnippet'])
         )
 
-        self.assertNotContains(response, "Update translations")
+        self.assertNotContains(response, "Sync translated snippets")
 
     def test_hides_if_user_doesnt_have_permission(self):
         strip_user_perms()
@@ -157,7 +157,7 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'testsnippet'])
         )
 
-        self.assertNotContains(response, "Update translations")
+        self.assertNotContains(response, "Sync translated snippets")
 
 
 @override_settings(
