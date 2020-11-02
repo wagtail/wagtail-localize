@@ -72,14 +72,14 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
 
             yield wagtailadmin_widgets.Button(_("Translate this page"), url, priority=60)
 
-        # If the page is the source for translations, show "Update translations" button
+        # If the page is the source for translations, show "Sync translated pages" button
         source = TranslationSource.objects.get_for_instance_or_none(page)
         if source is not None and source.translations.filter(enabled=True).exists():
             url = reverse("wagtail_localize:update_translations", args=[source.id])
             if next_url is not None:
                 url += '?' + urlencode({'next': next_url})
 
-            yield wagtailadmin_widgets.Button(_("Update translations"), url, priority=65)
+            yield wagtailadmin_widgets.Button(_("Sync translated pages"), url, priority=65)
 
 
 @hooks.register('register_snippet_listing_buttons')
@@ -104,7 +104,7 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
                 priority=100
             )
 
-        # If the snippet is the source for translations, show "Update translations" button
+        # If the snippet is the source for translations, show "Sync translated snippets" button
         source = TranslationSource.objects.get_for_instance_or_none(snippet)
         if source is not None and source.translations.filter(enabled=True).exists():
             url = reverse('wagtail_localize:update_translations', args=[source.id])
@@ -112,9 +112,9 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
                 url += '?' + urlencode({'next': next_url})
 
             yield SnippetListingButton(
-                _('Update translations'),
+                _('Sync translated snippets'),
                 url,
-                attrs={'aria-label': _("Update translations for '%(title)s'") % {'title': str(snippet)}},
+                attrs={'aria-label': _("Sync translations of '%(title)s'") % {'title': str(snippet)}},
                 priority=106
             )
 
