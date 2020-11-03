@@ -16,12 +16,13 @@ pip install wagtail-localize
 
 ### Settings modifications
 
-Add `wagtail_localize` and any optional sub modules to `INSTALLED_APPS` in `settings/base.py`:
+Add `wagtail_localize` and `wagtail_localize.locales` to `INSTALLED_APPS` in `settings/base.py`:
 
 ```python
 INSTALLED_APPS = [
     ...
     "wagtail_localize",
+    "wagtail_localize.locales",  # Note: This replaces "wagtail.locales"
     ...
 ]
 ```
