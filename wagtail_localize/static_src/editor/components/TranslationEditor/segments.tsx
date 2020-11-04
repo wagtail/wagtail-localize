@@ -307,9 +307,10 @@ const SegmentSource = styled.p`
 `;
 
 const SegmentValue = styled.div`
+    padding: 0.9em 1.2em;
+
     > p,
     > ${StyledTextArea} {
-        padding: 0.9em 1.2em;
         font-size: 1.2em;
         font-style: italic;
         line-height: 1.5em;
@@ -611,16 +612,10 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             );
         }
 
-        const Wrapper = styled.div`
-            padding: 0.9em 1.2em;
-        `;
-
         value = (
-            <Wrapper>
-                <PageChooser
-                    pageId={(override && override.value) || segment.value}
-                />
-            </Wrapper>
+            <PageChooser
+                pageId={(override && override.value) || segment.value}
+            />
         );
     } else if (segment.location.widget.type == 'image_chooser') {
         const onClickChangeImage = () => {
@@ -647,16 +642,10 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             );
         }
 
-        const Wrapper = styled.div`
-            padding: 0.9em 1.2em;
-        `;
-
         value = (
-            <Wrapper>
-                <ImageChooser
-                    imageId={(override && override.value) || segment.value}
-                />
-            </Wrapper>
+            <ImageChooser
+                imageId={(override && override.value) || segment.value}
+            />
         );
     } else if (segment.location.widget.type == 'document_chooser') {
         const onClickChangeDocument = () => {
@@ -683,16 +672,10 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             );
         }
 
-        const Wrapper = styled.div`
-            padding: 0.9em 1.2em;
-        `;
-
         value = (
-            <Wrapper>
-                <DocumentChooser
-                    documentId={(override && override.value) || segment.value}
-                />
-            </Wrapper>
+            <DocumentChooser
+                documentId={(override && override.value) || segment.value}
+            />
         );
     } else {
         value = <p>{segment.value}</p>;
