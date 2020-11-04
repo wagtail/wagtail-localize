@@ -5,6 +5,8 @@ from django.urls import reverse
 from wagtail.core.models import Locale
 from wagtail.tests.utils import WagtailTestUtils
 
+from wagtail_localize.models import LocaleSynchronization
+
 
 @override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
 class TestLocaleIndexView(TestCase, WagtailTestUtils):
@@ -49,6 +51,7 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
     def test_create(self):
         response = self.post({
             'language_code': "fr",
+            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
         })
 
         # Should redirect back to index
@@ -57,9 +60,13 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
         # Check that the locale was created
         self.assertTrue(Locale.objects.filter(language_code='fr').exists())
 
+        # Check the sync_from was set
+        self.assertTrue(LocaleSynchronization.objects.filter(locale__language_code='fr', sync_from__language_code='en').exists())
+
     def test_duplicate_not_allowed(self):
         response = self.post({
             'language_code': "en",
+            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
         })
 
         # Should return the form with errors
@@ -69,6 +76,7 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
     def test_language_code_must_be_in_settings(self):
         response = self.post({
             'language_code': "ja",
+            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
         })
 
         # Should return the form with errors
@@ -118,6 +126,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
     def test_edit(self):
         response = self.post({
             'language_code': 'fr',
+            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
         })
 
         # Should redirect back to index
@@ -132,6 +141,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
 
         response = self.post({
             'language_code': "en",
+            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
         }, locale=french)
 
         # Should return the form with errors
@@ -141,6 +151,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
     def test_edit_language_code_must_be_in_settings(self):
         response = self.post({
             'language_code': "ja",
+            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
         })
 
         # Should return the form with errors
