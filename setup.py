@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
-import sys, os
+from os import path
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
+from wagtail_localize import __version__
+
 
 # Hack to prevent "TypeError: 'NoneType' object is not callable" error
 # in multiprocessing/util.py _exit_function when setup.py exits
@@ -12,11 +15,15 @@ try:
 except ImportError:
     pass
 
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
+    long_description = f.read()
 
 setup(
     name="wagtail-localize",
-    version="0.9",
+    version=__version__,
     description="Translation plugin for Wagtail CMS",
+    long_description=long_description,
     author="Karl Hobley",
     author_email="karl@kaed.uk",
     url="",
@@ -32,6 +39,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Framework :: Wagtail :: 2",
     ],
     install_requires=["Django>=2.2,<3.2", "Wagtail>=2.11,<2.12", "polib>=1.1,<2.0"],
     extras_require={
