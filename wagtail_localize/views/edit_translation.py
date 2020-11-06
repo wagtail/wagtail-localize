@@ -225,7 +225,6 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
 
         if isinstance(block_type, blocks.StructBlock):
             block_field_name = context_path_components[2]
-            block_type = block_type.child_blocks[block_field_name]
             block_field = block_type.child_blocks[block_field_name].label
         else:
             block_field = None
