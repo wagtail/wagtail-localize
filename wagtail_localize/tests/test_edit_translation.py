@@ -32,9 +32,12 @@ from .utils import assert_permission_denied
 
 RICH_TEXT_DATA = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a>.</li><li>Special characters: \'"!? セキレイ</li></ul>'
 
-STREAM_BLOCK_ID = uuid.uuid4()
+STREAM_TEXT_BLOCK_ID = uuid.uuid4()
+STREAM_STRUCT_BLOCK_ID = uuid.uuid4()
+
 STREAM_DATA = [
-    {"id": STREAM_BLOCK_ID, "type": "test_textblock", "value": "This is a text block"}
+    {"id": STREAM_TEXT_BLOCK_ID, "type": "test_textblock", "value": "This is a text block"},
+    {"id": STREAM_STRUCT_BLOCK_ID, "type": "test_structblock", "value": {"field_a": "This is a struct", "field_b": "block"}},
 ]
 
 
@@ -171,7 +174,9 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                 ('test_richtextfield', 'This is a paragraph. &lt;foo&gt; <b>Bold text</b>'),
                 ('test_richtextfield', '<a id="a1">This is a link</a>.'),
                 ('test_richtextfield', 'Special characters: \'"!? セキレイ'),
-                (f'test_streamfield.{STREAM_BLOCK_ID}', 'This is a text block'),
+                (f'test_streamfield.{STREAM_TEXT_BLOCK_ID}', 'This is a text block'),
+                (f'test_streamfield.{STREAM_STRUCT_BLOCK_ID}.field_a', 'This is a struct'),
+                (f'test_streamfield.{STREAM_STRUCT_BLOCK_ID}.field_b', 'block'),
             ]
         )
         self.assertEqual(
@@ -184,8 +189,9 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         # Test locations
         self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Char field', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
         self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
-        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_BLOCK_ID), 'fieldHelpText': '', 'subField': None, 'widget': None})
-        # TODO: Examples that use fieldHelpText and subField
+        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_TEXT_BLOCK_ID), 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][10]['location'], {'tab': 'content', 'field': 'Test structblock', 'blockId': str(STREAM_STRUCT_BLOCK_ID), 'fieldHelpText': '', 'subField': 'Field a', 'widget': None})
+        # TODO: Example that uses fieldHelpText
 
     def test_override_types(self):
         # Similar to above but adds some more overridable things to test with
@@ -977,7 +983,7 @@ class TestDownloadPOFileView(EditTranslationTestData, TestCase):
         self.assertContains(response, 'msgctxt "test_richtextfield"\nmsgid "This is a paragraph. &lt;foo&gt; <b>Bold text</b>"\nmsgstr ""')
         self.assertContains(response, 'msgctxt "test_richtextfield"\nmsgid "<a id=\\"a1\\">This is a link</a>."\nmsgstr ""')
         self.assertContains(response, 'msgctxt "test_richtextfield"\nmsgid "Special characters: \'\\"!? セキレイ"\nmsgstr ""')
-        self.assertContains(response, f'msgctxt "test_streamfield.{STREAM_BLOCK_ID}"\nmsgid "This is a text block"\nmsgstr ""')
+        self.assertContains(response, f'msgctxt "test_streamfield.{STREAM_TEXT_BLOCK_ID}"\nmsgid "This is a text block"\nmsgstr ""')
 
     def test_download_pofile_snippet(self):
         response = self.client.get(reverse('wagtail_localize:download_pofile', args=[self.snippet_translation.id]))
