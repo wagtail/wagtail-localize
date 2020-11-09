@@ -194,7 +194,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         # TODO: Example that uses fieldHelpText
 
         # Check related object
-        related_object_segment = props['segments'][10]
+        related_object_segment = props['segments'][12]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
         self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
@@ -213,7 +213,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         props = json.loads(response.context['props'])
 
         # Check related object
-        related_object_segment = props['segments'][10]
+        related_object_segment = props['segments'][12]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
         self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
