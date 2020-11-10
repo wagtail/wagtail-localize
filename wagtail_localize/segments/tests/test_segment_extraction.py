@@ -58,6 +58,12 @@ class TestSegmentExtraction(TestCase):
 
         self.assertEqual(segments, [StringSegmentValue("test_charfield", "Test content")])
 
+    def test_null_charfield(self):
+        page = make_test_page(test_charfield=None)
+        segments = extract_segments(page)
+
+        self.assertEqual(segments, [])
+
     def test_textfield(self):
         page = make_test_page(test_textfield="Test content")
         segments = extract_segments(page)

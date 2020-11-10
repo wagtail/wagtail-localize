@@ -134,14 +134,19 @@ def extract_segments(instance):
 
         elif isinstance(field, (models.TextField, models.CharField)):
             if not field.choices:
+                value = field.value_from_object(instance)
+
+                if value is None:
+                    continue
+
                 if is_translatable:
                     segments.append(
-                        StringSegmentValue(field.name, field.value_from_object(instance))
+                        StringSegmentValue(field.name, value)
                     )
 
                 elif is_synchronized:
                     segments.append(
-                        OverridableSegmentValue(field.name, field.value_from_object(instance))
+                        OverridableSegmentValue(field.name, value)
                     )
 
         elif isinstance(field, (models.ForeignKey)):
