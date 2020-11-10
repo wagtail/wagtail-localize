@@ -88,7 +88,7 @@ class TestCustomField(models.TextField):
 
 
 class TestPage(Page):
-    test_charfield = models.CharField(__("char field"), max_length=255, blank=True)
+    test_charfield = models.CharField(__("char field"), max_length=255, blank=True, null=True, default='')
     test_textfield = models.TextField(blank=True)
     test_emailfield = models.EmailField(blank=True)
     test_slugfield = models.SlugField(blank=True)
