@@ -35,6 +35,7 @@ from modelcluster.models import (
 from wagtail.core.models import Page, get_translatable_models
 from wagtail.core.utils import find_available_slug
 
+from .compat import DATE_FORMAT
 from .fields import copy_synchronised_fields
 from .locales.components import register_locale_component
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue
@@ -1045,8 +1046,6 @@ class StringTranslation(models.Model):
         """
         Returns a comment to display to the user containing info on how and when the string was translated.
         """
-        DATE_FORMAT = '%-d %B %Y'
-
         if self.tool_name:
             return _("Translated with {tool_name} on {date}").format(tool_name=self.tool_name, date=self.updated_at.strftime(DATE_FORMAT))
 

@@ -35,6 +35,7 @@ from wagtail.images.models import AbstractImage
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
+from wagtail_localize.compat import DATE_FORMAT
 from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import Translation, StringTranslation, StringSegment, OverridableSegment, SegmentOverride
 from wagtail_localize.segments import StringSegmentValue
@@ -494,7 +495,7 @@ def edit_translation(request, translation, instance):
                 'titleSegmentId': title_segment_id,
                 'isLive': is_live,
                 'isLocked': is_locked,
-                'lastPublishedDate': last_published_at.strftime('%-d %B %Y') if last_published_at is not None else None,
+                'lastPublishedDate': last_published_at.strftime(DATE_FORMAT) if last_published_at is not None else None,
                 'lastPublishedBy': UserSerializer(last_published_by).data if last_published_by is not None else None,
                 'liveUrl': live_url,
             },
