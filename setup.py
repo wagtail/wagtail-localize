@@ -24,6 +24,7 @@ setup(
     version=__version__,
     description="Translation plugin for Wagtail CMS",
     long_description=long_description,
+    long_description_content_type='text/markdown',
     author="Karl Hobley",
     author_email="karl@kaed.uk",
     url="",
