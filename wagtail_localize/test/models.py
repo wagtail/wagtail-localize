@@ -226,6 +226,13 @@ class TestGenerateTranslatableFieldsPage(Page):
     test_customfield = TestCustomField(blank=True)
 
 
+class TestOverrideTranslatableFieldsPage(TestGenerateTranslatableFieldsPage):
+    override_translatable_fields = [
+        SynchronizedField('test_charfield'),
+        TranslatableField('test_emailfield'),
+    ]
+
+
 class TranslatableChildObject(TranslatableMixin, Orderable):
     page = ParentalKey(TestGenerateTranslatableFieldsPage, related_name="test_translatable_childobjects")
     field = models.TextField()

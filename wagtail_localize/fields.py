@@ -147,7 +147,29 @@ def get_translatable_fields(model):
             else:
                 translatable_fields.append(SynchronizedField(child_relation.name))
 
-    return translatable_fields
+    # Combine with any overrides defined on the model
+    override_translatable_fields = getattr(model, 'override_translatable_fields', [])
+
+    if override_translatable_fields:
+        override_translatable_fields = {
+            field.field_name: field
+            for field in override_translatable_fields
+        }
+
+        combined_translatable_fields = []
+        for field in translatable_fields:
+            if field.field_name in override_translatable_fields:
+                combined_translatable_fields.append(override_translatable_fields.pop(field.field_name))
+            else:
+                combined_translatable_fields.append(field)
+
+        if override_translatable_fields:
+            combined_translatable_fields.extend(override_translatable_fields.values())
+
+        return combined_translatable_fields
+
+    else:
+        return translatable_fields
 
 
 def copy_synchronised_fields(source, target):
