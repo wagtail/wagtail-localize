@@ -194,7 +194,7 @@ class TestAsInstanceForSnippet(TestCase):
 
 class TestExportPO(TestCase):
     def setUp(self):
-        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
+        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content", test_textfield="This is some test content")
         self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
     def test_export_po(self):
@@ -204,11 +204,18 @@ class TestExportPO(TestCase):
         self.assertEqual(po.metadata['MIME-Version'], '1.0')
         self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
 
-        self.assertEqual(len(po), 1)
+        self.assertEqual(len(po), 2)
         self.assertEqual(po[0].msgid, "This is some test content")
         self.assertEqual(po[0].msgctxt, "test_charfield")
         self.assertEqual(po[0].msgstr, "")
         self.assertFalse(po[0].obsolete)
+
+        # Test with the exact same content twice
+        # This checks for https://github.com/wagtail/wagtail-localize/issues/253
+        self.assertEqual(po[1].msgid, "This is some test content")
+        self.assertEqual(po[1].msgctxt, "test_textfield")
+        self.assertEqual(po[1].msgstr, "")
+        self.assertFalse(po[1].obsolete)
 
 
 class TestCreateOrUpdateTranslationForPage(TestCase):
