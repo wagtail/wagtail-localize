@@ -1,6 +1,5 @@
 import json
 import uuid
-from collections import defaultdict
 
 import polib
 from django.conf import settings
@@ -385,10 +384,10 @@ class TranslationSource(models.Model):
         Exports a PO file contining the source strings.
         """
         # Get messages
-        messages = defaultdict(list)
+        messages = []
 
         for string_segment in StringSegment.objects.filter(source=self).order_by('order').select_related("context", "string"):
-            messages[string_segment.string.data] = string_segment.context.path
+            messages.append((string_segment.string.data, string_segment.context.path))
 
         # Build a PO file
         po = polib.POFile(wrapwidth=200)
@@ -398,7 +397,7 @@ class TranslationSource(models.Model):
             "Content-Type": "text/plain; charset=utf-8",
         }
 
-        for text, context in messages.items():
+        for text, context in messages:
             po.append(
                 polib.POEntry(
                     msgid=text,
@@ -766,7 +765,7 @@ class Translation(models.Model):
         Exports a PO file contining the source strings and translations.
         """
         # Get messages
-        messages = defaultdict(list)
+        messages = []
 
         string_segments = (
             StringSegment.objects.filter(source=self.source)
@@ -776,7 +775,7 @@ class Translation(models.Model):
         )
 
         for string_segment in string_segments:
-            messages[string_segment.string.data] = (string_segment.context.path, string_segment.translation)
+            messages.append((string_segment.string.data, string_segment.context.path, string_segment.translation))
 
         # Build a PO file
         po = polib.POFile(wrapwidth=200)
@@ -787,7 +786,7 @@ class Translation(models.Model):
             "X-WagtailLocalize-TranslationID": str(self.uuid),
         }
 
-        for text, (context, translation) in messages.items():
+        for text, context, translation in messages:
             po.append(
                 polib.POEntry(
                     msgid=text,

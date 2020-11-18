@@ -135,7 +135,7 @@ class TestExportPO(TestCase):
         self.en_locale = Locale.objects.get(language_code="en")
         self.fr_locale = Locale.objects.create(language_code="fr")
 
-        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
+        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content", test_textfield="This is some test content")
         self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
         self.translation = Translation.objects.create(
@@ -151,11 +151,18 @@ class TestExportPO(TestCase):
         self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
         self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
 
-        self.assertEqual(len(po), 1)
+        self.assertEqual(len(po), 2)
         self.assertEqual(po[0].msgid, "This is some test content")
         self.assertEqual(po[0].msgctxt, "test_charfield")
         self.assertEqual(po[0].msgstr, "")
         self.assertFalse(po[0].obsolete)
+
+        # Test with the exact same content twice
+        # This checks for https://github.com/wagtail/wagtail-localize/issues/253
+        self.assertEqual(po[1].msgid, "This is some test content")
+        self.assertEqual(po[1].msgctxt, "test_textfield")
+        self.assertEqual(po[1].msgstr, "")
+        self.assertFalse(po[1].obsolete)
 
     def test_export_po_with_translation(self):
         StringTranslation.objects.create(
@@ -172,11 +179,19 @@ class TestExportPO(TestCase):
         self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
         self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
 
-        self.assertEqual(len(po), 1)
+        self.assertEqual(len(po), 2)
         self.assertEqual(po[0].msgid, "This is some test content")
         self.assertEqual(po[0].msgctxt, "test_charfield")
         self.assertEqual(po[0].msgstr, "Contenu de test")
         self.assertFalse(po[0].obsolete)
+
+        # Test with the exact same content twice
+        # But note that this context doesn't have a translation!
+        # This checks for https://github.com/wagtail/wagtail-localize/issues/253
+        self.assertEqual(po[1].msgid, "This is some test content")
+        self.assertEqual(po[1].msgctxt, "test_textfield")
+        self.assertEqual(po[1].msgstr, "")
+        self.assertFalse(po[1].obsolete)
 
     def test_export_po_with_obsolete_translation(self):
         obsolete_string = String.from_value(self.en_locale, StringValue("This is an obsolete string"))
@@ -197,17 +212,22 @@ class TestExportPO(TestCase):
         self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
 
         # The non-obsolete strings come first
-        self.assertEqual(len(po), 2)
+        self.assertEqual(len(po), 3)
         self.assertEqual(po[0].msgid, "This is some test content")
         self.assertEqual(po[0].msgctxt, "test_charfield")
         self.assertEqual(po[0].msgstr, "")
         self.assertFalse(po[0].obsolete)
 
+        self.assertEqual(po[1].msgid, "This is some test content")
+        self.assertEqual(po[1].msgctxt, "test_textfield")
+        self.assertEqual(po[1].msgstr, "")
+        self.assertFalse(po[1].obsolete)
+
         # Then the obsolete string
-        self.assertEqual(po[1].msgid, "This is an obsolete string")
-        self.assertEqual(po[1].msgctxt, "test_charfield")
-        self.assertEqual(po[1].msgstr, "Ceci est une chaîne obsolète")
-        self.assertTrue(po[1].obsolete)
+        self.assertEqual(po[2].msgid, "This is an obsolete string")
+        self.assertEqual(po[2].msgctxt, "test_charfield")
+        self.assertEqual(po[2].msgstr, "Ceci est une chaîne obsolète")
+        self.assertTrue(po[2].obsolete)
 
         # Obsolete strings that never had a translation don't get exported
 
