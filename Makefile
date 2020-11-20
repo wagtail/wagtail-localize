@@ -6,3 +6,7 @@ build: npm_deps
 
 dev: npm_deps
 	npm run start
+
+messages:
+	node ./scripts/extract-translatable-strings.js
+	cd wagtail_localize && python ../testmanage.py makemessages --locale=en
