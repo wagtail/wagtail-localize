@@ -6,8 +6,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy as __
+from django.utils.translation import gettext as _, gettext_lazy
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -18,15 +17,15 @@ from wagtail_localize.models import TranslationSource
 
 class UpdateTranslationsForm(forms.Form):
     publish_translations = forms.BooleanField(
-        label=__("Publish immediately"),
-        help_text=__("This will apply the updates and publish immediately, before any new translations happen."),
+        label=gettext_lazy("Publish immediately"),
+        help_text=gettext_lazy("This will apply the updates and publish immediately, before any new translations happen."),
         required=False,
     )
 
 
 class UpdateTranslationsView(SingleObjectMixin, TemplateView):
     template_name = "wagtail_localize/admin/update_translations.html"
-    title = __("Update existing translations")
+    title = gettext_lazy("Update existing translations")
 
     def get_object(self):
         return get_object_or_404(TranslationSource, id=self.kwargs['translation_source_id'])

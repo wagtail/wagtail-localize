@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
 from django.urls import reverse, path, include
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy
 from django.views.i18n import JavaScriptCatalog
 
 from wagtail.admin import widgets as wagtailadmin_widgets
@@ -148,7 +148,7 @@ def before_edit_page(request, page):
 
 
 class RestartTranslationPageActionMenuItem(PageActionMenuItem):
-    label = _("Restart translation")
+    label = gettext_lazy("Restart translation")
     name = "localize-restart-translation"
     icon_name = "undo"
     classname = 'action-secondary'
@@ -193,7 +193,7 @@ def before_edit_snippet(request, instance):
 
 if SNIPPET_RESTART_TRANSLATION_ENABLED:
     class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
-        label = _("Restart translation")
+        label = gettext_lazy("Restart translation")
         name = "localize-restart-translation"
         icon_name = "undo"
         classname = 'action-secondary'

@@ -13,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as __
+from django.utils.translation import gettext_lazy
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
 from wagtail.core.blocks import StreamValue
@@ -274,9 +274,9 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         # Add some extra preview modes to the page
         previous_preview_modes = TestPage.preview_modes
         TestPage.preview_modes = [
-            ('', __("Default")),
-            ('first-mode', __("First mode")),
-            ('second-mode', __("Second mode")),
+            ('', gettext_lazy("Default")),
+            ('first-mode', gettext_lazy("First mode")),
+            ('second-mode', gettext_lazy("Second mode")),
         ]
 
         try:
