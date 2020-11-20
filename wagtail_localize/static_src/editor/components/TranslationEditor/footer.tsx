@@ -107,7 +107,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     name="action"
                     value="publish"
                     className="button button-longrunning "
-                    data-clicked-text={gettext('Publishing…')}
+                    data-clicked-text={gettext('Publishing...')}
                 >
                     <Icon
                         name="upload"
