@@ -7,7 +7,7 @@ from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.utils.translation import gettext as _, gettext_lazy as __, ngettext
+from django.utils.translation import gettext as _, gettext_lazy, ngettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -20,11 +20,11 @@ from wagtail_localize.models import Translation, TranslationSource
 class SubmitTranslationForm(forms.Form):
     # Note: We don't actually use select_all in Python., is is just the
     # easiest way to add the widget to the form. It's controlled in JS.
-    select_all = forms.BooleanField(label=__("Select all"), required=False)
+    select_all = forms.BooleanField(label=gettext_lazy("Select all"), required=False)
     locales = forms.ModelMultipleChoiceField(
-        label=__("Locales"), queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple
+        label=gettext_lazy("Locales"), queryset=Locale.objects.none(), widget=forms.CheckboxSelectMultiple
     )
-    include_subtree = forms.BooleanField(required=False, help_text=__("All child pages will be created."))
+    include_subtree = forms.BooleanField(required=False, help_text=gettext_lazy("All child pages will be created."))
 
     def __init__(self, instance, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -113,7 +113,7 @@ class TranslationCreator:
 
 class SubmitTranslationView(SingleObjectMixin, TemplateView):
     template_name = "wagtail_localize/admin/submit_translation.html"
-    title = __("Translate")
+    title = gettext_lazy("Translate")
 
     def get_title(self):
         return self.title
@@ -194,7 +194,7 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
 
 
 class SubmitPageTranslationView(SubmitTranslationView):
-    title = __("Translate page")
+    title = gettext_lazy("Translate page")
 
     def get_subtitle(self):
         return self.object.get_admin_display_title()
