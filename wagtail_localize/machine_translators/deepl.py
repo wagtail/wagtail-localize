@@ -1,5 +1,4 @@
 import requests
-from django.utils.translation import gettext_lazy as _
 
 from wagtail_localize.strings import StringValue
 
@@ -15,7 +14,7 @@ def language_code(code, is_target=False):
 
 
 class DeepLTranslator(BaseMachineTranslator):
-    display_name = _("DeepL")
+    display_name = "DeepL"
 
     def translate(self, source_locale, target_locale, strings):
         response = requests.post('https://api.deepl.com/v2/translate', {
