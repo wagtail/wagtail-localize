@@ -822,7 +822,7 @@ def machine_translate(request, translation_id):
         segments[segment.string].append((string_segment.string_id, string_segment.context_id))
 
     if segments:
-        translations = translator.translate(translation.source.locale, translation.target_locale, segments.keys())
+        translations = translator.translate(translation.source.locale.language_code, translation.target_locale.language_code, segments.keys())
 
         with transaction.atomic():
             for string, contexts in segments.items():
