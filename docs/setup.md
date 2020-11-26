@@ -48,8 +48,10 @@ The following additions need to be made to `./yoursite/urls.py`
 from django.conf.urls.i18n import i18n_patterns
 ...
 
-urlpatterns += i18n_patterns(
-    url(r"^search/$", search_views.search, name="search"),
-    url(r"", include(wagtail_urls)),
+urlpatterns = i18n_patterns(
+    path('django-admin/', admin.site.urls),
+    path('admin/', include(wagtailadmin_urls)),
+    path('documents/', include(wagtaildocs_urls)),
+    path('search/', search_views.search, name='search'),
 )
 ```
