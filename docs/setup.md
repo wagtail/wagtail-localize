@@ -38,6 +38,8 @@ LANGUAGES = [
     ("en", "English"),
     ("fr", "French"),
 ]
+
+WAGTAIL_CONTENT_LANGUAGES = LANGUAGES
 ```
 
 ### URL configuration
