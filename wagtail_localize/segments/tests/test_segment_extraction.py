@@ -1,10 +1,11 @@
 import uuid
 import unittest
 
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
 from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page
+from wagtail.core.models import Page, Site
 
 from wagtail_localize.segments import (
     StringSegmentValue,
@@ -19,6 +20,7 @@ from wagtail_localize.test.models import (
     TestSnippet,
     TestChildObject,
     TestNonParentalChildObject,
+    TestModelWithInvalidForeignKey,
 )
 
 
@@ -366,3 +368,16 @@ class TestSegmentExtractionWithStreamField(TestCase):
 
         segments = extract_segments(page)
         self.assertEqual(segments, [])
+
+    def test_invalid_foreign_key(self):
+        instance = TestModelWithInvalidForeignKey.objects.create(fk=Site.objects.get())
+
+        with self.assertRaises(ImproperlyConfigured) as e:
+            extract_segments(instance)
+
+        self.assertEqual(
+            str(e.exception),
+            "The foreign key `wagtail_localize_test.TestModelWithInvalidForeignKey.fk` "
+            "was registered as a translatable field but the model it points to "
+            "`wagtailcore.Site` is not translatable"
+        )

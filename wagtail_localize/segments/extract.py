@@ -1,3 +1,4 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
 from modelcluster.fields import ParentalKey
@@ -159,8 +160,16 @@ def extract_segments(instance):
         elif isinstance(field, (models.ForeignKey)):
             if is_translatable:
                 if not issubclass(field.related_model, TranslatableMixin):
-                    # TODO: ImproperlyConfiguredError
-                    raise Exception
+                    raise ImproperlyConfigured(
+                        "The foreign key `{}.{}.{}` was registered as a translatable "
+                        "field but the model it points to `{}.{}` is not translatable".format(
+                            field.model._meta.app_label,
+                            field.model.__name__,
+                            field.name,
+                            field.related_model._meta.app_label,
+                            field.related_model.__name__,
+                        )
+                    )
 
                 related_instance = getattr(instance, field.name)
 
