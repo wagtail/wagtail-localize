@@ -61,3 +61,9 @@ class TestStringSegmentValue(TestCase):
             segment.render_html(),
             'This is some text. &lt;foo&gt; <b>Bold text</b> <a href="http://changed-example.com">A link and some more <b>Bold text</b></a>',
         )
+
+    def test_raises_typeerror_if_string_is_none(self):
+        with self.assertRaises(TypeError) as e:
+            StringSegmentValue("foo.bar", None)
+
+        self.assertEqual(str(e.exception), '`string` must be either a `StringValue` or a `str`. Got `NoneType`')
