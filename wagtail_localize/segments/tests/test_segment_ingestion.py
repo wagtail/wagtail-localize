@@ -11,6 +11,7 @@ from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
     RelatedObjectSegmentValue,
+    OverridableSegmentValue,
 )
 from wagtail_localize.segments.ingest import ingest_segments
 from wagtail_localize.strings import StringValue
@@ -373,6 +374,40 @@ class TestSegmentIngestionWithStreamField(TestCase):
                     "id": str(block_id),
                     "type": "test_urlblock",
                     "value": "http://test-content.fr/foo",
+                }
+            ],
+        )
+
+    def test_embedblock(self):
+        block_id = uuid.uuid4()
+        page = make_test_page_with_streamfield_block(
+            str(block_id), "test_embedblock", "https://www.youtube.com/watch?v=pGpCHRyUZXQ"
+        )
+
+        translated_page = page.copy_for_translation(self.locale)
+
+        ingest_segments(
+            page,
+            translated_page,
+            self.src_locale,
+            self.locale,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}", "https://www.youtube.com/watch?v=aBByJQCaaEA"
+                )
+            ],
+        )
+
+        translated_page.save()
+        translated_page.refresh_from_db()
+
+        self.assertEqual(
+            translated_page.test_streamfield.stream_data,
+            [
+                {
+                    "id": str(block_id),
+                    "type": "test_embedblock",
+                    "value": "https://www.youtube.com/watch?v=aBByJQCaaEA",
                 }
             ],
         )

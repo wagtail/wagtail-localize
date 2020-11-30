@@ -5,6 +5,7 @@ from django.db import models
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
+from wagtail.embeds.blocks import EmbedBlock, EmbedValue
 
 from wagtail_localize.strings import restore_strings
 
@@ -45,6 +46,15 @@ class StreamFieldSegmentsWriter:
     def handle_block(self, block_type, block_value, segments):
         if hasattr(block_type, "restore_translated_segments"):
             return block_type.restore_translated_segments(block_value, segments)
+
+        elif isinstance(block_type, EmbedBlock):
+            if len(segments) > 1:
+                raise ValueError("EmbedBlock can only have a single segment. Found {}".format(len(segments)))
+
+            segment = segments[0]
+
+            if isinstance(segment, OverridableSegmentValue):
+                return EmbedValue(segment.data)
 
         elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock, blocks.URLBlock, blocks.EmailBlock)):
             if len(segments) > 1:
