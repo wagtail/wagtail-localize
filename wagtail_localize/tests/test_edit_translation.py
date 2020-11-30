@@ -187,17 +187,17 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Char field', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
-        self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
-        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_TEXT_BLOCK_ID), 'fieldHelpText': '', 'subField': None, 'widget': None})
-        self.assertEqual(props['segments'][10]['location'], {'tab': 'content', 'field': 'Test structblock', 'blockId': str(STREAM_STRUCT_BLOCK_ID), 'fieldHelpText': '', 'subField': 'Field a', 'widget': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Char field', 'blockId': None, 'fieldHelpText': '', 'order': 1, 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'order': 6, 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_TEXT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][10]['location'], {'tab': 'content', 'field': 'Test structblock', 'blockId': str(STREAM_STRUCT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': 'Field a', 'widget': None})
         # TODO: Example that uses fieldHelpText
 
         # Check related object
         related_object_segment = props['segments'][12]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
-        self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'order': 8, 'subField': None, 'widget': None})
         self.assertEqual(related_object_segment['source']['title'], str(self.snippet))
         self.assertEqual(related_object_segment['dest']['title'], str(self.fr_snippet))
         self.assertEqual(related_object_segment['translationProgress'], {'totalSegments': 1, 'translatedSegments': 0})
@@ -216,7 +216,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         related_object_segment = props['segments'][12]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
-        self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'order': 8, 'subField': None, 'widget': None})
         self.assertEqual(related_object_segment['source']['title'], str(self.snippet))
         self.assertEqual(related_object_segment['dest']['title'], str(self.fr_snippet))
         self.assertIsNone(related_object_segment['translationProgress'])
@@ -350,7 +350,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         # Test locations
-        self.assertEqual(props['segments'][0]['location'], {'tab': '', 'field': 'Field', 'blockId': None, 'fieldHelpText': '', 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][0]['location'], {'tab': '', 'field': 'Field', 'blockId': None, 'fieldHelpText': '', 'order': 0, 'subField': None, 'widget': None})
 
     def test_cant_edit_snippet_translation_without_perms(self):
         self.moderators_group.permissions.filter(content_type=ContentType.objects.get_for_model(TestSnippet)).delete()

@@ -152,6 +152,29 @@ class TabHelper:
         else:
             return self.tabs[0]
 
+    @cached_property
+    def field_ordering_mapping(self):
+        if isinstance(self.edit_handler, TabbedInterface):
+            field_orderings = {}
+            order = 0
+            for tab in self.edit_handler.children:
+                for tab_field in tab.required_fields():
+                    # TODO(someday): Orderings of fields within inline panels.
+                    # (currently, they will all be assigned the same order value,
+                    # so they will end up being order by how they are defined on
+                    # the model instead of the panel definition.
+                    # But this should be OK for most people)
+                    field_orderings[tab_field] = order
+                    order += 1
+
+            return field_orderings
+        else:
+            return {}
+
+    def get_field_order(self, field_name):
+        if field_name in self.field_ordering_mapping:
+            return self.field_ordering_mapping[field_name]
+
 
 def get_segment_location_info(source_instance, tab_helper, content_path, widget=False):
     context_path_components = content_path.split('.')
@@ -159,6 +182,7 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
 
     # Work out which tab the segment is on from edit handler
     tab = cautious_slugify(tab_helper.get_field_tab(field.name))
+    order = tab_helper.get_field_order(field.name)
 
     def widget_from_field(field):
         if isinstance(field, models.ForeignKey):
@@ -233,6 +257,7 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
         return {
             'tab': tab,
             'field': capfirst(block_type.label),
+            'order': order,
             'blockId': block_id,
             'fieldHelpText': '',
             'subField': block_field,
@@ -249,6 +274,7 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
         return {
             'tab': tab,
             'field': capfirst(field.related_model._meta.verbose_name),
+            'order': order,
             'blockId': context_path_components[1],
             'fieldHelpText': child_field.help_text,
             'subField': capfirst(child_field.verbose_name),
@@ -259,6 +285,7 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
         return {
             'tab': tab,
             'field': capfirst(field.verbose_name),
+            'order': order,
             'blockId': None,
             'fieldHelpText': field.help_text,
             'subField': None,
@@ -485,7 +512,16 @@ def edit_translation(request, translation, instance):
     ]
 
     segments = string_segment_data + syncronised_value_segment_data + related_object_segment_data
-    segments.sort(key=lambda segment: segment['order'])
+
+    # Order segments by how they appear in the content panels
+    # segment['location']['order'] is the content panel ordering
+    # segment['order'] is the model field ordering
+    # User's expect segments to follow the panel ordering as that's the ordering
+    # that is used in the page editor of the source page. However, segments that
+    # come from the same streamfield/inline panel are given the same value for
+    # panel ordering, so we need to order by model field ordering as well (all
+    # segments have a unique value for model field ordering)
+    segments.sort(key=lambda segment: (segment['location']['order'], segment['order']))
 
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
         # These props are passed directly to the TranslationEditor react component
