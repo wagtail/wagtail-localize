@@ -64,6 +64,12 @@ class StringSegmentValue(BaseValue):
         if isinstance(string, str):
             string = StringValue.from_plaintext(string)
 
+        elif isinstance(string, StringValue):
+            pass
+
+        else:
+            raise TypeError("`string` must be either a `StringValue` or a `str`. Got `{}`".format(type(string).__name__))
+
         self.string = string
         self.attrs = attrs or None
 
