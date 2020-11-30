@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 
 from modelcluster.fields import ParentalKey
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable, TranslatableMixin
@@ -149,6 +150,31 @@ class TestPage(Page):
         SynchronizedField("test_synchronized_snippet"),
         SynchronizedField("test_synchronized_childobjects"),
         SynchronizedField("test_synchronized_customfield"),
+    ]
+
+    content_panels = Page.content_panels + [
+        FieldPanel("test_charfield"),
+        FieldPanel("test_textfield"),
+        FieldPanel("test_emailfield"),
+        FieldPanel("test_slugfield"),
+        FieldPanel("test_urlfield"),
+        FieldPanel("test_richtextfield"),
+        FieldPanel("test_streamfield"),
+        FieldPanel("test_snippet"),
+        InlinePanel("test_childobjects"),
+        FieldPanel("test_customfield"),
+        FieldPanel("test_synchronized_charfield"),
+        FieldPanel("test_synchronized_textfield"),
+        FieldPanel("test_synchronized_emailfield"),
+        FieldPanel("test_synchronized_slugfield"),
+        FieldPanel("test_synchronized_urlfield"),
+        FieldPanel("test_synchronized_richtextfield"),
+        FieldPanel("test_synchronized_streamfield"),
+        FieldPanel("test_synchronized_image"),
+        FieldPanel("test_synchronized_document"),
+        FieldPanel("test_synchronized_snippet"),
+        InlinePanel("test_synchronized_childobjects"),
+        FieldPanel("test_synchronized_customfield"),
     ]
 
 
