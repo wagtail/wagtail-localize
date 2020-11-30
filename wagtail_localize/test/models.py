@@ -244,3 +244,13 @@ class TranslatableChildObject(TranslatableMixin, Orderable):
 class NonTranslatableChildObject(Orderable):
     page = ParentalKey(TestGenerateTranslatableFieldsPage, related_name="test_nontranslatable_childobjects")
     field = models.TextField()
+
+
+class TestModelWithInvalidForeignKey(TranslatableMixin, models.Model):
+    fk = models.ForeignKey('wagtailcore.Site', on_delete=models.CASCADE)
+
+    # This should raise an error as the model being pointed to is not
+    # translatable!
+    translatable_fields = [
+        TranslatableField('fk'),
+    ]
