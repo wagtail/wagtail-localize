@@ -10,6 +10,7 @@ from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
     RelatedObjectSegmentValue,
+    OverridableSegmentValue,
 )
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.strings import StringValue
@@ -212,6 +213,23 @@ class TestSegmentExtractionWithStreamField(TestCase):
             [
                 StringSegmentValue(
                     f"test_streamfield.{block_id}", "http://test-content.com/foo"
+                )
+            ],
+        )
+
+    def test_embedblock(self):
+        block_id = uuid.uuid4()
+        page = make_test_page_with_streamfield_block(
+            str(block_id), "test_embedblock", "https://www.youtube.com/watch?v=aBByJQCaaEA"
+        )
+
+        segments = extract_segments(page)
+
+        self.assertEqual(
+            segments,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}", "https://www.youtube.com/watch?v=aBByJQCaaEA"
                 )
             ],
         )

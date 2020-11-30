@@ -6,6 +6,7 @@ from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable, TranslatableMixin
 from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import register_snippet
@@ -76,6 +77,7 @@ class TestStreamBlock(blocks.StreamBlock):
     test_imagechooserblock = ImageChooserBlock()
     test_documentchooserblock = DocumentChooserBlock()
     test_snippetchooserblock = SnippetChooserBlock(TestSnippet)
+    test_embedblock = EmbedBlock()
 
 
 class TestCustomField(models.TextField):
