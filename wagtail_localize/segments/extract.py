@@ -4,7 +4,7 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import TranslatableMixin
+from wagtail.core.models import TranslatableMixin, Page
 from wagtail.embeds.blocks import EmbedBlock
 
 from wagtail_localize.segments import (
@@ -68,7 +68,12 @@ class StreamFieldSegmentExtractor:
         if related_object is None:
             return []
 
-        if isinstance(related_object, TranslatableMixin):
+        # All FKs to translatable models should be translatable.
+        # With the exception of pages that are special because we can localize them at runtime easily.
+        # TODO: Perhaps we need a special type for pages where it links to the translation if availabe,
+        # but falls back to the source if it isn't translated yet?
+        # Note: This exact same decision was made for regular foreign keys in fields.py
+        if isinstance(related_object, TranslatableMixin) and not isinstance(related_object, Page):
             return [RelatedObjectSegmentValue.from_instance("", related_object)]
         else:
             return [OverridableSegmentValue("", related_object.pk)]

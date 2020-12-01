@@ -126,6 +126,7 @@ def get_translatable_fields(model):
             # With the exception of pages that are special because we can localize them at runtime easily.
             # TODO: Perhaps we need a special type for pages where it links to the translation if availabe,
             # but falls back to the source if it isn't translated yet?
+            # Note: This exact same decision was made for page chooser blocks in segments/extract.py
             if issubclass(field.related_model, TranslatableMixin) and not issubclass(field.related_model, Page):
                 translatable_fields.append(TranslatableField(field.name))
             else:

@@ -24,7 +24,7 @@ from wagtail.images.tests.utils import get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import SegmentOverride, String, StringTranslation, Translation, TranslationContext, TranslationLog, TranslationSource, OverridableSegment
-from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet
+from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet, TestHomePage
 from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
 from .utils import assert_permission_denied
@@ -204,6 +204,45 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(related_object_segment['dest']['title'], str(self.fr_snippet))
         self.assertEqual(related_object_segment['translationProgress'], {'totalSegments': 1, 'translatedSegments': 0})
 
+    def test_page_chooser_widgets(self):
+        home_page_with_specific_type = self.home_page.add_child(instance=TestHomePage(title="Test home page", slug="test-home-page"))
+        self.page.test_page = self.home_page
+        self.page.test_page_specific_type = home_page_with_specific_type
+        self.page.test_page_with_restricted_types = home_page_with_specific_type
+
+        PAGE_CHOOSER_BLOCK_ID = uuid.uuid4()
+        PAGE_CHOOSER_BLOCK_WITH_RESTRICTED_TYPES_ID = uuid.uuid4()
+
+        STREAM_DATA_WITH_PAGE_CHOOSERS = [
+            {"id": PAGE_CHOOSER_BLOCK_ID, "type": "test_pagechooserblock", "value": self.home_page.id},
+            {"id": PAGE_CHOOSER_BLOCK_WITH_RESTRICTED_TYPES_ID, "type": "test_pagechooserblock_with_restricted_types", "value": home_page_with_specific_type.id},
+        ]
+
+        self.page.test_streamfield = StreamValue(
+            TestPage.test_streamfield.field.stream_block, STREAM_DATA_WITH_PAGE_CHOOSERS, is_lazy=True
+        )
+        self.page.save()
+
+        # Update source
+        TranslationSource.update_or_create_from_instance(self.page)
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'wagtail_localize/admin/edit_translation.html')
+
+        # Check props
+        props = json.loads(response.context['props'])
+
+        segments_by_content_path = {
+            segment['contentPath']: segment
+            for segment in props['segments']
+        }
+        self.assertEqual(segments_by_content_path['test_page']['location']['widget'], {'type': 'page_chooser', 'allowed_page_types': ['wagtailcore.page']})
+        self.assertEqual(segments_by_content_path['test_page_specific_type']['location']['widget'], {'type': 'page_chooser', 'allowed_page_types': ['wagtail_localize_test.testhomepage']})
+        self.assertEqual(segments_by_content_path['test_page_with_restricted_types']['location']['widget'], {'type': 'page_chooser', 'allowed_page_types': ['wagtail_localize_test.testhomepage', 'wagtail_localize_test.testpage']})
+        self.assertEqual(segments_by_content_path[f'test_streamfield.{PAGE_CHOOSER_BLOCK_ID}']['location']['widget'], {'type': 'page_chooser', 'allowed_page_types': ['wagtailcore.page']})
+        self.assertEqual(segments_by_content_path[f'test_streamfield.{PAGE_CHOOSER_BLOCK_WITH_RESTRICTED_TYPES_ID}']['location']['widget'], {'type': 'page_chooser', 'allowed_page_types': ['wagtail_localize_test.testhomepage', 'wagtail_localize_test.testpage']})
+
     def test_manually_translated_related_object(self):
         # Related objects don't have to be translated by Wagtail localize so test with the snippet's translation record deleted
         self.snippet_translation.delete()
@@ -263,6 +302,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             [(segment['contentPath'], segment['location']['widget'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
             [
                 (f'test_streamfield.{url_block_id}', {'type': 'text'}, "https://wagtail.io/"),
+                (f'test_streamfield.{page_block_id}', {'type': 'page_chooser', 'allowed_page_types': ['wagtailcore.page']}, self.page.id),
                 (f'test_streamfield.{image_block_id}', {'type': 'image_chooser'}, self.page.test_synchronized_image.id),
                 (f'test_streamfield.{document_block_id}', {'type': 'document_chooser'}, self.page.test_synchronized_document.id),
                 ('test_synchronized_emailfield', {'type': 'text'}, 'email@example.com'),
