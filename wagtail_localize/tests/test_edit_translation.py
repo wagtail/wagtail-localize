@@ -24,7 +24,7 @@ from wagtail.images.tests.utils import get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import SegmentOverride, String, StringTranslation, Translation, TranslationContext, TranslationLog, TranslationSource, OverridableSegment
-from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet
 from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
 from .utils import assert_permission_denied
@@ -50,6 +50,8 @@ class EditTranslationTestData(WagtailTestUtils):
         # Convert the user into an editor
         self.moderators_group = Group.objects.get(name="Moderators")
         for permission in Permission.objects.filter(content_type=ContentType.objects.get_for_model(TestSnippet)):
+            self.moderators_group.permissions.add(permission)
+        for permission in Permission.objects.filter(content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)):
             self.moderators_group.permissions.add(permission)
         self.user.is_superuser = False
         self.user.groups.add(self.moderators_group)
@@ -734,6 +736,14 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_on_create_for_snippet(self):
         response = self.client.get(reverse('wagtailsnippets:add', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name]))
+        self.assertNotContains(response, "Restart translation")
+
+    @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
+    def test_doesnt_show_for_untranslatable_snippet(self):
+        snippet = NonTranslatableSnippet.objects.create(
+            field="Test"
+        )
+        response = self.client.get(reverse('wagtailsnippets:edit', args=[NonTranslatableSnippet._meta.app_label, NonTranslatableSnippet._meta.model_name, snippet.id]))
         self.assertNotContains(response, "Restart translation")
 
 

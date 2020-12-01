@@ -203,20 +203,15 @@ if SNIPPET_RESTART_TRANSLATION_ENABLED:
             if context['view'] != 'edit':
                 return False
 
+            if not issubclass(context['model'], TranslatableMixin):
+                return False
+
             return Translation.objects.filter(
                 source__object_id=context['instance'].translation_key,
                 target_locale_id=context['instance'].locale_id,
                 enabled=False
             ).exists()
-    
-    
-    class DisabledTranslationSnippetActionMenuItem():
-        def is_shown(self, request, context):
-            return False
 
-    
     @hooks.register("register_snippet_action_menu_item")
     def register_restart_translation_snippet_action_menu_item(model):
-        if issubclass(model, TranslatableMixin):
-            return RestartTranslationSnippetActionMenuItem(order=0)
-        return DisabledTranslationSnippetActionMenuItem()
+        return RestartTranslationSnippetActionMenuItem(order=0)
