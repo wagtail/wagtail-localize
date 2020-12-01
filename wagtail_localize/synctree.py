@@ -197,6 +197,14 @@ def on_page_saved(sender, instance, **kwargs):
     if not kwargs['created']:
         return
 
+    # We can't handle creations at the root, this is because Treebeard calls
+    # the post_save signal before it updates the numchild of the parent page
+    # Which is a problem here because we're about to add another child which
+    # needs that value to be set correctly in order to get a unique path.
+    # TODO(someday): Find a nicer solution for this
+    if instance.depth == 2:
+        return
+
     # Check if the source tree needs to be synchronised into any other trees
     from .models import LocaleSynchronization
     locales_to_sync_to = Locale.objects.filter(

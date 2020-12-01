@@ -175,3 +175,33 @@ class TestSignals(TestCase):
 
         es_new_page = TestPage.objects.get(translation_key=new_page.translation_key, locale=self.es_locale)
         self.assertEqual(es_new_page.alias_of, new_page.page_ptr)
+
+    def test_create_homepage_in_sync_source_locale(self):
+        # Test's for a crash that happened when a homepage was created for a locale
+        # that is the sync source of another
+        # See https://github.com/wagtail/wagtail-localize/issues/245
+
+        # Note: The behaviour implemented just prevents the crash from happening by
+        # not creating homepages in the post_save signal. But, ideally, we should
+        # find a way to support this.
+
+        # Delete all homepages
+        root = Page.objects.get(id=1)
+        root.get_children().delete()
+        root.refresh_from_db()
+
+        # Create the spanish Locale Synchronisation
+        LocaleSynchronization.objects.create(
+            locale=self.es_locale,
+            sync_from=self.en_locale,
+        )
+
+        # Create a homepage in English
+        new_en_homepage = root.add_child(
+            instance=TestPage(title="Home", slug="home", locale=self.en_locale)
+        )
+
+        # Homepages shouldn't be created
+        self.assertFalse(new_en_homepage.has_translation(self.fr_locale))
+        self.assertFalse(new_en_homepage.has_translation(self.fr_ca_locale))
+        self.assertFalse(new_en_homepage.has_translation(self.es_locale))
