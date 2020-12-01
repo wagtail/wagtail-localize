@@ -24,7 +24,7 @@ from wagtail.images.tests.utils import get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import SegmentOverride, String, StringTranslation, Translation, TranslationContext, TranslationLog, TranslationSource, OverridableSegment
-from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet, TestHomePage
+from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet, TestHomePage, PageWithCustomEditHandler, PageWithCustomEditHandlerChildObject
 from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
 from .utils import assert_permission_denied
@@ -311,6 +311,69 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                 ('test_synchronized_snippet', {'type': 'unknown'}, self.snippet.id),
             ]
         )
+
+    def test_edit_page_translation_with_custom_edit_handler(self):
+        page = self.home_page.add_child(
+            instance=PageWithCustomEditHandler(
+                title="Custom edit handler",
+                foo_field="Foo",
+                bar_field="Bar",
+                baz_field="Baz",
+                child_objects=[
+                    PageWithCustomEditHandlerChildObject(
+                        field="Test 1",
+                    ),
+                    PageWithCustomEditHandlerChildObject(
+                        field="Test 2",
+                    ),
+                ]
+            )
+        )
+
+        source, created = TranslationSource.get_or_create_from_instance(page)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        translation.save_target()
+        fr_page = page.get_translation(self.fr_locale)
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[fr_page.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'wagtail_localize/admin/edit_translation.html')
+
+        # Check props
+        props = json.loads(response.context['props'])
+
+        self.assertEqual(props['tabs'], [
+            {'label': 'Bar', 'slug': 'bar'},
+            {'label': 'Child objects', 'slug': 'child-objects'},
+            {'label': 'Foo', 'slug': 'foo'},
+            {'label': 'Content', 'slug': 'content'},
+            {'label': 'Promote', 'slug': 'promote'},
+            {'label': 'Settings', 'slug': 'settings'},
+        ])
+
+        # Test locations
+        locations = [
+            {
+                'value': segment['source'],
+                'tab': segment['location']['tab'],
+                'field': segment['location']['field'],
+                'model_order': segment['order'],
+                'panel_order': segment['location']['order'],
+            }
+            for segment in props['segments']
+        ]
+        self.assertEqual(locations, [
+            {'value': 'Bar', 'tab': 'bar', 'field': 'Bar field', 'model_order': 4, 'panel_order': 0},
+            {'value': 'Baz', 'tab': 'bar', 'field': 'Baz field', 'model_order': 5, 'panel_order': 1},
+            {'value': 'Test 1', 'tab': 'child-objects', 'field': 'Page with custom edit handler child object', 'model_order': 6, 'panel_order': 2},
+            {'value': 'Test 2', 'tab': 'child-objects', 'field': 'Page with custom edit handler child object', 'model_order': 7, 'panel_order': 2},
+            {'value': 'Foo', 'tab': 'foo', 'field': 'Foo field', 'model_order': 3, 'panel_order': 3},
+            {'value': 'Custom edit handler', 'tab': 'content', 'field': 'Title', 'model_order': 1, 'panel_order': 4},
+            {'value': 'custom-edit-handler', 'tab': 'promote', 'field': 'Slug', 'model_order': 2, 'panel_order': 5}
+        ])
 
     def test_edit_page_translation_with_multi_mode_preview(self):
         # Add some extra preview modes to the page
