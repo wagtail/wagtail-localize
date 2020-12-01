@@ -142,6 +142,9 @@ class TabHelper:
                 for tab_field in tab.required_fields():
                     field_tabs[tab_field] = tab.heading
 
+                for tab_formset in tab.required_formsets().keys():
+                    field_tabs[tab_formset] = tab.heading
+
             return field_tabs
         else:
             return {}
@@ -150,7 +153,7 @@ class TabHelper:
         if field_name in self.field_tab_mapping:
             return self.field_tab_mapping[field_name]
         else:
-            return self.tabs[0]
+            raise KeyError(f"Cannot find tab for field '{field_name}''")
 
     @cached_property
     def field_ordering_mapping(self):
@@ -167,6 +170,10 @@ class TabHelper:
                     field_orderings[tab_field] = order
                     order += 1
 
+                for tab_formset in tab.required_formsets().keys():
+                    field_orderings[tab_formset] = order
+                    order += 1
+
             return field_orderings
         else:
             return {}
@@ -174,6 +181,8 @@ class TabHelper:
     def get_field_order(self, field_name):
         if field_name in self.field_ordering_mapping:
             return self.field_ordering_mapping[field_name]
+        else:
+            raise KeyError(f"Cannot find ordering for field '{field_name}''")
 
     @cached_property
     def field_edit_handler_mapping(self):

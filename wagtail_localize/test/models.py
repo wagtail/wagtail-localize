@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, InlinePanel, PageChooserPanel
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable, TranslatableMixin
@@ -301,3 +301,35 @@ class TestModelWithInvalidForeignKey(TranslatableMixin, models.Model):
     translatable_fields = [
         TranslatableField('fk'),
     ]
+
+
+class PageWithCustomEditHandler(Page):
+    foo_field = models.TextField()
+    bar_field = models.TextField()
+    baz_field = models.TextField()
+
+    foo_panels = [
+        FieldPanel('foo_field'),
+    ]
+
+    bar_panels = [
+        FieldPanel('bar_field'),
+        FieldPanel('baz_field'),
+    ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(bar_panels, heading="Bar"),
+        ObjectList([InlinePanel('child_objects')], heading="Child objects"),
+        ObjectList(foo_panels, heading="Foo"),
+        ObjectList(Page.content_panels, heading="Content"),
+        ObjectList(Page.promote_panels, heading="Promote"),
+        ObjectList(Page.settings_panels, heading="Settings"),
+    ])
+
+
+class PageWithCustomEditHandlerChildObject(TranslatableMixin, Orderable):
+    page = ParentalKey(PageWithCustomEditHandler, related_name="child_objects")
+    field = models.TextField()
+
+    class Meta(TranslatableMixin.Meta, Orderable.Meta):
+        pass
