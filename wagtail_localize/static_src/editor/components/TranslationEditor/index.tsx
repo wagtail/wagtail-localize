@@ -44,6 +44,15 @@ export interface PreviewMode {
     url: string;
 }
 
+export interface PageChooserWidget {
+    type: 'page_chooser';
+    allowed_page_types: string[];
+}
+
+export interface OtherWidgets {
+    type: 'text' | 'image_chooser' | 'document_chooser' | 'unknown';
+}
+
 export interface SegmentCommon {
     id: number;
     contentPath: string;
@@ -53,15 +62,7 @@ export interface SegmentCommon {
         blockId: string | null;
         subField: string | null;
         helpText: string;
-
-        widget: {
-            type:
-                | 'text'
-                | 'page_chooser'
-                | 'image_chooser'
-                | 'document_chooser'
-                | 'unknown';
-        };
+        widget: PageChooserWidget | OtherWidgets;
     };
 }
 

@@ -544,7 +544,8 @@ const EditorSynchronisedValueSegment: FunctionComponent<
         );
     }
 
-    if (segment.location.widget.type == 'text') {
+    const widget = segment.location.widget;
+    if (widget.type == 'text') {
         const [isEditing, setIsEditing] = React.useState(false);
         const [editingValue, setEditingValue] = React.useState(
             (override && override.value) || segment.value
@@ -593,10 +594,13 @@ const EditorSynchronisedValueSegment: FunctionComponent<
 
             value = <p>{(override && override.value) || segment.value}</p>;
         }
-    } else if (segment.location.widget.type == 'page_chooser') {
+    } else if (widget.type == 'page_chooser') {
         const onClickChangePage = () => {
             (window as any).ModalWorkflow({
                 url: (window as any).chooserUrls.pageChooser,
+                urlParams: {
+                    page_type: widget.allowed_page_types.join(',')
+                },
                 onload: (window as any).PAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
                 responses: {
                     pageChosen: function(pageData: any) {
@@ -618,7 +622,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 pageId={(override && override.value) || segment.value}
             />
         );
-    } else if (segment.location.widget.type == 'image_chooser') {
+    } else if (widget.type == 'image_chooser') {
         const onClickChangeImage = () => {
             (window as any).ModalWorkflow({
                 url: (window as any).chooserUrls.imageChooser,
@@ -648,7 +652,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 imageId={(override && override.value) || segment.value}
             />
         );
-    } else if (segment.location.widget.type == 'document_chooser') {
+    } else if (widget.type == 'document_chooser') {
         const onClickChangeDocument = () => {
             (window as any).ModalWorkflow({
                 url: (window as any).chooserUrls.documentChooser,

@@ -20,7 +20,7 @@ from rest_framework import serializers, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.admin import messages
-from wagtail.admin.edit_handlers import TabbedInterface, ObjectList
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, BaseCompositeEditHandler, FieldPanel, PageChooserPanel
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -175,6 +175,27 @@ class TabHelper:
         if field_name in self.field_ordering_mapping:
             return self.field_ordering_mapping[field_name]
 
+    @cached_property
+    def field_edit_handler_mapping(self):
+        # TODO (someday): Extract mappings out of inline panels
+        field_edit_handlers = {}
+
+        def walk(edit_handler):
+            if isinstance(edit_handler, BaseCompositeEditHandler):
+                for child in edit_handler.children:
+                    walk(child)
+
+            elif isinstance(edit_handler, FieldPanel):
+                field_edit_handlers[edit_handler.field_name] = edit_handler
+
+        walk(self.edit_handler)
+
+        return field_edit_handlers
+
+    def get_field_edit_handler(self, field_name):
+        if field_name in self.field_edit_handler_mapping:
+            return self.field_edit_handler_mapping[field_name]
+
 
 def get_segment_location_info(source_instance, tab_helper, content_path, widget=False):
     context_path_components = content_path.split('.')
@@ -187,10 +208,23 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
     def widget_from_field(field):
         if isinstance(field, models.ForeignKey):
             if issubclass(field.related_model, Page):
-                # TODO: Allowed page types
-                return {
-                    'type': 'page_chooser'
-                }
+                edit_handler = tab_helper.get_field_edit_handler(field.name)
+
+                if isinstance(edit_handler, PageChooserPanel):
+                    return {
+                        'type': 'page_chooser',
+                        'allowed_page_types': [
+                            '{app}.{model}'.format(
+                                app=model._meta.app_label,
+                                model=model._meta.model_name)
+                            for model in edit_handler.target_models()
+                        ],
+                    }
+
+                else:
+                    return {
+                        'type': 'unknown'
+                    }
 
             elif issubclass(field.related_model, AbstractDocument):
                 return {
@@ -214,9 +248,16 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
     def widget_from_block(block):
         # TODO: Snippet chooser block
         if isinstance(block, blocks.PageChooserBlock):
-            # TODO: Allowed page types
             return {
-                'type': 'page_chooser'
+                'type': 'page_chooser',
+                'allowed_page_types': [
+                    '{app}.{model}'.format(
+                        app=model._meta.app_label,
+                        model=model._meta.model_name)
+
+                    # Note: Unlike PageChooserPanel, the block doesn't automatically fall back to [Page]
+                    for model in block.target_models or [Page]
+                ]
             }
 
         elif isinstance(block, DocumentChooserBlock):

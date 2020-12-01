@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable, TranslatableMixin
@@ -75,6 +75,7 @@ class TestStreamBlock(blocks.StreamBlock):
     test_customstructblock = CustomStructBlock()
     test_customblockwithoutextractmethod = CustomBlockWithoutExtractMethod()
     test_pagechooserblock = blocks.PageChooserBlock()
+    test_pagechooserblock_with_restricted_types = blocks.PageChooserBlock(['wagtail_localize_test.TestHomePage', 'wagtail_localize_test.TestPage'])
     test_imagechooserblock = ImageChooserBlock()
     test_documentchooserblock = DocumentChooserBlock()
     test_snippetchooserblock = SnippetChooserBlock(TestSnippet)
@@ -125,6 +126,18 @@ class TestPage(Page):
         TestSnippet, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
 
+    test_page = models.ForeignKey(
+        Page, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    test_page_specific_type = models.ForeignKey(
+        'TestHomePage', null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    test_page_with_restricted_types = models.ForeignKey(
+        Page, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
     test_synchronized_customfield = TestCustomField(blank=True)
 
     translatable_fields = [
@@ -149,6 +162,9 @@ class TestPage(Page):
         SynchronizedField("test_synchronized_document"),
         SynchronizedField("test_synchronized_snippet"),
         SynchronizedField("test_synchronized_childobjects"),
+        SynchronizedField('test_page'),
+        SynchronizedField('test_page_specific_type'),
+        SynchronizedField('test_page_with_restricted_types'),
         SynchronizedField("test_synchronized_customfield"),
     ]
 
@@ -174,6 +190,9 @@ class TestPage(Page):
         FieldPanel("test_synchronized_document"),
         FieldPanel("test_synchronized_snippet"),
         InlinePanel("test_synchronized_childobjects"),
+        PageChooserPanel('test_page'),
+        PageChooserPanel('test_page_specific_type'),
+        PageChooserPanel('test_page_with_restricted_types', ['wagtail_localize_test.TestHomePage', 'wagtail_localize_test.TestPage']),
         FieldPanel("test_synchronized_customfield"),
     ]
 
