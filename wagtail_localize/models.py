@@ -4,6 +4,7 @@ from collections import defaultdict
 
 import polib
 from django.conf import settings
+from django.contrib.admin.utils import quote
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -23,6 +24,7 @@ from django.db.models import (
 )
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.text import capfirst, slugify
@@ -49,6 +51,20 @@ def pk(obj):
         return obj.pk
     else:
         return obj
+
+
+def get_edit_url(instance):
+    """
+    Returns the URL of the given instance.
+
+    As there's no standard way to get this information from Wagtail,
+    this only works with Pages and snippets at the moment.
+    """
+    if isinstance(instance, Page):
+        return reverse('wagtailadmin_pages:edit', args=[instance.id])
+
+    else:
+        return reverse('wagtailsnippets:edit', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)])
 
 
 class TranslatableObjectManager(models.Manager):
@@ -290,6 +306,12 @@ class TranslationSource(models.Model):
         return self.specific_content_type.get_object_for_this_type(
             translation_key=self.object_id, locale_id=self.locale_id
         )
+
+    def get_source_instance_edit_url(self):
+        """
+        Returns the URL to edit the source instance.
+        """
+        return get_edit_url(self.get_source_instance())
 
     def get_translated_instance(self, locale):
         return self.specific_content_type.get_object_for_this_type(
@@ -688,6 +710,12 @@ class Translation(models.Model):
         Fetches the translated instance from the database.
         """
         return self.source.get_translated_instance(self.target_locale)
+
+    def get_target_instance_edit_url(self):
+        """
+        Returns the URL to edit the target instance
+        """
+        return get_edit_url(self.get_target_instance())
 
     def get_progress(self):
         """

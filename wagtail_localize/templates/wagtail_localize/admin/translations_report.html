@@ -1,0 +1,51 @@
+{% extends 'wagtailadmin/reports/base_report.html' %}
+{% load i18n wagtailadmin_tags %}
+
+{% block results %}
+    {% if object_list %}
+        <table class="listing">
+            <thead>
+                <tr>
+                    <th>
+                        {% trans 'Content type' %}
+                    </th>
+                    <th>
+                        {% trans 'Source' %}
+                    </th>
+                    <th>
+                        {% trans 'Target' %}
+                    </th>
+                    <th>
+                        {% trans 'Status' %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for translation in object_list %}
+                    <tr>
+                        <td>
+                            {{ translation.source.specific_content_type.name|capfirst }}
+                        </td>
+                        <td>
+                            <a href="{{ translation.source.get_source_instance_edit_url }}">
+                                {{ translation.source.object_repr }} ({{ translation.source.locale }})
+                            </a>
+                        </td>
+                        <td>
+                            {% with translation.get_target_instance as target_instance %}
+                                <a href="{{ translation.get_target_instance_edit_url }}">
+                                    {{ target_instance.get_admin_display_title|default:target_instance }} ({{ translation.target_locale }})
+                                </a>
+                            {% endwith %}
+                        </td>
+                        <td>
+                            {{ translation.get_status_display }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{% trans "No translations found." %}</p>
+    {% endif %}
+{% endblock %}

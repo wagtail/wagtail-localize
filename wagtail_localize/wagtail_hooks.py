@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _, gettext_lazy
 from django.views.i18n import JavaScriptCatalog
 
 from wagtail.admin import widgets as wagtailadmin_widgets
+from wagtail.admin.menu import MenuItem
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.core import hooks
 from wagtail.core.models import Locale, TranslatableMixin
@@ -22,7 +23,7 @@ except ImportError:
 from wagtail.snippets.widgets import SnippetListingButton
 
 from .models import Translation, TranslationSource
-from .views import edit_translation, submit_translations, update_translations
+from .views import edit_translation, submit_translations, update_translations, report
 
 # Import synctree so it can register its signal handler
 from . import synctree  # noqa
@@ -43,6 +44,7 @@ def register_admin_urls():
         path("translate/<int:translation_id>/preview/", edit_translation.preview_translation, name="preview_translation"),
         path("translate/<int:translation_id>/preview/<str:mode>/", edit_translation.preview_translation, name="preview_translation"),
         path("translate/<int:translation_id>/disable/", edit_translation.stop_translation, name="stop_translation"),
+        path('reports/translations/', report.TranslationsReportView.as_view(), name='translations_report'),
     ]
 
     return [
@@ -215,3 +217,13 @@ if SNIPPET_RESTART_TRANSLATION_ENABLED:
     @hooks.register("register_snippet_action_menu_item")
     def register_restart_translation_snippet_action_menu_item(model):
         return RestartTranslationSnippetActionMenuItem(order=0)
+
+
+class TranslationsReportMenuItem(MenuItem):
+    def is_shown(self, request):
+        return True
+
+
+@hooks.register('register_reports_menu_item')
+def register_ab_testing_report_menu_item():
+    return TranslationsReportMenuItem(_('Translations'), reverse('wagtail_localize:translations_report'), icon_name='site', order=9000)
