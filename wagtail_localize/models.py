@@ -32,7 +32,7 @@ from modelcluster.models import (
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
-from wagtail.core.models import Page, get_translatable_models
+from wagtail.core.models import Page, get_translatable_models, PageLogEntry
 from wagtail.core.utils import find_available_slug
 
 from .compat import DATE_FORMAT
@@ -504,9 +504,27 @@ class TranslationSource(models.Model):
                 ingest_segments(original, translation, self.locale, locale, segments)
 
                 if isinstance(translation, Page):
-                    # Convert the page into a regular page
-                    # TODO: Audit logging, etc
-                    translation.alias_of_id = None
+                    # If the page is an alias, convert it into a regular page
+                    if translation.alias_of_id:
+                        translation.alias_of_id = None
+                        translation.save(update_fields=['alias_of_id'], clean=False)
+
+                        # Create initial revision
+                        revision = translation.save_revision(user=user, changed=False, clean=False)
+
+                        # Log the alias conversion
+                        PageLogEntry.objects.log_action(
+                            instance=translation,
+                            revision=revision,
+                            action='wagtail.convert_alias',
+                            user=user,
+                            data={
+                                'page': {
+                                    'id': translation.id,
+                                    'title': translation.get_admin_display_title()
+                                },
+                            },
+                        )
 
                     # Make sure the slug is valid
                     translation.slug = find_available_slug(translation.get_parent(), slugify(translation.slug), ignore_page_id=translation.id)
@@ -517,6 +535,7 @@ class TranslationSource(models.Model):
 
                     if publish:
                         page_revision.publish()
+
                 else:
                     translation.save()
                     page_revision = None
