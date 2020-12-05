@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.utils import timezone
 from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page, Locale
+from wagtail.core.models import Page, Locale, PageLogEntry
 
 from wagtail_localize.models import (
     TranslationSource,
@@ -525,6 +525,25 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         self.assertEqual(translated_page.test_snippet, self.translated_snippet)
         self.assertEqual(translated_page.test_charfield, "Ceci est du contenu de test")
+
+    def test_convert_alias(self):
+        self.page.copy_for_translation(self.dest_locale, alias=True)
+
+        new_page, created = self.source.create_or_update_translation(self.dest_locale)
+
+        self.assertFalse(created)
+        self.assertIsNone(new_page.alias_of)
+        self.assertEqual(new_page.title, "Test page")
+        self.assertEqual(new_page.slug, 'test-page-fr')
+        self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
+        self.assertEqual(new_page.translation_key, self.page.translation_key)
+        self.assertEqual(new_page.locale, self.dest_locale)
+        self.assertTrue(
+            self.source.translation_logs.filter(locale=self.dest_locale).exists()
+        )
+
+        # Check a log was created for the alias conversion
+        self.assertTrue(PageLogEntry.objects.filter(page=new_page, action='wagtail.convert_alias').exists())
 
 
 class TestGetEphemeralTranslatedInstance(TestCase):
