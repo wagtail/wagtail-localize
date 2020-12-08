@@ -1,0 +1,262 @@
+# 
+# Translators:
+# Luís Favas <al62006@utad.eu>, 2020
+# 
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-20 13:07+0000\n"
+"Last-Translator: Luís Favas <al62006@utad.eu>, 2020\n"
+"Language-Team: Portuguese (Portugal) (https://www.transifex.com/torchbox/teams/8009/pt_PT/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: pt_PT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: machine_translators/dummy.py:45
+msgid "Dummy translator"
+msgstr "Tradutor fictício "
+
+#: models.py:713
+msgid "Up to date"
+msgstr "Está tudo em ordem"
+
+#: models.py:715
+msgid "Waiting for translations"
+msgstr "Esperando traduções"
+
+#: models.py:955
+msgid "Manual"
+msgstr "Manual"
+
+#: models.py:956
+msgid "Machine"
+msgstr "Maquina"
+
+#: models.py:1050
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Traduzido com {tool_name} a {date}"
+
+#: models.py:1053
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Traduzido manualmente a {date}"
+
+#: models.py:1056
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Traduzido à maquina a {date}"
+
+#: strings.py:47
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"Etiqueta <{}> não permitida. O texto apenas pode conter HTML com etiquetas "
+"\"inline\" (tais como <b>,<a>) "
+
+#: strings.py:54
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"O texto não pode conter etiquetas HTML com atributos ( fugindo à regra o "
+"'id' na etiqueta <a> )"
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"page.</a>."
+msgstr ""
+"Esta página ainda não foi traduzida. É um espelhamento da <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">página "
+"%(original_locale)s</a>."
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
+#: wagtail_hooks.py:77
+msgid "Translate this page"
+msgstr "Traduzir esta página"
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Submit"
+msgstr "Submeter"
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Go back"
+msgstr "Voltar atrás"
+
+#: templates/wagtail_localize/admin/update_translations.html:11
+msgid "Why would I sync my page?"
+msgstr "Porquê sincronizar a minha página?"
+
+#: templates/wagtail_localize/admin/update_translations.html:12
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will"
+" add new content for translation and remove deleted content."
+msgstr ""
+"As alterações não são automaticamente aplicadas entre páginas traduzidas. A "
+"sincronização tanto adiciona bem como remove conteúdo."
+
+#: templates/wagtail_localize/admin/update_translations.html:15
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"A última sincronização foi a %(last_sync_date)s. Está prestes a sincronizar "
+"o seguinte:"
+
+#: views/edit_translation.py:123
+msgid "Content"
+msgstr "Conteúdo"
+
+#: views/edit_translation.py:325
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Novos erros de validação foram encontrados ao publicar o '{object}' no "
+"{locale}. Por favor componha os mesmos ou clique em publicar outra vez para "
+"ignorar essas traduções por agora."
+
+#: views/edit_translation.py:340
+#, python-brace-format
+msgid ""
+"Published '{object}' in {locale} with missing translations - see below."
+msgstr "Publicado '{object}' em {locale} com traduções em falta - ver abaixo."
+
+#: views/edit_translation.py:346
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Publicado '{object}' em {locale}."
+
+#: views/edit_translation.py:610
+msgid "Translation has been stopped."
+msgstr "A tradução foi parada."
+
+#: views/edit_translation.py:624
+msgid "Translation has been restarted."
+msgstr "A tradução foi reiniciada."
+
+#: views/edit_translation.py:760
+msgid "Please upload a valid PO file."
+msgstr "Por favor carregue um ficheiro PO válido."
+
+#: views/edit_translation.py:769
+msgid "Cannot import PO file that was created for a different translation."
+msgstr ""
+"Não pode importar ficheiros PO que foram criados para uma tradução "
+"diferente."
+
+#: views/edit_translation.py:778
+msgid "Successfully imported translations from PO File."
+msgstr "Traduções importadas com sucesso do ficheiro PO."
+
+#: views/edit_translation.py:846
+msgid "Successfully translated with {}."
+msgstr "Tradução sucedida com {}."
+
+#: views/edit_translation.py:852
+msgid "There isn't anything left to translate."
+msgstr "Não existe mais nada para traduzir."
+
+#: views/submit_translations.py:23
+msgid "Select all"
+msgstr "Selecionar tudo"
+
+#: views/submit_translations.py:25
+msgid "Locales"
+msgstr "Dialetos"
+
+#: views/submit_translations.py:27
+msgid "All child pages will be created."
+msgstr "Todas as páginas filhas foram criadas."
+
+#: views/submit_translations.py:39
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Incluir sub-árvore ({} página)"
+msgstr[1] "Incluir sub-árvore  ({} páginas)"
+
+#: views/submit_translations.py:116 wagtail_hooks.py:105
+msgid "Translate"
+msgstr "Traduzir"
+
+#: views/submit_translations.py:176
+msgid "{} locales"
+msgstr "{} dialetos"
+
+#: views/submit_translations.py:197
+msgid "Translate page"
+msgstr "Traduzir página"
+
+#: views/submit_translations.py:215
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"A página  '{page_title}' foi submetida com sucesso para tradução em "
+"{locales}"
+
+#: views/submit_translations.py:224
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Traduzir {model_name}"
+
+#: views/submit_translations.py:240
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"O {model_name} '{object}' foi submetido com sucesso para tradução em "
+"{locales}"
+
+#: views/update_translations.py:20
+msgid "Publish immediately"
+msgstr "Publicar imediatamente"
+
+#: views/update_translations.py:21
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Isto vai aplicar atualizações e publicar imediatamente, antes das novas "
+"traduções estarem prontas."
+
+#: views/update_translations.py:28
+msgid "Update existing translations"
+msgstr "Atualizar traduções existentes"
+
+#: views/update_translations.py:46
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "As traduções para '{object}' foram atualizadas com sucesso"
+
+#: wagtail_hooks.py:86
+msgid "Sync translated pages"
+msgstr "Sincronizar páginas traduzidas"
+
+#: wagtail_hooks.py:107
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Traduzir '%(title)s'"
+
+#: wagtail_hooks.py:119
+msgid "Sync translated snippets"
+msgstr "Sincronizar trechos traduzidos"
+
+#: wagtail_hooks.py:121
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Sincronizar traduções de '%(title)s'"
+
+#: wagtail_hooks.py:151 wagtail_hooks.py:196
+msgid "Restart translation"
+msgstr "Reiniciar tradução"

@@ -1,0 +1,263 @@
+# 
+# Translators:
+# Istvan Farkas <istvan.farkas@gmail.com>, 2020
+# 
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-20 13:07+0000\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2020\n"
+"Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/hu/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: hu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: machine_translators/dummy.py:45
+msgid "Dummy translator"
+msgstr "Üres fordító"
+
+#: models.py:713
+msgid "Up to date"
+msgstr "Friss"
+
+#: models.py:715
+msgid "Waiting for translations"
+msgstr "Fordításra vár"
+
+#: models.py:955
+msgid "Manual"
+msgstr "Kézi"
+
+#: models.py:956
+msgid "Machine"
+msgstr "Gépi"
+
+#: models.py:1050
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Fordítva {tool_name}  módon, ekkor: {date}"
+
+#: models.py:1053
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Kézzel fordítva ekkor: {date}"
+
+#: models.py:1056
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Géppel fordítva ekkor: {date}"
+
+#: strings.py:47
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"A <{}> tag nincs engedélyezve. A szövegek csak standard HTML tageket "
+"tartalmazhatnak (mint a <b><a>)"
+
+#: strings.py:54
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"A szövegekben nem lehet olyan HTML tag, aminem tulajdonságai vannak (kivéve "
+"az 'id'-t a <a> tagekben)"
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"page.</a>."
+msgstr ""
+"Ez az oldal még nem lett lefordítva. Jelenleg a(z) <a "
+"href=\"%(edit_original_page_url)s\" "
+"target=\"_blank\">%(original_locale)soldalt</a> tükrözi."
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
+#: wagtail_hooks.py:77
+msgid "Translate this page"
+msgstr "Oldal lefordítása"
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Submit"
+msgstr "Beküldés"
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Go back"
+msgstr "Vissza"
+
+#: templates/wagtail_localize/admin/update_translations.html:11
+msgid "Why would I sync my page?"
+msgstr "Miért akarnám szinkronizálni az oldalam?"
+
+#: templates/wagtail_localize/admin/update_translations.html:12
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will"
+" add new content for translation and remove deleted content."
+msgstr ""
+"A változások így automatikusan átmennek a fordított oldalakra. A szinkron "
+"hozzáadja az új elemet a fordításhoz, és eltávolítja a törölteket."
+
+#: templates/wagtail_localize/admin/update_translations.html:15
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"Az utolsó szinkron ekkor történt: %(last_sync_date)s. A következők lesznek "
+"szinkronizálva:"
+
+#: views/edit_translation.py:123
+msgid "Content"
+msgstr "Tartalom"
+
+#: views/edit_translation.py:325
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Új ellenőrzési hibák bukkantak fel a(z) '{object}' publikálásakor {locale} "
+"nyelven. Kérjük javítsa a hibákat, vagy nyomja meg a publikálás gombot újra "
+"a fordítási hibák figyelmen kívül hagyásához."
+
+#: views/edit_translation.py:340
+#, python-brace-format
+msgid ""
+"Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"A(z) '{object}' {locale} verziója publikálva hiányzó fordításokkal - lásd "
+"alább."
+
+#: views/edit_translation.py:346
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "A(z) '{object}' {locale} verziója publikálva."
+
+#: views/edit_translation.py:610
+msgid "Translation has been stopped."
+msgstr "A fordítás megállítva."
+
+#: views/edit_translation.py:624
+msgid "Translation has been restarted."
+msgstr "A fordítás újraindítva."
+
+#: views/edit_translation.py:760
+msgid "Please upload a valid PO file."
+msgstr "Kérjük töltsön fel egy érvényes PO fájlt."
+
+#: views/edit_translation.py:769
+msgid "Cannot import PO file that was created for a different translation."
+msgstr ""
+"Nem lehet olyan PO fájlt beimportálni, amelyik egy másik nyelvhez készült."
+
+#: views/edit_translation.py:778
+msgid "Successfully imported translations from PO File."
+msgstr "Fordítások sikeresen importálva."
+
+#: views/edit_translation.py:846
+msgid "Successfully translated with {}."
+msgstr "Sikeres fordítás ezzel: {}"
+
+#: views/edit_translation.py:852
+msgid "There isn't anything left to translate."
+msgstr "Nem maradt fordítanivaló."
+
+#: views/submit_translations.py:23
+msgid "Select all"
+msgstr "Összes kijelölése"
+
+#: views/submit_translations.py:25
+msgid "Locales"
+msgstr "Területi beállítások"
+
+#: views/submit_translations.py:27
+msgid "All child pages will be created."
+msgstr "Az összes gyermekoldal létre fog jönni."
+
+#: views/submit_translations.py:39
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Aloldalakkal együtt ({} oldal)"
+msgstr[1] "Aloldalakkal együtt ({} oldal)"
+
+#: views/submit_translations.py:116 wagtail_hooks.py:105
+msgid "Translate"
+msgstr "Fordítás"
+
+#: views/submit_translations.py:176
+msgid "{} locales"
+msgstr "{} területi beállítás"
+
+#: views/submit_translations.py:197
+msgid "Translate page"
+msgstr "Oldal fordítása"
+
+#: views/submit_translations.py:215
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"A(z) '{page_title}' oldal be lett küldve fordításra a következő nyelveken: "
+"{locales}"
+
+#: views/submit_translations.py:224
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "{model_name} fordítása"
+
+#: views/submit_translations.py:240
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"A(z) '{page_title}' {model_name} be lett küldve fordításra a következő "
+"nyelveken: {locales}"
+
+#: views/update_translations.py:20
+msgid "Publish immediately"
+msgstr "Azonnali közzététel"
+
+#: views/update_translations.py:21
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Ez elmenti a módosításokat, és azonnal publikálja az oldalt, a fordítások "
+"előtt."
+
+#: views/update_translations.py:28
+msgid "Update existing translations"
+msgstr "Meglévő fordítások frissítése"
+
+#: views/update_translations.py:46
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "A(z) '{object}' fordításai sikeresen frissítve"
+
+#: wagtail_hooks.py:86
+msgid "Sync translated pages"
+msgstr "Fordítások szinkronizálása"
+
+#: wagtail_hooks.py:107
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "'%(title)s' lefordítása"
+
+#: wagtail_hooks.py:119
+msgid "Sync translated snippets"
+msgstr "Lefordított elemek szinkronizálása"
+
+#: wagtail_hooks.py:121
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "'%(title)s' fordításainak szinkronizálása"
+
+#: wagtail_hooks.py:151 wagtail_hooks.py:196
+msgid "Restart translation"
+msgstr "Fordítás újraindítása"

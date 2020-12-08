@@ -1,0 +1,258 @@
+# 
+# Translators:
+# Mirek Zvolský <zvolsky@seznam.cz>, 2020
+# 
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-20 13:07+0000\n"
+"Last-Translator: Mirek Zvolský <zvolsky@seznam.cz>, 2020\n"
+"Language-Team: Czech (https://www.transifex.com/torchbox/teams/8009/cs/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+
+#: machine_translators/dummy.py:45
+msgid "Dummy translator"
+msgstr "Fiktivní překladač"
+
+#: models.py:713
+msgid "Up to date"
+msgstr "Aktuální"
+
+#: models.py:715
+msgid "Waiting for translations"
+msgstr "Čeká se na překlad"
+
+#: models.py:955
+msgid "Manual"
+msgstr "Manuální"
+
+#: models.py:956
+msgid "Machine"
+msgstr "Strojový"
+
+#: models.py:1050
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Přeloženo pomocí {tool_name} dne {date}"
+
+#: models.py:1053
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Přeloženo ručně dne {date}"
+
+#: models.py:1056
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Strojově přeloženo dne {date}"
+
+#: strings.py:47
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"<{}> značka není povolena. Řetězec smí obsahovat jen standardní HTML inline "
+"značky (jako např. <b>, <a>)"
+
+#: strings.py:54
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"Řetězec nemůže mít žádné HTML značky s atributy (s výjimkou 'id' ve <a> "
+"značkách)"
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"page.</a>."
+msgstr ""
+"Tato stránka zatím nebyla přeložena. Je identická s <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"stránkou.</a>."
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
+#: wagtail_hooks.py:77
+msgid "Translate this page"
+msgstr "Přeložit tuto stránku"
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Submit"
+msgstr "Uložit"
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Go back"
+msgstr "Zpět"
+
+#: templates/wagtail_localize/admin/update_translations.html:11
+msgid "Why would I sync my page?"
+msgstr "Proč mám synchronizovat stránku?"
+
+#: templates/wagtail_localize/admin/update_translations.html:12
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will"
+" add new content for translation and remove deleted content."
+msgstr ""
+"Změny nejsou automaticky propagovány mezi přeloženými stránkami. "
+"Syncchronizace přidá nový obsah k překladu a odstraní zrušený obsah."
+
+#: templates/wagtail_localize/admin/update_translations.html:15
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"Poslední synchronizace proběhla %(last_sync_date)s. K synchronizaci je "
+"následující:"
+
+#: views/edit_translation.py:123
+msgid "Content"
+msgstr "Obsah"
+
+#: views/edit_translation.py:325
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Byly nalezeny chyby během validace při zveřejnění '{object}' v {locale}. "
+"Prosím, opravte je nebo stiskněte Publikovat znovu, čímž problematické "
+"překlady zatím ignorujete."
+
+#: views/edit_translation.py:340
+#, python-brace-format
+msgid ""
+"Published '{object}' in {locale} with missing translations - see below."
+msgstr "Zveřejněné '{object}' v {locale} s chybějícím překladem - viz níže."
+
+#: views/edit_translation.py:346
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Zveřejněné '{object}' v {locale}."
+
+#: views/edit_translation.py:610
+msgid "Translation has been stopped."
+msgstr "Překlad byl pozastaven."
+
+#: views/edit_translation.py:624
+msgid "Translation has been restarted."
+msgstr "Překlad byl znova zahájen."
+
+#: views/edit_translation.py:760
+msgid "Please upload a valid PO file."
+msgstr "Prosím, nahrajte platný PO soubor."
+
+#: views/edit_translation.py:769
+msgid "Cannot import PO file that was created for a different translation."
+msgstr "Nelze nahrát PO soubor, který byl vytvořen pro jiný překlad."
+
+#: views/edit_translation.py:778
+msgid "Successfully imported translations from PO File."
+msgstr "Úspěšně byly nahrány překlady z PO souboru."
+
+#: views/edit_translation.py:846
+msgid "Successfully translated with {}."
+msgstr "Úspěšně přeloženo {}."
+
+#: views/edit_translation.py:852
+msgid "There isn't anything left to translate."
+msgstr "Nezůstává nic dalšího k překladu."
+
+#: views/submit_translations.py:23
+msgid "Select all"
+msgstr "Vybrat vše"
+
+#: views/submit_translations.py:25
+msgid "Locales"
+msgstr "Místní nastavení"
+
+#: views/submit_translations.py:27
+msgid "All child pages will be created."
+msgstr "Všechny závislé stránky budou vytvořeny."
+
+#: views/submit_translations.py:39
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Včetně podřízeného stromu ({} stránka)"
+msgstr[1] "Včetně podřízeného stromu ({} stránky)"
+msgstr[2] "Včetně podřízeného stromu ({} stránek)"
+msgstr[3] "Včetně podřízeného stromu ({} stránek)"
+
+#: views/submit_translations.py:116 wagtail_hooks.py:105
+msgid "Translate"
+msgstr "Přeložit"
+
+#: views/submit_translations.py:176
+msgid "{} locales"
+msgstr "{} místní nastavení"
+
+#: views/submit_translations.py:197
+msgid "Translate page"
+msgstr "Přeložit stránku"
+
+#: views/submit_translations.py:215
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr "Stránka '{page_title}' byla úspěšně uložena pro překlad do {locales}"
+
+#: views/submit_translations.py:224
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Přeložit {model_name}"
+
+#: views/submit_translations.py:240
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr "{model_name} '{object}' byl úspěšně uložen pro překlad do {locales}"
+
+#: views/update_translations.py:20
+msgid "Publish immediately"
+msgstr "Ihned zveřejnit"
+
+#: views/update_translations.py:21
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Budou zohledněny aktualizace a bude ihned zveřejněno - dříve než proběhnou "
+"další překlady."
+
+#: views/update_translations.py:28
+msgid "Update existing translations"
+msgstr "Aktualizovat existující překlady"
+
+#: views/update_translations.py:46
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "Úspěšně byly aktualizovány překlady pro '{object}'"
+
+#: wagtail_hooks.py:86
+msgid "Sync translated pages"
+msgstr "Synchronizovat přeložené stránky"
+
+#: wagtail_hooks.py:107
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Přeložit '%(title)s'"
+
+#: wagtail_hooks.py:119
+msgid "Sync translated snippets"
+msgstr "Synchronizovat přeložené citace"
+
+#: wagtail_hooks.py:121
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Synchronizovat překlady '%(title)s'"
+
+#: wagtail_hooks.py:151 wagtail_hooks.py:196
+msgid "Restart translation"
+msgstr "Obnovit překlad"

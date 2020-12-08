@@ -1,0 +1,205 @@
+# 
+# Translators:
+# Thijs Kramer <thijskramer@gmail.com>, 2020
+# 
+msgid ""
+msgstr ""
+"Last-Translator: Thijs Kramer <thijskramer@gmail.com>, 2020\n"
+"Language-Team: Dutch (Netherlands) (https://www.transifex.com/torchbox/teams/8009/nl_NL/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: nl_NL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:694
+msgid " version"
+msgstr "versie"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:782
+msgid "[DELETED]"
+msgstr "[VERWIJDERD]"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
+msgid "Apply editor lock"
+msgstr "Pas bewerkingsblokkade toe"
+
+#: wagtail_localize/static_src/common/components/Header/index.tsx:213
+msgid "Breadcrumb"
+msgstr "Broodkruimel"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:412
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:565
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:671
+msgid "Change document"
+msgstr "Wijzig document"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:641
+msgid "Change image"
+msgstr "Wijzig afbeelding"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:611
+msgid "Change page"
+msgstr "Wijzig pagina"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:201
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:139
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:161
+msgid "Changed"
+msgstr "Gewijzigd"
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:65
+msgid "Choose a document"
+msgstr "Kies een document"
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:61
+msgid "Choose a page"
+msgstr "Kies een pagina"
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:75
+msgid "Choose an image"
+msgstr "Kies een afbeelding"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:37
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:94
+msgid "Download PO file"
+msgstr "Download PO-bestand"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:87
+msgid "Download PO file and input translations offline"
+msgstr "Download PO-bestand en voer offline vertalingen in"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:151
+msgid "Draft"
+msgstr "Concept"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:475
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:589
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:790
+msgid "Edit"
+msgstr "Bewerk"
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:47
+msgid "Edit this document"
+msgstr "Bewerk dit document"
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:57
+msgid "Edit this image"
+msgstr "Bewerk deze afbeelding"
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:43
+msgid "Edit this page"
+msgstr "Bewerk deze pagina"
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:54
+msgid "Fetching document information..."
+msgstr "Bezig met ophalen van documentgegevens..."
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:64
+msgid "Fetching image information..."
+msgstr "Bezig met ophalen van afbeeldingsgegevens..."
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:50
+msgid "Fetching page information..."
+msgstr "Bezig met ophalen van paginagegevens..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:123
+msgid "Live"
+msgstr "Openbaar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:58
+msgid "Lock"
+msgstr "Vergrendel"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:765
+msgid "Not translated"
+msgstr "Niet vertaald"
+
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:118
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:139
+msgid "Preview"
+msgstr "Voorvertoning"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
+msgid "Publish in "
+msgstr "Publiceer in"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:136
+msgid "Published"
+msgstr "Gepubliceerd"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:134
+msgid "Published on "
+msgstr "Gepubliceerd op"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:110
+msgid "Publishing..."
+msgstr "Bezig met publiceren..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
+msgid "Remove editor lock"
+msgstr "Verwijder bewerkingsblokkade"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:692
+msgid "Revert to "
+msgstr "Terugdraaien naar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:417
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:568
+msgid "Save"
+msgstr "Opslaan"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:95
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:433
+msgid "Saving..."
+msgstr "Bezig met opslaan..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:750
+msgid "segments translated"
+msgstr "vertaalde segmenten"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:125
+msgid "Server error"
+msgstr "Server error"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:25
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:28
+msgid "Stop translation"
+msgstr "Stop vertaling"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:475
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:799
+msgid "Translate"
+msgstr "Vertaal"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:138
+msgid "Translate all missing strings with "
+msgstr "Vertaal alle ontbrekende teksten met"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:162
+msgid "Translate with "
+msgstr "Vertaal met"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
+msgid "Unlock"
+msgstr "Ontgrendelen"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:90
+msgid "Unpublish"
+msgstr "Depubliceren"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:108
+msgid "Upload PO file"
+msgstr "Upload PO-bestand"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:100
+msgid "Upload translated PO file to submit translations"
+msgstr "Upload vertaald PO-bestand om vertalingen te verzenden"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:538
+msgid "Uses %s version"
+msgstr "Gebruikt %s versie"
