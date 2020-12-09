@@ -274,7 +274,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -304,7 +304,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -334,7 +334,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -368,7 +368,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -402,7 +402,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -435,7 +435,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -469,7 +469,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -499,7 +499,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -538,7 +538,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -579,7 +579,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -617,7 +617,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
@@ -660,7 +660,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            translated_page.test_streamfield.stream_data,
+            list(translated_page.test_streamfield.stream_data),
             [
                 {
                     "id": str(block_id),
