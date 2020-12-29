@@ -115,8 +115,17 @@ class StreamFieldSegmentsWriter:
         return struct_block
 
     def handle_list_block(self, list_block, segments):
-        # TODO
-        pass
+        segments_by_block = defaultdict(list)
+        for segment in segments:
+            block_idx, segment = segment.unwrap()
+            segments_by_block[block_idx].append(segment)
+
+        for idx, segments in segments_by_block.items():
+            block_value = list_block[int(idx)]
+            block_type = block_value.block
+            list_block[int(idx)] = self.handle_block(block_type, block_value, segments)
+
+        return list_block
 
     def get_stream_block_child_data(self, stream_block, block_uuid):
         for stream_child in stream_block:
