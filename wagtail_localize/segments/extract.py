@@ -91,8 +91,13 @@ class StreamFieldSegmentExtractor:
         return segments
 
     def handle_list_block(self, list_block):
-        # TODO
-        return []
+        segments = []
+        for idx, block in enumerate(list_block):
+            segments.extend(
+                segment.wrap(str(idx))
+                for segment in self.handle_block(block.block, block)
+            )
+        return segments
 
     def handle_stream_block(self, stream_block):
         segments = []
