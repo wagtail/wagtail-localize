@@ -389,3 +389,28 @@ def restore_strings(template, strings):
         text_element.replaceWith(string.render_soup(attrs))
 
     return str(soup)
+
+
+
+def extract_ids(template):
+    """Extract link ids from one template string and return it in a set."""
+    soup = BeautifulSoup(template, "html.parser")
+    ids = set()
+    for element in soup.descendants:
+        if not isinstance(element, Tag):
+            continue
+
+        if element.name == 'a':
+            if 'id' in element.attrs:
+                ids.add(element.attrs['id'])
+
+    return ids
+
+
+def validate_translation_links(translation_of, data):
+    """Check that the link id in a translation are present in its source."""
+    id1s, id2s = extract_ids(translation_of), extract_ids(data)
+    new_ids = id2s - id1s
+    if new_ids:
+        ids = ", ".join(sorted(new_ids))
+        raise ValueError(_("Unrecognised id found in an <a> tag: {}").format(ids))
