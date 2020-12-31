@@ -1,6 +1,13 @@
 from django.test import TestCase
 
-from wagtail_localize.strings import StringValue, extract_strings, restore_strings
+from wagtail_localize.models import TranslationSource
+from wagtail_localize.strings import (
+    StringValue,
+    extract_strings,
+    restore_strings,
+    extract_ids,
+    validate_translation_links,
+)
 
 
 class TestStringValueFromSourceHTML(TestCase):
@@ -316,3 +323,56 @@ class TestRestoreStrings(TestCase):
             """,
             html,
         )
+
+
+class IDsValidationTestCase(TestCase):
+    def test_extract_ids(self):
+        ids = extract_ids(
+            """
+            <a id="a1">link1</a>
+            <strong>
+                <a id="a2">link2</a>
+                <a id="a1">link1</a>
+                <em>
+                    <a id="a3">link3</a>
+                </em>
+            <strong>
+            """
+        )
+        self.assertEqual({"a1", "a2", "a3"}, ids)
+
+    def test_validate_translation_links_ok(self):
+            validate_translation_links(
+                """
+                <a id="a1">link1</a>
+                <strong>
+                    <a id="a2">link2</a>
+                <strong>
+                """,
+                """
+                <a id="a1">lien 1</a>
+                <strong>
+                    <a id="a2">lien 2</a>
+                <strong>
+                """
+            )
+
+    def test_validate_translation_links_raises_error_if_new_ids(self):
+        with self.assertRaises(ValueError) as e:
+            validate_translation_links(
+                """
+                <a id="a1">link1</a>
+                <strong>
+                    <a id="a2">link2</a>
+                <strong>
+                """,
+                """
+                <a id="a1">lien 1</a>
+                <strong>
+                    <a id="a2">lien 2</a>
+                    <a id="a3">lien 3</a>
+                    <a id="a4">lien 4</a>
+                <strong>
+                """
+            )
+        self.assertEqual(e.exception.args, ("Unrecognised id found in an <a> tag: a3, a4",))

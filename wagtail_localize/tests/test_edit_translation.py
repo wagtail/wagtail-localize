@@ -956,6 +956,44 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
         self.assertEqual(translation.last_translated_by, self.user)
         self.assertTrue(translation.has_error)
 
+    def test_update_string_translation_with_unkown_links(self):
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data='A char field'),
+            context=TranslationContext.objects.get(path='test_charfield'),
+            locale=self.fr_locale,
+            data='Not translated!',
+            translation_type=StringTranslation.TRANSLATION_TYPE_MACHINE
+        )
+
+        string = String.objects.get(data='A char field')
+        string_segment = string.segments.get()
+
+        response = self.client.put(reverse('wagtail_localize:edit_string_translation', args=[self.page_translation.id, string_segment.id]), {
+            'value': 'Tiens, <a id="a42">un nouveau lien</a>',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.json(), {
+            'string_id': string.id,
+            'segment_id': string_segment.id,
+            'data': 'Tiens, <a id="a42">un nouveau lien</a>',
+            'error': 'Unrecognised id found in an <a> tag: a42',
+            'comment': 'Translated manually on 21 August 2020',
+            'last_translated_by': {
+                'avatar_url': '//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm',
+                'full_name': ''
+            }
+        })
+
+        translation = StringTranslation.objects.get()
+        self.assertEqual(translation.translation_of, string)
+        self.assertEqual(translation.context, string_segment.context)
+        self.assertEqual(translation.translation_type, StringTranslation.TRANSLATION_TYPE_MANUAL)
+        self.assertEqual(translation.tool_name, "")
+        self.assertEqual(translation.last_translated_by, self.user)
+        self.assertTrue(translation.has_error)
+
     def test_delete_string_translation(self):
         StringTranslation.objects.create(
             translation_of=String.objects.get(data='A char field'),

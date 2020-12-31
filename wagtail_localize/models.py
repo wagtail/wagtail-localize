@@ -41,7 +41,7 @@ from .locales.components import register_locale_component
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
-from .strings import StringValue
+from .strings import StringValue, validate_translation_links
 
 
 def pk(obj):
@@ -1027,8 +1027,10 @@ class StringTranslation(models.Model):
         # if any strings are invalid so we don't use them on a page.
         updating_data = update_fields is None or 'data' in update_fields
         if updating_data and not self.has_error:
+
             try:
                 StringValue.from_translated_html(self.data)
+                validate_translation_links(self.translation_of.data, self.data)
             except ValueError:
                 self.has_error = True
                 self.save(update_fields=['has_error'])
@@ -1054,6 +1056,7 @@ class StringTranslation(models.Model):
         # Check for HTML validation errors
         try:
             StringValue.from_translated_html(self.data)
+            validate_translation_links(self.translation_of.data, self.data)
         except ValueError as e:
             return e.args[0]
 
