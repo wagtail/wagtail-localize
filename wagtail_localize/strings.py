@@ -358,6 +358,7 @@ def extract_strings(html):
     walk(soup)
 
     # Now extract strings from the <text> tags
+    hrefs = []
     strings = []
     for element in soup.descendants:
         if element.name == "text":
@@ -370,7 +371,14 @@ def extract_strings(html):
             text, suffix = rstrip_keep(text)
 
             element.attrs["position"] = len(strings)
-            strings.append(StringValue.from_source_html(text))
+            string_val, attrs = StringValue.from_source_html(text)
+            strings.append((string_val, attrs))
+            # Links should be translated
+            if attrs:
+                for key, val in attrs.items():
+                    if 'href' in val and val['href'] not in hrefs:
+                        hrefs.append(val['href'])
+                        strings.append((StringValue(val['href']), {'xref': val['href']}))
 
             if prefix:
                 element.insert_before(prefix)
@@ -378,14 +386,25 @@ def extract_strings(html):
             if suffix:
                 element.insert_after(suffix)
 
+        elif element.name == "a":
+            element.attrs["position"] = len(strings)
+            if element.attrs and 'href' in element.attrs and element.attrs['href'] not in hrefs:
+                hrefs.append(element.attrs['href'])
+                strings.append((StringValue(element.attrs['href']), {'xref': element.attrs['href']}))
+
     return str(soup), strings
 
 
 def restore_strings(template, strings):
     soup = BeautifulSoup(template, "html.parser")
+    hrefs = {attrs['xref']: string.data for (string, attrs) in strings if attrs and 'xref' in attrs}
 
     for text_element in soup.findAll("text"):
         string, attrs = strings[int(text_element.get("position"))]
+        if attrs:
+            for key, val in attrs.items():
+                if 'href' in val and val['href'] in hrefs:
+                    val['href'] = hrefs[val['href']]
         text_element.replaceWith(string.render_soup(attrs))
 
     return str(soup)
