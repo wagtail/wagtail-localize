@@ -9,17 +9,34 @@ from wagtail.embeds.blocks import EmbedBlock, EmbedValue
 
 from wagtail_localize.strings import restore_strings
 
-from .types import OverridableSegmentValue
+from .types import OverridableSegmentValue, StringSegmentValue
 
 
 def organise_template_segments(segments):
     # The first segment is always the template, followed by the texts in order of their position
+
     segments.sort(key=lambda segment: segment.order)
     template = segments[0]
+    xrefs = {
+        segment.path: segment.data
+        for segment in segments
+        if isinstance(segment, OverridableSegmentValue) and segment.data
+    }
+    def translate_href(attrs):
+        if attrs:
+            for key, val in attrs.items():
+                if val and "href" in val:
+                    if val["href"] in xrefs:
+                        val["href"] = xrefs[val["href"]]
+        return attrs
+
     return (
         template.format,
         template.template,
-        [(segment.string, segment.attrs) for segment in segments[1:]],
+        [
+            (segment.string, translate_href(segment.attrs))
+            for segment in segments[1:] if isinstance(segment, StringSegmentValue)
+        ],
     )
 
 

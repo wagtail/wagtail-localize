@@ -44,10 +44,13 @@ class StreamFieldSegmentExtractor:
 
         elif isinstance(block_type, blocks.RichTextBlock):
             template, strings = extract_strings(block_value.source)
-
-            return [TemplateSegmentValue("", "html", template, len(strings))] + [
-                StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
+            ret = [TemplateSegmentValue("", "html", template, len(strings))] + [
+                OverridableSegmentValue(attrs["xref"], string.data)
+                if attrs and "xref" in attrs else
+                StringSegmentValue("", string, attrs=attrs)
+                for string, attrs in strings
             ]
+            return ret
 
         elif isinstance(block_type, blocks.ChooserBlock):
             return self.handle_related_object_block(block_value)
@@ -137,7 +140,10 @@ def extract_segments(instance):
                 template, strings = extract_strings(field.value_from_object(instance))
 
                 field_segments = [TemplateSegmentValue("", "html", template, len(strings))] + [
-                    StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
+                    OverridableSegmentValue(string.data, string.data)
+                    if attrs and "xref" in attrs else
+                    StringSegmentValue("", string, attrs=attrs)
+                    for string, attrs in strings
                 ]
 
                 segments.extend(segment.wrap(field.name) for segment in field_segments)
