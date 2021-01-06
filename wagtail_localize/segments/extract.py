@@ -43,12 +43,15 @@ class StreamFieldSegmentExtractor:
             return [StringSegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            template, strings = extract_strings(block_value.source)
-            ret = [TemplateSegmentValue("", "html", template, len(strings))] + [
-                OverridableSegmentValue(attrs["xref"], string.data)
-                if attrs and "xref" in attrs else
+            template, strings, hrefs = extract_strings(block_value.source)
+            ret = [
+                TemplateSegmentValue("", "html", template, len(strings))
+            ] + [
                 StringSegmentValue("", string, attrs=attrs)
                 for string, attrs in strings
+            ] + [
+                OverridableSegmentValue(href, href)
+                for href in hrefs
             ]
             return ret
 
@@ -137,13 +140,16 @@ def extract_segments(instance):
 
         elif isinstance(field, RichTextField):
             if is_translatable:
-                template, strings = extract_strings(field.value_from_object(instance))
+                template, strings, hrefs = extract_strings(field.value_from_object(instance))
 
-                field_segments = [TemplateSegmentValue("", "html", template, len(strings))] + [
-                    OverridableSegmentValue(string.data, string.data)
-                    if attrs and "xref" in attrs else
+                field_segments = [
+                    TemplateSegmentValue("", "html", template, len(strings))
+                ] + [
                     StringSegmentValue("", string, attrs=attrs)
                     for string, attrs in strings
+                ] + [
+                    OverridableSegmentValue(href, href)
+                    for href in hrefs
                 ]
 
                 segments.extend(segment.wrap(field.name) for segment in field_segments)

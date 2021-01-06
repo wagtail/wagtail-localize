@@ -358,7 +358,7 @@ def extract_strings(html):
     walk(soup)
 
     # Now extract strings from the <text> tags
-    hrefs = []
+    hrefs = set()
     strings = []
     position = 0
     for element in soup.descendants:
@@ -378,9 +378,8 @@ def extract_strings(html):
             # Links should be translated
             if attrs:
                 for key, val in attrs.items():
-                    if 'href' in val and val['href'] not in hrefs:
-                        hrefs.append(val['href'])
-                        strings.append((StringValue(val['href']), {'xref': val['href']}))
+                    if 'href' in val:
+                        hrefs.add(val['href'])
 
             if prefix:
                 element.insert_before(prefix)
