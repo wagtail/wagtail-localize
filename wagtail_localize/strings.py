@@ -244,6 +244,7 @@ def extract_strings(html):
         if (
             len(elements) == 1
             and not isinstance(elements[0], NavigableString)
+            and elements[0].name != 'a'  # keep href translatable
             and elements[0].name in INLINE_TAGS
         ):
             wrap(elements[0].children)

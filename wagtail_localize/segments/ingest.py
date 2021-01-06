@@ -23,11 +23,11 @@ def organise_template_segments(segments):
         if isinstance(segment, OverridableSegmentValue) and segment.data
     }
     def translate_href(attrs):
+        """Update href in segments with their translated values."""
         if attrs:
             for key, val in attrs.items():
-                if val and "href" in val:
-                    if val["href"] in xrefs:
-                        val["href"] = xrefs[val["href"]]
+                if val and "href" in val and val["href"] in xrefs:
+                    val["href"] = xrefs[val["href"]]
         return attrs
 
     return (
