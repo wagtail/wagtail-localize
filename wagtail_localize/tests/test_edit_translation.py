@@ -184,6 +184,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(
             [(segment['contentPath'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
             [
+                ('test_richtextfield.http://example.com', 'http://example.com'),
                 ('test_synchronized_emailfield', 'email@example.com'),
             ]
         )
@@ -191,12 +192,19 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         # Test locations
         self.assertEqual(props['segments'][0]['location'], {'tab': 'content', 'field': 'Char field', 'blockId': None, 'fieldHelpText': '', 'order': 1, 'subField': None, 'widget': None})
         self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'order': 6, 'subField': None, 'widget': None})
-        self.assertEqual(props['segments'][9]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_TEXT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': None, 'widget': None})
-        self.assertEqual(props['segments'][10]['location'], {'tab': 'content', 'field': 'Test structblock', 'blockId': str(STREAM_STRUCT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': 'Field a', 'widget': None})
+        self.assertEqual(props['segments'][10]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_TEXT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': None, 'widget': None})
+        self.assertEqual(props['segments'][11]['location'], {'tab': 'content', 'field': 'Test structblock', 'blockId': str(STREAM_STRUCT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': 'Field a', 'widget': None})
         # TODO: Example that uses fieldHelpText
 
+        # Check synchronised value
+        synchronised_value_segment = props['segments'][9]
+        self.assertEqual(synchronised_value_segment['type'], 'synchronised_value')
+        self.assertEqual(synchronised_value_segment['contentPath'], 'test_richtextfield.http://example.com')
+        self.assertEqual(synchronised_value_segment['location'], {'blockId': None, 'field': 'Test richtextfield', 'fieldHelpText': '', 'order': 6, 'subField': None, 'tab': 'content', 'widget': {'type': 'text'}})
+        self.assertEqual(synchronised_value_segment['value'], 'http://example.com')
+
         # Check related object
-        related_object_segment = props['segments'][12]
+        related_object_segment = props['segments'][13]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
         self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'order': 8, 'subField': None, 'widget': None})
@@ -254,7 +262,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         props = json.loads(response.context['props'])
 
         # Check related object
-        related_object_segment = props['segments'][12]
+        related_object_segment = props['segments'][13]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
         self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'order': 8, 'subField': None, 'widget': None})
@@ -301,6 +309,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(
             [(segment['contentPath'], segment['location']['widget'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
             [
+                ('test_richtextfield.http://example.com', {'type': 'text'}, 'http://example.com'),
                 (f'test_streamfield.{url_block_id}', {'type': 'text'}, "https://wagtail.io/"),
                 (f'test_streamfield.{page_block_id}', {'type': 'page_chooser', 'allowed_page_types': ['wagtailcore.page']}, self.page.id),
                 (f'test_streamfield.{image_block_id}', {'type': 'image_chooser'}, self.page.test_synchronized_image.id),
