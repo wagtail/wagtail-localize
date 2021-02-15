@@ -2,10 +2,10 @@ from collections import defaultdict
 
 from django.db import models
 
+from django.apps import apps
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
-from wagtail.embeds.blocks import EmbedBlock, EmbedValue
 
 from wagtail_localize.strings import restore_strings
 
@@ -44,17 +44,22 @@ class StreamFieldSegmentsWriter:
         self.tgt_locale = tgt_locale
 
     def handle_block(self, block_type, block_value, segments):
+        # Need to check if the app is installed before importing EmbedBlock
+        # See: https://github.com/wagtail/wagtail-localize/issues/309
+        if apps.is_installed("wagtail.embeds"):
+            from wagtail.embeds.blocks import EmbedBlock, EmbedValue
+
+            if isinstance(block_type, EmbedBlock):
+                if len(segments) > 1:
+                    raise ValueError("EmbedBlock can only have a single segment. Found {}".format(len(segments)))
+
+                segment = segments[0]
+
+                if isinstance(segment, OverridableSegmentValue):
+                    return EmbedValue(segment.data)
+
         if hasattr(block_type, "restore_translated_segments"):
             return block_type.restore_translated_segments(block_value, segments)
-
-        elif isinstance(block_type, EmbedBlock):
-            if len(segments) > 1:
-                raise ValueError("EmbedBlock can only have a single segment. Found {}".format(len(segments)))
-
-            segment = segments[0]
-
-            if isinstance(segment, OverridableSegmentValue):
-                return EmbedValue(segment.data)
 
         elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock, blocks.URLBlock, blocks.EmailBlock)):
             if len(segments) > 1:

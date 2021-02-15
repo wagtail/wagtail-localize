@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
@@ -5,7 +6,6 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import TranslatableMixin, Page
-from wagtail.embeds.blocks import EmbedBlock
 
 from wagtail_localize.segments import (
     StringSegmentValue,
@@ -24,14 +24,19 @@ class StreamFieldSegmentExtractor:
         self.include_overridables = include_overridables
 
     def handle_block(self, block_type, block_value):
+        # Need to check if the app is installed before importing EmbedBlock
+        # See: https://github.com/wagtail/wagtail-localize/issues/309
+        if apps.is_installed("wagtail.embeds"):
+            from wagtail.embeds.blocks import EmbedBlock
+
+            if isinstance(block_type, EmbedBlock):
+                if self.include_overridables:
+                    return [OverridableSegmentValue("", block_value.url)]
+                else:
+                    return []
+
         if hasattr(block_type, "get_translatable_segments"):
             return block_type.get_translatable_segments(block_value)
-
-        elif isinstance(block_type, EmbedBlock):
-            if self.include_overridables:
-                return [OverridableSegmentValue("", block_value.url)]
-            else:
-                return []
 
         elif isinstance(block_type, (blocks.URLBlock, blocks.EmailBlock)):
             if self.include_overridables:
