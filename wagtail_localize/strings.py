@@ -391,7 +391,6 @@ def restore_strings(template, strings):
     return str(soup)
 
 
-
 def extract_ids(template):
     """Extract link ids from one template string and return it in a set."""
     soup = BeautifulSoup(template, "html.parser")
