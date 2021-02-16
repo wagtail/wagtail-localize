@@ -16,6 +16,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
+from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page, Locale
 from wagtail.documents.models import Document
@@ -405,6 +406,45 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.moderators_group.page_permissions.all().delete()
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
         assert_permission_denied(self, response)
+
+    def test_edit_page_translation_with_missing_panel(self):
+        # Hide fields that don't have a panel to edit them with
+        previous_panels = TestPage.content_panels
+        TestPage.content_panels = [
+            FieldPanel('title'),
+            FieldPanel('test_textfield'),
+        ]
+        TestPage.get_edit_handler.cache_clear()
+
+        try:
+            response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        finally:
+            TestPage.content_panels = previous_panels
+            TestPage.get_edit_handler.cache_clear()
+
+        # Check props
+        props = json.loads(response.context['props'])
+
+        self.assertEqual(props['tabs'], [
+            {'label': 'Content', 'slug': 'content'},
+            {'label': 'Promote', 'slug': 'promote'},
+            {'label': 'Settings', 'slug': 'settings'},
+        ])
+
+        # Test locations
+        locations = [
+            {
+                'value': segment['source'],
+                'tab': segment['location']['tab'],
+                'field': segment['location']['field'],
+                'model_order': segment['order'],
+                'panel_order': segment['location']['order'],
+            }
+            for segment in props['segments']
+        ]
+        self.assertEqual(locations, [
+            {'value': 'A text field', 'tab': 'content', 'field': 'Test textfield', 'model_order': 2, 'panel_order': 1},
+        ])
 
     def test_edit_snippet_translation(self):
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
