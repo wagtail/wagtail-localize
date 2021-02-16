@@ -8,6 +8,7 @@ import Avatar from '../../../common/components/Avatar';
 import PageChooser from '../../../common/components/PageChooser';
 import ImageChooser from '../../../common/components/ImageChooser';
 import DocumentChooser from '../../../common/components/DocumentChooser';
+import SnippetChooser from '../../../common/components/SnippetChooser';
 
 import {
     EditorProps,
@@ -680,6 +681,40 @@ const EditorSynchronisedValueSegment: FunctionComponent<
         value = (
             <DocumentChooser
                 documentId={(override && override.value) || segment.value}
+            />
+        );
+    } else if (widget.type == 'snippet_chooser') {
+        const onClickChangeSnippet = () => {
+            (window as any).ModalWorkflow({
+                url: widget.chooser_url,
+                onload: (window as any).SNIPPET_CHOOSER_MODAL_ONLOAD_HANDLERS,
+                responses: {
+                    snippetChosen: function(snippetData: any) {
+                        saveOverride(
+                            segment,
+                            snippetData.id,
+                            csrfToken,
+                            dispatch
+                        );
+                    }
+                }
+            });
+        };
+        if (!isLocked) {
+            buttons.push(
+                <ActionButton onClick={onClickChangeSnippet}>
+                    {gettext('Change %s').replace(
+                        '%s',
+                        widget.snippet_model.verbose_name
+                    )}
+                </ActionButton>
+            );
+        }
+
+        value = (
+            <SnippetChooser
+                snippetModel={widget.snippet_model}
+                snippetId={(override && override.value) || segment.value}
             />
         );
     } else {
