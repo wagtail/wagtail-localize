@@ -5,10 +5,12 @@ def get_locale_components():
     return LOCALE_COMPONENTS
 
 
-def register_locale_component(*, required=False):
+def register_locale_component(*, heading, help_text=None, required=False):
     def _wrapper(model):
         if model not in LOCALE_COMPONENTS:
             LOCALE_COMPONENTS.append({
+                'heading': heading,
+                'help_text': help_text,
                 'required': required,
                 'model': model,
                 'slug': model._meta.db_table,
