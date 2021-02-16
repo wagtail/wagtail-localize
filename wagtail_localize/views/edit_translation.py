@@ -32,6 +32,8 @@ from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.models import AbstractDocument
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import AbstractImage
+from wagtail.snippets.blocks import SnippetChooserBlock
+from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
@@ -253,6 +255,18 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
                     'type': 'image_chooser'
                 }
 
+            elif issubclass(field.related_model, tuple(get_snippet_models())):
+                return {
+                    'type': 'snippet_chooser',
+                    'snippet_model': {
+                        'app_label': field.related_model._meta.app_label,
+                        'model_name': field.related_model._meta.model_name,
+                        'verbose_name': field.related_model._meta.verbose_name,
+                        'verbose_name_plural': field.related_model._meta.verbose_name_plural,
+                    },
+                    'chooser_url': reverse('wagtailsnippets:choose', args=[field.related_model._meta.app_label, field.related_model._meta.model_name])
+                }
+
         elif isinstance(field, (models.CharField, models.TextField, models.EmailField, models.URLField)):
             return {
                 'type': 'text',
@@ -263,7 +277,6 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
         }
 
     def widget_from_block(block):
-        # TODO: Snippet chooser block
         if isinstance(block, blocks.PageChooserBlock):
             return {
                 'type': 'page_chooser',
@@ -285,6 +298,18 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
         elif isinstance(block, ImageChooserBlock):
             return {
                 'type': 'image_chooser'
+            }
+
+        elif isinstance(block, SnippetChooserBlock):
+            return {
+                'type': 'snippet_chooser',
+                'snippet_model': {
+                    'app_label': block.target_model._meta.app_label,
+                    'model_name': block.target_model._meta.model_name,
+                    'verbose_name': block.target_model._meta.verbose_name,
+                    'verbose_name_plural': block.target_model._meta.verbose_name_plural,
+                },
+                'chooser_url': reverse('wagtailsnippets:choose', args=[block.target_model._meta.app_label, block.target_model._meta.model_name])
             }
 
         elif isinstance(block, (blocks.CharBlock, blocks.TextBlock, blocks.EmailBlock, blocks.URLBlock)):

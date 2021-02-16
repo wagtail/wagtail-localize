@@ -49,6 +49,17 @@ export interface PageChooserWidget {
     allowed_page_types: string[];
 }
 
+export interface SnippetChooserWidget {
+    type: 'snippet_chooser';
+    snippet_model: {
+        app_label: string;
+        model_name: string;
+        verbose_name: string;
+        verbose_name_plural: string;
+    };
+    chooser_url: string;
+}
+
 export interface OtherWidgets {
     type: 'text' | 'image_chooser' | 'document_chooser' | 'unknown';
 }
@@ -62,7 +73,7 @@ export interface SegmentCommon {
         blockId: string | null;
         subField: string | null;
         helpText: string;
-        widget: PageChooserWidget | OtherWidgets;
+        widget: PageChooserWidget | SnippetChooserWidget | OtherWidgets;
     };
 }
 

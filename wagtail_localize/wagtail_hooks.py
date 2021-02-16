@@ -23,7 +23,7 @@ except ImportError:
 from wagtail.snippets.widgets import SnippetListingButton
 
 from .models import Translation, TranslationSource
-from .views import edit_translation, submit_translations, update_translations, report
+from .views import edit_translation, submit_translations, update_translations, report, snippets_api
 
 # Import synctree so it can register its signal handler
 from . import synctree  # noqa
@@ -45,6 +45,8 @@ def register_admin_urls():
         path("translate/<int:translation_id>/preview/<str:mode>/", edit_translation.preview_translation, name="preview_translation"),
         path("translate/<int:translation_id>/disable/", edit_translation.stop_translation, name="stop_translation"),
         path('reports/translations/', report.TranslationsReportView.as_view(), name='translations_report'),
+        path('api/snippets/<slug:app_label>/<slug:model_name>/', snippets_api.SnippetViewSet.as_view({'get': 'list'}), name='snippets_api_listing'),
+        path('api/snippets/<slug:app_label>/<slug:model_name>/<str:pk>/', snippets_api.SnippetViewSet.as_view({'get': 'retrieve'}), name='snippets_api_detail'),
     ]
 
     return [

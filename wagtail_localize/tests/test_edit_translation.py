@@ -244,6 +244,56 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(segments_by_content_path[f'test_streamfield.{PAGE_CHOOSER_BLOCK_ID}']['location']['widget'], {'type': 'page_chooser', 'allowed_page_types': ['wagtailcore.page']})
         self.assertEqual(segments_by_content_path[f'test_streamfield.{PAGE_CHOOSER_BLOCK_WITH_RESTRICTED_TYPES_ID}']['location']['widget'], {'type': 'page_chooser', 'allowed_page_types': ['wagtail_localize_test.testhomepage', 'wagtail_localize_test.testpage']})
 
+    def test_snippet_chooser_widgets(self):
+        first_snippet = TestSnippet.objects.create(field="First snippet")
+        second_snippet = NonTranslatableSnippet.objects.create(field="Second snippet")
+
+        SNIPPET_CHOOSER_BLOCK_ID = uuid.uuid4()
+        STREAM_DATA_WITH_SNIPPET_CHOOSERS = [
+            {"id": SNIPPET_CHOOSER_BLOCK_ID, "type": "test_nontranslatablesnippetchooserblock", "value": second_snippet.id},
+        ]
+
+        self.page.test_synchronized_snippet = first_snippet
+        self.page.test_streamfield = StreamValue(
+            TestPage.test_streamfield.field.stream_block, STREAM_DATA_WITH_SNIPPET_CHOOSERS, is_lazy=True
+        )
+        self.page.save()
+
+        # Update source
+        TranslationSource.update_or_create_from_instance(self.page)
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'wagtail_localize/admin/edit_translation.html')
+
+        # Check props
+        props = json.loads(response.context['props'])
+
+        segments_by_content_path = {
+            segment['contentPath']: segment
+            for segment in props['segments']
+        }
+        self.assertEqual(segments_by_content_path['test_synchronized_snippet']['location']['widget'], {
+            'type': 'snippet_chooser',
+            'snippet_model': {
+                'app_label': 'wagtail_localize_test',
+                'model_name': 'testsnippet',
+                'verbose_name': 'test snippet',
+                'verbose_name_plural': 'test snippets'
+            },
+            'chooser_url': '/admin/snippets/choose/wagtail_localize_test/testsnippet/'
+        })
+        self.assertEqual(segments_by_content_path[f'test_streamfield.{SNIPPET_CHOOSER_BLOCK_ID}']['location']['widget'], {
+            'type': 'snippet_chooser',
+            'snippet_model': {
+                'app_label': 'wagtail_localize_test',
+                'model_name': 'nontranslatablesnippet',
+                'verbose_name': 'non translatable snippet',
+                'verbose_name_plural': 'non translatable snippets'
+            },
+            'chooser_url': '/admin/snippets/choose/wagtail_localize_test/nontranslatablesnippet/'
+        })
+
     def test_manually_translated_related_object(self):
         # Related objects don't have to be translated by Wagtail localize so test with the snippet's translation record deleted
         self.snippet_translation.delete()
@@ -309,7 +359,16 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                 ('test_synchronized_emailfield', {'type': 'text'}, 'email@example.com'),
                 ('test_synchronized_image', {'type': 'image_chooser'}, self.page.test_synchronized_image.id),
                 ('test_synchronized_document', {'type': 'document_chooser'}, self.page.test_synchronized_document.id),
-                ('test_synchronized_snippet', {'type': 'unknown'}, self.snippet.id),
+                ('test_synchronized_snippet', {
+                    'type': 'snippet_chooser',
+                    'snippet_model': {
+                        'app_label': 'wagtail_localize_test',
+                        'model_name': 'testsnippet',
+                        'verbose_name': 'test snippet',
+                        'verbose_name_plural': 'test snippets'
+                    },
+                    'chooser_url': '/admin/snippets/choose/wagtail_localize_test/testsnippet/'
+                }, self.snippet.id),
             ]
         )
 

@@ -79,6 +79,7 @@ class TestStreamBlock(blocks.StreamBlock):
     test_imagechooserblock = ImageChooserBlock()
     test_documentchooserblock = DocumentChooserBlock()
     test_snippetchooserblock = SnippetChooserBlock(TestSnippet)
+    test_nontranslatablesnippetchooserblock = SnippetChooserBlock(NonTranslatableSnippet)
     test_embedblock = EmbedBlock()
 
 
