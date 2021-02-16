@@ -26,7 +26,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.text import capfirst, slugify
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy
 from modelcluster.models import (
     ClusterableModel,
     get_serializable_data_for_fields,
@@ -1400,7 +1400,7 @@ def register_post_delete_signal_handlers():
         post_delete.connect(disable_translation_on_delete, sender=model)
 
 
-@register_locale_component
+@register_locale_component()
 class LocaleSynchronization(models.Model):
     locale = models.OneToOneField('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
     sync_from = models.ForeignKey('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')

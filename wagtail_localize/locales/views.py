@@ -1,5 +1,6 @@
 import functools
 
+from django import forms
 from django.db import transaction
 from django.utils.translation import gettext_lazy
 
@@ -33,15 +34,24 @@ class ComponentManager:
     def from_request(cls, request, instance=None):
         components = []
 
-        for component_model in get_locale_components():
+        for component in get_locale_components():
+            component_model = component['model']
+
             component_instance = component_model.objects.filter(locale=instance).first()
             edit_handler = get_locale_component_edit_handler(component_model).bind_to(
                 model=component_model, instance=component_instance, request=request
             )
             form_class = edit_handler.get_form_class()
-            prefix = "component_{}_{}".format(
-                component_model._meta.app_label, component_model.__name__
-            )
+
+            # Add an 'enabled' field to the form if it isn't required
+            if not component['required']:
+                form_class = type(form_class.__name__, (form_class, ), {
+                    'enabled': forms.BooleanField(initial=component_instance is not None),
+                    # Move enabled field to top
+                    'field_order': ['enabled'],
+                })
+
+            prefix = "component-{}".format(component_model._meta.db_table)
 
             if request.method == "POST":
                 form = form_class(
@@ -53,21 +63,26 @@ class ComponentManager:
             else:
                 form = form_class(instance=component_instance, prefix=prefix)
 
-            components.append((component_model, component_instance, form))
+            components.append((component, component_instance, form))
 
         return cls(components)
 
     def is_valid(self):
         return all(
             component_form.is_valid()
-            for component_model, component_instance, component_form in self.components
+            for component, component_instance, component_form in self.components
+            if component['required'] or component_form['enabled'].value()
         )
 
     def save(self, locale):
-        for component_model, component_instance, component_form in self.components:
-            component_instance = component_form.save(commit=False)
-            component_instance.locale = locale
-            component_instance.save()
+        for component, component_instance, component_form in self.components:
+            if component['required'] or component_form['enabled'].value():
+                component_instance = component_form.save(commit=False)
+                component_instance.locale = locale
+                component_instance.save()
+
+            elif component_instance:
+                component_instance.delete()
 
     def __iter__(self):
         return iter(self.components)
