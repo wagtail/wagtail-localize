@@ -206,12 +206,20 @@ class TabHelper:
             return self.field_edit_handler_mapping[field_name]
 
 
+class FieldHasNoEditPanelError(KeyError):
+    pass
+
+
 def get_segment_location_info(source_instance, tab_helper, content_path, widget=False):
     context_path_components = content_path.split('.')
     field = source_instance._meta.get_field(context_path_components[0])
 
     # Work out which tab the segment is on from edit handler
-    tab = cautious_slugify(tab_helper.get_field_tab(field.name))
+    try:
+        tab = cautious_slugify(tab_helper.get_field_tab(field.name))
+    except KeyError:
+        raise FieldHasNoEditPanelError
+
     order = tab_helper.get_field_order(field.name)
 
     def widget_from_field(field):
@@ -468,30 +476,39 @@ def edit_translation(request, translation, instance):
             'url': reverse('wagtail_localize:machine_translate', args=[translation.id]),
         }
 
-    string_segment_data = [
-        {
+    segments = []
+
+    for segment in string_segments:
+        try:
+            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path)
+        except FieldHasNoEditPanelError:
+            continue
+
+        segments.append({
             'type': 'string',
             'id': segment.id,
             'contentPath': segment.context.path,
             'source': segment.string.data,
-            'location': get_segment_location_info(source_instance, tab_helper, segment.context.path),
+            'location': location_info,
             'editUrl': reverse('wagtail_localize:edit_string_translation', kwargs={'translation_id': translation.id, 'string_segment_id': segment.id}),
             'order': segment.order,
-        }
-        for segment in string_segments
-    ]
-    syncronised_value_segment_data = [
-        {
+        })
+
+    for segment in overridable_segments:
+        try:
+            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, widget=True)
+        except FieldHasNoEditPanelError:
+            continue
+
+        segments.append({
             'type': 'synchronised_value',
             'id': segment.id,
             'contentPath': segment.context.path,
-            'location': get_segment_location_info(source_instance, tab_helper, segment.context.path, widget=True),
+            'location': location_info,
             'value': segment.data,
             'editUrl': reverse('wagtail_localize:edit_override', kwargs={'translation_id': translation.id, 'overridable_segment_id': segment.id}),
             'order': segment.order,
-        }
-        for segment in overridable_segments
-    ]
+        })
 
     def get_source_object_info(segment):
         instance = segment.get_source_instance()
@@ -547,21 +564,22 @@ def edit_translation(request, translation, instance):
             'translatedSegments': translated_segments,
         }
 
-    related_object_segment_data = [
-        {
+    for segment in related_object_segments:
+        try:
+            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path)
+        except FieldHasNoEditPanelError:
+            continue
+
+        segments.append({
             'type': 'related_object',
             'id': segment.id,
             'contentPath': segment.context.path,
-            'location': get_segment_location_info(source_instance, tab_helper, segment.context.path),
+            'location': location_info,
             'order': segment.order,
             'source': get_source_object_info(segment),
             'dest': get_dest_object_info(segment),
             'translationProgress': get_translation_progress(segment, translation.target_locale),
-        }
-        for segment in related_object_segments
-    ]
-
-    segments = string_segment_data + syncronised_value_segment_data + related_object_segment_data
+        })
 
     # Order segments by how they appear in the content panels
     # segment['location']['order'] is the content panel ordering
