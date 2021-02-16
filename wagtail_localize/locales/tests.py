@@ -6,6 +6,7 @@ from wagtail.core.models import Locale
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import LocaleSynchronization
+from wagtail_localize.locales.components import LOCALE_COMPONENTS
 
 
 @override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
@@ -51,7 +52,8 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
     def test_create(self):
         response = self.post({
             'language_code': "fr",
-            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': self.english.id,
         })
 
         # Should redirect back to index
@@ -66,7 +68,8 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
     def test_duplicate_not_allowed(self):
         response = self.post({
             'language_code': "en",
-            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': self.english.id,
         })
 
         # Should return the form with errors
@@ -76,12 +79,61 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
     def test_language_code_must_be_in_settings(self):
         response = self.post({
             'language_code': "ja",
-            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': self.english.id,
         })
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
         self.assertFormError(response, 'form', 'language_code', ['Select a valid choice. ja is not one of the available choices.'])
+
+    def test_sync_from_required_when_enabled(self):
+        response = self.post({
+            'language_code': "fr",
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': '',
+        })
+
+        # Should return the form with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'component_form', 'sync_from', ['This field is required.'])
+
+        # Check that the locale was not created
+        self.assertFalse(Locale.objects.filter(language_code='fr').exists())
+
+    def test_sync_from_not_required_when_disabled(self):
+        response = self.post({
+            'language_code': "fr",
+            'component-wagtail_localize_localesynchronization-enabled': '',
+            'component-wagtail_localize_localesynchronization-sync_from': '',
+        })
+
+        # Should redirect back to index
+        self.assertRedirects(response, reverse('wagtaillocales:index'))
+
+        # Check that the locale was created
+        self.assertTrue(Locale.objects.filter(language_code='fr').exists())
+
+        # Check the sync_from was not set
+        self.assertFalse(LocaleSynchronization.objects.exists())
+
+    def test_sync_from_required_when_component_required(self):
+        LOCALE_COMPONENTS[0]['required'] = True
+        try:
+            response = self.post({
+                'language_code': "fr",
+                'component-wagtail_localize_localesynchronization-enabled': '',
+                'component-wagtail_localize_localesynchronization-sync_from': '',
+            })
+        finally:
+            LOCALE_COMPONENTS[0]['required'] = False
+
+        # Should return the form with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'component_form', 'sync_from', ['This field is required.'])
+
+        # Check that the locale was not created
+        self.assertFalse(Locale.objects.filter(language_code='fr').exists())
 
 
 @override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
@@ -126,7 +178,8 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
     def test_edit(self):
         response = self.post({
             'language_code': 'fr',
-            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': self.english.id,
         })
 
         # Should redirect back to index
@@ -141,7 +194,8 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
 
         response = self.post({
             'language_code': "en",
-            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': self.english.id,
         }, locale=french)
 
         # Should return the form with errors
@@ -151,12 +205,53 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
     def test_edit_language_code_must_be_in_settings(self):
         response = self.post({
             'language_code': "ja",
-            'component_wagtail_localize_LocaleSynchronization-sync_from': self.english.id,
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': self.english.id,
         })
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
         self.assertFormError(response, 'form', 'language_code', ['Select a valid choice. ja is not one of the available choices.'])
+
+    def test_sync_from_required_when_enabled(self):
+        response = self.post({
+            'language_code': "fr",
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': '',
+        })
+
+        # Should return the form with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'component_form', 'sync_from', ['This field is required.'])
+
+    def test_sync_from_not_required_when_disabled(self):
+        response = self.post({
+            'language_code': "fr",
+            'component-wagtail_localize_localesynchronization-enabled': '',
+            'component-wagtail_localize_localesynchronization-sync_from': '',
+        })
+
+        # Should redirect back to index
+        self.assertRedirects(response, reverse('wagtaillocales:index'))
+
+        # Check that the locale was edited
+        self.english.refresh_from_db()
+        self.assertEqual(self.english.language_code, 'fr')
+
+    def test_sync_from_required_when_component_required(self):
+        LOCALE_COMPONENTS[0]['required'] = True
+        try:
+            response = self.post({
+                'language_code': "fr",
+                'component-wagtail_localize_localesynchronization-enabled': '',
+                'component-wagtail_localize_localesynchronization-sync_from': '',
+            })
+        finally:
+            LOCALE_COMPONENTS[0]['required'] = False
+
+        # Should return the form with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'component_form', 'sync_from', ['This field is required.'])
 
 
 @override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
