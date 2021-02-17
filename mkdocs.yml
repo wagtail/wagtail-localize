@@ -1,6 +1,7 @@
 site_name: Wagtail Localize
 theme:
   name: 'cinder'
+  custom_dir: docs/theme_overrides
 markdown_extensions:
   - codehilite
 nav:
