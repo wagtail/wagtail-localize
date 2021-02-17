@@ -36,6 +36,6 @@ plugins:
             - django.setup()
 nav:
   - Home: index.md
-  - Getting Started:
-      - Setup: setup.md
-      - Tutorial: tutorial.md
+  - Tutorial: tutorial.md
+  - How To:
+    - Setup Guide: how-to/setup.md
