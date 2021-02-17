@@ -1,11 +1,6 @@
-site_name: Wagtail Localize Documentation
+site_name: Wagtail Localize
 theme:
-  name: 'material'
-  logo:
-    icon: 'translate'
-  palette:
-    primary: 'teal'
-    accent: 'teal'
+  name: 'cinder'
 markdown_extensions:
   - codehilite
 nav:
