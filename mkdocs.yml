@@ -1,9 +1,39 @@
 site_name: Wagtail Localize
 theme:
-  name: 'cinder'
+  name: "material"
   custom_dir: docs/theme_overrides
+  palette:
+    primary: teal
+  features:
+    - navigation.tabs
+    - navigation.sections
 markdown_extensions:
   - codehilite
+  - pymdownx.superfences:
+      # Allows us to use mermaid and codehilite together
+      # https://stackoverflow.com/questions/61638740/exclude-mermaid-code-blocks-for-highlighting-with-codehilite-mkdocs
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+extra_css:
+  - stylesheets/mkdocstrings.css
+plugins:
+  - search
+  - mermaid2:
+      version: 8.6.4
+  - mkdocstrings:
+      handlers:
+        python:
+          selection:
+            filters:
+              - "!^_"  # exlude all members starting with _
+              - "^__init__$"  # but always include __init__ modules and methods
+          setup_commands:
+            - import os
+            - import django
+            - os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wagtail_localize.test.settings")
+            - django.setup()
 nav:
   - Home: index.md
   - Getting Started:

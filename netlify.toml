@@ -2,6 +2,6 @@
 publish = "site"
 ignore = "git diff --quiet HEAD^ HEAD {mkdocs.yml,netlify.toml,docs/}"
 command = """
-pip install -e.[documentation]
+pip install -e.[testing,documentation]
 mkdocs build -d site
 """
