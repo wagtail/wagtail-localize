@@ -44,3 +44,9 @@ nav:
     - Machine translation: how-to/machine-translation.md
     - Migrate from wagtailtrans: how-to/migrate-from-wagtailtrans.md
     - Migrate from wagtail-modeltranslation: how-to/migrate-from-wagtail-modeltranslation.md
+  - Reference:
+    - Translatable Fields: ref/translatable-fields.md
+    - Strings: ref/strings.md
+    - Segments: ref/segments.md
+    - Models: ref/models.md
+    - Synctree module: ref/synctree.md
