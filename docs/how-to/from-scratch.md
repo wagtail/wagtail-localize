@@ -1,4 +1,8 @@
-## Installation
+# Detailled installation guide
+
+Note: Will rewrite this, this document will expand on the instructions added to the index in https://github.com/wagtail/wagtail-localize/pull/332 to also include enabling Wagtail internationalisation too.
+
+## Install the package
 
 Install with pip:
 

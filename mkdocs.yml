@@ -37,5 +37,10 @@ plugins:
 nav:
   - Home: index.md
   - Tutorial: tutorial.md
-  - How To:
-    - Setup Guide: how-to/setup.md
+  - How To Guides:
+    - Detailed installation guide: how-to/from-scratch.md
+    - Translatable fields configuration: how-to/field-configuration.md
+    - Translation services: how-to/translation-services.md
+    - Machine translation: how-to/machine-translation.md
+    - Migrate from wagtailtrans: how-to/migrate-from-wagtailtrans.md
+    - Migrate from wagtail-modeltranslation: how-to/migrate-from-wagtail-modeltranslation.md
