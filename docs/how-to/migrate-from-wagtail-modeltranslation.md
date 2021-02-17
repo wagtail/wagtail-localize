@@ -1,0 +1,1 @@
+# Migrate from wagtail-modeltranslation

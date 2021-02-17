@@ -1,0 +1,1 @@
+# Configuring translatable fields
