@@ -50,3 +50,8 @@ nav:
     - Segments: ref/segments.md
     - Models: ref/models.md
     - Synctree module: ref/synctree.md
+  - Explanations:
+    - Content Paths: concept/content-paths.md
+    - Segment Types: concept/segment-types.md
+    - Auto-generation of Translatable Fields: concept/translatable-fields-autogen.md
+    - Tree Synchronisation: concept/tree-synchronisation.md
