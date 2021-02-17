@@ -7,14 +7,6 @@ from setuptools import find_packages, setup
 from wagtail_localize import __version__
 
 
-# Hack to prevent "TypeError: 'NoneType' object is not callable" error
-# in multiprocessing/util.py _exit_function when setup.py exits
-# (see http://www.eby-sarna.com/pipermail/peak/2010-May/003357.html)
-try:
-    import multiprocessing
-except ImportError:
-    pass
-
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
@@ -26,7 +18,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     author="Karl Hobley",
-    author_email="karl@kaed.uk",
+    author_email="karl@torchbox.com",
     url="",
     packages=find_packages(),
     include_package_data=True,
@@ -40,6 +32,11 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Framework :: Django",
+        "Framework :: Django :: 2.2",
+        "Framework :: Django :: 3.0",
+        "Framework :: Django :: 3.1",
+        "Framework :: Wagtail",
         "Framework :: Wagtail :: 2",
     ],
     install_requires=["Django>=2.2,<3.2", "Wagtail>=2.11,<2.13", "polib>=1.1,<2.0"],

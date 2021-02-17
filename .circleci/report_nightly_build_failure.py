@@ -13,7 +13,6 @@ if 'SLACK_WEBHOOK_URL' in os.environ:
     })
 
     print("Slack responded with:", response)
-    print(response.content)
 
 else:
     print("Unable to report to #nightly-build-failures slack channel because SLACK_WEBHOOK_URL is not set")
