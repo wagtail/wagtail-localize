@@ -692,10 +692,10 @@ const EditorSynchronisedValueSegment: FunctionComponent<
         };
         buttons.push(
             <ActionButton onClick={onClickUseEnglishVersion}>
-                {/* FIXME use a formatted string */}
-                {gettext('Revert to ') +
-                    sourceLocale.displayName +
-                    gettext(' version')}
+                {gettext('Revert to %s version').replace(
+                    '%s',
+                    sourceLocale.displayName
+                )}
             </ActionButton>
         );
     }
