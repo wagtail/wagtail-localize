@@ -45,6 +45,7 @@ setup(
     install_requires=["Django>=2.2,<3.2", "Wagtail>=2.11,<2.13", "polib>=1.1,<2.0"],
     extras_require={
         "testing": ["dj-database-url==0.5.0", "freezegun==0.3.15"],
+        "documentation": ["mkdocs==1.1.2", "mkdocs-cinder==1.2.0"],
     },
     zip_safe=False,
 )
