@@ -47,8 +47,15 @@ nav:
   - Reference:
     - Translatable Fields: ref/translatable-fields.md
     - Strings: ref/strings.md
-    - Segments: ref/segments.md
-    - Models: ref/models.md
+    - Segments:
+        - Value Types: ref/segments/types.md
+        - Extraction: ref/segments/extract.md
+        - Ingestion: ref/segments/ingest.md
+    - Models:
+        - Translation Memory: ref/models/translation-memory.md
+        - Translation Management: ref/models/translation-management.md
+        - Translatable segments: ref/models/translatable-segments.md
+        - Overridable segments: ref/models/overridable-segments.md
     - Synctree module: ref/synctree.md
   - Explanations:
     - Content Paths: concept/content-paths.md
