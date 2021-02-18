@@ -58,7 +58,7 @@ nav:
         - Overridable segments: ref/models/overridable-segments.md
     - Synctree module: ref/synctree.md
   - Explanations:
+    - Segments: concept/segments.md
     - Content Paths: concept/content-paths.md
-    - Segment Types: concept/segment-types.md
     - Auto-generation of Translatable Fields: concept/translatable-fields-autogen.md
     - Tree Synchronisation: concept/tree-synchronisation.md
