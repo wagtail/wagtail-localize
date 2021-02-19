@@ -1,3 +1,6 @@
+from wagtail.admin.forms.models import WagtailAdminModelForm
+
+
 LOCALE_COMPONENTS = []
 
 
@@ -20,3 +23,11 @@ def register_locale_component(*, heading, help_text=None, required=False):
         return model
 
     return _wrapper
+
+
+class LocaleComponentModelForm(WagtailAdminModelForm):
+    def validate_with_locale(self, locale):
+        """
+        Validates the locale component against the given locale.
+        """
+        pass
