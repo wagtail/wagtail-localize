@@ -619,6 +619,7 @@ def edit_translation(request, translation, instance):
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
         # These props are passed directly to the TranslationEditor react component
         'props': json.dumps({
+            'adminBaseUrl': reverse('wagtailadmin_home'),
             'object': {
                 'title': str(instance),
                 'titleSegmentId': title_segment_id,

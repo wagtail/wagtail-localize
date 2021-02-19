@@ -7,10 +7,12 @@ interface DocumentAPI {
 }
 
 interface DocumentChooserProps {
+    adminBaseUrl: string;
     documentId: number | null;
 }
 
 const DocumentChooser: FunctionComponent<DocumentChooserProps> = ({
+    adminBaseUrl,
     documentId
 }) => {
     const [documentInfo, setDocumentInfo] = React.useState<DocumentAPI | null>(
@@ -21,7 +23,7 @@ const DocumentChooser: FunctionComponent<DocumentChooserProps> = ({
         setDocumentInfo(null);
 
         if (documentId) {
-            fetch(`/admin/api/main/documents/${documentId}/`)
+            fetch(`${adminBaseUrl}api/main/documents/${documentId}/`)
                 .then(response => response.json())
                 .then(setDocumentInfo);
         }
@@ -39,7 +41,7 @@ const DocumentChooser: FunctionComponent<DocumentChooserProps> = ({
                     <ul className="actions" style={{ listStyleType: 'none' }}>
                         <li>
                             <a
-                                href={`/admin/documents/edit/${documentInfo.id}/`}
+                                href={`${adminBaseUrl}documents/edit/${documentInfo.id}/`}
                                 className="edit-link button button-small button-secondary"
                                 target="_blank"
                                 rel="noopener noreferrer"

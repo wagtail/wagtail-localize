@@ -12,17 +12,21 @@ interface ImageAPI {
 }
 
 interface ImageChooserProps {
+    adminBaseUrl: string;
     imageId: number | null;
 }
 
-const ImageChooser: FunctionComponent<ImageChooserProps> = ({ imageId }) => {
+const ImageChooser: FunctionComponent<ImageChooserProps> = ({
+    adminBaseUrl,
+    imageId
+}) => {
     const [imageInfo, setImageInfo] = React.useState<ImageAPI | null>(null);
 
     React.useEffect(() => {
         setImageInfo(null);
 
         if (imageId) {
-            fetch(`/admin/api/main/images/${imageId}/`)
+            fetch(`${adminBaseUrl}api/main/images/${imageId}/`)
                 .then(response => response.json())
                 .then(setImageInfo);
         }
@@ -49,7 +53,7 @@ const ImageChooser: FunctionComponent<ImageChooserProps> = ({ imageId }) => {
                     <ul className="actions" style={{ listStyleType: 'none' }}>
                         <li>
                             <a
-                                href={`/admin/images/${imageInfo.id}/`}
+                                href={`${adminBaseUrl}images/${imageInfo.id}/`}
                                 className="edit-link button button-small button-secondary"
                                 target="_blank"
                                 rel="noopener noreferrer"

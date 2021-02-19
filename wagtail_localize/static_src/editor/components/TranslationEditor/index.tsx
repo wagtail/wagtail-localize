@@ -146,6 +146,7 @@ export interface SegmentOverride {
 }
 
 export interface EditorProps {
+    adminBaseUrl: string;
     csrfToken: string;
     object: {
         title: string;
