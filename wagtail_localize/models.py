@@ -38,7 +38,7 @@ from wagtail.core.utils import find_available_slug
 
 from .compat import DATE_FORMAT
 from .fields import copy_synchronised_fields
-from .locales.components import register_locale_component
+from .locales.components import register_locale_component, LocaleComponentModelForm
 from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
@@ -1865,6 +1865,15 @@ def register_post_delete_signal_handlers():
         post_delete.connect(disable_translation_on_delete, sender=model)
 
 
+class LocaleSynchronizationModelForm(LocaleComponentModelForm):
+    def validate_with_locale(self, locale):
+        # Note, we must compare the language_codes as it may be the same locale record but the language_code was updated in this request
+        if 'sync_from' in self.cleaned_data and locale.language_code == self.cleaned_data['sync_from'].language_code:
+            raise ValidationError({
+                'sync_from': _("This locale cannot be synced into itself.")
+            })
+
+
 @register_locale_component(
     heading=gettext_lazy("Synchronise content from another locale"),
     help_text=gettext_lazy(
@@ -1885,6 +1894,8 @@ class LocaleSynchronization(models.Model):
     """
     locale = models.OneToOneField('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
     sync_from = models.ForeignKey('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
+
+    base_form_class = LocaleSynchronizationModelForm
 
     def sync_trees(self, *, page_index=None):
         from .synctree import synchronize_tree

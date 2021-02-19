@@ -1,6 +1,7 @@
 import functools
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy
 
@@ -11,7 +12,7 @@ from wagtail.admin.viewsets.model import ModelViewSet
 from wagtail.core.models import Locale
 from wagtail.core.permissions import locale_permission_policy
 
-from .components import get_locale_components
+from .components import get_locale_components, LocaleComponentModelForm
 from .forms import LocaleForm
 from .utils import get_locale_usage
 
@@ -23,7 +24,7 @@ def get_locale_component_edit_handler(model):
         return model.edit_handler
     else:
         panels = extract_panel_definitions_from_model_class(model, exclude=["locale"])
-        return ObjectList(panels)
+        return ObjectList(panels, base_form_class=getattr(model, 'base_form_class', LocaleComponentModelForm))
 
 
 class ComponentManager:
@@ -67,12 +68,22 @@ class ComponentManager:
 
         return cls(components)
 
-    def is_valid(self):
-        return all(
-            component_form.is_valid()
-            for component, component_instance, component_form in self.components
-            if component['required'] or component_form['enabled'].value()
-        )
+    def is_valid(self, locale):
+        is_valid = True
+
+        for component, component_instance, component_form in self.components:
+            if component['required'] or component_form['enabled'].value():
+                component_form.full_clean()
+
+                try:
+                    component_form.validate_with_locale(locale)
+                except ValidationError as e:
+                    component_form.add_error(None, e)
+
+                if not component_form.is_valid():
+                    is_valid = False
+
+        return is_valid
 
     def save(self, locale):
         for component, component_instance, component_form in self.components:
@@ -112,12 +123,17 @@ class CreateView(generic.CreateView):
     def get_components(self):
         return ComponentManager.from_request(self.request)
 
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        self.components = self.get_components()
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         self.object = None
+        self.components = self.get_components()
         form = self.get_form()
-        self.components = ComponentManager.from_request(self.request)
 
-        if form.is_valid() and self.get_components().is_valid():
+        if form.is_valid() and self.components.is_valid(form.save(commit=False)):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
@@ -125,12 +141,12 @@ class CreateView(generic.CreateView):
     @transaction.atomic
     def form_valid(self, form):
         response = super().form_valid(form)
-        self.get_components().save(self.object)
+        self.components.save(self.object)
         return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context["components"] = self.get_components()
+        context["components"] = self.components
         return context
 
 
@@ -145,11 +161,17 @@ class EditView(generic.EditView):
     def get_components(self):
         return ComponentManager.from_request(self.request, instance=self.object)
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.components = self.get_components()
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        self.components = self.get_components()
         form = self.get_form()
 
-        if form.is_valid() and self.get_components().is_valid():
+        if form.is_valid() and self.components.is_valid(form.save(commit=False)):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
@@ -157,12 +179,12 @@ class EditView(generic.EditView):
     @transaction.atomic
     def form_valid(self, form):
         response = super().form_valid(form)
-        self.get_components().save(self.object)
+        self.components.save(self.object)
         return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context["components"] = self.get_components()
+        context["components"] = self.components
         return context
 
 

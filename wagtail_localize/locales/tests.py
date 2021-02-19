@@ -253,6 +253,17 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
         self.assertFormError(response, 'component_form', 'sync_from', ['This field is required.'])
 
+    def test_sync_from_cannot_be_the_same_as_locale(self):
+        response = self.post({
+            'language_code': "en",
+            'component-wagtail_localize_localesynchronization-enabled': 'on',
+            'component-wagtail_localize_localesynchronization-sync_from': self.english.id,
+        })
+
+        # Should return the form with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'component_form', 'sync_from', ['This locale cannot be synced into itself.'])
+
 
 @override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
 class TestLocaleDeleteView(TestCase, WagtailTestUtils):
