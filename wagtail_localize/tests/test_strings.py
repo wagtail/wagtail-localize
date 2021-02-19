@@ -157,7 +157,7 @@ class TestStringRenderText(TestCase):
 
 class TextExtractStrings(TestCase):
     def test_extract_strings(self):
-        template, strings = extract_strings(
+        template, strings, hrefs = extract_strings(
             """
             <p><b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.</p>
             <p>Proportions of types of flour and other ingredients vary widely, as do modes of preparation. As a result, types, shapes, sizes, and textures of breads differ around the world. Bread may be\xa0<a href="https://en.wikipedia.org/wiki/Leaven">leavened</a>\xa0by processes such as reliance on naturally occurring\xa0<a href="https://en.wikipedia.org/wiki/Sourdough">sourdough</a>\xa0microbes, chemicals, industrially produced yeast, or high-pressure aeration. Some bread is cooked before it can leaven, including for traditional or religious reasons. Non-cereal ingredients such as fruits, nuts and fats may be included. Commercial bread commonly contains additives to improve flavor, texture, color, shelf life, and ease of manufacturing.</p>
@@ -181,7 +181,7 @@ class TextExtractStrings(TestCase):
         )
 
     def test_extract_strings_2(self):
-        template, strings = extract_strings(
+        template, strings, hrefs = extract_strings(
             """
             <h1>Foo bar baz</h1>
             <p>This is a paragraph. <b>This is some bold <i>and now italic</i></b> text</p>
@@ -222,7 +222,7 @@ class TextExtractStrings(TestCase):
     def test_block_tag_in_inline_tag(self):
         # If an inline tag contains a block tag. The inline tag must be in the template.
         # Testing for issue https://github.com/mozilla/donate-wagtail/issues/586
-        template, strings = extract_strings("<p><i>Foo <p>Bar</p></i></p>")
+        template, strings, hrefs = extract_strings("<p><i>Foo <p>Bar</p></i></p>")
 
         self.assertHTMLEqual(
             template,
@@ -235,7 +235,7 @@ class TextExtractStrings(TestCase):
         ])
 
     def test_br_tag_is_treated_as_inline_tag(self):
-        template, strings = extract_strings(
+        template, strings, hrefs = extract_strings(
             "<p><b>Foo <i>Bar<br/>Baz</i></b></p>"
         )
 
@@ -246,21 +246,21 @@ class TextExtractStrings(TestCase):
         ])
 
     def test_br_tag_is_removed_when_it_appears_at_beginning_of_segment(self):
-        template, strings = extract_strings("<p><i><br/>Foo</i></p>")
+        template, strings, hrefs = extract_strings("<p><i><br/>Foo</i></p>")
 
         self.assertHTMLEqual(template, '<p><i><br/><text position="0"></text></i></p>')
 
         self.assertEqual(strings, [StringValue.from_source_html("Foo")])
 
     def test_br_tag_is_removed_when_it_appears_at_end_of_segment(self):
-        template, strings = extract_strings("<p><i>Foo</i><br/></p>")
+        template, strings, hrefs = extract_strings("<p><i>Foo</i><br/></p>")
 
         self.assertHTMLEqual(template, '<p><i><text position="0"></text></i><br/></p>')
 
         self.assertEqual(strings, [StringValue.from_source_html("Foo")])
 
     def test_empty_inline_tag(self):
-        template, strings = extract_strings("<p><i></i>Foo</p>")
+        template, strings, hrefs = extract_strings("<p><i></i>Foo</p>")
 
         self.assertHTMLEqual(template, '<p><i></i><text position="0"></text></p>')
 

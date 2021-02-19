@@ -244,6 +244,7 @@ def extract_strings(html):
         if (
             len(elements) == 1
             and not isinstance(elements[0], NavigableString)
+            and elements[0].name != 'a'  # keep href translatable
             and elements[0].name in INLINE_TAGS
         ):
             wrap(elements[0].children)
@@ -358,7 +359,9 @@ def extract_strings(html):
     walk(soup)
 
     # Now extract strings from the <text> tags
+    hrefs = set()
     strings = []
+    position = 0
     for element in soup.descendants:
         if element.name == "text":
             text = element.attrs.pop("value")
@@ -369,8 +372,15 @@ def extract_strings(html):
             text, prefix = lstrip_keep(text)
             text, suffix = rstrip_keep(text)
 
-            element.attrs["position"] = len(strings)
-            strings.append(StringValue.from_source_html(text))
+            element.attrs["position"] = position
+            position += 1
+            string_val, attrs = StringValue.from_source_html(text)
+            strings.append((string_val, attrs))
+            # Links should be translated
+            if attrs:
+                for key, val in attrs.items():
+                    if 'href' in val:
+                        hrefs.add(val['href'])
 
             if prefix:
                 element.insert_before(prefix)
@@ -378,12 +388,15 @@ def extract_strings(html):
             if suffix:
                 element.insert_after(suffix)
 
-    return str(soup), strings
+        elif element.name == "a":
+            if element.attrs and 'href' in element.attrs and element.attrs['href'] not in hrefs:
+                hrefs.add(element.attrs['href'])
+
+    return str(soup), strings, sorted(hrefs)
 
 
 def restore_strings(template, strings):
     soup = BeautifulSoup(template, "html.parser")
-
     for text_element in soup.findAll("text"):
         string, attrs = strings[int(text_element.get("position"))]
         text_element.replaceWith(string.render_soup(attrs))

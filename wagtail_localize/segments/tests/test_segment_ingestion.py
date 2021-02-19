@@ -48,9 +48,14 @@ RICH_TEXT_TEST_FRENCH_SEGMENTS = [
         },
         order=12,
     ),
+    OverridableSegmentValue(
+        "'http://example.com'",
+        "http://example.fr",
+        order=13,
+    )
 ]
 
-RICH_TEXT_TEST_OUTPUT = '<h1>Ceci est une rubrique</h1><p>Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b></p><ul><li><a href="http://example.com">Ceci est un lien</a></li></ul>'
+RICH_TEXT_TEST_OUTPUT = '<h1>Ceci est une rubrique</h1><p>Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b></p><ul><li><a href="http://example.fr">Ceci est un lien</a></li></ul>'
 
 
 class TestSegmentIngestion(TestCase):

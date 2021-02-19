@@ -18,6 +18,13 @@ from ..fields import get_translatable_fields
 from ..strings import extract_strings
 
 
+def quote_path_component(text):
+    """
+    Puts quotes around the path compoenents, and escapes any special characters.
+    """
+    return "'" + text.replace("\\", "\\\\") .replace("'", "\\'") + "'"
+
+
 class StreamFieldSegmentExtractor:
     def __init__(self, field, include_overridables=False):
         self.field = field
@@ -48,11 +55,17 @@ class StreamFieldSegmentExtractor:
             return [StringSegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            template, strings = extract_strings(block_value.source)
-
-            return [TemplateSegmentValue("", "html", template, len(strings))] + [
-                StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
+            template, strings, hrefs = extract_strings(block_value.source)
+            ret = [
+                TemplateSegmentValue("", "html", template, len(strings))
+            ] + [
+                StringSegmentValue("", string, attrs=attrs)
+                for string, attrs in strings
+            ] + [
+                OverridableSegmentValue(quote_path_component(href), href)
+                for href in hrefs
             ]
+            return ret
 
         elif isinstance(block_type, blocks.ChooserBlock):
             return self.handle_related_object_block(block_value)
@@ -139,10 +152,16 @@ def extract_segments(instance):
 
         elif isinstance(field, RichTextField):
             if is_translatable:
-                template, strings = extract_strings(field.value_from_object(instance))
+                template, strings, hrefs = extract_strings(field.value_from_object(instance))
 
-                field_segments = [TemplateSegmentValue("", "html", template, len(strings))] + [
-                    StringSegmentValue("", string, attrs=attrs) for string, attrs in strings
+                field_segments = [
+                    TemplateSegmentValue("", "html", template, len(strings))
+                ] + [
+                    StringSegmentValue("", string, attrs=attrs)
+                    for string, attrs in strings
+                ] + [
+                    OverridableSegmentValue(quote_path_component(href), href)
+                    for href in hrefs
                 ]
 
                 segments.extend(segment.wrap(field.name) for segment in field_segments)

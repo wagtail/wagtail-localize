@@ -51,6 +51,10 @@ RICH_TEXT_TEST_OUTPUT = [
             "a1": {"href": "http://example.com"}
         }
     ),
+    OverridableSegmentValue(
+        "'http://example.com'",
+        "http://example.com"
+    )
 ]
 
 
