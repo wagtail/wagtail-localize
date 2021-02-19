@@ -184,7 +184,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(
             [(segment['contentPath'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
             [
-                ('test_richtextfield.http://example.com', 'http://example.com'),
+                ("test_richtextfield.'http://example.com'", 'http://example.com'),
                 ('test_synchronized_emailfield', 'email@example.com'),
             ]
         )
@@ -199,7 +199,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         # Check synchronised value
         synchronised_value_segment = props['segments'][9]
         self.assertEqual(synchronised_value_segment['type'], 'synchronised_value')
-        self.assertEqual(synchronised_value_segment['contentPath'], 'test_richtextfield.http://example.com')
+        self.assertEqual(synchronised_value_segment['contentPath'], "test_richtextfield.'http://example.com'")
         self.assertEqual(synchronised_value_segment['location'], {'blockId': None, 'field': 'Test richtextfield', 'fieldHelpText': '', 'order': 6, 'subField': None, 'tab': 'content', 'widget': {'type': 'text'}})
         self.assertEqual(synchronised_value_segment['value'], 'http://example.com')
 
@@ -309,7 +309,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(
             [(segment['contentPath'], segment['location']['widget'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
             [
-                ('test_richtextfield.http://example.com', {'type': 'text'}, 'http://example.com'),
+                ("test_richtextfield.'http://example.com'", {'type': 'text'}, 'http://example.com'),
                 (f'test_streamfield.{url_block_id}', {'type': 'text'}, "https://wagtail.io/"),
                 (f'test_streamfield.{page_block_id}', {'type': 'page_chooser', 'allowed_page_types': ['wagtailcore.page']}, self.page.id),
                 (f'test_streamfield.{image_block_id}', {'type': 'image_chooser'}, self.page.test_synchronized_image.id),

@@ -18,6 +18,13 @@ from ..fields import get_translatable_fields
 from ..strings import extract_strings
 
 
+def quote_path_component(text):
+    """
+    Puts quotes around the path compoenents, and escapes any special characters.
+    """
+    return "'" + text.replace("\\", "\\\\") .replace("'", "\\'") + "'"
+
+
 class StreamFieldSegmentExtractor:
     def __init__(self, field, include_overridables=False):
         self.field = field
@@ -50,7 +57,7 @@ class StreamFieldSegmentExtractor:
                 StringSegmentValue("", string, attrs=attrs)
                 for string, attrs in strings
             ] + [
-                OverridableSegmentValue(href, href)
+                OverridableSegmentValue(quote_path_component(href), href)
                 for href in hrefs
             ]
             return ret
@@ -148,7 +155,7 @@ def extract_segments(instance):
                     StringSegmentValue("", string, attrs=attrs)
                     for string, attrs in strings
                 ] + [
-                    OverridableSegmentValue(href, href)
+                    OverridableSegmentValue(quote_path_component(href), href)
                     for href in hrefs
                 ]
 
