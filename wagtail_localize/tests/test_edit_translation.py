@@ -1839,3 +1839,48 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
         })
 
         assert_permission_denied(self, response)
+
+
+class TestEditAlias(WagtailTestUtils, TestCase):
+    """
+    Tests that Wagtail Localize's custom edit alias template is rendered for aliases
+    that have a different locale to their original.
+    """
+    def setUp(self):
+        self.login()
+        self.user = get_user_model().objects.get()
+
+        # Create a test page
+        self.home_page = Page.objects.get(depth=2)
+        self.page = self.home_page.add_child(instance=TestPage(
+            title="The title",
+            slug="test",
+        ))
+
+        # Set up French locale
+        self.fr_locale = Locale.objects.create(language_code="fr")
+        self.fr_home_page = self.home_page.copy_for_translation(self.fr_locale)
+
+    def test_edit_translatable_alias(self):
+        # Create an alias of the page in French
+        alias_page = self.page.create_alias(parent=self.fr_home_page, update_locale=self.fr_locale)
+
+        # Try to edit the page
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[alias_page.id]))
+
+        # Check the translatable alias template was rendered
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'wagtail_localize/admin/edit_translatable_alias.html')
+
+    def test_edit_non_translatable_alias(self):
+        # Create an alias of the page in English
+        alias_page = self.page.create_alias(update_slug='test-alias')
+
+        # Try to edit the page
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[alias_page.id]))
+
+        # Check the translatable alias template was not rendered
+        # Wagtail's builtin edit_alias.html should be rendered instead
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateNotUsed(response, 'wagtail_localize/admin/edit_translatable_alias.html')
+        self.assertTemplateUsed(response, 'wagtailadmin/pages/edit_alias.html')
