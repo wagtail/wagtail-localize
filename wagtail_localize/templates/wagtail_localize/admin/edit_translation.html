@@ -3,7 +3,7 @@
 
 {% block bodyclass %}page-editor{% endblock %}
 
-{% block titletag %}Translation of {{ translation.source.as_instance }} into {{ translation.target_locale }}{% endblock %}
+{% block titletag %}{% blocktrans with instance=translation.source.as_instance locale=translation.target_locale %}Translation of {{ instance }} into {{ locale }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
     <div class="js-translation-editor" data-props="{{ props }}">

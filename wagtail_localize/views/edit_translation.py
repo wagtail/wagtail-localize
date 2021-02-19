@@ -617,6 +617,8 @@ def edit_translation(request, translation, instance):
     segments.sort(key=lambda segment: (segment['location']['order'], segment['order']))
 
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
+        'translation': translation,
+
         # These props are passed directly to the TranslationEditor react component
         'props': json.dumps({
             'object': {
