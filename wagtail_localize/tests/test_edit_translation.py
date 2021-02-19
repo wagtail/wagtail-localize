@@ -514,6 +514,25 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {'value': 'A text field', 'tab': 'content', 'field': 'Test textfield', 'model_order': 2, 'panel_order': 1},
         ])
 
+    def test_edit_page_from_outdated_translation_source(self):
+        self.page_source.schema_version = '0001_initial'
+        self.page_source.save()
+
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+
+        if DJANGO_VERSION >= (3, 0):
+            self.assertContains(
+                response,
+                "The data model for &#x27;Test page&#x27; has been changed since the last translation sync. "
+                "If any new fields have been added recently, these may not be visible until the next translation sync."
+            )
+        else:
+            self.assertContains(
+                response,
+                "The data model for &#39;Test page&#39; has been changed since the last translation sync. "
+                "If any new fields have been added recently, these may not be visible until the next translation sync."
+            )
+
     def test_edit_snippet_translation(self):
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
         self.assertEqual(response.status_code, 200)

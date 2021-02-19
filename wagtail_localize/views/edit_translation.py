@@ -616,6 +616,16 @@ def edit_translation(request, translation, instance):
     # segments have a unique value for model field ordering)
     segments.sort(key=lambda segment: (segment['location']['order'], segment['order']))
 
+    # Display a warning to the user if the schema of the source model has been updated since the source was last updated
+    if translation.source.schema_out_of_date():
+        messages.warning(
+            request,
+            _(
+                "The data model for '{model_name}' has been changed since the last translation sync. "
+                "If any new fields have been added recently, these may not be visible until the next translation sync."
+            ).format(model_name=capfirst(source_instance._meta.verbose_name))
+        )
+
     return render(request, 'wagtail_localize/admin/edit_translation.html', {
         'translation': translation,
 
