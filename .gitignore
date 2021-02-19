@@ -8,7 +8,7 @@
 /venv
 /.vscode
 /site
-/test_wagtail_localize.db
+/test_wagtaillocalize.db
 /wagtail_localize/static/wagtail_localize/js/wagtail-localize.js
 /node_modules
 /test-static
