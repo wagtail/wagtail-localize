@@ -507,6 +507,7 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
 };
 
 interface EditorSynchronisedValueSegmentProps {
+    adminBaseUrl: string;
     segment: SynchronisedValueSegment;
     override?: SegmentOverride;
     sourceLocale: Locale;
@@ -517,7 +518,15 @@ interface EditorSynchronisedValueSegmentProps {
 
 const EditorSynchronisedValueSegment: FunctionComponent<
     EditorSynchronisedValueSegmentProps
-> = ({ segment, override, sourceLocale, isLocked, dispatch, csrfToken }) => {
+> = ({
+    adminBaseUrl,
+    segment,
+    override,
+    sourceLocale,
+    isLocked,
+    dispatch,
+    csrfToken
+}) => {
     let comment = <></>;
     let buttons: React.ReactFragment[] = [];
     let value: React.ReactFragment = <></>;
@@ -620,6 +629,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
 
         value = (
             <PageChooser
+                adminBaseUrl={adminBaseUrl}
                 pageId={(override && override.value) || segment.value}
             />
         );
@@ -650,6 +660,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
 
         value = (
             <ImageChooser
+                adminBaseUrl={adminBaseUrl}
                 imageId={(override && override.value) || segment.value}
             />
         );
@@ -680,6 +691,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
 
         value = (
             <DocumentChooser
+                adminBaseUrl={adminBaseUrl}
                 documentId={(override && override.value) || segment.value}
             />
         );
@@ -713,6 +725,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
 
         value = (
             <SnippetChooser
+                adminBaseUrl={adminBaseUrl}
                 snippetModel={widget.snippet_model}
                 snippetId={(override && override.value) || segment.value}
             />
@@ -850,6 +863,7 @@ interface EditorSegmentListProps extends EditorProps, EditorState {
 }
 
 const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
+    adminBaseUrl,
     object: { isLocked },
     sourceLocale,
     segments,
@@ -894,6 +908,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                     case 'synchronised_value': {
                         return (
                             <EditorSynchronisedValueSegment
+                                adminBaseUrl={adminBaseUrl}
                                 segment={segment}
                                 override={segmentOverrides.get(segment.id)}
                                 sourceLocale={sourceLocale}

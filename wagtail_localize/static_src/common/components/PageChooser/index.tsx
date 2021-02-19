@@ -7,17 +7,21 @@ interface PageAPI {
 }
 
 interface PageChooserProps {
+    adminBaseUrl: string;
     pageId: number | null;
 }
 
-const PageChooser: FunctionComponent<PageChooserProps> = ({ pageId }) => {
+const PageChooser: FunctionComponent<PageChooserProps> = ({
+    adminBaseUrl,
+    pageId
+}) => {
     const [pageInfo, setPageInfo] = React.useState<PageAPI | null>(null);
 
     React.useEffect(() => {
         setPageInfo(null);
 
         if (pageId) {
-            fetch(`/admin/api/main/pages/${pageId}/`)
+            fetch(`${adminBaseUrl}api/main/pages/${pageId}/`)
                 .then(response => response.json())
                 .then(setPageInfo);
         }
@@ -35,7 +39,7 @@ const PageChooser: FunctionComponent<PageChooserProps> = ({ pageId }) => {
                     <ul className="actions" style={{ listStyleType: 'none' }}>
                         <li>
                             <a
-                                href={`/admin/pages/${pageInfo.id}/edit/`}
+                                href={`${adminBaseUrl}pages/${pageInfo.id}/edit/`}
                                 className="edit-link button button-small button-secondary"
                                 target="_blank"
                                 rel="noopener noreferrer"

@@ -8,6 +8,7 @@ interface SnippetAPI {
 }
 
 interface SnippetChooserProps {
+    adminBaseUrl: string;
     snippetModel: {
         app_label: string;
         model_name: string;
@@ -18,6 +19,7 @@ interface SnippetChooserProps {
 }
 
 const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
+    adminBaseUrl,
     snippetModel,
     snippetId
 }) => {
@@ -30,7 +32,7 @@ const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
 
         if (snippetId) {
             fetch(
-                `/admin/localize/api/snippets/${snippetModel.app_label}/${snippetModel.model_name}/${snippetId}/`
+                `${adminBaseUrl}localize/api/snippets/${snippetModel.app_label}/${snippetModel.model_name}/${snippetId}/`
             )
                 .then(response => response.json())
                 .then(setSnippetInfo);
