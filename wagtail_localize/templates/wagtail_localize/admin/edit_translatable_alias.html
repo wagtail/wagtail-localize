@@ -6,7 +6,7 @@
         {% url 'wagtailadmin_pages:edit' page.alias_of_id as edit_original_page_url %}
         <p>
             {% blocktrans with edit_original_page_url=edit_original_page_url original_locale=page.alias_of.locale.get_display_name trimmed %}
-                This page hasn't been translated yet. It is mirroring the <a href="{{ edit_original_page_url }}" target="_blank">{{ original_locale }} page.</a>.
+                This page hasn't been translated yet. It is mirroring the <a href="{{ edit_original_page_url }}" target="_blank">{{ original_locale }} page</a>.
             {% endblocktrans %}
         </p>
 
