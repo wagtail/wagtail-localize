@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
+from django.db.migrations.recorder import MigrationRecorder
 from django.db.models import (
     Case,
     When,
@@ -64,6 +65,15 @@ def get_edit_url(instance):
 
     else:
         return reverse('wagtailsnippets:edit', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)])
+
+
+def get_schema_version(app_label):
+    """
+    Returns the name of the last applied migration for the given app label.
+    """
+    migration = MigrationRecorder.Migration.objects.filter(app=app_label).order_by('applied').last()
+    if migration:
+        return migration.name
 
 
 class TranslatableObjectManager(models.Manager):
@@ -179,6 +189,12 @@ class TranslationSource(models.Model):
     locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE)
     object_repr = models.TextField(max_length=200)
     content_json = models.TextField()
+    # The name of the last migration to be applied to the app that contains the specific_content_type model
+    # This is used to provide a warning to a user when they are editing a translation that was submitted with
+    # an older schema
+    # Can be blank if the app has no migrations or the TranslationSource was submitted with an old version
+    # of Wagtail Localize
+    schema_version = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated_at = models.DateTimeField()
 
@@ -223,6 +239,7 @@ class TranslationSource(models.Model):
                 'locale': instance.locale,
                 'object_repr': str(instance)[:200],
                 'content_json': content_json,
+                'schema_version': get_schema_version(instance._meta.app_label) or '',
                 'last_updated_at': timezone.now(),
             }
         )
@@ -266,6 +283,7 @@ class TranslationSource(models.Model):
                 'locale': instance.locale,
                 'object_repr': str(instance)[:200],
                 'content_json': content_json,
+                'schema_version': get_schema_version(instance._meta.app_label) or '',
                 'last_updated_at': timezone.now(),
             }
         )
@@ -286,10 +304,11 @@ class TranslationSource(models.Model):
             serializable_data = get_serializable_data_for_fields(instance)
             self.content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
 
+        self.schema_version = get_schema_version(instance._meta.app_label) or ''
         self.object_repr = str(instance)[:200]
         self.last_updated_at = timezone.now()
 
-        self.save(update_fields=['content_json', 'object_repr', 'last_updated_at'])
+        self.save(update_fields=['content_json', 'schema_version', 'object_repr', 'last_updated_at'])
         self.refresh_segments()
 
     def get_source_instance(self):
@@ -627,6 +646,17 @@ class TranslationSource(models.Model):
         ingest_segments(original, translation, self.locale, locale, segments)
 
         return translation
+
+    def schema_out_of_date(self):
+        """
+        Returns True if the app that contains the model this source was generated from
+        has been updated since the source was last updated.
+        """
+        if not self.schema_version:
+            return False
+
+        current_schema_version = get_schema_version(self.specific_content_type.app_label)
+        return self.schema_version != current_schema_version
 
 
 class POImportWarning:

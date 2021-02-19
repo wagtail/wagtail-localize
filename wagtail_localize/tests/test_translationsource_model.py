@@ -629,3 +629,28 @@ class TestGetEphemeralTranslatedInstance(TestCase):
 
         new_page = self.source.get_ephemeral_translated_instance(self.dest_locale)
         self.assertEqual(new_page.test_textfield, "Champ de texte mis à jour")
+
+
+class TestSchemaOutOfDate(TestCase):
+    def setUp(self):
+        self.page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="This is some test content",
+            test_textfield="This is some more test content",
+        )
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
+
+    def test_schema_is_in_date_for_new_instance(self):
+        self.assertTrue(self.source.schema_version)
+        self.assertFalse(self.source.schema_out_of_date())
+
+    def test_schema_is_in_date_if_source_schema_version_is_unknown(self):
+        self.source.schema_version = ''
+        self.source.save()
+        self.assertFalse(self.source.schema_out_of_date())
+
+    def test_schema_is_out_of_date_if_source_schema_version_is_old(self):
+        self.source.schema_version = '0001_initial'
+        self.source.save()
+        self.assertTrue(self.source.schema_out_of_date())
