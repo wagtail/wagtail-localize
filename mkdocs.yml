@@ -1,4 +1,6 @@
 site_name: Wagtail Localize
+site_url: https://wagtail-localize.org
+repo_url: https://github.com/wagtail/wagtail-localize/
 theme:
   name: "material"
   custom_dir: docs/theme_overrides
