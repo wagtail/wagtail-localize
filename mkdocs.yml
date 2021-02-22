@@ -6,6 +6,10 @@ theme:
   custom_dir: docs/theme_overrides
   palette:
     primary: teal
+  icon:
+    logo: octicons/globe-16
+
+  favicon: _static/icon-128.png
   features:
     - navigation.tabs
     - navigation.sections
