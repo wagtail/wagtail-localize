@@ -2,7 +2,7 @@
 template: templates/index.html
 ---
 
-![Wagtail Localize](/_static/logo.png)
+![Wagtail Localize](/_static/banner.png)
 
 Wagtail Localize is a translation plugin for the [Wagtail CMS](https://github.com/wagtail/wagtail). It allows pages or snippets to be translated within Wagtail's admin interface. It also provides integrations with external translations services such as [Pontoon](https://pontoon.mozilla.org/) or [DeepL](https://www.deepl.com/), and importing/exporting translations with PO files.
 
