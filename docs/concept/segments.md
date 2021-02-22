@@ -3,7 +3,7 @@
 When pages are submitted for translation, the content is broken down into 'segments'.
 Translation is performed on individual segments rather than the page as a whole.
 
-It's done this way to allow translations to be updated incremantally. If a single
+It's done this way to allow translations to be updated incrementally. If a single
 field/block/paragraph is updated in the source, translators will only have to update
 a single segment and not the whole page.
 
