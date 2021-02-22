@@ -64,3 +64,27 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/wagtail_localize
           TOXENV: python${{ matrix.python }}-django${{ matrix.django }}-wagtail${{ matrix.wagtail }}-postgres
+
+  coverage:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.8']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          pip install -e.[testing]
+          pip install coverage==5.4
+      - name: Test
+        run: |
+          coverage run testmanage.py test
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
