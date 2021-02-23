@@ -257,8 +257,6 @@ def extract_strings(html):
 
     Inline elements and visible text are extracted together.
 
-    This also returns a list of hrefs that were found in the HTML, these are also included in the strings.
-
     For example:
 
         <h1>Foo</h1>
@@ -270,7 +268,7 @@ def extract_strings(html):
             <a href="http://example.com">A link</a>
         </p>
 
-    Will produce the following two outputs (as a 3-tuple)
+    Will produce the following two outputs (as a 2-tuple)
 
         <h1><text position="0"></h1>
         <p>
@@ -287,16 +285,13 @@ def extract_strings(html):
             "<a href="http://example.com">A link</a>"
         ]
 
-        [
-            http://example.com"
-        ]
 
     Args:
         html (str): The HTML to extract strings from.
 
     Returns:
-        tuple[str, list[tuple[StringValue, dict]], list[str]]: Returns a template string, list 2-tuples containing a
-            StringValue and dict of HTML attribute, and a list of hrefs that were found.
+        tuple[str, list[tuple[StringValue, dict]]]: Returns a template string, and list 2-tuples containing a
+            StringValue and dict of HTML attribute
     """
     soup = BeautifulSoup(html, "html.parser")
 
@@ -433,8 +428,6 @@ def extract_strings(html):
     walk(soup)
 
     # Now extract strings from the <text> tags
-    # Also, make a list of all 'href' attributes we find too
-    hrefs = set()
     strings = []
     position = 0
     for element in soup.descendants:
@@ -451,11 +444,6 @@ def extract_strings(html):
             position += 1
             string_val, attrs = StringValue.from_source_html(text)
             strings.append((string_val, attrs))
-            # Links should be translated
-            if attrs:
-                for key, val in attrs.items():
-                    if 'href' in val:
-                        hrefs.add(val['href'])
 
             if prefix:
                 element.insert_before(prefix)
@@ -463,11 +451,7 @@ def extract_strings(html):
             if suffix:
                 element.insert_after(suffix)
 
-        elif element.name == "a":
-            if element.attrs and 'href' in element.attrs and element.attrs['href'] not in hrefs:
-                hrefs.add(element.attrs['href'])
-
-    return str(soup), strings, sorted(hrefs)
+    return str(soup), strings
 
 
 def restore_strings(template, strings):

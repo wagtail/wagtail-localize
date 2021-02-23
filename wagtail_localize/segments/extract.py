@@ -65,7 +65,15 @@ class StreamFieldSegmentExtractor:
             return [StringSegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            template, strings, hrefs = extract_strings(block_value.source)
+            template, strings = extract_strings(block_value.source)
+
+            # Find all unique href values
+            hrefs = set()
+            for string, attrs in strings:
+                for tag_attrs in attrs.values():
+                    if 'href' in tag_attrs:
+                        hrefs.add(tag_attrs['href'])
+
             ret = [
                 TemplateSegmentValue("", "html", template, len(strings))
             ] + [
@@ -73,7 +81,7 @@ class StreamFieldSegmentExtractor:
                 for string, attrs in strings
             ] + [
                 OverridableSegmentValue(quote_path_component(href), href)
-                for href in hrefs
+                for href in sorted(hrefs)
             ]
             return ret
 
@@ -172,7 +180,14 @@ def extract_segments(instance):
 
         elif isinstance(field, RichTextField):
             if is_translatable:
-                template, strings, hrefs = extract_strings(field.value_from_object(instance))
+                template, strings = extract_strings(field.value_from_object(instance))
+
+                # Find all unique href values
+                hrefs = set()
+                for string, attrs in strings:
+                    for tag_attrs in attrs.values():
+                        if 'href' in tag_attrs:
+                            hrefs.add(tag_attrs['href'])
 
                 field_segments = [
                     TemplateSegmentValue("", "html", template, len(strings))
@@ -181,7 +196,7 @@ def extract_segments(instance):
                     for string, attrs in strings
                 ] + [
                     OverridableSegmentValue(quote_path_component(href), href)
-                    for href in hrefs
+                    for href in sorted(hrefs)
                 ]
 
                 segments.extend(segment.wrap(field.name) for segment in field_segments)
