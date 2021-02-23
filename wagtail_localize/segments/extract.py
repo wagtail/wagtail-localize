@@ -26,7 +26,17 @@ def quote_path_component(text):
 
 
 class StreamFieldSegmentExtractor:
+    """
+    A helper class to help traverse StreamField values and extract segments.
+    """
     def __init__(self, field, include_overridables=False):
+        """
+        Initialises a StreamFieldSegmentExtractor.
+
+        Args:
+            field (StreamField): The StreamField to extract segments from.
+            include_overridables (boolean, optional): Set this to True to extract overridable segments too.
+        """
         self.field = field
         self.include_overridables = include_overridables
 
@@ -125,6 +135,16 @@ class StreamFieldSegmentExtractor:
 
 
 def extract_segments(instance):
+    """
+    Extracts segments from the given model instance.
+
+    Args:
+        instance (Model): The model instance to extract segments from.
+
+    Returns:
+        list[StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, or OverridableSegmentValue]: The
+            segment values that have been extracted.
+    """
     segments = []
 
     for translatable_field in get_translatable_fields(instance.__class__):

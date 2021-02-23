@@ -61,12 +61,24 @@ def validate_element(element):
 class StringValue:
     """
     A fragment of HTML that only contains inline tags with all attributes stripped out.
+
+    Attributes:
+        data (str): The HTML fragment.
     """
     def __init__(self, data):
         self.data = data
 
     @classmethod
     def from_plaintext(cls, text):
+        """
+        Initialises a StringValue from a plain text string.
+
+        Args:
+            text (str): The plain text to turn into a StringValue.
+
+        Returns:
+            StringValue: The initialised StringValue.
+        """
         # Escapes all HTML characters and replaces newlines with <br> tags
         elements = []
 
@@ -85,10 +97,16 @@ class StringValue:
     @classmethod
     def from_source_html(cls, html):
         """
-        Get a string from source HTML.
+        Initialises a StringValue from a HTML string.
 
         Source HTML is the HTML you get in Wagtail field data. This contains HTML attributes that
         must first be stripped out before the string can be translated.
+
+        Args:
+            html (str): The HTML to turn into a StringValue.
+
+        Returns:
+            tuple[StringValue, dict]: The initialised StringValue and a dictionary of extracted HTML attributes.
         """
         # Extracts attributes from any tags (eg, href from <a> tags) and stores a version
         # with just the translatable HTML
@@ -123,10 +141,16 @@ class StringValue:
     @classmethod
     def from_translated_html(cls, html):
         """
-        Get a String from translated HTML.
+        Initialises a StringValue from a HTML string.
 
         HTML attributes are stripped out before translation, so translated HTML does not
         need to have them stripped out.
+
+        Args:
+            html (str): The HTML to turn into a StringValue.
+
+        Returns:
+            StringValue: The initialised StringValue.
         """
         soup = BeautifulSoup(html, "html.parser")
 
@@ -135,6 +159,14 @@ class StringValue:
         return cls(str(soup))
 
     def render_text(self):
+        """
+        Returns a plain text representation of the string.
+
+        Note: If the string was initialised from HTML, all HTML tags will be stripped out.
+
+        Returns:
+            str: The plain text representation of the string.
+        """
         soup = BeautifulSoup(self.data, "html.parser")
         texts = []
 
@@ -154,6 +186,17 @@ class StringValue:
         return "".join(texts)
 
     def render_soup(self, attrs):
+        """
+        Returns a BeautifulSoup instance containing the string.
+
+        This is equivalent to: ``BeautifulSoup(string.render_html(attrs), "html.parser")``
+
+        The .render_html() method calls this internally so it would be more performant to call this directly if a
+        BeautifulSoup object is what you need.
+
+        Returns:
+            BeautifulSoup: A BeautifulSoup object representing the HTML of the string.
+        """
         soup = BeautifulSoup(self.data, "html.parser")
 
         def walk(soup):
@@ -174,9 +217,25 @@ class StringValue:
         return soup
 
     def render_html(self, attrs):
+        """
+        Returns a HTML representation of the string.
+
+        Note: If the string was initialised from plain text, all special characters will be escaped.
+
+        Returns:
+            str: The HTML representation of the string.
+        """
         return str(self.render_soup(attrs))
 
     def get_translatable_html(self):
+        """
+        Returns a HTML string without restoring any HTML attributes.
+
+        Note: If the string was initialised from plain text, all special characters will be escaped.
+
+        Returns:
+            str: The HTML representation of the string without HTML attributes
+        """
         return self.data
 
     def __eq__(self, other):
@@ -198,6 +257,8 @@ def extract_strings(html):
 
     Inline elements and visible text are extracted together.
 
+    This also returns a list of hrefs that were found in the HTML, these are also included in the strings.
+
     For example:
 
         <h1>Foo</h1>
@@ -206,9 +267,10 @@ def extract_strings(html):
             <ul>
                 <li><b>Baz</b></li>
             </ul>
+            <a href="http://example.com">A link</a>
         </p>
 
-    Will produce the following two outputs (as a 2-tuple)
+    Will produce the following two outputs (as a 3-tuple)
 
         <h1><text position="0"></h1>
         <p>
@@ -222,7 +284,19 @@ def extract_strings(html):
             "Foo",
             "Bar",
             "<b>Baz</b>",
+            "<a href="http://example.com">A link</a>"
         ]
+
+        [
+            http://example.com"
+        ]
+
+    Args:
+        html (str): The HTML to extract strings from.
+
+    Returns:
+        tuple[str, list[tuple[StringValue, dict]], list[str]]: Returns a template string, list 2-tuples containing a
+            StringValue and dict of HTML attribute, and a list of hrefs that were found.
     """
     soup = BeautifulSoup(html, "html.parser")
 
@@ -359,6 +433,7 @@ def extract_strings(html):
     walk(soup)
 
     # Now extract strings from the <text> tags
+    # Also, make a list of all 'href' attributes we find too
     hrefs = set()
     strings = []
     position = 0
@@ -396,6 +471,19 @@ def extract_strings(html):
 
 
 def restore_strings(template, strings):
+    """
+    Inserts a list of strings into the template.
+
+    This reverses the `extract_strings` function.
+
+    Args:
+        template (str): The HTML template.
+        strings (list[tuple[StringValue, dict]]): A list of 2-tuples containing a StringValue and HTML attributes dict
+            for each string to reinsert into the template.
+
+    Returns:
+        str: A HTML blob with the strings inserted into the template.
+    """
     soup = BeautifulSoup(template, "html.parser")
     for text_element in soup.findAll("text"):
         string, attrs = strings[int(text_element.get("position"))]

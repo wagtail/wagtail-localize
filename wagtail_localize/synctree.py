@@ -158,10 +158,15 @@ class PageIndex:
 
 def synchronize_tree(source_locale, target_locale, *, page_index=None):
     """
-    Synchronises a locale tree with the other locales.
+    Synchronises a locale tree with an other locale.
 
-    This creates any placeholders that don't exist yet, updates placeholders where their
-    source has been changed and moves pages to match the structure of other trees
+    This creates alias pages for pages that are not translated yet.
+
+    Args:
+        source_locale (Locale): The Locale to sync from.
+        target_locale (Locale): The Locale to sync into
+        page_index (PageIndex, optional): The Page index to reuse for performance. Otherwise will generate a new one.
+
     """
     # Build a page index
     if not page_index:
