@@ -1010,7 +1010,7 @@ class Translation(models.Model):
     @transaction.atomic
     def import_po(self, po, delete=False, user=None, translation_type='manual', tool_name=""):
         """
-        Exports all translatable strings with any translations that have already been made.
+        Imports all translatable strings with any translations that have already been made.
 
         Args:
             po (polib.POFile): A POFile object containing the source translatable strings and any translations.
