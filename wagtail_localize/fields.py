@@ -65,7 +65,7 @@ class TranslatableField(BaseTranslatableField):
 
 class SynchronizedField(BaseTranslatableField):
     """
-    A field that should always be kept in sync with the original page
+    A field that should always be kept in sync with the original page.
     """
 
     def is_synchronized(self, obj):
@@ -76,6 +76,17 @@ class SynchronizedField(BaseTranslatableField):
 
 
 def get_translatable_fields(model):
+    """
+    Derives a list of translatable fields from the given model class.
+
+    Arguments:
+        model (Model class): The model class to derive translatable fields from.
+
+    Returns:
+        list[TranslatableField or SynchronizedField]: A list of TranslatableField and SynchronizedFields that were
+            derived from the model.
+
+    """
     if hasattr(model, 'translatable_fields'):
         return model.translatable_fields
 
@@ -175,7 +186,13 @@ def get_translatable_fields(model):
 
 def copy_synchronised_fields(source, target):
     """
-    Copies data in synchronised fields from the source object to the target object.
+    Copies data in synchronised fields from the source instance to the target instance.
+
+    Note: Both instances must have the same model class
+
+    Arguments:
+        source (Model): The source instance to copy data from.
+        target (Model): The target instance to copy data to.
     """
     for translatable_field in get_translatable_fields(source.__class__):
         if translatable_field.is_synchronized(source):

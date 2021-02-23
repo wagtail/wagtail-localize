@@ -23,6 +23,21 @@ def unquote_path_component(text):
 
 
 def organise_template_segments(segments):
+    """
+    Organises the segments for a RichTextField or RichTextBlock to prepare them for recombining.
+
+    This takes a single TemplateValue segment, and zero or more StringValueSegments/OverridableValueSegments.
+    It detects the TemplateValue and groups the OverridableValueSegments with their StringValueSegments.
+
+    Arguments:
+        segments (list[StringValueSegment, TemplateValueSegment, or OverridableValueSegment]): The segments to organise.
+
+    Returns:
+        tuple[string, string, list[tuple[string, dict]]]: Returns a 3-tuple. The first component is the template format,
+            the second component is the template itself as a string, the third component is a list of 2-tuples that
+            represent translated strings to be reinserted into the template. These 2-tuples contain the string itself
+            and a dict of HTML attributes to insert back into the string.
+    """
     # The first segment is always the template, followed by the texts in order of their position
 
     segments.sort(key=lambda segment: segment.order)
@@ -52,6 +67,18 @@ def organise_template_segments(segments):
 
 
 def handle_related_object(related_model, src_locale, tgt_locale, segments):
+    """
+    Returns the instance of the related object that is referenced by the given segments.
+
+    This is called when inserting segments into a ForeignKey or ChooserBlock.
+
+    Raises:
+        Model.DoesNotExist: If the segment is a RelatedObjectValue and the related object doesn't exist in the target locale.
+        Model.DoesNotExist: If the segment is a OverridableSegmentValue and the referenced instance no longer exists.
+
+    Returns:
+        Model: The referenced instance.
+    """
     if len(segments) > 1:
         raise ValueError("Related object field can only have a single segment. Found {}".format(len(segments)))
 
@@ -66,7 +93,18 @@ def handle_related_object(related_model, src_locale, tgt_locale, segments):
 
 
 class StreamFieldSegmentsWriter:
+    """
+    A helper class to help traverse StreamField values and insert translated segments.
+    """
     def __init__(self, field, src_locale, tgt_locale):
+        """
+        Initialises a StreamFieldSegmentsWriter.
+
+        Args:
+            field (StreamField): The StreamField to extract segments from.
+            src_locale (Locale): The source locale of the segments.
+            tgt_locale (Locale): The locale of the segment translations.
+        """
         self.field = field
         self.src_locale = src_locale
         self.tgt_locale = tgt_locale
@@ -171,6 +209,17 @@ class StreamFieldSegmentsWriter:
 
 
 def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segments):
+    """
+    Ingests translated segments into a translated instance.
+
+    Args:
+        original_obj (Model): The original instance that the segments were extracted from.
+        translated_obj (Model): The translated instance that we are ingesting segments into.
+        src_local (Locale): The locale of the source instance.
+        tgt_locale (Locale): The locale of the translated instance
+        segments (list[StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, or OverridableSegmentValue]):
+            The segment values to ingest
+    """
     # Get segments by field name
     segments_by_field_name = defaultdict(list)
     for segment in segments:
