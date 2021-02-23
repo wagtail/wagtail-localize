@@ -257,6 +257,8 @@ def extract_strings(html):
 
     Inline elements and visible text are extracted together.
 
+    This also returns a list of hrefs that were found in the HTML, these are also included in the strings.
+
     For example:
 
         <h1>Foo</h1>
@@ -268,7 +270,7 @@ def extract_strings(html):
             <a href="http://example.com">A link</a>
         </p>
 
-    Will produce the following two outputs (as a 2-tuple)
+    Will produce the following two outputs (as a 3-tuple)
 
         <h1><text position="0"></h1>
         <p>
@@ -284,7 +286,6 @@ def extract_strings(html):
             "<b>Baz</b>",
             "<a href="http://example.com">A link</a>"
         ]
-
 
     Args:
         html (str): The HTML to extract strings from.
