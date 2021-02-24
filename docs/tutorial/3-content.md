@@ -150,3 +150,6 @@ Hit that "Translate this page" button, then click "Submit" on the step afterward
 mode, and the editor should now look something like this:
 
 [See image](/_static/tutorial/wagtail-edit-translation.png)
+
+
+TODO: Explore the editor features

@@ -43,6 +43,7 @@ nav:
     - 1. Project set up: tutorial/1-project-set-up.md
     - 2. Configure Wagtail Localize: tutorial/2-configure-wagtail-localize.md
     - 3. Translating Content: tutorial/3-content.md
+    - 4. Translating Templates: tutorial/4-templates.md
   - How To Guides:
     - Detailed installation guide: how-to/from-scratch.md
     - Translatable fields configuration: how-to/field-configuration.md
