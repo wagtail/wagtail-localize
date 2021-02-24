@@ -18,6 +18,7 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_div_format
+  - pymdownx.tabbed
 extra_css:
   - stylesheets/mkdocstrings.css
 plugins:
@@ -38,7 +39,11 @@ plugins:
             - django.setup()
 nav:
   - Home: index.md
-  - Tutorial: tutorial.md
+  - Tutorial:
+    - 1. Project set up: tutorial/1-project-set-up.md
+    - 2. Configure Wagtail Localize: tutorial/2-configure-wagtail-localize.md
+    - 3. Translating Content: tutorial/3-content.md
+    - 4. Translating Templates: tutorial/4-templates.md
   - How To Guides:
     - Detailed installation guide: how-to/from-scratch.md
     - Translatable fields configuration: how-to/field-configuration.md
