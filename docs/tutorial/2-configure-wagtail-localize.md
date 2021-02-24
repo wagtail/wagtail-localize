@@ -1,6 +1,7 @@
 # 2. Configure Wagtail Localize
 
-In this section, you will enable internationalisation and configure Wagtail Localize in the site you created earlier.
+In this section, you will enable Wagtail's internationalisation and install Wagtail Localize into the site that you
+created earlier.
 
 ## Settings
 
@@ -8,7 +9,8 @@ Open ``tutorial/settings/base.py`` in your favourite text editor.
 
 ### Add Wagtail Localize to ``INSTALLED_APPS``
 
-Find the ``INSTALLED_APPS`` setting, and insert ``'wagtail_localize'`` and ``'wagtail_localize.locales'`` in between ``'search`` and ``'wagtail.contrib.forms'``:
+Find the ``INSTALLED_APPS`` setting, and insert ``'wagtail_localize'`` and ``'wagtail_localize.locales'`` in between
+``'search`` and ``'wagtail.contrib.forms'``:
 
 ``` python
 INSTALLED_APPS = [
@@ -25,7 +27,8 @@ INSTALLED_APPS = [
 ]
 ```
 
-Note that the ``wagtail_localize.locales`` module is a temporary replacement for Wagtail's builtin ``wagtail.locales`` module and it will be removed in a later release.
+Note that the ``wagtail_localize.locales`` module is a temporary replacement for Wagtail's builtin ``wagtail.locales``
+module and it will be removed in a later release.
 
 ### Enable Wagtail's internationalisation
 
@@ -44,8 +47,8 @@ USE_TZ = True
 
 ### Configure content languages
 
-In the "Internationalisation" section, set the ``LANGUAGES`` and ``WAGTAIL_CONTENT_LANGUAGES`` settings to English and
-French:
+In the "Internationalisation" section, add the following to set the ``LANGUAGES`` and ``WAGTAIL_CONTENT_LANGUAGES``
+settings to English and French:
 
 ``` python
 WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
@@ -53,11 +56,6 @@ WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
     ('fr', "French"),
 ]
 ```
-
-This will allow content to be authored in either English or French (configured by ``WAGTAIL_CONTENT_LANGUAGES``) and
-also use those same languages on the site frontend (configured by ``LANGUAGES``). It's possible in Wagtail Localize
-to make languages share Wagtail content. One case where this is useful is for supporting regions like ``en-gb`` and
-``en-us`` where you might want them to use the same content but differ on just date formatting and currency.
 
 ### Enable ``LocaleMiddleware``
 
@@ -85,18 +83,19 @@ MIDDLEWARE = [
 
 ## URLs
 
-We need to tell Django (the web framework that Wagtail is built on) which URL paths are translatable. For these
-patterns, Django will prefix them with the language code. For example, if we tell Django that the search view is
-translatable, the URL will change from ``/search/`` to ``/en/search/`` for English and ``/fr/search/`` for French.
+Next, you need configure which URL paths are translatable so that Django will prefix them with the language code.
 
-To configure this, open ``tutorial/urls.py`` in your favourite text editor. You'll notice in there that there are two
-groups of URL patterns with an ``if settings.DEBUG:`` block in the middle. It's done this way because the
-``wagtail_urls`` entry must always be last.
+Open ``tutorial/urls.py`` in your text editor. You'll see that there are two groups of URL patterns with an
+``if settings.DEBUG:`` block in between them.
 
-To tell Django to prefix ``wagtail_urls`` and ``/search`` with a language code, wrap these patterns with
-[``i18n_patterns``](https://docs.djangoproject.com/en/3.1/topics/i18n/translation/#django.conf.urls.i18n.i18n_patterns).
-You can do this by ``'search/'`` path to the top of the second group of URL patterns and then replace the
-square brackets around the second group with ``i18n_patterns()``:
+The patterns that need to be made translatable are:
+
+ - ``path('search/', search_views.search, name='search'),``
+ - ``path("", include(wagtail_urls)),``
+
+To make these translatable, move the 'search/' pattern into the second block, above the ``wagtail_urls`` pattern. Then,
+replace the square brakets around that block with
+[``i18n_patterns``](https://docs.djangoproject.com/en/3.1/topics/i18n/translation/#django.conf.urls.i18n.i18n_patterns):
 
 ``` python
 from django.conf.urls.i18n import i18n_patterns
@@ -117,7 +116,7 @@ urlpatterns = urlpatterns + i18n_patterns(
 )
 ```
 
-With the ``'search/'`` path removed, the first group should now look like:
+With the search pattern removed, the first group should now look like:
 
 ``` python
 # These paths are non-translatable so will not be given a language prefix
@@ -142,10 +141,9 @@ Go back to ``http://localhost:8000``. If your browser is configured for English 
 you should be redirected to ``http://localhost:8000/en/``.
 If your browser is configured in French, you should be redirected to ``http://localhost:8000/fr/``.
 
-In either case, you can view the site in ``/en/`` or ``/fr/``, but there are no differences yet, we will get to that in
-the following sections!
+In either case, you can view the site in ``/en/`` or ``/fr/`` (no differences yet).
 
-If this is all working as described, that means ``i18n_patterns`` and ``LocaleMiddleware`` are both working!
+If this is all working as described, that means ``i18n_patterns`` and ``LocaleMiddleware`` are working!
 
 ## Check the admin
 
@@ -156,21 +154,19 @@ has been labelled as "English". If you see that, then Wagtail's internationalisa
 
 ## Create the "French" locale
 
-Wagtail Localize links all content to ``Locale`` objects in the database. This allows the language codes to be updated
-easily and also allows custom components (such as currencies, flags, etc) to be associated with them in the database.
+Wagtail Localize creates only one locale to begin with, which is the one the corresponds to what you have in the
+``LANGUAGE_CODE`` setting. If you left ``LANGUAGE_CODE`` set to ``en-gb`` the initial locale would've been created for
+"English", so you need to create a new locale for "French".
 
-Wagtail Localize sets up only one ``Locale`` to begin with, which is the one the corresponds to the ``LANGUAGE_CODE``
-setting. In this tutorial, we left ``LANGUAGE_CODE`` set to ``en-gb`` so the initial ``Locale`` would've been created
-for "English" but not "French".
+To create a new locale, go to "Settings" => "Locales" in the admin interface, and click "Add a new locale". "French"
+should be automatically selected as it is the only available option (this list comes from the
+``WAGTAIL_CONTENT_LANGUAGES`` setting you configured earlier).
 
-To set up a locale object, go to "Settings" => "Locales" in the admin interface, and click "Add a new locale". "French"
-should be automatically selected as it is the only available option.
-
-Set the "Sync from" field to "English". This keeps the "French" language tree in sync with any existing and new
-English content as it's authored.
+Set the "Sync from" field to "English". This keeps the "French" language tree in sync with any existing and new English
+content as it's authored.
 
 ![Setting up the French locale](/_static/tutorial/wagtail-add-french-locale.png)
 
-After you've pressed "Save", you should now see two "Home" pages in the page explorer:
+After you press "Save", there should be two "Home" pages in the page explorer:
 
 ![Wagtail explorer menu with English and French homepages](/_static/tutorial/wagtail-explorer-with-english-and-french.png)

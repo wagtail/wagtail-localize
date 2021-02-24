@@ -2,6 +2,9 @@
 
 Welcome to the tutorial!
 
+This tutorial will take you though setting up a new Wagtail site with a blog from scratch, and then translate it into
+another language using Wagtail Localize. This tutorial doesn't assume any past experience with Wagtail or Django.
+
 In this section, you will set up a very basic Wagtail instance.
 
 === "Mac OS and GNU/Linux"

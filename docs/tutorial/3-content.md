@@ -1,14 +1,14 @@
 # 3. Translating content
 
-Now that Wagtail Localize is fully configured, let's add some more interesting page models so that we can try out
-some of Wagtail Localize's translation features.
+In this section, you will add some test content into the site and translate it with Wagtail Localize.
 
 ## Blog app
 
-Let's add a blog to our website! For this we need to create two page models, a "Blog post page" to represent blog
-entries and a "Blog index page" to contain them.
+Let's create a blog! A simple blog needs at least two page models, a "Blog post page" to represent blog entries and a
+"Blog index page" to contain them. Let's also create a "Blog category" snippet so we can demonstrate translating
+snippets.
 
-Firstly, you should set up a new app for the models (it's best practise to group page types into separate Django apps):
+Firstly, start a new app for the blog models:
 
 ``` shell
 python manage.py startapp blog
@@ -33,8 +33,6 @@ INSTALLED_APPS = [
 ```
 
 Now, open ``blog/models.py`` and copy and paste the following code into it:
-
-(this snippet is all standard Wagtail stuff, so I won't go into what it all means here!)
 
 ``` python
 from django.db import models
@@ -105,7 +103,7 @@ class BlogIndexPage(Page):
     parent_page_types = ['home.HomePage']
 ```
 
-Then add those models to the database:
+Then add those models to the database by running the following commands in your terminal:
 
 ``` shell
 python manage.py makemigrations
@@ -114,7 +112,7 @@ python manage.py migrate
 
 ## Create some test pages
 
-Next, let's create some test pages to translate. We will start by creating a blog index, then a blog post page under it.
+Now you can create some test pages to translate! Let's start by creating a blog index, then a blog post page under it.
 
 Navigate to the English Home page in the explorer, click "Add child page" then click "Blog index page". Fill it in like
 the following screenshot, and publish it.
@@ -133,52 +131,22 @@ but make sure that you cover the following:
 
 ## Translate it!
 
-Once you've published that, an exact copy should also be created in the French version too! remember when we selected
-"English" in the "Sync from" field in the French locale earlier? This is what that field does.
+Once those pages are created and published, aliases of those pages should be automatically created in the French version!
+This is because we set the "Sync from" field to "English" when we created the French locale. This tells Wagtail Localize
+to sync all new pages as well as the pages that existed at the time.
 
-When we add a template, it would be possible to visit this blog post in both the English and French versions of the
-site. Both versions, however, will have the English content. Let's translate it into French!
+At the moment, the French pages are an exact copy of the English pages, so let's translate them into French!
 
-To translate a page, find a foreign-language version of it in the page explorer and click "Edit". You should be
-presented with the following message:
+To translate the blog post you just created, find the French language of it in the page explorer and click edit.
+Alternatively, you can go straight from editing the English version to the French using the language selector at the top
+of the editor.
+
+When you get to the edit view, you will get this message (this is because it is keeping itself in sync with the English
+page):
 
 ![Translate page](/_static/tutorial/wagtail-translate-page.png)
 
-Can you guess the next step?
-
-Hit that "Translate this page" button, then click "Submit" on the step afterwards, this will put that version of the page
-into translation mode, and the editor should now look something like this:
+Hit that "Translate this page" button, then click "Submit" on the step afterwards, this will put the page into translation
+mode, and the editor should now look something like this:
 
 [See image](/_static/tutorial/wagtail-edit-translation.png)
-
-As you can see, the source page has been broken down into individual "Segments", there are three kinds of segments:
-
-
-TODO, got a bit carried away here, move to explanation
-
-### Text Segment
-
-This is a snippet of translatable text that has been extracted from the page. For ``CharField``/``TextField``, this
-snippet would contain the full value of the field (For example, the "title" field). ``StreamField``s and
-``RichTextField``s are broken down into smaller segments, with block structure and embedded media removed.
-
-``RichTextField``s still contain inline formatting and links, attributes are stripped out and replaced with ids to
-prevent translators from changing them.
-
-The main advantage of translating in this way, is it makes it very easy to keep the page up to date as the original
-is edited over time. Translators only have to retranslate segments that were changed. Also, segment translations could
-be reused to save time translating pages that have similar content.
-
-### Overridable segment
-
-By default, non-translatable content (such as images) stays in sync with the original page (this happens synchronously
-with other translations, so images and their captions don't go out of sync).
-
-But you can override this content, which can be useful if an image contains text, for example. When an overridable
-segment is overridden, it stops syncing with the original page.
-
-### Related object segment
-
-If the page is linked with any translatable snippets, these are automatically submitted for translation with the page,
-and the translation is automatically linked with the translated version of the snippet. Here, you can see the progress
-of translating this snippet, with a link to edit the snippet.
