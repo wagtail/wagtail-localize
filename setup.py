@@ -42,7 +42,13 @@ setup(
     install_requires=["Django>=2.2,<3.2", "Wagtail>=2.11,<2.13", "polib>=1.1,<2.0"],
     extras_require={
         "testing": ["dj-database-url==0.5.0", "freezegun==0.3.15"],
-        "documentation": ["mkdocs==1.1.2", "mkdocs-material==6.2.8", "mkdocs-mermaid2-plugin==0.5.1", "mkdocstrings==0.14.0"],
+        "documentation": [
+            "mkdocs==1.1.2",
+            "mkdocs-material==6.2.8",
+            "mkdocs-mermaid2-plugin==0.5.1",
+            "mkdocstrings==0.14.0",
+            "mkdocs-include-markdown-plugin==2.8.0",
+        ],
     },
     zip_safe=False,
 )
