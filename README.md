@@ -1,76 +1,42 @@
 # Wagtail localize
 
-Supported versions:
+<!--content-start-->
 
-Python: 3.7 and 3.8
-Django: 2.2, 3.0 and 3.1
-Wagtail: 2.11
+Wagtail Localize is a translation plugin for the [Wagtail CMS](https://wagtail.io). It allows pages or snippets to be translated within Wagtail's admin interface. It also provides integrations with external translations services such as [Pontoon](https://pontoon.mozilla.org/) or [DeepL](https://www.deepl.com/), and importing/exporting translations with PO files.
 
-## Installation and setup
+## Requirements
 
-Install with pip:
+Wagtail Localize requires the following:
+
+ - Python (3.7, 3.8)
+ - Django (2.11, 3.0, 3.1)
+ - Wagtail (2.11, 2.12) with [internationalisation enabled](https://docs.wagtail.io/en/stable/advanced_topics/i18n.html#configuration)
+
+## Installation
+
+Install using ``pip``:
 
 ```shell
 pip install wagtail-localize
 ```
 
-### Settings modifications
-
-Add `wagtail_localize` and `wagtail_localize.locales` to `INSTALLED_APPS` in `settings/base.py`:
+Add ``wagtail_localize`` and ``wagtail_localize.locales`` to your ``INSTALLED_APPS`` setting:
 
 ```python
 INSTALLED_APPS = [
     ...
     "wagtail_localize",
-    "wagtail_localize.locales",  # Note: This replaces "wagtail.locales"
+    "wagtail_localize.locales",  # This replaces "wagtail.locales"
     ...
 ]
 ```
 
-Add the following to `MIDDLEWARE`:
+## Support
 
-```python
-"django.middleware.locale.LocaleMiddleware",
-```
+For support, please use [GitHub Discussions](https://github.com/wagtail/wagtail-localize/discussions) or ask a question on the ``#multi-language`` channel on [Wagtail's Slack instance](https://wagtail.io/slack/).
 
-Ensure your settings file has:
+## Thanks
 
-```python
-LANGUAGE_CODE = "en-gb"  # Or your preferred default language
-USE_I18N = True
-```
+Many thanks to all of our supporters, contributors, and early adopters who helped with the initial release. In particular, to The Mozilla Foundation and Torchbox who sponsored the majority of the initial development and Wagtail core's internationalisation support.
 
-Add to following to your settings specifying any languages you would like to translate:
-
-```python
-LANGUAGES = [
-    ("en", "English"),
-    ("fr", "French"),
-]
-```
-
-To enable DeepL as a machine translator, add the following to your settings:
-
-```python
-WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'wagtail_localize.machine_translators.deepl.DeepLTranslator',
-    'OPTIONS': {
-        'AUTH_KEY': '<Your DeepL key here>',
-    }
-}
-```
-
-### URL configuration
-
-The following additions need to be made to `./yoursite/urls.py`
-
-```python
-from django.conf.urls.i18n import i18n_patterns
-...
-
-urlpatterns += i18n_patterns(
-    url(r"^search/$", search_views.search, name="search"),
-    url(r"", include(wagtail_urls)),
-)
-```
-
+<!--content-end-->

@@ -37,6 +37,7 @@ plugins:
             - import django
             - os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wagtail_localize.test.settings")
             - django.setup()
+  - include-markdown
 nav:
   - Home: index.md
   - Tutorial:
