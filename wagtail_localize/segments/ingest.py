@@ -8,6 +8,7 @@ from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
 
 from wagtail_localize.strings import restore_strings
+from wagtail_localize.fields import get_translatable_fields
 
 from .types import OverridableSegmentValue, StringSegmentValue
 
@@ -226,10 +227,17 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
         field_name, segment = segment.unwrap()
         segments_by_field_name[field_name].append(segment)
 
-    for field_name, field_segments in segments_by_field_name.items():
+    for field in get_translatable_fields(translated_obj.__class__):
+
+        field_name = field.field_name
+        field_segments = segments_by_field_name[field_name]
         field = translated_obj.__class__._meta.get_field(field_name)
 
-        if hasattr(field, "restore_translated_segments"):
+        if not field_segments:
+            data = field.value_from_object(original_obj)
+            setattr(translated_obj, field_name, data)
+
+        elif hasattr(field, "restore_translated_segments"):
             value = field.value_from_object(original_obj)
             new_value = field.restore_translated_segments(value, field_segments)
             setattr(translated_obj, field_name, new_value)
