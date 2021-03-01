@@ -234,7 +234,13 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
         field = translated_obj.__class__._meta.get_field(field_name)
 
         if not field_segments:
-            data = field.value_from_object(original_obj)
+
+            if isinstance(field, (models.TextField, models.CharField)):
+                data = field.value_from_object(original_obj)
+            else:
+                # TODO implement for other types
+                continue
+
             setattr(translated_obj, field_name, data)
 
         elif hasattr(field, "restore_translated_segments"):
