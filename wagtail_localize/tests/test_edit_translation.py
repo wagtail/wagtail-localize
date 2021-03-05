@@ -35,10 +35,12 @@ RICH_TEXT_DATA = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; 
 
 STREAM_TEXT_BLOCK_ID = uuid.uuid4()
 STREAM_STRUCT_BLOCK_ID = uuid.uuid4()
+STREAM_RICH_TEXT_BLOCK_ID = uuid.uuid4()
 
 STREAM_DATA = [
     {"id": STREAM_TEXT_BLOCK_ID, "type": "test_textblock", "value": "This is a text block"},
     {"id": STREAM_STRUCT_BLOCK_ID, "type": "test_structblock", "value": {"field_a": "This is a struct", "field_b": "block"}},
+    {"id": STREAM_RICH_TEXT_BLOCK_ID, "type": "test_richtextblock", "value": RICH_TEXT_DATA},
 ]
 
 
@@ -180,12 +182,17 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                 (f'test_streamfield.{STREAM_TEXT_BLOCK_ID}', 'This is a text block'),
                 (f'test_streamfield.{STREAM_STRUCT_BLOCK_ID}.field_a', 'This is a struct'),
                 (f'test_streamfield.{STREAM_STRUCT_BLOCK_ID}.field_b', 'block'),
+                (f'test_streamfield.{STREAM_RICH_TEXT_BLOCK_ID}', 'This is a heading'),
+                (f'test_streamfield.{STREAM_RICH_TEXT_BLOCK_ID}', 'This is a paragraph. &lt;foo&gt; <b>Bold text</b>'),
+                (f'test_streamfield.{STREAM_RICH_TEXT_BLOCK_ID}', '<a id="a1">This is a link</a>.'),
+                (f'test_streamfield.{STREAM_RICH_TEXT_BLOCK_ID}', 'Special characters: \'"!? セキレイ'),
             ]
         )
         self.assertEqual(
             [(segment['contentPath'], segment['value']) for segment in props['segments'] if segment['type'] == 'synchronised_value'],
             [
                 ("test_richtextfield.'http://example.com'", 'http://example.com'),
+                (f"test_streamfield.{STREAM_RICH_TEXT_BLOCK_ID}.'http://example.com'", 'http://example.com'),
                 ('test_synchronized_emailfield', 'email@example.com'),
             ]
         )
@@ -195,6 +202,8 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(props['segments'][7]['location'], {'tab': 'content', 'field': 'Test richtextfield', 'blockId': None, 'fieldHelpText': '', 'order': 6, 'subField': None, 'widget': None})
         self.assertEqual(props['segments'][10]['location'], {'tab': 'content', 'field': 'Text block', 'blockId': str(STREAM_TEXT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': None, 'widget': None})
         self.assertEqual(props['segments'][11]['location'], {'tab': 'content', 'field': 'Test structblock', 'blockId': str(STREAM_STRUCT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': 'Field a', 'widget': None})
+        self.assertEqual(props['segments'][14]['location'], {'tab': 'content', 'field': 'Test richtextblock', 'blockId': str(STREAM_RICH_TEXT_BLOCK_ID), 'fieldHelpText': '', 'order': 7, 'subField': None, 'widget': None})
+
         # TODO: Example that uses fieldHelpText
 
         # Check synchronised value
@@ -204,8 +213,15 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(synchronised_value_segment['location'], {'blockId': None, 'field': 'Test richtextfield', 'fieldHelpText': '', 'order': 6, 'subField': None, 'tab': 'content', 'widget': {'type': 'text'}})
         self.assertEqual(synchronised_value_segment['value'], 'http://example.com')
 
+        # Check synchronised value extracted from rich text block
+        synchronised_value_segment = props['segments'][17]
+        self.assertEqual(synchronised_value_segment['type'], 'synchronised_value')
+        self.assertEqual(synchronised_value_segment['contentPath'], f"test_streamfield.{STREAM_RICH_TEXT_BLOCK_ID}.'http://example.com'")
+        self.assertEqual(synchronised_value_segment['location'], {'blockId': str(STREAM_RICH_TEXT_BLOCK_ID), 'field': 'Test richtextblock', 'fieldHelpText': '', 'order': 7, 'subField': None, 'tab': 'content', 'widget': {'type': 'text'}})
+        self.assertEqual(synchronised_value_segment['value'], 'http://example.com')
+
         # Check related object
-        related_object_segment = props['segments'][13]
+        related_object_segment = props['segments'][18]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
         self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'order': 8, 'subField': None, 'widget': None})
@@ -313,7 +329,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         props = json.loads(response.context['props'])
 
         # Check related object
-        related_object_segment = props['segments'][13]
+        related_object_segment = props['segments'][18]
         self.assertEqual(related_object_segment['type'], 'related_object')
         self.assertEqual(related_object_segment['contentPath'], 'test_snippet')
         self.assertEqual(related_object_segment['location'], {'tab': 'content', 'field': 'Test snippet', 'blockId': None, 'fieldHelpText': '', 'order': 8, 'subField': None, 'widget': None})

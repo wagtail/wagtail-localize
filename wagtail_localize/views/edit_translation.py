@@ -312,7 +312,7 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
                 'chooser_url': reverse('wagtailsnippets:choose', args=[block.target_model._meta.app_label, block.target_model._meta.model_name])
             }
 
-        elif isinstance(block, (blocks.CharBlock, blocks.TextBlock, blocks.EmailBlock, blocks.URLBlock)):
+        elif isinstance(block, (blocks.CharBlock, blocks.TextBlock, blocks.RichTextBlock, blocks.EmailBlock, blocks.URLBlock)):
             return {
                 'type': 'text',
             }
