@@ -19,7 +19,7 @@ setup(
     long_description_content_type='text/markdown',
     author="Karl Hobley",
     author_email="karl@torchbox.com",
-    url="",
+    url="https://www.wagtail-localize.org",
     packages=find_packages(),
     include_package_data=True,
     license="BSD",
