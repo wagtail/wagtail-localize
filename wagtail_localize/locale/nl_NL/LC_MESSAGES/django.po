@@ -1,51 +1,66 @@
-# 
+#
 # Translators:
 # Thijs Kramer <thijskramer@gmail.com>, 2020
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-20 13:07+0000\n"
+"POT-Creation-Date: 2021-03-25 22:57+0700\n"
 "Last-Translator: Thijs Kramer <thijskramer@gmail.com>, 2020\n"
-"Language-Team: Dutch (Netherlands) (https://www.transifex.com/torchbox/teams/8009/nl_NL/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Dutch (Netherlands) (https://www.transifex.com/torchbox/"
+"teams/8009/nl_NL/)\n"
 "Language: nl_NL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: machine_translators/dummy.py:45
 msgid "Dummy translator"
 msgstr "Dummy-vertaler"
 
-#: models.py:713
+#: models.py:976
 msgid "Up to date"
 msgstr "Actueel"
 
-#: models.py:715
+#: models.py:978
 msgid "Waiting for translations"
 msgstr "Wachtend op vertalingen"
 
-#: models.py:955
+#: models.py:1310
 msgid "Manual"
 msgstr "Handmatig"
 
-#: models.py:956
+#: models.py:1311
 msgid "Machine"
 msgstr "Machine"
 
-#: models.py:1050
+#: models.py:1426
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr "Vertaald met {tool_name} op {date}"
 
-#: models.py:1053
+#: models.py:1429
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr "Handmatig vertaald op {date}"
 
-#: models.py:1056
+#: models.py:1432
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr "Automatisch vertaald op {date}"
+
+#: models.py:1873
+msgid "This locale cannot be synced into itself."
+msgstr ""
+
+#: models.py:1878
+msgid "Synchronise content from another locale"
+msgstr ""
+
+#: models.py:1880
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
 
 #: strings.py:47
 msgid ""
@@ -63,21 +78,35 @@ msgstr ""
 "Teksten mogen geen HTML tags met attributen bevatten (behalve het attribuut "
 "'id' in <a> tags)"
 
+#: strings.py:501
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr ""
+
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:8
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "This page hasn't been translated yet. It is mirroring the <a href="
+#| "\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page."
+#| "</a>."
 msgid ""
-"This page hasn't been translated yet. It is mirroring the <a "
-"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
-"page.</a>."
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
 msgstr ""
 "Deze pagina is nog niet vertaald. De pagina is een alias van de pagina <a "
-"href=\"%(edit_original_page_url)s\" "
-"target=\"_blank\">'%(original_locale)s'</a>."
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">'%(original_locale)s'</"
+"a>."
 
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:77
+#: wagtail_hooks.py:81
 msgid "Translate this page"
 msgstr "Vertaal deze pagina"
+
+#: templates/wagtail_localize/admin/edit_translation.html:6
+#, fuzzy, python-format
+#| msgid "Sync translations of '%(title)s'"
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Synchroniseer vertalingen van '%(title)s'"
 
 #: templates/wagtail_localize/admin/submit_translation.html:25
 #: templates/wagtail_localize/admin/update_translations.html:57
@@ -89,19 +118,43 @@ msgstr "Verzenden"
 msgid "Go back"
 msgstr "Ga terug"
 
+#: templates/wagtail_localize/admin/translations_report.html:10
+#: views/report.py:93
+#, fuzzy
+#| msgid "Content"
+msgid "Content type"
+msgstr "Inhoud"
+
+#: templates/wagtail_localize/admin/translations_report.html:13
+msgid "Source"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:16
+msgid "Target"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:19
+msgid "Status"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:49
+#, fuzzy
+#| msgid "Waiting for translations"
+msgid "No translations found."
+msgstr "Wachtend op vertalingen"
+
 #: templates/wagtail_localize/admin/update_translations.html:11
 msgid "Why would I sync my page?"
 msgstr "Waarom synchroniseren?"
 
 #: templates/wagtail_localize/admin/update_translations.html:12
 msgid ""
-"Changes are not automatically applied between translated pages. Syncing will"
-" add new content for translation and remove deleted content."
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
 msgstr ""
 "Wijzigingen worden niet automatisch voor alle vertaalde pagina's "
 "doorgevoerd. Synchroniseren zorgt ervoor dat er nieuwe vertaalbare teksten "
-"worden toegevoegd en dat verwijderde teksten daadwerkelijk verwijderd "
-"worden."
+"worden toegevoegd en dat verwijderde teksten daadwerkelijk verwijderd worden."
 
 #: templates/wagtail_localize/admin/update_translations.html:15
 #, python-format
@@ -112,62 +165,79 @@ msgstr ""
 "De laatste synchronisatie vond plaats op %(last_sync_date)s. Het volgende "
 "zal gesynchroniseerd worden:"
 
-#: views/edit_translation.py:123
+#: views/edit_translation.py:125
 msgid "Content"
 msgstr "Inhoud"
 
-#: views/edit_translation.py:325
+#: views/edit_translation.py:435
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
 "Please fix them or click publish again to ignore these translations for now."
 msgstr ""
-"Er zijn nieuwe validatiefouten gevonden bij het publiceren van '{object}' in"
-" {locale}. Los de fouten op of publiceer opnieuw om deze vertalingen voor nu"
-" te negeren."
+"Er zijn nieuwe validatiefouten gevonden bij het publiceren van '{object}' in "
+"{locale}. Los de fouten op of publiceer opnieuw om deze vertalingen voor nu "
+"te negeren."
 
-#: views/edit_translation.py:340
+#: views/edit_translation.py:450
 #, python-brace-format
-msgid ""
-"Published '{object}' in {locale} with missing translations - see below."
+msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 "'{object}' in {locale} is met ontbrekende vertalingen gepubliceerd - zie "
 "hieronder."
 
-#: views/edit_translation.py:346
+#: views/edit_translation.py:456
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "'{object}' in {locale} gepubliceerd."
 
-#: views/edit_translation.py:610
+#: views/edit_translation.py:624
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+
+#: views/edit_translation.py:752
 msgid "Translation has been stopped."
 msgstr "Gestopt met vertalen."
 
-#: views/edit_translation.py:624
+#: views/edit_translation.py:766
 msgid "Translation has been restarted."
 msgstr "Opnieuw gestart met vertalen."
 
-#: views/edit_translation.py:760
+#: views/edit_translation.py:902
 msgid "Please upload a valid PO file."
 msgstr "Upload een geldig PO-bestand."
 
-#: views/edit_translation.py:769
+#: views/edit_translation.py:911
 msgid "Cannot import PO file that was created for a different translation."
 msgstr ""
 "Het is niet mogelijk een PO-bestand te importeren dat voor een andere "
 "vertaling gemaakt is."
 
-#: views/edit_translation.py:778
+#: views/edit_translation.py:920
 msgid "Successfully imported translations from PO File."
 msgstr "Het importeren van vertalingen uit het PO-bestand is geslaagd."
 
-#: views/edit_translation.py:846
+#: views/edit_translation.py:988
 msgid "Successfully translated with {}."
 msgstr "Succesvol vertaald met {}."
 
-#: views/edit_translation.py:852
+#: views/edit_translation.py:994
 msgid "There isn't anything left to translate."
 msgstr "Er is niets meer te vertalen."
+
+#: views/report.py:94
+msgid "Source title"
+msgstr ""
+
+#: views/report.py:105 wagtail_hooks.py:231
+#, fuzzy
+#| msgid "Translate"
+msgid "Translations"
+msgstr "Vertaal"
 
 #: views/submit_translations.py:23
 msgid "Select all"
@@ -187,7 +257,7 @@ msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Neem onderliggende boomstructuur mee ({} pagina)"
 msgstr[1] "Neem onderliggende boomstructuur mee ({} pagina's)"
 
-#: views/submit_translations.py:116 wagtail_hooks.py:105
+#: views/submit_translations.py:116 wagtail_hooks.py:109
 msgid "Translate"
 msgstr "Vertaal"
 
@@ -243,24 +313,24 @@ msgstr "Huidige vertalingen bijwerken"
 msgid "Successfully updated translations for '{object}'"
 msgstr "Vertalingen voor '{object}' zijn succesvol bijgewerkt"
 
-#: wagtail_hooks.py:86
+#: wagtail_hooks.py:90
 msgid "Sync translated pages"
 msgstr "Synchroniseer vertaalde pagina's"
 
-#: wagtail_hooks.py:107
+#: wagtail_hooks.py:111
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "Vertaal '%(title)s'"
 
-#: wagtail_hooks.py:119
+#: wagtail_hooks.py:123
 msgid "Sync translated snippets"
 msgstr "Synchroniseer vertaalde knipsels"
 
-#: wagtail_hooks.py:121
+#: wagtail_hooks.py:125
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synchroniseer vertalingen van '%(title)s'"
 
-#: wagtail_hooks.py:151 wagtail_hooks.py:196
+#: wagtail_hooks.py:155 wagtail_hooks.py:200
 msgid "Restart translation"
 msgstr "Start vertaling opnieuw"

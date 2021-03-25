@@ -11,27 +11,106 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-23 12:34+0100\n"
+"POT-Creation-Date: 2021-03-25 22:57+0700\n"
 "PO-Revision-Date: 2020-10-23 10:41+0000\n"
 "Last-Translator: Maylon Pedroso <maylonpedroso@gmail.com>, 2020\n"
 "Language-Team: Spanish (https://www.transifex.com/torchbox/teams/8009/es/)\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: locales/apps.py:8
+msgid "Wagtail locales (Wagtail Localize version)"
+msgstr ""
+
+#: locales/forms.py:10 locales/templates/wagtaillocales/index.html:13
+#: locales/templates/wagtaillocales/index.html:17
 msgid "Language"
 msgstr "Idioma"
 
+#: locales/forms.py:27
 msgid "Select a new language"
 msgstr "Selecciona un nuevo idioma"
 
+#: locales/templates/wagtaillocales/confirm_delete.html:13
 msgid "Yes, delete"
 msgstr "Sí, eliminar"
 
+#: locales/templates/wagtaillocales/confirm_delete.html:14
+#: locales/templates/wagtaillocales/confirm_delete.html:19
 msgid "Back"
 msgstr "Regresar"
 
+#: locales/templates/wagtaillocales/create.html:7
+#: locales/templates/wagtaillocales/edit.html:58
+msgid "Save"
+msgstr ""
+
+#: locales/templates/wagtaillocales/edit.html:12
+msgid ""
+"This locale's current language code is not supported. Please choose a new "
+"language or delete this locale."
+msgstr ""
+
+#: locales/templates/wagtaillocales/edit.html:49
+msgid "Enable "
+msgstr ""
+
+#: locales/templates/wagtaillocales/edit.html:50
+msgid "Disable "
+msgstr ""
+
+#: locales/templates/wagtaillocales/index.html:21
 msgid "Usage"
 msgstr "Uso"
+
+#: locales/templates/wagtaillocales/index.html:31
+msgid "This locale's language code is not supported"
+msgstr ""
+
+#: locales/views.py:104 locales/wagtail_hooks.py:26
+msgid "Locales"
+msgstr ""
+
+#: locales/views.py:105
+msgid "Add a locale"
+msgstr ""
+
+#: locales/views.py:119
+msgid "Add locale"
+msgstr ""
+
+#: locales/views.py:120
+#, python-brace-format
+msgid "Locale '{0}' created."
+msgstr ""
+
+#: locales/views.py:154
+#, python-brace-format
+msgid "Locale '{0}' updated."
+msgstr ""
+
+#: locales/views.py:155
+msgid "The locale could not be saved due to errors."
+msgstr ""
+
+#: locales/views.py:156 locales/views.py:194
+msgid "Delete locale"
+msgstr ""
+
+#: locales/views.py:192
+#, python-brace-format
+msgid "Locale '{0}' deleted."
+msgstr ""
+
+#: locales/views.py:193
+msgid ""
+"This locale cannot be deleted because there are pages and/or other objects "
+"using it."
+msgstr ""
+
+#: locales/views.py:195
+msgid "Are you sure you want to delete this locale?"
+msgstr ""
