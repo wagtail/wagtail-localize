@@ -133,7 +133,7 @@ class TranslatableObject(models.Model):
 
     Attributes:
         translation_key (UUIDField): The translation_key that value that is used by the instances.
-        content_type (ForeignKey to ContentType) Link to the base Django content type representing the model that the
+        content_type (ForeignKey to ContentType): Link to the base Django content type representing the model that the
             instances use. Note that this field refers to the model that has the ``locale`` and ``translation_key``
             fields and not the specific type.
     """
@@ -247,11 +247,11 @@ class TranslationSource(models.Model):
     submits something for translation.
 
     Attributes:
-        object (ForeignKey to TranslatableObject) The object that this is a source for
-        specific_content_type (ForeignKey to ContentType) The specific content type that this was extracted from.
+        object (ForeignKey to TranslatableObject): The object that this is a source for
+        specific_content_type (ForeignKey to ContentType): The specific content type that this was extracted from.
             Note that `TranslatableObject.content_type` doesn't store the most specific content type, but this
             does.
-        locale (ForeignKey to Locale) The Locale of the instance that this source content was extracted from.
+        locale (ForeignKey to Locale): The Locale of the instance that this source content was extracted from.
         object_repr (TextField): A string representing the name of the source object. Used in the UI.
         content_json (TextField with JSON contents): The serialized source content. Note that this is serialzed in the
             same way that Wagtail serializes page revisions.
@@ -876,8 +876,8 @@ class Translation(models.Model):
 
     Attributes:
         uuid (UUIDField): A unique ID for this translation used for referencing it from external systems.
-        source (ForeignKey to TranslationSource) The source that is being translated.
-        target_locale (ForeignKey to Locale) The Locale that the source is being translated into.
+        source (ForeignKey to TranslationSource): The source that is being translated.
+        target_locale (ForeignKey to Locale): The Locale that the source is being translated into.
         created_at (DateTimeField): The date/time the translation was started.
         translations_last_updated_at (DateTimeField): The date/time of when a translated string was last updated.
         destination_last_updated_at (DateTimeField): The date/time of when the destination object was last updated.
@@ -1136,10 +1136,10 @@ class TranslationLog(models.Model):
     Keeps Track of when translations are created/updated.
 
     Attributes:
-        source (ForeignKey to TranslationSource) The source that was used for translation.
-        locale (ForeignKey to Locale) The Locale that the source was translated into.
+        source (ForeignKey to TranslationSource): The source that was used for translation.
+        locale (ForeignKey to Locale): The Locale that the source was translated into.
         created_at (DateTimeField): The date/time the translation was done.
-        page_revision: (ForeignKey to PageRevision) If the translation was of a page, this links to the PageRevision
+        page_revision (ForeignKey to PageRevision): If the translation was of a page, this links to the PageRevision
             that was created
     """
 
@@ -1178,7 +1178,7 @@ class String(models.Model):
     Represents a unique string of translatable text.
 
     Attributes:
-        locale (ForeignKey to Locale) The locale of the string.
+        locale (ForeignKey to Locale): The locale of the string.
         data (TextField): The string.
         data_hash (UUIDField): A hash of the string, for more efficient indexing of long strings.
     """
@@ -1249,7 +1249,7 @@ class TranslationContext(models.Model):
     path.
 
     Attributes:
-        object (ForeignKey to TranslatableObject) The object.
+        object (ForeignKey to TranslatableObject): The object.
         path (TextField): The content path.
         path_id (UUIDField): A hash of the path for efficient indexing of long content paths.
     """
@@ -1289,14 +1289,14 @@ class StringTranslation(models.Model):
     Represents a translation of a string.
 
     Attributes:
-        translation_of (ForeignKey to String) The String that this is a translation of.
-        locale (ForeignKey to Locale) The Locale of this translation.
-        context (ForeignKey to TranslationContext) The context that this translation was made in. This allows different
+        translation_of (ForeignKey to String): The String that this is a translation of.
+        locale (ForeignKey to Locale): The Locale of this translation.
+        context (ForeignKey to TranslationContext): The context that this translation was made in. This allows different
             fields/pages to have different translations of the same source string.
         data (TextField): The translation.
         translation_type (CharField with choices 'manual' or 'machine'): Whether the translationw as performed by a human or machine.
         tool_name (CharField): The name of the tool that was used to make this translation.
-        last_translated_by (ForeignKey to User) The user who last updated this translation.
+        last_translated_by (ForeignKey to User): The user who last updated this translation.
         created_at (DateTimeField): The date/time that this translation was first created.
         updated_at (DateFimeField): The date/time that this translation was last updated.
         has_error (BooleanField): Set to True if the value of this translation has an error. We store translations with
@@ -1341,9 +1341,9 @@ class StringTranslation(models.Model):
         Gets or creates a StringTranslation instance from the given parameters.
 
         Args:
-            translation_of (ForeignKey to String) The String that this is a translation of.
-            locale (ForeignKey to Locale) The Locale of this translation.
-            context (ForeignKey to TranslationContext) The context that this translation was made in. This allows different
+            translation_of (ForeignKey to String): The String that this is a translation of.
+            locale (ForeignKey to Locale): The Locale of this translation.
+            context (ForeignKey to TranslationContext): The context that this translation was made in. This allows different
                 fields/pages to have different translations of the same source string.
             data (TextField): The translation.
 
@@ -1510,8 +1510,8 @@ class SegmentOverride(models.Model):
     in this model.
 
     Attributes:
-        locale (ForeignKey to Locale) The Locale to override.
-        context (ForeignKey to TranslationContext) The context to override. With the Locale, this tells us specifically
+        locale (ForeignKey to Locale): The Locale to override.
+        context (ForeignKey to TranslationContext): The context to override. With the Locale, this tells us specifically
             which object/content path to override.
         last_translated_by (User): The user who last updated this override.
         created_at (DateTimeField): The date/time when the override was first created.
@@ -1626,7 +1626,7 @@ class StringSegment(BaseSegment):
     Represents a translatable string that was extracted from a TranslationSource.
 
     Attributes:
-        string (ForeignKey to String) The string that was extracted.
+        string (ForeignKey to String): The string that was extracted.
         attrs (TextField with JSON contents): The HTML attributes that were extracted from the string.
 
             When we extract the segment, we replace HTML attributes with ``id`` attributes and the attributes that were
@@ -1736,9 +1736,9 @@ class RelatedObjectSegment(BaseSegment):
     Represents a related object segment that was extracted from a TranslationSource.
 
     Attributes:
-        object (ForeignKey to TranslatableObject) The TranslatableObject instance that represents the related object.
-        source (ForeignKey to TranslationSource) The source content that the string was extracted from.
-        context (ForeignKey to TranslationContext) The context, which contains the position of the string in the source content.
+        object (ForeignKey to TranslatableObject): The TranslatableObject instance that represents the related object.
+        source (ForeignKey to TranslationSource): The source content that the string was extracted from.
+        context (ForeignKey to TranslationContext): The context, which contains the position of the string in the source content.
         order (PositiveIntegerField): The index that this segment appears on the page.
     """
     object = models.ForeignKey(
@@ -1814,7 +1814,7 @@ class OverridableSegment(BaseSegment):
     Attributes:
         data_json (TextField with JSON content): The value of the overridable segment as it is in the source.
         source (ForeignKey to TranslationSource): The source content that the string was extracted from.
-        context (ForeignKey to TranslationContext) The context, which contains the position of the string in the source content.
+        context (ForeignKey to TranslationContext): The context, which contains the position of the string in the source content.
         order (PositiveIntegerField): The index that this segment appears on the page.
     """
     data_json = models.TextField()
@@ -1880,8 +1880,8 @@ class LocaleSynchronization(models.Model):
     This tells Wagtail Localize to synchronise the contents of the 'sync_from' Locale to the 'locale' Locale.
 
     Attributes:
-        locale (ForeignKey to Locale) The destination Locale of the synchronisation
-        sync_from (ForeignKey to Locale) The source Locale of the synchronisation
+        locale (ForeignKey to Locale): The destination Locale of the synchronisation
+        sync_from (ForeignKey to Locale): The source Locale of the synchronisation
     """
     locale = models.OneToOneField('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
     sync_from = models.ForeignKey('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
