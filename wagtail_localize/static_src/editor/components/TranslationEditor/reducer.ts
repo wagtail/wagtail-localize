@@ -10,6 +10,14 @@ import {
 export interface EditorState {
     stringTranslations: Map<number, StringTranslation>;
     segmentOverrides: Map<number, SegmentOverride>;
+    editingSegments: Set<number>;
+}
+
+export const SET_EDITING_MODE = 'set-editing-mode';
+export interface SetEditingModeAction {
+    type: typeof SET_EDITING_MODE;
+    segmentId: number;
+    editing: boolean;
 }
 
 export const EDIT_STRING_TRANSLATION = 'edit-string-translation';
@@ -71,6 +79,7 @@ export interface OverrideSaveServerErrorAction {
 }
 
 export type EditorAction =
+    | SetEditingModeAction
     | EditStringTranslationAction
     | TranslationSavedAction
     | TranslationDeletedAction
@@ -84,8 +93,19 @@ export type EditorAction =
 export function reducer(state: EditorState, action: EditorAction) {
     let stringTranslations = new Map(state.stringTranslations);
     let segmentOverrides = new Map(state.segmentOverrides);
+    let editingSegments = new Set(state.editingSegments);
 
     switch (action.type) {
+        // Editing mode
+        case SET_EDITING_MODE: {
+            if (action.editing) {
+                editingSegments.add(action.segmentId);
+            } else {
+                editingSegments.delete(action.segmentId);
+            }
+            break;
+        }
+
         // Translation actions
         case EDIT_STRING_TRANSLATION: {
             stringTranslations.set(action.segmentId, {
@@ -181,5 +201,9 @@ export function reducer(state: EditorState, action: EditorAction) {
         }
     }
 
-    return Object.assign({}, state, { stringTranslations, segmentOverrides });
+    return Object.assign({}, state, {
+        stringTranslations,
+        segmentOverrides,
+        editingSegments
+    });
 }

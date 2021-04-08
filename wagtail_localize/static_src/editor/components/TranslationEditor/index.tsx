@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 
 import Section from '../../../common/components/Section';
 import { Tabs, TabContent } from '../../../common/components/Tabs';
@@ -218,10 +218,31 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
     // Set up initial state
     const initialState: EditorState = {
         stringTranslations,
-        segmentOverrides
+        segmentOverrides,
+        editingSegments: new Set()
     };
 
     const [state, dispatch] = React.useReducer(reducer, initialState);
+
+    // Catch user trying to navigate away with unsaved segments
+    useEffect(() => {
+        if (state.editingSegments.size > 0) {
+            const onUnload = (event: BeforeUnloadEvent) => {
+                const confirmationMessage = gettext(
+                    'There are unsaved segments. Please save or cancel them before leaving.'
+                );
+
+                // eslint-disable-next-line no-param-reassign
+                event.returnValue = confirmationMessage;
+                return confirmationMessage;
+            };
+
+            window.addEventListener('beforeunload', onUnload);
+            return () => {
+                window.removeEventListener('beforeunload', onUnload);
+            };
+        }
+    }, [state.editingSegments]);
 
     const tabData = props.tabs
         .map(tab => {
