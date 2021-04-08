@@ -377,6 +377,8 @@ interface EditorStringSegmentProps {
     segment: StringSegment;
     translation?: StringTranslation;
     isLocked: boolean;
+    isEditing: boolean;
+    setIsEditing(editing: boolean): void;
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
 }
@@ -385,10 +387,11 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
     segment,
     translation,
     isLocked,
+    isEditing,
+    setIsEditing,
     dispatch,
     csrfToken
 }) => {
-    const [isEditing, setIsEditing] = React.useState(false);
     const [editingValue, setEditingValue] = React.useState(
         (translation && translation.value) || ''
     );
@@ -512,6 +515,8 @@ interface EditorSynchronisedValueSegmentProps {
     override?: SegmentOverride;
     sourceLocale: Locale;
     isLocked: boolean;
+    isEditing: boolean;
+    setIsEditing(editing: boolean): void;
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
 }
@@ -524,6 +529,8 @@ const EditorSynchronisedValueSegment: FunctionComponent<
     override,
     sourceLocale,
     isLocked,
+    isEditing,
+    setIsEditing,
     dispatch,
     csrfToken
 }) => {
@@ -556,7 +563,6 @@ const EditorSynchronisedValueSegment: FunctionComponent<
 
     const widget = segment.location.widget;
     if (widget.type == 'text') {
-        const [isEditing, setIsEditing] = React.useState(false);
         const [editingValue, setEditingValue] = React.useState(
             (override && override.value) || segment.value
         );
@@ -869,6 +875,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
     segments,
     stringTranslations,
     segmentOverrides,
+    editingSegments,
     dispatch,
     csrfToken
 }) => {
@@ -890,6 +897,14 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
 
     const segmentRendered = Array.from(segmentsByFieldBlock.entries()).map(
         ([fieldBlock, segments]) => {
+            const setEditingMode = (segmentId: number, editing: boolean) => {
+                dispatch({
+                    type: 'set-editing-mode',
+                    segmentId,
+                    editing
+                });
+            };
+
             // Render segments in field/block
             const segmentsRendered = segments.map(segment => {
                 switch (segment.type) {
@@ -900,6 +915,10 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                                 segment={segment}
                                 translation={stringTranslations.get(segment.id)}
                                 isLocked={isLocked}
+                                isEditing={editingSegments.has(segment.id)}
+                                setIsEditing={(editing: boolean) =>
+                                    setEditingMode(segment.id, editing)
+                                }
                                 dispatch={dispatch}
                                 csrfToken={csrfToken}
                             />
@@ -913,6 +932,10 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                                 override={segmentOverrides.get(segment.id)}
                                 sourceLocale={sourceLocale}
                                 isLocked={isLocked}
+                                isEditing={editingSegments.has(segment.id)}
+                                setIsEditing={(editing: boolean) =>
+                                    setEditingMode(segment.id, editing)
+                                }
                                 dispatch={dispatch}
                                 csrfToken={csrfToken}
                             />
