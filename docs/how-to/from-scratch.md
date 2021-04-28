@@ -18,7 +18,7 @@ Add `wagtail_localize` and any optional sub modules to `INSTALLED_APPS` in `sett
 INSTALLED_APPS = [
     ...
     "wagtail_localize",
-    "wagtail_localize.translation",
+    "wagtail_localize.locales",
 ]
 ```
 
