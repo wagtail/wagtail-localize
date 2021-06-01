@@ -2,11 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:694
-msgid " version"
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:782
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:840
 msgid "[DELETED]"
 msgstr ""
 
@@ -18,38 +14,46 @@ msgstr ""
 msgid "Breadcrumb"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:412
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:565
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:416
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:582
 msgid "Cancel"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:671
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:724
+msgid "Change %s"
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:693
 msgid "Change document"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:641
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:662
 msgid "Change image"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:611
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:631
 msgid "Change page"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:201
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:139
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:161
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
 msgid "Changed"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:65
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:87
+msgid "Choose a %s"
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:67
 msgid "Choose a document"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:61
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:65
 msgid "Choose a page"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:75
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:79
 msgid "Choose an image"
 msgstr ""
 
@@ -69,33 +73,41 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:475
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:589
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:790
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:606
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:848
 msgid "Edit"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:47
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:59
+msgid "Edit this %s"
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:49
 msgid "Edit this document"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:57
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:61
 msgid "Edit this image"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:43
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:47
 msgid "Edit this page"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:54
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:71
+msgid "Fetching %s information..."
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:56
 msgid "Fetching document information..."
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:64
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:68
 msgid "Fetching image information..."
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:50
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:54
 msgid "Fetching page information..."
 msgstr ""
 
@@ -107,7 +119,7 @@ msgstr ""
 msgid "Lock"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:765
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:823
 msgid "Not translated"
 msgstr ""
 
@@ -136,25 +148,25 @@ msgstr ""
 msgid "Remove editor lock"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:692
-msgid "Revert to "
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:749
+msgid "Revert to %s version"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:417
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:568
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:421
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:585
 msgid "Save"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:95
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:433
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:437
 msgid "Saving..."
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:750
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:808
 msgid "segments translated"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:125
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:145
 msgid "Server error"
 msgstr ""
 
@@ -163,8 +175,12 @@ msgstr ""
 msgid "Stop translation"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:475
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:799
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:857
 msgid "Translate"
 msgstr ""
 
@@ -192,6 +208,6 @@ msgstr ""
 msgid "Upload translated PO file to submit translations"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:538
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:555
 msgid "Uses %s version"
 msgstr ""
