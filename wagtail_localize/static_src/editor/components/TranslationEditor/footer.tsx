@@ -123,15 +123,33 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     // Make last action the default
     const defaultAction = actions.pop();
 
-    return (
-        <footer>
-            <ActionMenu
-                defaultAction={defaultAction}
-                actions={actions}
-                previewModes={previewModes}
-            />
-        </footer>
-    );
+    // The markup for footers is slightly different when running Wagtail 2.13+
+    if ((window as any).comments) {
+        // Running Wagtail 2.13
+        return (
+            <footer className="footer">
+                <ul>
+                    <li className="footer__container">
+                        <ActionMenu
+                            defaultAction={defaultAction}
+                            actions={actions}
+                            previewModes={previewModes}
+                        />
+                    </li>
+                </ul>
+            </footer>
+        );
+    } else {
+        return (
+            <footer>
+                <ActionMenu
+                    defaultAction={defaultAction}
+                    actions={actions}
+                    previewModes={previewModes}
+                />
+            </footer>
+        );
+    }
 };
 
 export default EditorFooter;
