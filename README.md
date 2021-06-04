@@ -17,7 +17,7 @@ Wagtail Localize requires the following:
 
  - Python (3.7, 3.8)
  - Django (2.11, 3.0, 3.1)
- - Wagtail (2.11, 2.12) with [internationalisation enabled](https://docs.wagtail.io/en/stable/advanced_topics/i18n.html#configuration)
+ - Wagtail (2.11, 2.12, 2.13) with [internationalisation enabled](https://docs.wagtail.io/en/stable/advanced_topics/i18n.html#configuration)
 
 ## Installation
 
