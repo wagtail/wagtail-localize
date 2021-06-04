@@ -154,6 +154,10 @@ def get_translatable_fields(model):
     # Add child relations for clusterable models
     if issubclass(model, ClusterableModel):
         for child_relation in get_all_child_relations(model):
+            # Ignore comments
+            if issubclass(model, Page) and child_relation.name == 'comments':
+                continue
+
             if issubclass(child_relation.related_model, TranslatableMixin):
                 translatable_fields.append(TranslatableField(child_relation.name))
             else:
