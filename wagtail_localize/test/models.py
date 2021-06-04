@@ -16,6 +16,13 @@ from wagtail_localize.fields import TranslatableField, SynchronizedField
 from wagtail_localize.segments import StringSegmentValue
 
 
+# Telepath added in Wagtail 2.13
+try:
+    from wagtail.core import telepath
+except ImportError:
+    telepath = False
+
+
 @register_snippet
 class TestSnippet(TranslatableMixin, models.Model):
     field = models.TextField(gettext_lazy("field"))
@@ -58,7 +65,18 @@ class CustomStructBlock(blocks.StructBlock):
 
 
 class CustomBlockWithoutExtractMethod(blocks.Block):
-    pass
+    class Meta:
+        default = None
+
+
+if telepath:
+    class CustomBlockWithoutExtractMethodAdapter(telepath.Adapter):
+        js_constructor = 'CustomBlockWithoutExtractMethod'
+
+        def js_args(self, block):
+            return []
+
+    telepath.register(CustomBlockWithoutExtractMethodAdapter(), CustomBlockWithoutExtractMethod)
 
 
 class TestStreamBlock(blocks.StreamBlock):
