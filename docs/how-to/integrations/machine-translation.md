@@ -15,6 +15,19 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 
 This document describes how to configure various machine translators, as well as implement your own integration.
 
+# Google Cloud Translation
+
+Website: [https://cloud.google.com/translate](https://cloud.google.com/translate)
+
+``` python
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    'CLASS': 'wagtail_localize.machine_translators.google.GoogleCloudTranslator',
+    'OPTIONS': {
+        'PROJECT_ID': '<Your project ID here>',
+    }
+}
+```
+
 ## DeepL
 
 Website: [https://www.deepl.com/](https://www.deepl.com/)
