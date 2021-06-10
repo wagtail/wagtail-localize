@@ -128,7 +128,7 @@ class TestSegmentIngestion(TestCase):
             translated_page,
             self.src_locale,
             self.locale,
-            [StringSegmentValue("test_urlfield", "http://test-content.fr/foo")],
+            [StringSegmentValue("test_urlfield", StringValue.from_plaintext("http://test-content.fr/foo"))],
         )
 
         self.assertEqual(translated_page.test_urlfield, "http://test-content.fr/foo")

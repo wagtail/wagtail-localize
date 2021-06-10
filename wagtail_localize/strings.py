@@ -81,18 +81,27 @@ class StringValue:
         """
         # Escapes all HTML characters and replaces newlines with <br> tags
         elements = []
+        contains_html = False
 
         for line in text.split('\n'):
             if line:
-                elements.append(escape(line))
+                line_escaped = escape(line)
+
+                if line_escaped != line:
+                    contains_html = True
+
+                elements.append(line_escaped)
 
             elements.append('<br>')
 
-        # Remove last element which is an extra br tag
+        # Remove last <br> tag
         elements.pop()
 
-        # Join the elements then pass through beautiful soup to normalize the HTML
-        return cls(str(BeautifulSoup(''.join(elements), 'html.parser')))
+        if len(elements) > 1 or contains_html:
+            # Join the elements then pass through beautiful soup to normalize the HTML
+            return cls(str(BeautifulSoup(''.join(elements), 'html.parser')))
+        else:
+            return cls(elements[0])
 
     @classmethod
     def from_source_html(cls, html):

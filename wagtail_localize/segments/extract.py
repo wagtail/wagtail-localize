@@ -213,7 +213,7 @@ def extract_segments(instance):
 
                 if is_translatable:
                     segments.append(
-                        StringSegmentValue(field.name, value)
+                        StringSegmentValue(field.name, StringValue.from_plaintext(value))
                     )
 
                 elif is_synchronized:
