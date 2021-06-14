@@ -10,6 +10,7 @@ theme:
     - navigation.tabs
     - navigation.sections
 markdown_extensions:
+  - admonition
   - codehilite
   - pymdownx.superfences:
       # Allows us to use mermaid and codehilite together

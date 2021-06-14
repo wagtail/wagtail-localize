@@ -127,7 +127,7 @@ but make sure that you cover the following:
  - Add an item in the paragraph block, with some text and a couple of list items. Use some inline formatting
    (bold, italic, etc) and add a link
 
-[Example](/_static/tutorial/wagtail-edit-source.png)
+![Blog post page being edited in Wagtail](/_static/tutorial/wagtail-edit-source.png)
 
 ## Translate it!
 
@@ -149,7 +149,59 @@ page):
 Hit that "Translate this page" button, then click "Submit" on the step afterwards, this will put the page into translation
 mode, and the editor should now look something like this:
 
-[See image](/_static/tutorial/wagtail-edit-translation.png)
+![Blog post page being translated in Wagtail](/_static/tutorial/wagtail-edit-translation.png)
 
+As you can see, each segment of translatable text has been extracted into a separate editable block.
+Translating in this way makes it easier to keep the translations in sync with the original page, as editors only need to
+retranslate changed segments when the original page is updated.
 
-TODO: Explore the editor features
+There are three kinds of segment that you can edit here:
+
+### 1. String segments
+
+String segments are translatable pieces of text which are extracted from text fields on the page. Rich text fields are
+broken down into smaller segments to make it easier for translators to translate them.
+
+String segments can be individually translated through this UI, by downloading/uploading PO files (using the buttons at
+the top of the editor), using a [machine translation service](/how-to/integrations/machine-translation) or an
+[external translation tool](/how-to/integrations/pontoon).
+
+![A translated string segment](/_static/tutorial/wagtail-translated-segment.png)
+
+### 2. Overridable segments
+
+These segments are used to represent non-text fields that may be changed for each language. Examples of this include
+images, choice fields, and non-translatable string fields (such as usernames, email addresses, etc).
+
+These segments will always default to the same value as in the original. But editors may override these values which
+breaks this link.
+
+![A overridden image](/_static/tutorial/wagtail-overridden-image.png)
+
+### 3. Related object segments
+
+Any translatable related objects that are linked to the original page are automatically submitted for translation when
+the page is submitted. For example, the ``BlogCategory`` model is translatable, so Wagtail Localize has automatically
+submitted the "Dog" blog category, that was linked from the original page, for translation:
+
+![A translated blog category](/_static/tutorial/wagtail-translated-snippet.png)
+
+Clicking "Edit" here will take the user to the translation editor of the "Dogs" snippet:
+
+![Snippet being translated in Wagtail](/_static/tutorial/wagtail-edit-snippet-translation.png)
+
+!!! note "Stopping translation mode"
+
+    If you would like to make significant changes to the translation, you can strop the translation mode by clicking the
+    "Stop translation" action in the action menu at the bottom:
+
+    ![Stop translation button in action menu](/_static/tutorial/wagtail-stop-translation.png)
+
+    After clicking this, the page will switch to using the standard Wagtail editor. It will still be connected to the
+    original, so you can still use the language switcher at the top of the page to find the original page and other
+    translations.
+
+    You can restart translation mode later by clicking "Restart Translation" in the action menu. This will override any
+    changes made while translation mode was stopped.
+
+    While translation mode is stopped, editors will need to synchronise any content updates from the source manually.
