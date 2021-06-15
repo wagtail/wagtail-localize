@@ -67,7 +67,7 @@ nav:
         - Translation Management: ref/models/translation-management.md
         - Translatable segments: ref/models/translatable-segments.md
         - Overridable segments: ref/models/overridable-segments.md
-        - Overridable segments: ref/models/settings.md
+        - Settings: ref/models/settings.md
     - Synctree module: ref/synctree.md
   - Explanations:
     - Segments: concept/segments.md
