@@ -48,7 +48,7 @@ nav:
     - 4. Translating Templates: tutorial/4-templates.md
   - How To Guides:
     - Installation guide: how-to/installation.md
-    - Translatable fields configuration: how-to/field-configuration.md
+    - Configuring translatable fields: how-to/field-configuration.md
     - Integrations:
       - Pontoon: how-to/integrations/pontoon.md
       - Machine Translation: how-to/integrations/machine-translation.md
