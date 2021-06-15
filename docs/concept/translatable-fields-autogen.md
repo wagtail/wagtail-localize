@@ -17,7 +17,7 @@ The following are excluded:
  - Any field with ``editable=False``
  - ``ManyToManyField`` and ``ParentalKey``
  - Parent link fields, such as ``page_ptr``
- - Inhderited ``MP_Node`` fields named ``path``, ``depth``, and ``numchild``
+ - Inherited ``MP_Node`` fields named ``path``, ``depth``, and ``numchild``
  - Inherited ``Page`` fields named ``go_live_at``, ``explire_at``, ``first_published_at``, ``content_type`` and ``owner``
 
 Next, we look at text fields. All text fields (including ``RichTextField`` and ``StreamField``) are set to translatable,
