@@ -1307,8 +1307,8 @@ class StringTranslation(models.Model):
     TRANSLATION_TYPE_MANUAL = 'manual'
     TRANSLATION_TYPE_MACHINE = 'machine'
     TRANSLATION_TYPE_CHOICES = [
-        (TRANSLATION_TYPE_MANUAL, _("Manual")),
-        (TRANSLATION_TYPE_MACHINE, _("Machine")),
+        (TRANSLATION_TYPE_MANUAL, gettext_lazy("Manual")),
+        (TRANSLATION_TYPE_MACHINE, gettext_lazy("Machine")),
     ]
 
     translation_of = models.ForeignKey(
