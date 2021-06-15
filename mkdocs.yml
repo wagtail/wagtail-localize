@@ -47,7 +47,7 @@ nav:
     - 3. Translating Content: tutorial/3-content.md
     - 4. Translating Templates: tutorial/4-templates.md
   - How To Guides:
-    - Detailed installation guide: how-to/from-scratch.md
+    - Installation guide: how-to/installation.md
     - Translatable fields configuration: how-to/field-configuration.md
     - Integrations:
       - Pontoon: how-to/integrations/pontoon.md
