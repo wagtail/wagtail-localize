@@ -87,6 +87,7 @@ def get_translatable_fields(model):
             derived from the model.
 
     """
+    # Note: If you update this, please update "docs/concept/translatable-fields-autogen.md"
     if hasattr(model, 'translatable_fields'):
         return model.translatable_fields
 
