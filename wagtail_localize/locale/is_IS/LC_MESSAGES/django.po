@@ -1,0 +1,314 @@
+# 
+# Translators:
+# saevarom <saevar@saevar.is>, 2021
+# Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021
+# 
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-06-01 14:17+0000\n"
+"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021\n"
+"Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/teams/8009/is_IS/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: is_IS\n"
+"Plural-Forms: nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);\n"
+
+#: machine_translators/dummy.py:45
+msgid "Dummy translator"
+msgstr "Gervi þýðandi"
+
+#: models.py:976
+msgid "Up to date"
+msgstr "Uppfært"
+
+#: models.py:978
+msgid "Waiting for translations"
+msgstr "Bíð eftir þýðingum"
+
+#: models.py:1310
+msgid "Manual"
+msgstr "Handvirk"
+
+#: models.py:1311
+msgid "Machine"
+msgstr "Sjálfvirk"
+
+#: models.py:1426
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Þýtt með {tool_name} þann {date}"
+
+#: models.py:1429
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Þýtt handvirkt þann {date}"
+
+#: models.py:1432
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Þýtt sjálfkrafa þann {date}"
+
+#: models.py:1873
+msgid "This locale cannot be synced into itself."
+msgstr ""
+
+#: models.py:1878
+msgid "Synchronise content from another locale"
+msgstr ""
+
+#: models.py:1880
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content"
+" authored in the selected locale will be automatically copied to this one."
+msgstr ""
+
+#: strings.py:47
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"<{}> tag er ekki leyft. Eingöngu má nota stöðluð HTML tög (til dæmis <b>, "
+"<a>)"
+
+#: strings.py:54
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr "Texti má ekki innihalda HTML tög með eigindum (nema 'id' í <a> tögum)"
+
+#: strings.py:501
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr ""
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"page</a>."
+msgstr ""
+
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
+#: wagtail_hooks.py:81
+msgid "Translate this page"
+msgstr "Þýða þessa síðu"
+
+#: templates/wagtail_localize/admin/edit_translation.html:6
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr ""
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Submit"
+msgstr "Senda"
+
+#: templates/wagtail_localize/admin/submit_translation.html:25
+#: templates/wagtail_localize/admin/update_translations.html:57
+msgid "Go back"
+msgstr "Til baka"
+
+#: templates/wagtail_localize/admin/translations_report.html:10
+#: views/report.py:93
+msgid "Content type"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:13
+msgid "Source"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:16
+msgid "Target"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:19
+msgid "Status"
+msgstr "Staða"
+
+#: templates/wagtail_localize/admin/translations_report.html:49
+msgid "No translations found."
+msgstr ""
+
+#: templates/wagtail_localize/admin/update_translations.html:11
+msgid "Why would I sync my page?"
+msgstr "Af hverju ætti ég að samræma síðuna mína?"
+
+#: templates/wagtail_localize/admin/update_translations.html:12
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will"
+" add new content for translation and remove deleted content."
+msgstr ""
+"Breytingar eru ekki sjálfkrafa samræmdar milli þýddra síðna. Samræming mun "
+"bæta við nýju efni fyrir þýðingu og fjarlægja efni sem hefur verið eytt."
+
+#: templates/wagtail_localize/admin/update_translations.html:15
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"Síðasta samræmingar dagsetning var %(last_sync_date)s. Þú ert að fara að "
+"samræma eftirfarandi:"
+
+#: views/edit_translation.py:125
+msgid "Content"
+msgstr "Innihald"
+
+#: views/edit_translation.py:435
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Nýjar prófunarvillur fundust við birtingu á '{object}' í {locale}. "
+"Vinsamlegast lagið þær eða smellið á setja í birtingu aftur til að hunsa "
+"þessar þýðingar í bili."
+
+#: views/edit_translation.py:450
+#, python-brace-format
+msgid ""
+"Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"Birti '{object}' í {locale} en það vantar þýðingar - sjá hér að neðan."
+
+#: views/edit_translation.py:456
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Birti '{object}' í {locale}."
+
+#: views/edit_translation.py:624
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+
+#: views/edit_translation.py:752
+msgid "Translation has been stopped."
+msgstr "Þýðing hefur verið stöðvuð."
+
+#: views/edit_translation.py:766
+msgid "Translation has been restarted."
+msgstr "Þýðing hefur verið endurhafin."
+
+#: views/edit_translation.py:902
+msgid "Please upload a valid PO file."
+msgstr "Vinsamlegast hlaðið inn gildri PO skrá."
+
+#: views/edit_translation.py:911
+msgid "Cannot import PO file that was created for a different translation."
+msgstr "Get ekki flutt inn PO skrá sem var búin til fyrir annað tungumál."
+
+#: views/edit_translation.py:920
+msgid "Successfully imported translations from PO File."
+msgstr "Tókst að flytja inn þýðingar úr PO skrá."
+
+#: views/edit_translation.py:988
+msgid "Successfully translated with {}."
+msgstr "Tókast að þýða með {}"
+
+#: views/edit_translation.py:994
+msgid "There isn't anything left to translate."
+msgstr "Það er ekkert eftir til að þýða."
+
+#: views/report.py:94
+msgid "Source title"
+msgstr ""
+
+#: views/report.py:105 wagtail_hooks.py:231
+msgid "Translations"
+msgstr ""
+
+#: views/submit_translations.py:23
+msgid "Select all"
+msgstr "Velja allt"
+
+#: views/submit_translations.py:25
+msgid "Locales"
+msgstr "Þýðingar"
+
+#: views/submit_translations.py:27
+msgid "All child pages will be created."
+msgstr "Allar undirsíður verða búnar til"
+
+#: views/submit_translations.py:39
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Innifela undirsíður ({} síður)"
+msgstr[1] "Innifela undirsíður ({} síður)"
+
+#: views/submit_translations.py:116 wagtail_hooks.py:109
+msgid "Translate"
+msgstr "Þýða"
+
+#: views/submit_translations.py:176
+msgid "{} locales"
+msgstr "{} þýðingar"
+
+#: views/submit_translations.py:197
+msgid "Translate page"
+msgstr "Þýða síðu"
+
+#: views/submit_translations.py:215
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr "Tókst að senda inn síðuna '{page_title}' í þýðingu fyrir {locales}"
+
+#: views/submit_translations.py:224
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Þýða {model_name}"
+
+#: views/submit_translations.py:240
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Tókst að senda inn þýðingar fyrir {model_name} '{object}' inn í {locales}"
+
+#: views/update_translations.py:20
+msgid "Publish immediately"
+msgstr "Setja í birtingu strax"
+
+#: views/update_translations.py:21
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Þetta keyrir uppfærsluna og setur í birtingu strax, áður en fleiri þýðingar "
+"verða gerðar."
+
+#: views/update_translations.py:28
+msgid "Update existing translations"
+msgstr "Uppfæra núverandi þýðingar"
+
+#: views/update_translations.py:46
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "Tókst að uppfæra þýðingar fyrir '{object}'"
+
+#: wagtail_hooks.py:90
+msgid "Sync translated pages"
+msgstr "Samræma þýddar síður"
+
+#: wagtail_hooks.py:111
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Þýða '%(title)s'"
+
+#: wagtail_hooks.py:123
+msgid "Sync translated snippets"
+msgstr "Samræma þýdd snifsi"
+
+#: wagtail_hooks.py:125
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Samræma þýðingar á '%(title)s'"
+
+#: wagtail_hooks.py:155 wagtail_hooks.py:200
+msgid "Restart translation"
+msgstr "Endurhefja þýðingar"

@@ -1,0 +1,221 @@
+# 
+# Translators:
+# Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021
+# 
+msgid ""
+msgstr ""
+"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021\n"
+"Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/teams/8009/is_IS/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: is_IS\n"
+"Plural-Forms: nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);\n"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:840
+msgid "[DELETED]"
+msgstr "[EYDD]"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
+msgid "Apply editor lock"
+msgstr "Kveikja á skriflás"
+
+#: wagtail_localize/static_src/common/components/Header/index.tsx:213
+msgid "Breadcrumb"
+msgstr "Brauðmolar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:416
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:582
+msgid "Cancel"
+msgstr "Hætta við"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:724
+msgid "Change %s"
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:693
+msgid "Change document"
+msgstr "Breyta skrá"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:662
+msgid "Change image"
+msgstr "Breyta mynd"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:631
+msgid "Change page"
+msgstr "Breyta síðu"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
+msgid "Changed"
+msgstr "Breytt"
+
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:87
+msgid "Choose a %s"
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:67
+msgid "Choose a document"
+msgstr "Veldu skrá"
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:65
+msgid "Choose a page"
+msgstr "Veldu síðu"
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:79
+msgid "Choose an image"
+msgstr "Veldu mynd"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:37
+msgid "Delete"
+msgstr "Eyða"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:94
+msgid "Download PO file"
+msgstr "Hlaða niður PO skrá"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:87
+msgid "Download PO file and input translations offline"
+msgstr "Hlaða niður PO skrá og þýða utan nets"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:151
+msgid "Draft"
+msgstr "Uppkast"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:606
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:848
+msgid "Edit"
+msgstr "Breyta"
+
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:59
+msgid "Edit this %s"
+msgstr "Breyta þessu %s"
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:49
+msgid "Edit this document"
+msgstr "Breyta þessari skrá"
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:61
+msgid "Edit this image"
+msgstr "Breyta þessari mynd"
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:47
+msgid "Edit this page"
+msgstr "Breyta þessari síðu"
+
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:71
+msgid "Fetching %s information..."
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:56
+msgid "Fetching document information..."
+msgstr "Sæki upplýsingar um skrá..."
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:68
+msgid "Fetching image information..."
+msgstr "Sæki upplýsingar um mynd..."
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:54
+msgid "Fetching page information..."
+msgstr "Sæki upplýsingar um síðu..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:123
+msgid "Live"
+msgstr "Í birtingu"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:58
+msgid "Lock"
+msgstr "Læsa"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:823
+msgid "Not translated"
+msgstr "Ekki þýtt"
+
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:118
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:139
+msgid "Preview"
+msgstr "Forskoða"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
+msgid "Publish in "
+msgstr "Birta í"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:136
+msgid "Published"
+msgstr "Sett í birtingu"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:134
+msgid "Published on "
+msgstr "Sett í birtingu "
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:110
+msgid "Publishing..."
+msgstr "Set í birtingu..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
+msgid "Remove editor lock"
+msgstr "Fjarlægja skriflás"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:749
+msgid "Revert to %s version"
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:421
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:585
+msgid "Save"
+msgstr "Vista"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:437
+msgid "Saving..."
+msgstr "Vista..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:808
+msgid "segments translated"
+msgstr "hlutar þýddir"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:145
+msgid "Server error"
+msgstr "Villa á netþjóni"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:25
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:28
+msgid "Stop translation"
+msgstr "Hætta þýðingu"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:857
+msgid "Translate"
+msgstr "Þýða"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:138
+msgid "Translate all missing strings with "
+msgstr "Þýða alla strengi sem vantar með"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:162
+msgid "Translate with "
+msgstr "Þýða með"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
+msgid "Unlock"
+msgstr "Aflæsa"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:90
+msgid "Unpublish"
+msgstr "Taka úr loftinu"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:108
+msgid "Upload PO file"
+msgstr "Hlaða upp PO skrá"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:100
+msgid "Upload translated PO file to submit translations"
+msgstr "Hlaða upp þýddri PO skrá til að senda inn þýðingar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:555
+msgid "Uses %s version"
+msgstr "Notar útgáfu %s"

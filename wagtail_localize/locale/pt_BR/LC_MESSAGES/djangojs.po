@@ -1,0 +1,221 @@
+# 
+# Translators:
+# Luiz Boaretto <lboaretto@gmail.com>, 2021
+# 
+msgid ""
+msgstr ""
+"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2021\n"
+"Language-Team: Portuguese (Brazil) (https://www.transifex.com/torchbox/teams/8009/pt_BR/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:840
+msgid "[DELETED]"
+msgstr "[REMOVIDO]"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
+msgid "Apply editor lock"
+msgstr "Aplicar bloqueio do editor"
+
+#: wagtail_localize/static_src/common/components/Header/index.tsx:213
+msgid "Breadcrumb"
+msgstr "Breadcrumb"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:416
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:582
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:724
+msgid "Change %s"
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:693
+msgid "Change document"
+msgstr "Alterar documento"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:662
+msgid "Change image"
+msgstr "Alterar imagem"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:631
+msgid "Change page"
+msgstr "Alterar página"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
+msgid "Changed"
+msgstr "Alterado"
+
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:87
+msgid "Choose a %s"
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:67
+msgid "Choose a document"
+msgstr "Escolha um documento"
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:65
+msgid "Choose a page"
+msgstr "Escolha uma página"
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:79
+msgid "Choose an image"
+msgstr "Escolha uma imagem"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:37
+msgid "Delete"
+msgstr "Excluir"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:94
+msgid "Download PO file"
+msgstr "Baixar arquivo PO"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:87
+msgid "Download PO file and input translations offline"
+msgstr "Baixe o arquivo PO e insira traduções offline"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:151
+msgid "Draft"
+msgstr "Rascunho"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:606
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:848
+msgid "Edit"
+msgstr "Editar"
+
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:59
+msgid "Edit this %s"
+msgstr "Editar este %s"
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:49
+msgid "Edit this document"
+msgstr "Editar este documento"
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:61
+msgid "Edit this image"
+msgstr "Editar esta imagem"
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:47
+msgid "Edit this page"
+msgstr "Editar esta página"
+
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:71
+msgid "Fetching %s information..."
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:56
+msgid "Fetching document information..."
+msgstr "Buscando informações do documento..."
+
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:68
+msgid "Fetching image information..."
+msgstr "Buscando informações da imagem..."
+
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:54
+msgid "Fetching page information..."
+msgstr "Buscando informações da página..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:123
+msgid "Live"
+msgstr "Online"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:58
+msgid "Lock"
+msgstr "Travar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:823
+msgid "Not translated"
+msgstr "Não traduzido"
+
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:118
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:139
+msgid "Preview"
+msgstr "Pré-visualizar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
+msgid "Publish in "
+msgstr "Publicar em"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:136
+msgid "Published"
+msgstr "Publicado"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:134
+msgid "Published on "
+msgstr "Publicado em"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:110
+msgid "Publishing..."
+msgstr "Publicando..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
+msgid "Remove editor lock"
+msgstr "Remover bloqueio do editor"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:749
+msgid "Revert to %s version"
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:421
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:585
+msgid "Save"
+msgstr "Salvar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:437
+msgid "Saving..."
+msgstr "Salvando..."
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:808
+msgid "segments translated"
+msgstr "segmentos traduzidos"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:145
+msgid "Server error"
+msgstr "Erro de servidor"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:25
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:28
+msgid "Stop translation"
+msgstr "Parar tradução"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:857
+msgid "Translate"
+msgstr "Traduzir"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:138
+msgid "Translate all missing strings with "
+msgstr "Traduzir todas as frases ausentes com"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:162
+msgid "Translate with "
+msgstr "Traduzir com"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
+msgid "Unlock"
+msgstr "Desbloquear"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:90
+msgid "Unpublish"
+msgstr "Despublicar"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:108
+msgid "Upload PO file"
+msgstr "Carregar arquivo PO"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:100
+msgid "Upload translated PO file to submit translations"
+msgstr "Faça upload do arquivo PO traduzido para enviar traduções"
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:555
+msgid "Uses %s version"
+msgstr "Use a versão %s "

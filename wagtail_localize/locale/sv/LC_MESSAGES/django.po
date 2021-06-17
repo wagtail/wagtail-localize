@@ -1,12 +1,12 @@
 # 
 # Translators:
-# Thomas Kunambi <kunambi@gmail.com>, 2020
+# Thomas Kunambi <kunambi@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-20 13:07+0000\n"
-"Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2020\n"
+"POT-Creation-Date: 2021-06-01 14:17+0000\n"
+"Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2021\n"
 "Language-Team: Swedish (https://www.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -16,36 +16,50 @@ msgstr ""
 msgid "Dummy translator"
 msgstr "Testöversättare"
 
-#: models.py:713
+#: models.py:976
 msgid "Up to date"
 msgstr "Aktuell"
 
-#: models.py:715
+#: models.py:978
 msgid "Waiting for translations"
 msgstr "Väntar på översättningar"
 
-#: models.py:955
+#: models.py:1310
 msgid "Manual"
 msgstr "Manuell"
 
-#: models.py:956
+#: models.py:1311
 msgid "Machine"
 msgstr "Maskin"
 
-#: models.py:1050
+#: models.py:1426
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr "Översatt med {tool_name} på {date}"
 
-#: models.py:1053
+#: models.py:1429
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr "Manuellt översatt på {date}"
 
-#: models.py:1056
+#: models.py:1432
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr "Maskinöversatt på {date}"
+
+#: models.py:1873
+msgid "This locale cannot be synced into itself."
+msgstr ""
+
+#: models.py:1878
+msgid "Synchronise content from another locale"
+msgstr ""
+
+#: models.py:1880
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content"
+" authored in the selected locale will be automatically copied to this one."
+msgstr ""
 
 #: strings.py:47
 msgid ""
@@ -63,21 +77,27 @@ msgstr ""
 "Strängar får inte innehålla HTML taggar med attribut (förutom 'id' i <a> "
 "taggar)"
 
+#: strings.py:501
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr ""
+
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:8
 #, python-format
 msgid ""
 "This page hasn't been translated yet. It is mirroring the <a "
 "href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
-"page.</a>."
+"page</a>."
 msgstr ""
-"Den här sidan har inte blivit översatt ännu. Den speglar <a "
-"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
-"sidan.</a>."
 
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:77
+#: wagtail_hooks.py:81
 msgid "Translate this page"
 msgstr "Översätt den här sidan"
+
+#: templates/wagtail_localize/admin/edit_translation.html:6
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr ""
 
 #: templates/wagtail_localize/admin/submit_translation.html:25
 #: templates/wagtail_localize/admin/update_translations.html:57
@@ -88,6 +108,27 @@ msgstr "Skicka"
 #: templates/wagtail_localize/admin/update_translations.html:57
 msgid "Go back"
 msgstr "Gå tillbaka"
+
+#: templates/wagtail_localize/admin/translations_report.html:10
+#: views/report.py:93
+msgid "Content type"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:13
+msgid "Source"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:16
+msgid "Target"
+msgstr ""
+
+#: templates/wagtail_localize/admin/translations_report.html:19
+msgid "Status"
+msgstr "Status"
+
+#: templates/wagtail_localize/admin/translations_report.html:49
+msgid "No translations found."
+msgstr ""
 
 #: templates/wagtail_localize/admin/update_translations.html:11
 msgid "Why would I sync my page?"
@@ -111,11 +152,11 @@ msgstr ""
 "Senaste synkroniseringsdatum var %(last_sync_date)s. Du kommer att "
 "synkronisera följande:"
 
-#: views/edit_translation.py:123
+#: views/edit_translation.py:125
 msgid "Content"
 msgstr "Innehåll"
 
-#: views/edit_translation.py:325
+#: views/edit_translation.py:435
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
@@ -125,46 +166,62 @@ msgstr ""
 "Vänliga fixa dem eller klicka publicera igen för att ignorera "
 "översättningarna nu."
 
-#: views/edit_translation.py:340
+#: views/edit_translation.py:450
 #, python-brace-format
 msgid ""
 "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 "Publicerade '{object}' på {locale} med saknade översättningar - se nedan."
 
-#: views/edit_translation.py:346
+#: views/edit_translation.py:456
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "Publicerade '{object}' på {locale}."
 
-#: views/edit_translation.py:610
+#: views/edit_translation.py:624
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+
+#: views/edit_translation.py:752
 msgid "Translation has been stopped."
 msgstr "Översättning har stoppats."
 
-#: views/edit_translation.py:624
+#: views/edit_translation.py:766
 msgid "Translation has been restarted."
 msgstr "Översättning har omstartats."
 
-#: views/edit_translation.py:760
+#: views/edit_translation.py:902
 msgid "Please upload a valid PO file."
 msgstr "Vänligen ladda upp en giltig PO-fil."
 
-#: views/edit_translation.py:769
+#: views/edit_translation.py:911
 msgid "Cannot import PO file that was created for a different translation."
 msgstr ""
 "Kan inte importera en PO-fil som har skapats för en annan översättning."
 
-#: views/edit_translation.py:778
+#: views/edit_translation.py:920
 msgid "Successfully imported translations from PO File."
 msgstr "Lyckades importera översättning från PO-fil."
 
-#: views/edit_translation.py:846
+#: views/edit_translation.py:988
 msgid "Successfully translated with {}."
 msgstr "Lyckades översätta med {}."
 
-#: views/edit_translation.py:852
+#: views/edit_translation.py:994
 msgid "There isn't anything left to translate."
 msgstr "Det finns ingenting kvar att översätta."
+
+#: views/report.py:94
+msgid "Source title"
+msgstr ""
+
+#: views/report.py:105 wagtail_hooks.py:231
+msgid "Translations"
+msgstr ""
 
 #: views/submit_translations.py:23
 msgid "Select all"
@@ -184,7 +241,7 @@ msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Inkludera underträd ({} sida)"
 msgstr[1] "Inkludera underträd ({} sidor)"
 
-#: views/submit_translations.py:116 wagtail_hooks.py:105
+#: views/submit_translations.py:116 wagtail_hooks.py:109
 msgid "Translate"
 msgstr "Översätt"
 
@@ -237,24 +294,24 @@ msgstr "Uppdatera existerande översättningar"
 msgid "Successfully updated translations for '{object}'"
 msgstr "Lyckades uppdatera översättningar för '{object}'"
 
-#: wagtail_hooks.py:86
+#: wagtail_hooks.py:90
 msgid "Sync translated pages"
 msgstr "Synkronisera översatta sidor"
 
-#: wagtail_hooks.py:107
+#: wagtail_hooks.py:111
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "Översätt '%(title)s'"
 
-#: wagtail_hooks.py:119
+#: wagtail_hooks.py:123
 msgid "Sync translated snippets"
 msgstr "Synkronisera översatta fragment"
 
-#: wagtail_hooks.py:121
+#: wagtail_hooks.py:125
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synkronisera översättningar av '%(title)s'"
 
-#: wagtail_hooks.py:151 wagtail_hooks.py:196
+#: wagtail_hooks.py:155 wagtail_hooks.py:200
 msgid "Restart translation"
 msgstr "Starta om översättning"

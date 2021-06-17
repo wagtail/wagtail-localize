@@ -1,20 +1,17 @@
 # 
 # Translators:
 # Thijs Kramer <thijskramer@gmail.com>, 2020
+# Coen van der Kamp <cvanderkamp@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Thijs Kramer <thijskramer@gmail.com>, 2020\n"
+"Last-Translator: Coen van der Kamp <cvanderkamp@gmail.com>, 2021\n"
 "Language-Team: Dutch (Netherlands) (https://www.transifex.com/torchbox/teams/8009/nl_NL/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl_NL\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:694
-msgid " version"
-msgstr "versie"
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:782
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:840
 msgid "[DELETED]"
 msgstr "[VERWIJDERD]"
 
@@ -26,38 +23,46 @@ msgstr "Pas bewerkingsblokkade toe"
 msgid "Breadcrumb"
 msgstr "Broodkruimel"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:412
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:565
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:416
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:582
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:671
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:724
+msgid "Change %s"
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:693
 msgid "Change document"
 msgstr "Wijzig document"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:641
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:662
 msgid "Change image"
 msgstr "Wijzig afbeelding"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:611
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:631
 msgid "Change page"
 msgstr "Wijzig pagina"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:201
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:139
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:161
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
 msgid "Changed"
 msgstr "Gewijzigd"
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:65
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:87
+msgid "Choose a %s"
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:67
 msgid "Choose a document"
 msgstr "Kies een document"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:61
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:65
 msgid "Choose a page"
 msgstr "Kies een pagina"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:75
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:79
 msgid "Choose an image"
 msgstr "Kies een afbeelding"
 
@@ -77,33 +82,41 @@ msgstr "Download PO-bestand en voer offline vertalingen in"
 msgid "Draft"
 msgstr "Concept"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:475
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:589
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:790
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:606
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:848
 msgid "Edit"
 msgstr "Bewerk"
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:47
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:59
+msgid "Edit this %s"
+msgstr "Wijzig %s"
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:49
 msgid "Edit this document"
 msgstr "Bewerk dit document"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:57
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:61
 msgid "Edit this image"
 msgstr "Bewerk deze afbeelding"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:43
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:47
 msgid "Edit this page"
 msgstr "Bewerk deze pagina"
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:54
+#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:71
+msgid "Fetching %s information..."
+msgstr ""
+
+#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:56
 msgid "Fetching document information..."
 msgstr "Bezig met ophalen van documentgegevens..."
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:64
+#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:68
 msgid "Fetching image information..."
 msgstr "Bezig met ophalen van afbeeldingsgegevens..."
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:50
+#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:54
 msgid "Fetching page information..."
 msgstr "Bezig met ophalen van paginagegevens..."
 
@@ -115,7 +128,7 @@ msgstr "Openbaar"
 msgid "Lock"
 msgstr "Vergrendel"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:765
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:823
 msgid "Not translated"
 msgstr "Niet vertaald"
 
@@ -144,25 +157,25 @@ msgstr "Bezig met publiceren..."
 msgid "Remove editor lock"
 msgstr "Verwijder bewerkingsblokkade"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:692
-msgid "Revert to "
-msgstr "Terugdraaien naar"
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:749
+msgid "Revert to %s version"
+msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:417
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:568
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:421
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:585
 msgid "Save"
 msgstr "Opslaan"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:95
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:433
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:437
 msgid "Saving..."
 msgstr "Bezig met opslaan..."
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:750
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:808
 msgid "segments translated"
 msgstr "vertaalde segmenten"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:125
+#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:145
 msgid "Server error"
 msgstr "Server error"
 
@@ -171,8 +184,12 @@ msgstr "Server error"
 msgid "Stop translation"
 msgstr "Stop vertaling"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:475
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:799
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:857
 msgid "Translate"
 msgstr "Vertaal"
 
@@ -200,6 +217,6 @@ msgstr "Upload PO-bestand"
 msgid "Upload translated PO file to submit translations"
 msgstr "Upload vertaald PO-bestand om vertalingen te verzenden"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:538
+#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:555
 msgid "Uses %s version"
 msgstr "Gebruikt %s versie"
