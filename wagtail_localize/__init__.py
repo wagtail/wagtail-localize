@@ -1,4 +1,4 @@
-from wagtail.utils.version import get_version
+from .version import get_version
 
 
 default_app_config = 'wagtail_localize.apps.WagtailLocalizeAppConfig'
