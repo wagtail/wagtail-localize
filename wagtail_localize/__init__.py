@@ -1,5 +1,10 @@
+from wagtail.utils.version import get_version
+
+
 default_app_config = 'wagtail_localize.apps.WagtailLocalizeAppConfig'
 
 
-VERSION = (0, 9, 5)
-__version__ = ".".join(map(str, VERSION))
+# release must be one of alpha, beta, rc, or final
+VERSION = (1, 0, 0, 'rc', 1)
+
+__version__ = get_version(VERSION)
