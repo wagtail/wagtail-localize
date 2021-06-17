@@ -1,0 +1,16 @@
+[main]
+host = https://www.transifex.com
+lang_map = zh_CN:zh_Hans, zh-Hant:zh_Hant
+
+[wagtail.wagtaillocalize]
+file_filter = wagtail_localize/locale/<lang>/LC_MESSAGES/django.po
+source_file = wagtail_localize/locale/en/LC_MESSAGES/django.po
+source_lang = en
+type = PO
+
+[wagtail.wagtaillocalize_js]
+file_filter = wagtail_localize/locale/<lang>/LC_MESSAGES/djangojs.po
+source_file = wagtail_localize/locale/en/LC_MESSAGES/djangojs.po
+source_lang = en
+type = PO
+
