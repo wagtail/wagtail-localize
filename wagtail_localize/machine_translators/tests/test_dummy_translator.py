@@ -24,7 +24,7 @@ class TestDummyTranslator(TestCase):
     def test_translate_html(self):
         string, attrs = StringValue.from_source_html('<a href="https://en.wikipedia.org/wiki/World">Hello world!</a>. <b>This is a test</b>.')
 
-        translations = DummyTranslator({}).translate(self.english_locale, self.french_locale, [
+        translations = DummyTranslator({}).translate(self.english_locale.language_code, self.french_locale.language_code, [
             string
         ])
 
@@ -33,11 +33,11 @@ class TestDummyTranslator(TestCase):
     def test_can_translate(self):
         canada_french_locale = Locale.objects.create(language_code="fr-CA")
 
-        self.assertTrue(DummyTranslator({}).can_translate(self.english_locale, self.french_locale))
-        self.assertTrue(DummyTranslator({}).can_translate(self.english_locale, canada_french_locale))
+        self.assertTrue(DummyTranslator({}).can_translate(self.english_locale.language_code, self.french_locale.language_code))
+        self.assertTrue(DummyTranslator({}).can_translate(self.english_locale.language_code, canada_french_locale.language_code))
 
         # Can't translate the same language
-        self.assertFalse(DummyTranslator({}).can_translate(self.english_locale, self.english_locale))
+        self.assertFalse(DummyTranslator({}).can_translate(self.english_locale.language_code, self.english_locale.language_code))
 
         # Can't translate two variants of the same language
-        self.assertFalse(DummyTranslator({}).can_translate(self.french_locale, canada_french_locale))
+        self.assertFalse(DummyTranslator({}).can_translate(self.french_locale.language_code, canada_french_locale.language_code))
