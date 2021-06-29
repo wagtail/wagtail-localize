@@ -723,6 +723,9 @@ class TranslationSource(models.Model):
                         page_revision.publish()
 
                 else:
+                    # Note: we don't need to run full_clean for Pages as Wagtail does that in Page.save()
+                    translation.full_clean()
+
                     translation.save()
                     page_revision = None
 

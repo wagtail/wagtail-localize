@@ -26,8 +26,10 @@ except ImportError:
 @register_snippet
 class TestSnippet(TranslatableMixin, models.Model):
     field = models.TextField(gettext_lazy("field"))
+    # To test field level validation of snippets
+    small_charfield = models.CharField(max_length=10, blank=True)
 
-    translatable_fields = [TranslatableField("field")]
+    translatable_fields = [TranslatableField("field"), TranslatableField("small_charfield")]
 
 
 @register_snippet

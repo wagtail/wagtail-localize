@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 from wagtail.core.blocks import StreamValue
@@ -61,6 +62,7 @@ class TestGetOrCreateFromInstance(TestCase):
             {
                 "pk": self.snippet.pk,
                 "field": "This is some test content",
+                "small_charfield": "",
                 "translation_key": str(self.snippet.translation_key),
                 "locale": self.snippet.locale_id,
             },
@@ -76,6 +78,7 @@ class TestGetOrCreateFromInstance(TestCase):
                 {
                     "pk": self.snippet.pk,
                     "field": "Some different content",  # Changed
+                    "small_charfield": "",
                     "translation_key": str(self.snippet.translation_key),
                     "locale": self.snippet.locale_id,
                 }
@@ -109,6 +112,7 @@ class TestUpdateOrCreateFromInstance(TestCase):
             {
                 "pk": self.snippet.pk,
                 "field": "This is some test content",
+                "small_charfield": "",
                 "translation_key": str(self.snippet.translation_key),
                 "locale": self.snippet.locale_id,
             },
@@ -124,6 +128,7 @@ class TestUpdateOrCreateFromInstance(TestCase):
                 {
                     "pk": self.snippet.pk,
                     "field": "Some different content",  # Changed
+                    "small_charfield": "",
                     "translation_key": str(self.snippet.translation_key),
                     "locale": self.snippet.locale_id,
                 }
@@ -551,6 +556,84 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         # Check a log was created for the alias conversion
         self.assertTrue(PageLogEntry.objects.filter(page=new_page, action='wagtail.convert_alias').exists())
+
+
+class TestCreateOrUpdateTranslationForSnippet(TestCase):
+    def setUp(self):
+        self.snippet = TestSnippet.objects.create(field="Test snippet content", small_charfield="Small text")
+        self.source, created = TranslationSource.get_or_create_from_instance(self.snippet)
+        self.source_locale = Locale.objects.get(language_code="en")
+        self.dest_locale = Locale.objects.create(language_code="fr")
+
+        # Add translation for field
+        self.string = String.from_value(
+            self.source_locale, StringValue.from_plaintext("Test snippet content")
+        )
+        self.translation = StringTranslation.objects.create(
+            translation_of=self.string,
+            locale=self.dest_locale,
+            context=TranslationContext.objects.get(
+                object_id=self.snippet.translation_key, path="field"
+            ),
+            data="Tester le contenu de l'extrait",
+        )
+
+        # Add translation for small_charfield
+        self.small_string = String.from_value(
+            self.source_locale, StringValue.from_plaintext("Small text")
+        )
+        self.small_translation = StringTranslation.objects.create(
+            translation_of=self.small_string,
+            locale=self.dest_locale,
+            context=TranslationContext.objects.get(
+                object_id=self.snippet.translation_key, path="small_charfield"
+            ),
+            data="Petit text",  # Truncated to fit because the field is limited to 10 characters
+        )
+
+    def test_create(self):
+        new_snippet, created = self.source.create_or_update_translation(self.dest_locale)
+
+        self.assertTrue(created)
+        self.assertEqual(new_snippet.field, "Tester le contenu de l'extrait")
+        self.assertEqual(new_snippet.translation_key, self.snippet.translation_key)
+        self.assertEqual(new_snippet.locale, self.dest_locale)
+        self.assertTrue(
+            self.source.translation_logs.filter(locale=self.dest_locale).exists()
+        )
+
+    def test_create_validates_fields(self):
+        self.small_translation.data = "Petit texte"  # More than 10 characters
+        self.small_translation.save()
+
+        with self.assertRaises(ValidationError) as e:
+            self.source.create_or_update_translation(self.dest_locale)
+
+        self.assertEqual(e.exception.messages, ['Ensure this value has at most 10 characters (it has 11).'])
+
+    def test_update(self):
+        self.snippet.copy_for_translation(self.dest_locale).save()
+
+        new_snippet, created = self.source.create_or_update_translation(self.dest_locale)
+
+        self.assertFalse(created)
+        self.assertEqual(new_snippet.field, "Tester le contenu de l'extrait")
+        self.assertEqual(new_snippet.translation_key, self.snippet.translation_key)
+        self.assertEqual(new_snippet.locale, self.dest_locale)
+        self.assertTrue(
+            self.source.translation_logs.filter(locale=self.dest_locale).exists()
+        )
+
+    def test_update_validates_fields(self):
+        self.snippet.copy_for_translation(self.dest_locale).save()
+
+        self.small_translation.data = "Petit texte"  # More than 10 characters
+        self.small_translation.save()
+
+        with self.assertRaises(ValidationError) as e:
+            self.source.create_or_update_translation(self.dest_locale)
+
+        self.assertEqual(e.exception.messages, ['Ensure this value has at most 10 characters (it has 11).'])
 
 
 class TestGetEphemeralTranslatedInstance(TestCase):
