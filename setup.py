@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# foo
 
 from os import path
 
