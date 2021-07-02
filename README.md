@@ -10,6 +10,7 @@
 Wagtail Localize is a translation plugin for the [Wagtail CMS](https://wagtail.io). It allows pages or snippets to be translated within Wagtail's admin interface. It also provides integrations with external translations services such as [Pontoon](https://pontoon.mozilla.org/) or [DeepL](https://www.deepl.com/), and importing/exporting translations with PO files.
 
 [Documentation](https://www.wagtail-localize.org)
+[Changelog](https://github.com/wagtail/wagtail-localize/blob/main/CHANGELOG.md)
 
 ## Requirements
 
