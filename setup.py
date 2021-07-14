@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# foo
+
 from os import path
 
 from setuptools import find_packages, setup
