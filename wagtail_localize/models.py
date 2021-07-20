@@ -28,12 +28,15 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext as _, gettext_lazy
+from modelcluster.fields import ParentalKey
 from modelcluster.models import (
     ClusterableModel,
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
-from wagtail.core.models import Page, get_translatable_models, PageLogEntry
+from wagtail.core import blocks
+from wagtail.core.fields import StreamField
+from wagtail.core.models import Page, get_translatable_models, PageLogEntry, TranslatableMixin
 from wagtail.core.utils import find_available_slug
 
 from .compat import DATE_FORMAT
@@ -497,23 +500,23 @@ class TranslationSource(models.Model):
         seen_related_object_segment_ids = []
         seen_overridable_segment_ids = []
 
-        for segment in extract_segments(self.as_instance()):
+        instance = self.as_instance()
+        for segment in extract_segments(instance):
             if isinstance(segment, TemplateSegmentValue):
-                seen_template_segment_ids.append(
-                    TemplateSegment.from_value(self, segment).id
-                )
+                segment_obj = TemplateSegment.from_value(self, segment)
+                seen_template_segment_ids.append(segment_obj.id)
             elif isinstance(segment, RelatedObjectSegmentValue):
-                seen_related_object_segment_ids.append(
-                    RelatedObjectSegment.from_value(self, segment).id
-                )
+                segment_obj = RelatedObjectSegment.from_value(self, segment)
+                seen_related_object_segment_ids.append(segment_obj.id)
             elif isinstance(segment, OverridableSegmentValue):
-                seen_overridable_segment_ids.append(
-                    OverridableSegment.from_value(self, segment).id
-                )
+                segment_obj = OverridableSegment.from_value(self, segment)
+                seen_overridable_segment_ids.append(segment_obj.id)
             else:
-                seen_string_segment_ids.append(
-                    StringSegment.from_value(self, self.locale, segment).id
-                )
+                segment_obj = StringSegment.from_value(self, self.locale, segment)
+                seen_string_segment_ids.append(segment_obj.id)
+
+            # Make sure the segment's field_path is pre-populated
+            segment_obj.context.get_field_path(instance)
 
         # Delete any segments that weren't mentioned
         self.stringsegment_set.exclude(id__in=seen_string_segment_ids).delete()
@@ -1253,6 +1256,7 @@ class TranslationContext(models.Model):
     Attributes:
         object (ForeignKey to TranslatableObject): The object.
         path (TextField): The content path.
+        field_path (TextField): the field path.
         path_id (UUIDField): A hash of the path for efficient indexing of long content paths.
     """
     object = models.ForeignKey(
@@ -1260,6 +1264,7 @@ class TranslationContext(models.Model):
     )
     path_id = models.UUIDField()
     path = models.TextField()
+    field_path = models.TextField()
 
     class Meta:
         unique_together = [
@@ -1284,6 +1289,55 @@ class TranslationContext(models.Model):
             self.path_id = self._get_path_id(self.path)
 
         return super().save(*args, **kwargs)
+
+    def get_field_path(self, instance):
+        """
+        Gets the field path for this context
+
+        Field path's were introduced in version 1.0, any contexts that were created before that release won't have one.
+        """
+        if not self.field_path:
+            def get_field_path_from_field(instance, path_components):
+                field_name = path_components[0]
+                field = instance._meta.get_field(field_name)
+
+                if isinstance(field, StreamField):
+                    def get_field_path_from_stream_block(stream_value, path_components):
+                        stream_blocks_by_id = {
+                            block.id: block
+                            for block in stream_value
+                        }
+                        block_id = path_components[0]
+                        block = stream_blocks_by_id[block_id]
+                        block_def = stream_value.stream_block.child_blocks[block.block_type]
+
+                        if isinstance(block_def, blocks.StructBlock):
+                            return [block.block_type, path_components[1]]
+
+                        elif isinstance(block_def, blocks.StreamBlock):
+                            return [block.block_type] + get_field_path_from_stream_block(block.value, path_components[1:])
+
+                        else:
+                            return [block.block_type]
+
+                    return [field_name] + get_field_path_from_stream_block(field.value_from_object(instance), path_components[1:])
+
+                elif (
+                    isinstance(field, (models.ManyToOneRel))
+                    and isinstance(field.remote_field, ParentalKey)
+                    and issubclass(field.related_model, TranslatableMixin)
+                ):
+                    manager = getattr(instance, field_name)
+                    child_instance = manager.get(translation_key=path_components[1])
+                    return [field_name] + get_field_path_from_field(child_instance, path_components[2:])
+
+                else:
+                    return [field_name]
+
+            self.field_path = '.'.join(get_field_path_from_field(instance, self.path.split('.')))
+            self.save(update_fields=['field_path'])
+
+        return self.field_path
 
 
 class StringTranslation(models.Model):
