@@ -130,6 +130,7 @@ class TestPage(Page):
 
     test_synchronized_charfield = models.CharField(max_length=255, blank=True)
     test_synchronized_textfield = models.TextField(blank=True)
+    test_not_overridable_synchronized_textfield = models.TextField(blank=True)
     test_synchronized_emailfield = models.EmailField(blank=True)
     test_synchronized_slugfield = models.SlugField(blank=True)
     test_synchronized_urlfield = models.URLField(blank=True)
@@ -174,6 +175,7 @@ class TestPage(Page):
         TranslatableField("test_customfield"),
         SynchronizedField("test_synchronized_charfield"),
         SynchronizedField("test_synchronized_textfield"),
+        SynchronizedField("test_not_overridable_synchronized_textfield", overridable=False),
         SynchronizedField("test_synchronized_emailfield"),
         SynchronizedField("test_synchronized_slugfield"),
         SynchronizedField("test_synchronized_urlfield"),

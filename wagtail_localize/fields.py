@@ -37,6 +37,13 @@ class BaseTranslatableField:
         """
         return False
 
+    def is_overridable(self, obj):
+        """
+        Returns True if the value of this field can be overridden. This is only
+        applicable to fields that are synchronized
+        """
+        return self.is_synchronized(obj)
+
     def __eq__(self, other):
         return self.__class__ == other.__class__ and self.field_name == other.field_name
 
@@ -68,8 +75,15 @@ class SynchronizedField(BaseTranslatableField):
     A field that should always be kept in sync with the original page.
     """
 
+    def __init__(self, field_name, overridable=True):
+        super().__init__(field_name)
+        self.overridable = overridable
+
     def is_synchronized(self, obj):
         return self.is_editable(obj)
+
+    def is_overridable(self, obj):
+        return self.is_synchronized(obj) and self.overridable
 
     def __repr__(self):
         return f"<SynchronizedField {self.field_name}>"

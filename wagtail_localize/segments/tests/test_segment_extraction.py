@@ -155,6 +155,24 @@ class TestSegmentExtraction(TestCase):
             [StringSegmentValue("test_customfield.foo", "Test content and some extra")],
         )
 
+    def test_synchronised_textfield(self):
+        page = make_test_page(test_synchronized_textfield="Test content")
+
+        segments = extract_segments(page)
+
+        self.assertEqual(
+            segments,
+            [OverridableSegmentValue("test_synchronized_textfield", "Test content")],
+        )
+
+    def test_non_overridable_synchronised_textfield(self):
+        page = make_test_page(test_not_overridable_synchronized_textfield="Test content")
+
+        segments = extract_segments(page)
+
+        # Shouldn't extract any segments as this isn't overridable
+        self.assertEqual(segments, [])
+
 
 def make_test_page_with_streamfield_block(block_id, block_type, block_value, **kwargs):
     stream_data = [{"id": block_id, "type": block_type, "value": block_value}]

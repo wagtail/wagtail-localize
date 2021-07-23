@@ -24,10 +24,13 @@ translatable fields that need to be extracted.
 
 ### Synchronised
 
-For all fields, this means that the value will be copied across whenever the translation is updated.
+This means that the value of the field will be copied to the translation whenever the translation is updated.
 
-Some synchronised fields can be overridden on translations, this currently depends on whether that field type is supported
-by the translation editing interface.
+Depending on the field type, synchronised fields can be overridden in translations. This means that the field will
+be editable on individual translations, but this is optional. If the field is edited on a translation, it will no
+longer receive updates from the source page until an editor clicks the "Revert to source version" button.
+
+The overridability of a field can be explicitly disabled by a developer.
 
 ### Neither / excluded
 
@@ -54,6 +57,27 @@ class BlogPage(Page):
     # Make the slug synchronised, but let Wagtail decide what to do with title/body
     override_translatable_fields = [
         SynchronizedField('slug'),
+    ]
+```
+
+## Removing the ability to override a ``SynchronizedField``
+
+Wagtail will decide if a field can be overridden depending on if its type.
+You can tell Wagtail to not allow the field to be overridden by passing the keyword argument ``overridable=False``.
+For example:
+
+```python
+from wagtail.core.models import Page
+
+from wagtail_localize.fields import SynchronizedField
+
+
+class BlogPage(Page):
+    body = RichTextField()
+
+    # Make the slug synchronised, but don't allow it to be overridden on translations
+    override_translatable_fields = [
+        SynchronizedField('slug', overridable=False),
     ]
 ```
 
