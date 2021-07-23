@@ -159,6 +159,8 @@ def extract_segments(instance):
         field = translatable_field.get_field(instance.__class__)
         is_translatable = translatable_field.is_translated(instance)
         is_synchronized = translatable_field.is_synchronized(instance)
+        is_overridable = translatable_field.is_overridable(instance)
+        extract_overridables = is_synchronized and is_overridable
 
         if hasattr(field, "get_translatable_segments"):
             if is_translatable:
@@ -173,7 +175,7 @@ def extract_segments(instance):
             if is_translatable:
                 segments.extend(
                     segment.wrap(field.name)
-                    for segment in StreamFieldSegmentExtractor(field, include_overridables=is_synchronized).handle_stream_block(
+                    for segment in StreamFieldSegmentExtractor(field, include_overridables=extract_overridables).handle_stream_block(
                         field.value_from_object(instance)
                     )
                 )
@@ -201,7 +203,7 @@ def extract_segments(instance):
 
                 segments.extend(segment.wrap(field.name) for segment in field_segments)
 
-            if is_synchronized:
+            if extract_overridables:
                 pass  # TODO: Extract images and links
 
         elif isinstance(field, (models.TextField, models.CharField)):
@@ -216,7 +218,7 @@ def extract_segments(instance):
                         StringSegmentValue(field.name, value)
                     )
 
-                elif is_synchronized:
+                elif extract_overridables:
                     segments.append(
                         OverridableSegmentValue(field.name, value)
                     )
@@ -242,7 +244,7 @@ def extract_segments(instance):
                         RelatedObjectSegmentValue.from_instance(field.name, related_instance)
                     )
 
-            elif is_synchronized:
+            elif extract_overridables:
                 related_instance = getattr(instance, field.name)
 
                 if related_instance:
@@ -263,7 +265,7 @@ def extract_segments(instance):
                         for segment in extract_segments(child_instance)
                     )
 
-            elif is_synchronized:
+            elif extract_overridables:
                 pass  # TODO
 
     class Counter:
