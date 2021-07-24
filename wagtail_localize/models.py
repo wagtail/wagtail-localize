@@ -2165,7 +2165,7 @@ class OverridableSegment(BaseSegment):
             source=source,
             context=context,
             order=value.order,
-            data_json=json.dumps(value.data),
+            data_json=json.dumps(value.data, cls=DjangoJSONEncoder),
         )
 
         return segment
