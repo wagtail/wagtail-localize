@@ -21,6 +21,10 @@ jobs:
           - python: '3.9'
             django: '3.2'
             wagtail: '2.13'
+        exclude:
+          # Exclude tests of Django 2.2 and Wagtail 2.14 together
+          - django: '2.2'
+            wagtail: '2.14'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python }}
@@ -42,7 +46,7 @@ jobs:
       matrix:
         python: ['3.7', '3.8', '3.9']
         django: ['2.2', '3.0', '3.1']
-        wagtail: ['2.11', '2.12', '2.13']
+        wagtail: ['2.11', '2.12', '2.13', '2.14']
         postgres: ['10.8']
         include:
           # Add test for Django 3.2 that is only suported on Wagtail 2.13+
@@ -50,6 +54,10 @@ jobs:
             django: '3.2'
             wagtail: '2.13'
             postgres: '10.8'
+        exclude:
+          # Exclude tests of Django 2.2 and Wagtail 2.14 together
+          - django: '2.2'
+            wagtail: '2.14'
     services:
       postgres:
         image: postgres:${{ matrix.postgres }}
