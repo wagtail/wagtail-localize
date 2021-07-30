@@ -19,7 +19,7 @@ jobs:
         keys:
           - node-modules-{{ .Branch }}-{{ checksum "package-lock.json" }}
           - node-modules-{{ .Branch }}-
-          - node-modules-master-
+          - node-modules-main-
 
       - run: npm install
       - run: npm run lint
@@ -38,7 +38,7 @@ jobs:
       - type: cache-restore
         keys:
          - pip-{{ .Branch }}-
-         - pip-master-
+         - pip-main-
 
       - run: pip install -e .[testing]
 
@@ -82,4 +82,4 @@ workflows:
             filters:
               branches:
                 only:
-                  - master
+                  - main
