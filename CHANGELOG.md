@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+ - [Support for Wagtail 2.14](https://github.com/wagtail/wagtail-localize/pull/440)
+ - [``overridable`` keyword argument for ``SynchronizedField``](https://github.com/wagtail/wagtail-localize/pull/438)
+
 ### Fixed
 
  - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
