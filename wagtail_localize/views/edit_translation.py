@@ -212,9 +212,10 @@ class FieldHasNoEditPanelError(KeyError):
     pass
 
 
-def get_segment_location_info(source_instance, tab_helper, content_path, widget=False):
-    context_path_components = content_path.split('.')
-    field = source_instance._meta.get_field(context_path_components[0])
+def get_segment_location_info(source_instance, tab_helper, content_path, field_path, widget=False):
+    content_path_components = content_path.split('.')
+    field_path_components = field_path.split('.')
+    field = source_instance._meta.get_field(field_path_components[0])
 
     # Work out which tab the segment is on from edit handler
     try:
@@ -322,17 +323,11 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
         }
 
     if isinstance(field, StreamField):
-        stream_value = field.value_from_object(source_instance)
-        stream_blocks_by_id = {
-            block.id: block
-            for block in field.value_from_object(source_instance)
-        }
-        block_id = context_path_components[1]
-        block_value = stream_blocks_by_id[block_id]
-        block_type = stream_value.stream_block.child_blocks[block_value.block_type]
+        block_type_name = field_path_components[1]
+        block_type = field.stream_block.child_blocks[block_type_name]
 
         if isinstance(block_type, blocks.StructBlock):
-            block_field_name = context_path_components[2]
+            block_field_name = field_path_components[2]
             block_field = block_type.child_blocks[block_field_name].label
         else:
             block_field = None
@@ -341,7 +336,7 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
             'tab': tab,
             'field': capfirst(block_type.label),
             'order': order,
-            'blockId': block_id,
+            'blockId': content_path_components[1],
             'fieldHelpText': '',
             'subField': block_field,
             'widget': widget_from_block(block_type) if widget else None,
@@ -352,13 +347,13 @@ def get_segment_location_info(source_instance, tab_helper, content_path, widget=
         and isinstance(field.remote_field, ParentalKey)
         and issubclass(field.related_model, TranslatableMixin)
     ):
-        child_field = field.related_model._meta.get_field(context_path_components[2])
+        child_field = field.related_model._meta.get_field(field_path_components[1])
 
         return {
             'tab': tab,
             'field': capfirst(field.related_model._meta.verbose_name),
             'order': order,
-            'blockId': context_path_components[1],
+            'blockId': content_path_components[1],
             'fieldHelpText': child_field.help_text,
             'subField': capfirst(child_field.verbose_name),
             'widget': widget_from_field(child_field) if widget else None,
@@ -505,7 +500,7 @@ def edit_translation(request, translation, instance):
 
     for segment in string_segments:
         try:
-            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path)
+            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, segment.context.get_field_path(source_instance))
         except FieldHasNoEditPanelError:
             continue
 
@@ -521,7 +516,7 @@ def edit_translation(request, translation, instance):
 
     for segment in overridable_segments:
         try:
-            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, widget=True)
+            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, segment.context.get_field_path(source_instance), widget=True)
         except FieldHasNoEditPanelError:
             continue
 
@@ -591,7 +586,7 @@ def edit_translation(request, translation, instance):
 
     for segment in related_object_segments:
         try:
-            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path)
+            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, segment.context.get_field_path(source_instance))
         except FieldHasNoEditPanelError:
             continue
 
