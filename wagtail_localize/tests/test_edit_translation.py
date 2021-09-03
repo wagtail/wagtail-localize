@@ -610,6 +610,20 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(messages[0].level_tag, 'error')
         self.assertEqual(messages[0].message, "Sorry, you do not have permission to access this area.\n\n\n\n\n")
 
+    def test_edit_translation_when_block_deleted_from_source_page(self):
+        # Tests for #433 - If a streamfield block that contained translatable text was deleted
+        # from the source page after submission, the translation editor would crash.
+
+        # Remove all blocks from source page
+        self.page.test_streamfield = StreamValue(
+            TestPage.test_streamfield.field.stream_block, [], is_lazy=True
+        )
+        self.page.save_revision().publish()
+
+        # Just testing that it doesn't crash
+        response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
+        self.assertEqual(response.status_code, 200)
+
 
 @freeze_time('2020-08-21')
 class TestPublishTranslation(EditTranslationTestData, APITestCase):
