@@ -898,7 +898,6 @@ class Translation(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
-    source_last_updated_at = models.DateTimeField(auto_now_add=True)
     translations_last_updated_at = models.DateTimeField(null=True)
     destination_last_updated_at = models.DateTimeField(null=True)
     enabled = models.BooleanField(default=True)
