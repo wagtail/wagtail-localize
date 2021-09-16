@@ -1,6 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
+from django.urls import reverse
 from wagtail.core.models import Locale, Page
+from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import LocaleSynchronization
 from wagtail_localize.synctree import PageIndex
@@ -88,7 +90,7 @@ class TestPageIndex(TestCase):
         self.assertEqual(canadaonlypage_entry.aliased_locales, [])
 
 
-class TestSignals(TestCase):
+class TestSignalsAndHooks(TestCase, WagtailTestUtils):
     def setUp(self):
         self.en_locale = Locale.objects.get(language_code="en")
         self.fr_locale = Locale.objects.create(language_code="fr")
@@ -126,17 +128,39 @@ class TestSignals(TestCase):
             sync_from=self.fr_locale,
         )
 
+        # Login
+        self.user = self.login()
+
     def test_create_new_page(self):
         LocaleSynchronization.objects.create(
             locale=self.es_locale,
             sync_from=self.en_locale,
         )
 
-        new_page = self.en_homepage.add_child(
-            instance=TestPage(title="Foo", slug="foo")
+        post_data = {
+            'title': "Foo",
+            'slug': 'foo',
+            'action-publish': 'publish',
+
+            'test_streamfield-count': '0',
+            'test_synchronized_streamfield-count': '0',
+            'comments-TOTAL_FORMS': '0',
+            'comments-INITIAL_FORMS': '0',
+            'test_childobjects-TOTAL_FORMS': '0',
+            'test_childobjects-INITIAL_FORMS': '0',
+            'test_synchronized_childobjects-TOTAL_FORMS': '0',
+            'test_synchronized_childobjects-INITIAL_FORMS': '0',
+        }
+        response = self.client.post(
+            reverse('wagtailadmin_pages:add', args=['wagtail_localize_test', 'testpage', self.en_homepage.id]),
+            post_data
         )
 
-        # Check it created aliases for the other locales
+        self.assertEqual(response.status_code, 302)
+
+        new_page = TestPage.objects.child_of(self.en_homepage).get(slug='foo')
+
+        # Check that it created aliases for the other locales
         fr_new_page = TestPage.objects.get(
             translation_key=new_page.translation_key,
             locale=self.fr_locale,
@@ -181,10 +205,6 @@ class TestSignals(TestCase):
         # that is the sync source of another
         # See https://github.com/wagtail/wagtail-localize/issues/245
 
-        # Note: The behaviour implemented just prevents the crash from happening by
-        # not creating homepages in the post_save signal. But, ideally, we should
-        # find a way to support this.
-
         # Delete all homepages
         root = Page.objects.get(id=1)
         root.get_children().delete()
@@ -197,11 +217,31 @@ class TestSignals(TestCase):
         )
 
         # Create a homepage in English
-        new_en_homepage = root.add_child(
-            instance=TestPage(title="Home", slug="home", locale=self.en_locale)
+        post_data = {
+            'title': "Home",
+            'slug': 'home',
+            'action-publish': 'publish',
+
+            'test_streamfield-count': '0',
+            'test_synchronized_streamfield-count': '0',
+            'comments-TOTAL_FORMS': '0',
+            'comments-INITIAL_FORMS': '0',
+            'test_childobjects-TOTAL_FORMS': '0',
+            'test_childobjects-INITIAL_FORMS': '0',
+            'test_synchronized_childobjects-TOTAL_FORMS': '0',
+            'test_synchronized_childobjects-INITIAL_FORMS': '0',
+        }
+        response = self.client.post(
+            reverse('wagtailadmin_pages:add', args=['wagtail_localize_test', 'testpage', root.id]),
+            post_data
         )
 
-        # Homepages shouldn't be created
-        self.assertFalse(new_en_homepage.has_translation(self.fr_locale))
-        self.assertFalse(new_en_homepage.has_translation(self.fr_ca_locale))
-        self.assertFalse(new_en_homepage.has_translation(self.es_locale))
+        self.assertEqual(response.status_code, 302)
+
+        # Create a homepage in English
+        new_en_homepage = TestPage.objects.child_of(root).get(locale=self.en_locale)
+
+        # Homepages in other languages should be created
+        self.assertTrue(new_en_homepage.has_translation(self.fr_locale))
+        self.assertTrue(new_en_homepage.has_translation(self.fr_ca_locale))
+        self.assertTrue(new_en_homepage.has_translation(self.es_locale))
