@@ -1,8 +1,7 @@
 from collections import defaultdict
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.functional import cached_property
+from wagtail.core import hooks
 from wagtail.core.models import Page, Locale
 
 
@@ -193,35 +192,26 @@ def synchronize_tree(source_locale, target_locale, *, page_index=None):
             )
 
 
-@receiver(post_save)
-def on_page_saved(sender, instance, **kwargs):
-    if not issubclass(sender, Page):
-        return
-
-    # We only care about creations
-    if not kwargs['created']:
-        return
-
-    # We can't handle creations at the root, this is because Treebeard calls
-    # the post_save signal before it updates the numchild of the parent page
-    # Which is a problem here because we're about to add another child which
-    # needs that value to be set correctly in order to get a unique path.
-    # TODO(someday): Find a nicer solution for this
-    if instance.depth == 2:
-        return
-
+def create_aliases_for_new_page(page):
     # Check if the source tree needs to be synchronised into any other trees
     from .models import LocaleSynchronization
     locales_to_sync_to = Locale.objects.filter(
         id__in=(
             LocaleSynchronization.objects
-            .filter(sync_from_id=instance.locale_id)
+            .filter(sync_from_id=page.locale_id)
             .values_list("locale_id", flat=True)
         )
     )
 
     # Create aliases in all those locales
     for locale in locales_to_sync_to:
-        instance.copy_for_translation(
+        new_alias = page.copy_for_translation(
             locale, copy_parents=True, alias=True
         )
+
+        create_aliases_for_new_page(new_alias)
+
+
+@hooks.register('after_create_page')
+def after_create_page(request, page):
+    create_aliases_for_new_page(page)
