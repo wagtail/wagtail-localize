@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0rc4] - 2021-09-17
+
+### Fixed
+
+- [Auto-create alias pages after page is completely saved](https://github.com/wagtail/wagtail-localize/pull/454)
+
 ## [1.0rc3] - 2021-08-03
 
 ### Added
@@ -20,3 +26,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.0rc3...HEAD
 [1.0rc3]: https://github.com/wagtail/wagtail-localize/compare/v1.0rc2...v1.0rc3
+[1.0rc4]: https://github.com/wagtail/wagtail-localize/compare/v1.0rc3...v1.0rc4
