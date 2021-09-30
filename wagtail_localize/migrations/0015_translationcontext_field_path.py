@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0013_translationsource_schema_version'),
+        ('wagtail_localize', '0014_remove_translation_source_last_updated_at'),
     ]
 
     operations = [
