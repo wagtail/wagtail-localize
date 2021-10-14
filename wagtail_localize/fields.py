@@ -6,6 +6,11 @@ from treebeard.mp_tree import MP_Node
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, TranslatableMixin
 
+try:
+    from wagtail.core.models import COMMENTS_RELATION_NAME
+except ImportError:
+    COMMENTS_RELATION_NAME = 'comments'
+
 
 class BaseTranslatableField:
     def __init__(self, field_name):
@@ -170,7 +175,7 @@ def get_translatable_fields(model):
     if issubclass(model, ClusterableModel):
         for child_relation in get_all_child_relations(model):
             # Ignore comments
-            if issubclass(model, Page) and child_relation.name == 'comments':
+            if issubclass(model, Page) and child_relation.name == COMMENTS_RELATION_NAME:
                 continue
 
             if issubclass(child_relation.related_model, TranslatableMixin):
