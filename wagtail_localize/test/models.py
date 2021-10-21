@@ -220,6 +220,18 @@ class TestPage(Page):
     ]
 
 
+class TestWithTranslationModeDisabledPage(Page):
+    # Always keep the translation mode off, regardless of the global
+    # WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE value
+    localize_default_translation_mode = "simple"
+
+
+class TestWithTranslationModeEnabledPage(Page):
+    # Always keep the translation mode on, regardless of the global
+    # WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE value
+    localize_default_translation_mode = "synced"
+
+
 class TestModel(TranslatableMixin):
     title = models.CharField(max_length=255)
     test_charfield = models.CharField(max_length=255, blank=True)

@@ -7,7 +7,13 @@ from wagtail.core.models import Page, Locale
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import Translation, TranslationSource
-from wagtail_localize.test.models import TestPage, TestSnippet, NonTranslatableSnippet
+from wagtail_localize.test.models import (
+    TestPage,
+    TestWithTranslationModeDisabledPage,
+    TestWithTranslationModeEnabledPage,
+    TestSnippet,
+    NonTranslatableSnippet
+)
 
 from .utils import assert_permission_denied
 
@@ -470,6 +476,64 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # The translated page should've been created and published
         translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertTrue(translated_page.live)
+
+    @override_settings(WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE="simple")
+    def test_post_submit_page_translation_with_global_disabled_mode(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_index.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+        )
+
+        translation = Translation.objects.get()
+        self.assertFalse(translation.enabled)
+
+    def test_post_submit_page_translation_with_disabled_mode_per_page_type(self):
+        custom_page = make_test_page(
+            self.en_homepage, cls=TestWithTranslationModeDisabledPage,
+            title="Translation mode test", slug="translation-mode-test"
+        )
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[custom_page.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+        )
+
+        translation = Translation.objects.get()
+        self.assertFalse(translation.enabled)
+
+    @override_settings(WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE="simple")
+    def test_post_submit_page_translation_with_global_mode_disabled_but_enabled_per_page_type(self):
+        custom_page = make_test_page(
+            self.en_homepage, cls=TestWithTranslationModeEnabledPage,
+            title="Translation mode test", slug="translation-mode-test"
+        )
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[custom_page.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+        )
+
+        translation = Translation.objects.get()
+        self.assertTrue(translation.enabled)
 
 
 @override_settings(
