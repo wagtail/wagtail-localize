@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 
 from django.contrib import messages
 from django.contrib.admin.utils import unquote
@@ -92,6 +93,13 @@ class TranslationCreator:
                 # Limit to one level of related objects, since this could potentially pull in a lot of stuff
                 self.create_translations(related_instance, include_related_objects=False)
 
+        # Support disabling the out of the box translation mode.
+        # The value set on the model takes precendence over the global setting.
+        if hasattr(instance, "localize_default_translation_mode"):
+            translation_mode = instance.localize_default_translation_mode
+        else:
+            translation_mode = getattr(settings, "WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE", "synced")
+
         # Set up translation records
         for target_locale in self.target_locales:
             # Create translation if it doesn't exist yet, re-enable if translation was disabled
@@ -101,7 +109,7 @@ class TranslationCreator:
                 source=source,
                 target_locale=target_locale,
                 defaults={
-                    'enabled': True
+                    'enabled': translation_mode == "synced"
                 }
             )
 
