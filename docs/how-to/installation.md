@@ -34,3 +34,20 @@ The locales that are synchronised from others can be managed through the Wagtail
 
 To enable this, replace the ``"wagtail.locales"`` entry in ``INSTALLED_APPS`` with ``"wagtail_localize.locales"``, this
 will add a "Sync from" field to all locales that allows an administrator to choose a locale to synchronise content from.
+
+
+## Disabling the default translation mode
+
+Wagtail Localize will automatically go in translation mode when creating new translations for models.
+
+To disable this behaviour globally, set `WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE = "simple"` in your settings file. 
+If you wish to disable it per page or model type, set the `localize_default_translation_mode` attribute to `"simple"` 
+on your model. The default value is `synced`.
+
+e.g.
+
+```python
+class MyPage(Page):
+    localize_default_translation_mode = "simple"
+    # ...
+```
