@@ -2,7 +2,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, InlinePanel, PageChooserPanel
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, InlinePanel, PageChooserPanel, \
+    StreamFieldPanel
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, Orderable, TranslatableMixin
@@ -67,6 +68,10 @@ class CustomStructBlock(blocks.StructBlock):
 
 
 class CustomBlockWithoutExtractMethod(blocks.Block):
+    def render_form(self, *args, **kwargs):
+        """Placeholder for Wagtail < 2.13"""
+        return ''
+
     class Meta:
         default = None
 
@@ -198,7 +203,7 @@ class TestPage(Page):
         FieldPanel("test_slugfield"),
         FieldPanel("test_urlfield"),
         FieldPanel("test_richtextfield"),
-        FieldPanel("test_streamfield"),
+        StreamFieldPanel("test_streamfield"),
         FieldPanel("test_snippet"),
         InlinePanel("test_childobjects"),
         FieldPanel("test_customfield"),
@@ -208,7 +213,7 @@ class TestPage(Page):
         FieldPanel("test_synchronized_slugfield"),
         FieldPanel("test_synchronized_urlfield"),
         FieldPanel("test_synchronized_richtextfield"),
-        FieldPanel("test_synchronized_streamfield"),
+        StreamFieldPanel("test_synchronized_streamfield"),
         FieldPanel("test_synchronized_image"),
         FieldPanel("test_synchronized_document"),
         FieldPanel("test_synchronized_snippet"),
