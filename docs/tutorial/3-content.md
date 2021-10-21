@@ -193,7 +193,7 @@ Clicking "Edit" here will take the user to the translation editor of the "Dogs" 
 !!! note "Stopping translation mode"
 
     If you would like to make significant changes to the translation, you can strop the translation mode by clicking the
-    "Stop translation" action in the action menu at the bottom:
+    "Stop Synced translation" action in the action menu at the bottom:
 
     ![Stop translation button in action menu](/_static/tutorial/wagtail-stop-translation.png)
 
@@ -201,7 +201,7 @@ Clicking "Edit" here will take the user to the translation editor of the "Dogs" 
     original, so you can still use the language switcher at the top of the page to find the original page and other
     translations.
 
-    You can restart translation mode later by clicking "Restart Translation" in the action menu. This will override any
+    You can restart translation mode later by clicking "Start Synced translation" in the action menu. This will override any
     changes made while translation mode was stopped.
 
     While translation mode is stopped, editors will need to synchronise any content updates from the source manually.

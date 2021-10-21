@@ -967,14 +967,14 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
 
-        self.assertContains(response, "Restart translation")
+        self.assertContains(response, "Start Synced translation")
 
     def test_doesnt_show_when_no_translation_for_page(self):
         self.page_translation.delete()
 
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=[self.fr_page.id]))
 
-        self.assertNotContains(response, "Restart translation")
+        self.assertNotContains(response, "Start Synced translation")
 
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_snippet(self):
@@ -983,7 +983,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
 
-        self.assertContains(response, "Restart translation")
+        self.assertContains(response, "Start Synced translation")
 
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_when_no_translation_for_snippet(self):
@@ -991,12 +991,12 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         response = self.client.get(reverse('wagtailsnippets:edit', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name, self.fr_snippet.id]))
 
-        self.assertNotContains(response, "Restart translation")
+        self.assertNotContains(response, "Start Synced translation")
 
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_on_create_for_snippet(self):
         response = self.client.get(reverse('wagtailsnippets:add', args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name]))
-        self.assertNotContains(response, "Restart translation")
+        self.assertNotContains(response, "Start Synced translation")
 
     @unittest.skipUnless(SNIPPET_RESTART_TRANSLATION_ENABLED, "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384")
     def test_doesnt_show_for_untranslatable_snippet(self):
@@ -1004,7 +1004,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
             field="Test"
         )
         response = self.client.get(reverse('wagtailsnippets:edit', args=[NonTranslatableSnippet._meta.app_label, NonTranslatableSnippet._meta.model_name, snippet.id]))
-        self.assertNotContains(response, "Restart translation")
+        self.assertNotContains(response, "Start Synced translation")
 
 
 @freeze_time('2020-08-21')
