@@ -169,3 +169,6 @@ LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [("en", "English"), ("fr", "French"), ("
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
     'CLASS': 'wagtail_localize.machine_translators.dummy.DummyTranslator',
 }
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
