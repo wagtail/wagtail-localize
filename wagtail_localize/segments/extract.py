@@ -5,6 +5,7 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.blocks import field_block
 from wagtail.core.models import TranslatableMixin, Page
 
 from wagtail_localize.segments import (
@@ -96,6 +97,10 @@ class StreamFieldSegmentExtractor:
 
         elif isinstance(block_type, blocks.StreamBlock):
             return self.handle_stream_block(block_value)
+
+        # Custom Field Block having a field of type text has to be translated.
+        elif isinstance(block_type, (field_block.FieldBlock)) and isinstance(block_value, str):
+            return [StringSegmentValue("", block_value)]
 
         # Ignore everything else
         return []
