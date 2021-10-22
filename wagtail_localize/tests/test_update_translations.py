@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core.models import Page, Locale
 from wagtail.tests.utils import WagtailTestUtils
 
@@ -137,8 +138,9 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'testsnippet'])
         )
 
+        extra = ' title="Sync translated snippets"' if WAGTAIL_VERSION > (2, 15) else ""
         self.assertContains(response, (
-            f'href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F">Sync translated snippets</a>'
+            f'href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"{extra}>Sync translated snippets</a>'
         ))
 
     def test_hides_if_snippet_hasnt_got_translations(self):
