@@ -1,0 +1,58 @@
+default_language_version:
+  python: python3.8
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-yaml
+        args: ['--unsafe']
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/psf/black
+    rev: 21.9b0
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/isort
+    # isort config is in setup.cfg
+    rev: 5.9.3
+    hooks:
+      - id: isort
+  - repo: https://gitlab.com/pycqa/flake8
+    # flake8 config is in setup.cfg
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-bugbear
+          - flake8-comprehensions
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: 'v1.18.2'
+    hooks:
+      - id: prettier
+        types_or: [markdown, css, scss, javascript, json, ts, tsx]
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: 'v8.1.0'
+    hooks:
+      - id: eslint
+        additional_dependencies:
+          - eslint@5.16.0
+          - eslint-config-airbnb@17.1.1
+          - eslint-config-prettier@^6.15.0
+          - eslint-config-torchbox@^0.2.0
+          - eslint-plugin-import@^2.23.4
+          - eslint-plugin-jsx-a11y@6.4.1
+          - eslint-plugin-react@7.24.0
+          - typescript@3.9.9
+          - '@typescript-eslint/eslint-plugin@1.13.0'
+          - '@typescript-eslint/parser@1.13.0'
+  - repo: https://github.com/asottile/blacken-docs
+    rev: v1.11.0
+    hooks:
+      - id: blacken-docs
+        additional_dependencies: [black==21.9b0]
