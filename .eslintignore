@@ -1,0 +1,7 @@
+node_modules
+coverage
+static_compiled
+venv
+.venv
+.tox
+!.eslintrc.js
