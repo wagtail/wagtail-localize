@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Thijs Kramer <thijskramer@gmail.com>, 2020
 # Coen van der Kamp <cvanderkamp@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Coen van der Kamp <cvanderkamp@gmail.com>, 2021\n"

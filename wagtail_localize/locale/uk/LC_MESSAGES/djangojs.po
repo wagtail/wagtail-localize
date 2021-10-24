@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # Mykola Zamkovoi <nickzam@gmail.com>, 2021
 # Vladyslav Herasymenko <drimacus182@gmail.com>, 2021
 # Viktor Shytiuk <VicHunting@yandex.ua>, 2021
 # Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021\n"

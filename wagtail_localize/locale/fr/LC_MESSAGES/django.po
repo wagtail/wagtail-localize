@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Loic Teixeira, 2021
 # Karl Hobley <karl@torchbox.com>, 2021
 # Benoît Bar <bar.benoit@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

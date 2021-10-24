@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Tatsiana Tsygan <art.tatsiana@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

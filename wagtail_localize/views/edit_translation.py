@@ -1,16 +1,18 @@
 import json
 import tempfile
+
 from collections import defaultdict
 
 import polib
+
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.functional import cached_property
 from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext as _
@@ -20,7 +22,13 @@ from rest_framework import serializers, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.admin import messages
-from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, BaseCompositeEditHandler, FieldPanel, PageChooserPanel
+from wagtail.admin.edit_handlers import (
+    BaseCompositeEditHandler,
+    FieldPanel,
+    ObjectList,
+    PageChooserPanel,
+    TabbedInterface,
+)
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -39,60 +47,81 @@ from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
 from wagtail_localize.compat import DATE_FORMAT
 from wagtail_localize.machine_translators import get_machine_translator
-from wagtail_localize.models import Translation, StringTranslation, StringSegment, OverridableSegment, SegmentOverride
+from wagtail_localize.models import (
+    OverridableSegment,
+    SegmentOverride,
+    StringSegment,
+    StringTranslation,
+    Translation,
+)
 from wagtail_localize.segments import StringSegmentValue
 
 
 class UserSerializer(serializers.ModelSerializer):
-    full_name = serializers.ReadOnlyField(source='get_full_name')
-    avatar_url = serializers.SerializerMethodField('get_avatar_url')
+    full_name = serializers.ReadOnlyField(source="get_full_name")
+    avatar_url = serializers.SerializerMethodField("get_avatar_url")
 
     def get_avatar_url(self, user):
         return avatar_url(user, size=25)
 
     class Meta:
         model = get_user_model()
-        fields = ['full_name', 'avatar_url']
+        fields = ["full_name", "avatar_url"]
 
 
 class StringTranslationSerializer(serializers.ModelSerializer):
-    string_id = serializers.ReadOnlyField(source='translation_of_id')
-    segment_id = serializers.SerializerMethodField('get_segment_id')
-    error = serializers.ReadOnlyField(source='get_error')
-    comment = serializers.ReadOnlyField(source='get_comment')
+    string_id = serializers.ReadOnlyField(source="translation_of_id")
+    segment_id = serializers.SerializerMethodField("get_segment_id")
+    error = serializers.ReadOnlyField(source="get_error")
+    comment = serializers.ReadOnlyField(source="get_comment")
     last_translated_by = UserSerializer()
 
     def get_segment_id(self, translation):
-        if 'translation_source' in self.context:
-            translation_source = self.context['translation_source']
-            return translation_source.stringsegment_set.filter(
-                string_id=translation.translation_of_id,
-                context_id=translation.context_id,
-            ).values_list('id', flat=True).first()
+        if "translation_source" in self.context:
+            translation_source = self.context["translation_source"]
+            return (
+                translation_source.stringsegment_set.filter(
+                    string_id=translation.translation_of_id,
+                    context_id=translation.context_id,
+                )
+                .values_list("id", flat=True)
+                .first()
+            )
 
     class Meta:
         model = StringTranslation
-        fields = ['string_id', 'segment_id', 'data', 'error', 'comment', 'last_translated_by']
+        fields = [
+            "string_id",
+            "segment_id",
+            "data",
+            "error",
+            "comment",
+            "last_translated_by",
+        ]
 
 
 class SegmentOverrideSerializer(serializers.ModelSerializer):
-    segment_id = serializers.SerializerMethodField('get_segment_id')
-    error = serializers.ReadOnlyField(source='get_error')
+    segment_id = serializers.SerializerMethodField("get_segment_id")
+    error = serializers.ReadOnlyField(source="get_error")
 
     def get_segment_id(self, override):
-        if 'translation_source' in self.context:
-            translation_source = self.context['translation_source']
+        if "translation_source" in self.context:
+            translation_source = self.context["translation_source"]
 
             try:
-                return translation_source.overridablesegment_set.only('id').get(
-                    context_id=override.context_id,
-                ).id
+                return (
+                    translation_source.overridablesegment_set.only("id")
+                    .get(
+                        context_id=override.context_id,
+                    )
+                    .id
+                )
             except OverridableSegment.DoesNotExist:
                 return
 
     class Meta:
         model = SegmentOverride
-        fields = ['segment_id', 'data', 'error']
+        fields = ["segment_id", "data", "error"]
 
 
 class TabHelper:
@@ -130,8 +159,8 @@ class TabHelper:
     def tabs_with_slugs(self):
         return [
             {
-                'label': label,
-                'slug': cautious_slugify(label),
+                "label": label,
+                "slug": cautious_slugify(label),
             }
             for label in self.tabs
         ]
@@ -212,9 +241,11 @@ class FieldHasNoEditPanelError(KeyError):
     pass
 
 
-def get_segment_location_info(source_instance, tab_helper, content_path, field_path, widget=False):
-    content_path_components = content_path.split('.')
-    field_path_components = field_path.split('.')
+def get_segment_location_info(
+    source_instance, tab_helper, content_path, field_path, widget=False
+):
+    content_path_components = content_path.split(".")
+    field_path_components = field_path.split(".")
     field = source_instance._meta.get_field(field_path_components[0])
 
     # Work out which tab the segment is on from edit handler
@@ -232,95 +263,104 @@ def get_segment_location_info(source_instance, tab_helper, content_path, field_p
 
                 if isinstance(edit_handler, PageChooserPanel):
                     return {
-                        'type': 'page_chooser',
-                        'allowed_page_types': [
-                            '{app}.{model}'.format(
-                                app=model._meta.app_label,
-                                model=model._meta.model_name)
+                        "type": "page_chooser",
+                        "allowed_page_types": [
+                            "{app}.{model}".format(
+                                app=model._meta.app_label, model=model._meta.model_name
+                            )
                             for model in edit_handler.target_models()
                         ],
                     }
 
                 else:
-                    return {
-                        'type': 'unknown'
-                    }
+                    return {"type": "unknown"}
 
             elif issubclass(field.related_model, AbstractDocument):
-                return {
-                    'type': 'document_chooser'
-                }
+                return {"type": "document_chooser"}
 
             elif issubclass(field.related_model, AbstractImage):
-                return {
-                    'type': 'image_chooser'
-                }
+                return {"type": "image_chooser"}
 
             elif issubclass(field.related_model, tuple(get_snippet_models())):
                 return {
-                    'type': 'snippet_chooser',
-                    'snippet_model': {
-                        'app_label': field.related_model._meta.app_label,
-                        'model_name': field.related_model._meta.model_name,
-                        'verbose_name': field.related_model._meta.verbose_name,
-                        'verbose_name_plural': field.related_model._meta.verbose_name_plural,
+                    "type": "snippet_chooser",
+                    "snippet_model": {
+                        "app_label": field.related_model._meta.app_label,
+                        "model_name": field.related_model._meta.model_name,
+                        "verbose_name": field.related_model._meta.verbose_name,
+                        "verbose_name_plural": field.related_model._meta.verbose_name_plural,
                     },
-                    'chooser_url': reverse('wagtailsnippets:choose', args=[field.related_model._meta.app_label, field.related_model._meta.model_name])
+                    "chooser_url": reverse(
+                        "wagtailsnippets:choose",
+                        args=[
+                            field.related_model._meta.app_label,
+                            field.related_model._meta.model_name,
+                        ],
+                    ),
                 }
 
-        elif isinstance(field, (models.CharField, models.TextField, models.EmailField, models.URLField)):
+        elif isinstance(
+            field,
+            (models.CharField, models.TextField, models.EmailField, models.URLField),
+        ):
             return {
-                'type': 'text',
+                "type": "text",
             }
 
-        return {
-            'type': 'unknown'
-        }
+        return {"type": "unknown"}
 
     def widget_from_block(block):
         if isinstance(block, blocks.PageChooserBlock):
             return {
-                'type': 'page_chooser',
-                'allowed_page_types': [
-                    '{app}.{model}'.format(
-                        app=model._meta.app_label,
-                        model=model._meta.model_name)
-
+                "type": "page_chooser",
+                "allowed_page_types": [
+                    "{app}.{model}".format(
+                        app=model._meta.app_label, model=model._meta.model_name
+                    )
                     # Note: Unlike PageChooserPanel, the block doesn't automatically fall back to [Page]
                     for model in block.target_models or [Page]
-                ]
+                ],
             }
 
         elif isinstance(block, DocumentChooserBlock):
-            return {
-                'type': 'document_chooser'
-            }
+            return {"type": "document_chooser"}
 
         elif isinstance(block, ImageChooserBlock):
-            return {
-                'type': 'image_chooser'
-            }
+            return {"type": "image_chooser"}
 
         elif isinstance(block, SnippetChooserBlock):
             return {
-                'type': 'snippet_chooser',
-                'snippet_model': {
-                    'app_label': block.target_model._meta.app_label,
-                    'model_name': block.target_model._meta.model_name,
-                    'verbose_name': block.target_model._meta.verbose_name,
-                    'verbose_name_plural': block.target_model._meta.verbose_name_plural,
+                "type": "snippet_chooser",
+                "snippet_model": {
+                    "app_label": block.target_model._meta.app_label,
+                    "model_name": block.target_model._meta.model_name,
+                    "verbose_name": block.target_model._meta.verbose_name,
+                    "verbose_name_plural": block.target_model._meta.verbose_name_plural,
                 },
-                'chooser_url': reverse('wagtailsnippets:choose', args=[block.target_model._meta.app_label, block.target_model._meta.model_name])
+                "chooser_url": reverse(
+                    "wagtailsnippets:choose",
+                    args=[
+                        block.target_model._meta.app_label,
+                        block.target_model._meta.model_name,
+                    ],
+                ),
             }
 
-        elif isinstance(block, (blocks.CharBlock, blocks.TextBlock, blocks.RichTextBlock, blocks.EmailBlock, blocks.URLBlock)):
+        elif isinstance(
+            block,
+            (
+                blocks.CharBlock,
+                blocks.TextBlock,
+                blocks.RichTextBlock,
+                blocks.EmailBlock,
+                blocks.URLBlock,
+            ),
+        ):
             return {
-                'type': 'text',
+                "type": "text",
             }
 
-        return {
-            'type': 'unknown'
-        }
+        return {"type": "unknown"}
 
     if isinstance(field, StreamField):
         block_type_name = field_path_components[1]
@@ -333,13 +373,13 @@ def get_segment_location_info(source_instance, tab_helper, content_path, field_p
             block_field = None
 
         return {
-            'tab': tab,
-            'field': capfirst(block_type.label),
-            'order': order,
-            'blockId': content_path_components[1],
-            'fieldHelpText': '',
-            'subField': block_field,
-            'widget': widget_from_block(block_type) if widget else None,
+            "tab": tab,
+            "field": capfirst(block_type.label),
+            "order": order,
+            "blockId": content_path_components[1],
+            "fieldHelpText": "",
+            "subField": block_field,
+            "widget": widget_from_block(block_type) if widget else None,
         }
 
     elif (
@@ -350,24 +390,24 @@ def get_segment_location_info(source_instance, tab_helper, content_path, field_p
         child_field = field.related_model._meta.get_field(field_path_components[1])
 
         return {
-            'tab': tab,
-            'field': capfirst(field.related_model._meta.verbose_name),
-            'order': order,
-            'blockId': content_path_components[1],
-            'fieldHelpText': child_field.help_text,
-            'subField': capfirst(child_field.verbose_name),
-            'widget': widget_from_field(child_field) if widget else None,
+            "tab": tab,
+            "field": capfirst(field.related_model._meta.verbose_name),
+            "order": order,
+            "blockId": content_path_components[1],
+            "fieldHelpText": child_field.help_text,
+            "subField": capfirst(child_field.verbose_name),
+            "widget": widget_from_field(child_field) if widget else None,
         }
 
     else:
         return {
-            'tab': tab,
-            'field': capfirst(field.verbose_name),
-            'order': order,
-            'blockId': None,
-            'fieldHelpText': field.help_text,
-            'subField': None,
-            'widget': widget_from_field(field) if widget else None,
+            "tab": tab,
+            "field": capfirst(field.verbose_name),
+            "order": order,
+            "blockId": None,
+            "fieldHelpText": field.help_text,
+            "subField": None,
+            "widget": widget_from_field(field) if widget else None,
         }
 
 
@@ -413,12 +453,14 @@ def edit_translation(request, translation, instance):
         can_unpublish = False
         can_lock = False
         can_unlock = False
-        can_delete = request.user.has_perm(get_permission_name('delete', instance.__class__))
+        can_delete = request.user.has_perm(
+            get_permission_name("delete", instance.__class__)
+        )
 
     source_instance = translation.source.get_source_instance()
 
-    if request.method == 'POST':
-        if request.POST.get('action') == 'publish':
+    if request.method == "POST":
+        if request.POST.get("action") == "publish":
             if isinstance(instance, Page):
                 if not page_perms.can_publish():
                     raise PermissionDenied
@@ -427,40 +469,65 @@ def edit_translation(request, translation, instance):
                 translation.save_target(user=request.user, publish=True)
 
             except ValidationError:
-                messages.error(request, _("New validation errors were found when publishing '{object}' in {locale}. Please fix them or click publish again to ignore these translations for now.").format(
-                    object=str(instance),
-                    locale=translation.target_locale.get_display_name()
-                ))
+                messages.error(
+                    request,
+                    _(
+                        "New validation errors were found when publishing '{object}' in {locale}. Please fix them or click publish again to ignore these translations for now."
+                    ).format(
+                        object=str(instance),
+                        locale=translation.target_locale.get_display_name(),
+                    ),
+                )
 
             else:
                 # Refresh instance to title in success message is up to date
                 instance.refresh_from_db()
 
-                string_segments = translation.source.stringsegment_set.all().order_by('order')
-                string_translations = string_segments.get_translations(translation.target_locale)
+                string_segments = translation.source.stringsegment_set.all().order_by(
+                    "order"
+                )
+                string_translations = string_segments.get_translations(
+                    translation.target_locale
+                )
 
                 # Using annotate_translation as this ignores errors by default (so both errors and missing segments treated the same)
-                if string_segments.annotate_translation(translation.target_locale).filter(translation__isnull=True).exists():
+                if (
+                    string_segments.annotate_translation(translation.target_locale)
+                    .filter(translation__isnull=True)
+                    .exists()
+                ):
                     # One or more strings had an error
-                    messages.warning(request, _("Published '{object}' in {locale} with missing translations - see below.").format(
-                        object=str(instance),
-                        locale=translation.target_locale.get_display_name()
-                    ))
+                    messages.warning(
+                        request,
+                        _(
+                            "Published '{object}' in {locale} with missing translations - see below."
+                        ).format(
+                            object=str(instance),
+                            locale=translation.target_locale.get_display_name(),
+                        ),
+                    )
 
                 else:
-                    messages.success(request, _("Published '{object}' in {locale}.").format(
-                        object=str(instance),
-                        locale=translation.target_locale.get_display_name()
-                    ))
+                    messages.success(
+                        request,
+                        _("Published '{object}' in {locale}.").format(
+                            object=str(instance),
+                            locale=translation.target_locale.get_display_name(),
+                        ),
+                    )
 
         return redirect(request.path)
 
-    string_segments = translation.source.stringsegment_set.all().order_by('order')
+    string_segments = translation.source.stringsegment_set.all().order_by("order")
     string_translations = string_segments.get_translations(translation.target_locale)
 
-    overridable_segments = translation.source.overridablesegment_set.all().order_by('order')
+    overridable_segments = translation.source.overridablesegment_set.all().order_by(
+        "order"
+    )
     segment_overrides = overridable_segments.get_overrides(translation.target_locale)
-    related_object_segments = translation.source.relatedobjectsegment_set.all().order_by('order')
+    related_object_segments = (
+        translation.source.relatedobjectsegment_set.all().order_by("order")
+    )
 
     tab_helper = TabHelper(source_instance)
 
@@ -473,81 +540,130 @@ def edit_translation(request, translation, instance):
         if cca:
             breadcrumb = [
                 {
-                    'id': page.id,
-                    'isRoot': page.is_root(),
-                    'title': page.title,
-                    'exploreUrl': reverse('wagtailadmin_explore_root') if page.is_root() else reverse('wagtailadmin_explore', args=[page.id]),
+                    "id": page.id,
+                    "isRoot": page.is_root(),
+                    "title": page.title,
+                    "exploreUrl": reverse("wagtailadmin_explore_root")
+                    if page.is_root()
+                    else reverse("wagtailadmin_explore", args=[page.id]),
                 }
-                for page in instance.get_ancestors(inclusive=False).descendant_of(cca, inclusive=True)
+                for page in instance.get_ancestors(inclusive=False).descendant_of(
+                    cca, inclusive=True
+                )
             ]
 
         # Set to the ID of a string segment that represents the title.
         # If this segment has a translation, the title will be replaced with that translation.
         try:
-            title_segment_id = string_segments.get(context__path='title').id
+            title_segment_id = string_segments.get(context__path="title").id
         except StringSegment.DoesNotExist:
             pass
 
     machine_translator = None
     translator = get_machine_translator()
-    if translator and translator.can_translate(translation.source.locale, translation.target_locale):
+    if translator and translator.can_translate(
+        translation.source.locale, translation.target_locale
+    ):
         machine_translator = {
-            'name': translator.display_name,
-            'url': reverse('wagtail_localize:machine_translate', args=[translation.id]),
+            "name": translator.display_name,
+            "url": reverse("wagtail_localize:machine_translate", args=[translation.id]),
         }
 
     segments = []
 
     for segment in string_segments:
         try:
-            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, segment.context.get_field_path(source_instance))
+            location_info = get_segment_location_info(
+                source_instance,
+                tab_helper,
+                segment.context.path,
+                segment.context.get_field_path(source_instance),
+            )
         except FieldHasNoEditPanelError:
             continue
 
-        segments.append({
-            'type': 'string',
-            'id': segment.id,
-            'contentPath': segment.context.path,
-            'source': segment.string.data,
-            'location': location_info,
-            'editUrl': reverse('wagtail_localize:edit_string_translation', kwargs={'translation_id': translation.id, 'string_segment_id': segment.id}),
-            'order': segment.order,
-        })
+        segments.append(
+            {
+                "type": "string",
+                "id": segment.id,
+                "contentPath": segment.context.path,
+                "source": segment.string.data,
+                "location": location_info,
+                "editUrl": reverse(
+                    "wagtail_localize:edit_string_translation",
+                    kwargs={
+                        "translation_id": translation.id,
+                        "string_segment_id": segment.id,
+                    },
+                ),
+                "order": segment.order,
+            }
+        )
 
     for segment in overridable_segments:
         try:
-            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, segment.context.get_field_path(source_instance), widget=True)
+            location_info = get_segment_location_info(
+                source_instance,
+                tab_helper,
+                segment.context.path,
+                segment.context.get_field_path(source_instance),
+                widget=True,
+            )
         except FieldHasNoEditPanelError:
             continue
 
-        segments.append({
-            'type': 'synchronised_value',
-            'id': segment.id,
-            'contentPath': segment.context.path,
-            'location': location_info,
-            'value': segment.data,
-            'editUrl': reverse('wagtail_localize:edit_override', kwargs={'translation_id': translation.id, 'overridable_segment_id': segment.id}),
-            'order': segment.order,
-        })
+        segments.append(
+            {
+                "type": "synchronised_value",
+                "id": segment.id,
+                "contentPath": segment.context.path,
+                "location": location_info,
+                "value": segment.data,
+                "editUrl": reverse(
+                    "wagtail_localize:edit_override",
+                    kwargs={
+                        "translation_id": translation.id,
+                        "overridable_segment_id": segment.id,
+                    },
+                ),
+                "order": segment.order,
+            }
+        )
 
     def get_source_object_info(segment):
         instance = segment.get_source_instance()
 
         if isinstance(instance, Page):
             return {
-                'title': str(instance),
-                'isLive': instance.live,
-                'liveUrl': instance.full_url,
-                'editUrl': reverse('wagtailadmin_pages:edit', args=[instance.id]),
-                'createTranslationRequestUrl': reverse('wagtail_localize:submit_page_translation', args=[instance.id]),
+                "title": str(instance),
+                "isLive": instance.live,
+                "liveUrl": instance.full_url,
+                "editUrl": reverse("wagtailadmin_pages:edit", args=[instance.id]),
+                "createTranslationRequestUrl": reverse(
+                    "wagtail_localize:submit_page_translation", args=[instance.id]
+                ),
             }
 
         else:
             return {
-                'title': str(instance),
-                'isLive': True,
-                'editUrl': reverse('wagtailsnippets:edit', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)]),
-                'createTranslationRequestUrl': reverse('wagtail_localize:submit_snippet_translation', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)]),
+                "title": str(instance),
+                "isLive": True,
+                "editUrl": reverse(
+                    "wagtailsnippets:edit",
+                    args=[
+                        instance._meta.app_label,
+                        instance._meta.model_name,
+                        quote(instance.id),
+                    ],
+                ),
+                "createTranslationRequestUrl": reverse(
+                    "wagtail_localize:submit_snippet_translation",
+                    args=[
+                        instance._meta.app_label,
+                        instance._meta.model_name,
+                        quote(instance.id),
+                    ],
+                ),
             }
 
     def get_dest_object_info(segment):
@@ -557,22 +673,31 @@ def edit_translation(request, translation, instance):
 
         if isinstance(instance, Page):
             return {
-                'title': str(instance),
-                'isLive': instance.live,
-                'liveUrl': instance.full_url,
-                'editUrl': reverse('wagtailadmin_pages:edit', args=[instance.id]),
+                "title": str(instance),
+                "isLive": instance.live,
+                "liveUrl": instance.full_url,
+                "editUrl": reverse("wagtailadmin_pages:edit", args=[instance.id]),
             }
 
         else:
             return {
-                'title': str(instance),
-                'isLive': True,
-                'editUrl': reverse('wagtailsnippets:edit', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)]),
+                "title": str(instance),
+                "isLive": True,
+                "editUrl": reverse(
+                    "wagtailsnippets:edit",
+                    args=[
+                        instance._meta.app_label,
+                        instance._meta.model_name,
+                        quote(instance.id),
+                    ],
+                ),
             }
 
     def get_translation_progress(segment, locale):
         try:
-            translation = Translation.objects.get(source__object_id=segment.object_id, target_locale=locale, enabled=True)
+            translation = Translation.objects.get(
+                source__object_id=segment.object_id, target_locale=locale, enabled=True
+            )
 
         except Translation.DoesNotExist:
             return None
@@ -580,26 +705,35 @@ def edit_translation(request, translation, instance):
         total_segments, translated_segments = translation.get_progress()
 
         return {
-            'totalSegments': total_segments,
-            'translatedSegments': translated_segments,
+            "totalSegments": total_segments,
+            "translatedSegments": translated_segments,
         }
 
     for segment in related_object_segments:
         try:
-            location_info = get_segment_location_info(source_instance, tab_helper, segment.context.path, segment.context.get_field_path(source_instance))
+            location_info = get_segment_location_info(
+                source_instance,
+                tab_helper,
+                segment.context.path,
+                segment.context.get_field_path(source_instance),
+            )
         except FieldHasNoEditPanelError:
             continue
 
-        segments.append({
-            'type': 'related_object',
-            'id': segment.id,
-            'contentPath': segment.context.path,
-            'location': location_info,
-            'order': segment.order,
-            'source': get_source_object_info(segment),
-            'dest': get_dest_object_info(segment),
-            'translationProgress': get_translation_progress(segment, translation.target_locale),
-        })
+        segments.append(
+            {
+                "type": "related_object",
+                "id": segment.id,
+                "contentPath": segment.context.path,
+                "location": location_info,
+                "order": segment.order,
+                "source": get_source_object_info(segment),
+                "dest": get_dest_object_info(segment),
+                "translationProgress": get_translation_progress(
+                    segment, translation.target_locale
+                ),
+            }
+        )
 
     # Order segments by how they appear in the content panels
     # segment['location']['order'] is the content panel ordering
@@ -609,7 +743,7 @@ def edit_translation(request, translation, instance):
     # come from the same streamfield/inline panel are given the same value for
     # panel ordering, so we need to order by model field ordering as well (all
     # segments have a unique value for model field ordering)
-    segments.sort(key=lambda segment: (segment['location']['order'], segment['order']))
+    segments.sort(key=lambda segment: (segment["location"]["order"], segment["order"]))
 
     # Display a warning to the user if the schema of the source model has been updated since the source was last updated
     if translation.source.schema_out_of_date():
@@ -618,79 +752,148 @@ def edit_translation(request, translation, instance):
             _(
                 "The data model for '{model_name}' has been changed since the last translation sync. "
                 "If any new fields have been added recently, these may not be visible until the next translation sync."
-            ).format(model_name=capfirst(source_instance._meta.verbose_name))
+            ).format(model_name=capfirst(source_instance._meta.verbose_name)),
         )
 
-    return render(request, 'wagtail_localize/admin/edit_translation.html', {
-        'translation': translation,
-
-        # These props are passed directly to the TranslationEditor react component
-        'props': json.dumps({
-            'adminBaseUrl': reverse('wagtailadmin_home'),
-            'object': {
-                'title': str(instance),
-                'titleSegmentId': title_segment_id,
-                'isLive': is_live,
-                'isLocked': is_locked,
-                'lastPublishedDate': last_published_at.strftime(DATE_FORMAT) if last_published_at is not None else None,
-                'lastPublishedBy': UserSerializer(last_published_by).data if last_published_by is not None else None,
-                'liveUrl': live_url,
-            },
-            'breadcrumb': breadcrumb,
-            'tabs': tab_helper.tabs_with_slugs,
-            'sourceLocale': {
-                'code': translation.source.locale.language_code,
-                'displayName': translation.source.locale.get_display_name(),
-            },
-            'locale': {
-                'code': translation.target_locale.language_code,
-                'displayName': translation.target_locale.get_display_name(),
-            },
-            'translations': [
+    return render(
+        request,
+        "wagtail_localize/admin/edit_translation.html",
+        {
+            "translation": translation,
+            # These props are passed directly to the TranslationEditor react component
+            "props": json.dumps(
                 {
-                    'title': str(translated_instance),
-                    'locale': {
-                        'code': translated_instance.locale.language_code,
-                        'displayName': translated_instance.locale.get_display_name(),
+                    "adminBaseUrl": reverse("wagtailadmin_home"),
+                    "object": {
+                        "title": str(instance),
+                        "titleSegmentId": title_segment_id,
+                        "isLive": is_live,
+                        "isLocked": is_locked,
+                        "lastPublishedDate": last_published_at.strftime(DATE_FORMAT)
+                        if last_published_at is not None
+                        else None,
+                        "lastPublishedBy": UserSerializer(last_published_by).data
+                        if last_published_by is not None
+                        else None,
+                        "liveUrl": live_url,
                     },
-                    'editUrl': reverse('wagtailadmin_pages:edit', args=[translated_instance.id]) if isinstance(translated_instance, Page) else reverse('wagtailsnippets:edit', args=[translated_instance._meta.app_label, translated_instance._meta.model_name, quote(translated_instance.id)]),
-                }
-                for translated_instance in instance.get_translations().select_related('locale')
-            ],
-            'perms': {
-                'canPublish': can_publish,
-                'canUnpublish': can_unpublish,
-                'canLock': can_lock,
-                'canUnlock': can_unlock,
-                'canDelete': can_delete,
-            },
-            'links': {
-                'downloadPofile': reverse('wagtail_localize:download_pofile', args=[translation.id]),
-                'uploadPofile': reverse('wagtail_localize:upload_pofile', args=[translation.id]),
-                'unpublishUrl': reverse('wagtailadmin_pages:unpublish', args=[instance.id]) if isinstance(instance, Page) else None,
-                'lockUrl': reverse('wagtailadmin_pages:lock', args=[instance.id]) if isinstance(instance, Page) else None,
-                'unlockUrl': reverse('wagtailadmin_pages:unlock', args=[instance.id]) if isinstance(instance, Page) else None,
-                'deleteUrl': reverse('wagtailadmin_pages:delete', args=[instance.id]) if isinstance(instance, Page) else reverse('wagtailsnippets:delete', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.pk)]),
-                'stopTranslationUrl': reverse('wagtail_localize:stop_translation', args=[translation.id]),
-            },
-            'previewModes': [
-                {
-                    'mode': mode,
-                    'label': label,
-                    'url': reverse('wagtail_localize:preview_translation', args=[translation.id]) if mode == instance.default_preview_mode else reverse('wagtail_localize:preview_translation', args=[translation.id, mode]),
-                }
-                for mode, label in (instance.preview_modes if isinstance(instance, Page) else [])
-            ],
-            'machineTranslator': machine_translator,
-            'segments': segments,
-
-            # We serialize the translation data using Django REST Framework.
-            # This gives us a consistent representation with the APIs so we
-            # can dynamically update translations in the view.
-            'initialStringTranslations': StringTranslationSerializer(string_translations, many=True, context={'translation_source': translation.source}).data,
-            'initialOverrides': SegmentOverrideSerializer(segment_overrides, many=True, context={'translation_source': translation.source}).data,
-        }, cls=DjangoJSONEncoder)
-    })
+                    "breadcrumb": breadcrumb,
+                    "tabs": tab_helper.tabs_with_slugs,
+                    "sourceLocale": {
+                        "code": translation.source.locale.language_code,
+                        "displayName": translation.source.locale.get_display_name(),
+                    },
+                    "locale": {
+                        "code": translation.target_locale.language_code,
+                        "displayName": translation.target_locale.get_display_name(),
+                    },
+                    "translations": [
+                        {
+                            "title": str(translated_instance),
+                            "locale": {
+                                "code": translated_instance.locale.language_code,
+                                "displayName": translated_instance.locale.get_display_name(),
+                            },
+                            "editUrl": reverse(
+                                "wagtailadmin_pages:edit", args=[translated_instance.id]
+                            )
+                            if isinstance(translated_instance, Page)
+                            else reverse(
+                                "wagtailsnippets:edit",
+                                args=[
+                                    translated_instance._meta.app_label,
+                                    translated_instance._meta.model_name,
+                                    quote(translated_instance.id),
+                                ],
+                            ),
+                        }
+                        for translated_instance in instance.get_translations().select_related(
+                            "locale"
+                        )
+                    ],
+                    "perms": {
+                        "canPublish": can_publish,
+                        "canUnpublish": can_unpublish,
+                        "canLock": can_lock,
+                        "canUnlock": can_unlock,
+                        "canDelete": can_delete,
+                    },
+                    "links": {
+                        "downloadPofile": reverse(
+                            "wagtail_localize:download_pofile", args=[translation.id]
+                        ),
+                        "uploadPofile": reverse(
+                            "wagtail_localize:upload_pofile", args=[translation.id]
+                        ),
+                        "unpublishUrl": reverse(
+                            "wagtailadmin_pages:unpublish", args=[instance.id]
+                        )
+                        if isinstance(instance, Page)
+                        else None,
+                        "lockUrl": reverse(
+                            "wagtailadmin_pages:lock", args=[instance.id]
+                        )
+                        if isinstance(instance, Page)
+                        else None,
+                        "unlockUrl": reverse(
+                            "wagtailadmin_pages:unlock", args=[instance.id]
+                        )
+                        if isinstance(instance, Page)
+                        else None,
+                        "deleteUrl": reverse(
+                            "wagtailadmin_pages:delete", args=[instance.id]
+                        )
+                        if isinstance(instance, Page)
+                        else reverse(
+                            "wagtailsnippets:delete",
+                            args=[
+                                instance._meta.app_label,
+                                instance._meta.model_name,
+                                quote(instance.pk),
+                            ],
+                        ),
+                        "stopTranslationUrl": reverse(
+                            "wagtail_localize:stop_translation", args=[translation.id]
+                        ),
+                    },
+                    "previewModes": [
+                        {
+                            "mode": mode,
+                            "label": label,
+                            "url": reverse(
+                                "wagtail_localize:preview_translation",
+                                args=[translation.id],
+                            )
+                            if mode == instance.default_preview_mode
+                            else reverse(
+                                "wagtail_localize:preview_translation",
+                                args=[translation.id, mode],
+                            ),
+                        }
+                        for mode, label in (
+                            instance.preview_modes if isinstance(instance, Page) else []
+                        )
+                    ],
+                    "machineTranslator": machine_translator,
+                    "segments": segments,
+                    # We serialize the translation data using Django REST Framework.
+                    # This gives us a consistent representation with the APIs so we
+                    # can dynamically update translations in the view.
+                    "initialStringTranslations": StringTranslationSerializer(
+                        string_translations,
+                        many=True,
+                        context={"translation_source": translation.source},
+                    ).data,
+                    "initialOverrides": SegmentOverrideSerializer(
+                        segment_overrides,
+                        many=True,
+                        context={"translation_source": translation.source},
+                    ).data,
+                },
+                cls=DjangoJSONEncoder,
+            ),
+        },
+    )
 
 
 def user_can_edit_instance(user, instance):
@@ -721,7 +924,9 @@ def preview_translation(request, translation_id, mode=None):
     if mode not in dict(instance.preview_modes):
         raise Http404
 
-    translation = translation.source.get_ephemeral_translated_instance(translation.target_locale, fallback=True)
+    translation = translation.source.get_ephemeral_translated_instance(
+        translation.target_locale, fallback=True
+    )
 
     return translation.make_preview_request(request, mode)
 
@@ -735,17 +940,14 @@ def stop_translation(request, translation_id):
         raise PermissionDenied
 
     translation.enabled = False
-    translation.save(update_fields=['enabled'])
+    translation.save(update_fields=["enabled"])
 
     next_url = get_valid_next_url_from_request(request)
     if not next_url:
         # Note: You should always provide a next URL when using this view!
-        next_url = reverse('wagtailadmin_home')
+        next_url = reverse("wagtailadmin_home")
 
-    messages.success(
-        request,
-        _("Translation has been stopped.")
-    )
+    messages.success(request, _("Translation has been stopped."))
 
     return redirect(next_url)
 
@@ -754,20 +956,22 @@ def stop_translation(request, translation_id):
 def restart_translation(request, translation, instance):
     # This view is hooked in using the before_edit_page hook so we don't need to check for edit permission
     translation.enabled = True
-    translation.save(update_fields=['enabled'])
+    translation.save(update_fields=["enabled"])
 
-    messages.success(
-        request,
-        _("Translation has been restarted.")
-    )
+    messages.success(request, _("Translation has been restarted."))
 
     if isinstance(instance, Page):
-        return redirect('wagtailadmin_pages:edit', instance.id)
+        return redirect("wagtailadmin_pages:edit", instance.id)
     else:
-        return redirect('wagtailsnippets:edit', instance._meta.app_label, instance._meta.model_name, quote(instance.pk))
+        return redirect(
+            "wagtailsnippets:edit",
+            instance._meta.app_label,
+            instance._meta.model_name,
+            quote(instance.pk),
+        )
 
 
-@api_view(['PUT', 'DELETE'])
+@api_view(["PUT", "DELETE"])
 def edit_string_translation(request, translation_id, string_segment_id):
     translation = get_object_or_404(Translation, id=translation_id)
     string_segment = get_object_or_404(StringSegment, id=string_segment_id)
@@ -779,24 +983,29 @@ def edit_string_translation(request, translation_id, string_segment_id):
     if not user_can_edit_instance(request.user, instance):
         raise PermissionDenied
 
-    if request.method == 'PUT':
+    if request.method == "PUT":
         string_translation, created = StringTranslation.objects.update_or_create(
             translation_of_id=string_segment.string_id,
             locale_id=translation.target_locale_id,
             context_id=string_segment.context_id,
             defaults={
-                'data': request.POST['value'],
-                'translation_type': StringTranslation.TRANSLATION_TYPE_MANUAL,
-                'tool_name': "",
-                'last_translated_by': request.user,
-                'has_error': False,
-                'field_error': "",
-            }
+                "data": request.POST["value"],
+                "translation_type": StringTranslation.TRANSLATION_TYPE_MANUAL,
+                "tool_name": "",
+                "last_translated_by": request.user,
+                "has_error": False,
+                "field_error": "",
+            },
         )
 
-        return Response(StringTranslationSerializer(string_translation, context={'translation_source': translation.source}).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        return Response(
+            StringTranslationSerializer(
+                string_translation, context={"translation_source": translation.source}
+            ).data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
 
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         string_translation = StringTranslation.objects.filter(
             translation_of_id=string_segment.string_id,
             locale_id=translation.target_locale_id,
@@ -806,17 +1015,25 @@ def edit_string_translation(request, translation_id, string_segment_id):
         if string_translation:
             string_translation.delete()
 
-            return Response(StringTranslationSerializer(string_translation, context={'translation_source': translation.source}).data, status=status.HTTP_200_OK)
+            return Response(
+                StringTranslationSerializer(
+                    string_translation,
+                    context={"translation_source": translation.source},
+                ).data,
+                status=status.HTTP_200_OK,
+            )
 
         else:
             # Note: this is still considered a success in the frontend
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['PUT', 'DELETE'])
+@api_view(["PUT", "DELETE"])
 def edit_override(request, translation_id, overridable_segment_id):
     translation = get_object_or_404(Translation, id=translation_id)
-    overridable_segment = get_object_or_404(OverridableSegment, id=overridable_segment_id)
+    overridable_segment = get_object_or_404(
+        OverridableSegment, id=overridable_segment_id
+    )
 
     if overridable_segment.context.object_id != translation.source.object_id:
         raise Http404
@@ -825,19 +1042,24 @@ def edit_override(request, translation_id, overridable_segment_id):
     if not user_can_edit_instance(request.user, instance):
         raise PermissionDenied
 
-    if request.method == 'PUT':
+    if request.method == "PUT":
         override, created = SegmentOverride.objects.update_or_create(
             locale_id=translation.target_locale_id,
             context_id=overridable_segment.context_id,
             defaults={
-                'data_json': json.dumps(request.POST['value']),
-                'last_translated_by': request.user,
-            }
+                "data_json": json.dumps(request.POST["value"]),
+                "last_translated_by": request.user,
+            },
         )
 
-        return Response(SegmentOverrideSerializer(override, context={'translation_source': translation.source}).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        return Response(
+            SegmentOverrideSerializer(
+                override, context={"translation_source": translation.source}
+            ).data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
 
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         override = SegmentOverride.objects.filter(
             locale_id=translation.target_locale_id,
             context_id=overridable_segment.context_id,
@@ -846,7 +1068,12 @@ def edit_override(request, translation_id, overridable_segment_id):
         if override:
             override.delete()
 
-            return Response(SegmentOverrideSerializer(override, context={'translation_source': translation.source}).data, status=status.HTTP_200_OK)
+            return Response(
+                SegmentOverrideSerializer(
+                    override, context={"translation_source": translation.source}
+                ).data,
+                status=status.HTTP_200_OK,
+            )
 
         else:
             # Note: this is still considered a success in the frontend
@@ -860,12 +1087,12 @@ def download_pofile(request, translation_id):
     if not user_can_edit_instance(request.user, instance):
         raise PermissionDenied
 
-    response = HttpResponse(str(translation.export_po()), content_type="text/x-gettext-translation")
-    response["Content-Disposition"] = (
-        "attachment; filename=%s-%s.po" % (
-            slugify(translation.source.object_repr),
-            translation.target_locale.language_code,
-        )
+    response = HttpResponse(
+        str(translation.export_po()), content_type="text/x-gettext-translation"
+    )
+    response["Content-Disposition"] = "attachment; filename=%s-%s.po" % (
+        slugify(translation.source.object_repr),
+        translation.target_locale.language_code,
     )
     return response
 
@@ -892,34 +1119,30 @@ def upload_pofile(request, translation_id):
 
         except (OSError, UnicodeDecodeError):
             # Annoyingly, POLib uses OSError for parser exceptions...
-            messages.error(
-                request,
-                _("Please upload a valid PO file.")
-            )
+            messages.error(request, _("Please upload a valid PO file."))
             do_import = False
 
     if do_import:
-        translation_id = po.metadata['X-WagtailLocalize-TranslationID']
+        translation_id = po.metadata["X-WagtailLocalize-TranslationID"]
         if translation_id != str(translation.uuid):
             messages.error(
                 request,
-                _("Cannot import PO file that was created for a different translation.")
+                _(
+                    "Cannot import PO file that was created for a different translation."
+                ),
             )
             do_import = False
 
     if do_import:
         translation.import_po(po, user=request.user, tool_name="PO File")
 
-        messages.success(
-            request,
-            _("Successfully imported translations from PO File.")
-        )
+        messages.success(request, _("Successfully imported translations from PO File."))
 
     # Work out where to redirect to
     next_url = get_valid_next_url_from_request(request)
     if not next_url:
         # Note: You should always provide a next URL when using this view!
-        next_url = reverse('wagtailadmin_home')
+        next_url = reverse("wagtailadmin_home")
 
     return redirect(next_url)
 
@@ -936,12 +1159,16 @@ def machine_translate(request, translation_id):
     if translator is None:
         raise Http404
 
-    if not translator.can_translate(translation.source.locale, translation.target_locale):
+    if not translator.can_translate(
+        translation.source.locale, translation.target_locale
+    ):
         raise Http404
 
     # Get segments
     segments = defaultdict(list)
-    for string_segment in translation.source.stringsegment_set.all().select_related("context", "string"):
+    for string_segment in translation.source.stringsegment_set.all().select_related(
+        "context", "string"
+    ):
         segment = StringSegmentValue(
             string_segment.context.path, string_segment.string.as_value()
         ).with_order(string_segment.order)
@@ -956,10 +1183,14 @@ def machine_translate(request, translation_id):
         ).exists():
             continue
 
-        segments[segment.string].append((string_segment.string_id, string_segment.context_id))
+        segments[segment.string].append(
+            (string_segment.string_id, string_segment.context_id)
+        )
 
     if segments:
-        translations = translator.translate(translation.source.locale, translation.target_locale, segments.keys())
+        translations = translator.translate(
+            translation.source.locale, translation.target_locale, segments.keys()
+        )
 
         with transaction.atomic():
             for string, contexts in segments.items():
@@ -969,47 +1200,50 @@ def machine_translate(request, translation_id):
                         locale=translation.target_locale,
                         context_id=context_id,
                         defaults={
-                            'data': translations[string].data,
-                            'translation_type': StringTranslation.TRANSLATION_TYPE_MACHINE,
-                            'tool_name': translator.display_name,
-                            'last_translated_by': request.user,
-                            'has_error': False,
-                            'field_error': "",
-                        }
+                            "data": translations[string].data,
+                            "translation_type": StringTranslation.TRANSLATION_TYPE_MACHINE,
+                            "tool_name": translator.display_name,
+                            "last_translated_by": request.user,
+                            "has_error": False,
+                            "field_error": "",
+                        },
                     )
 
         messages.success(
             request,
-            _("Successfully translated with {}.").format(translator.display_name)
+            _("Successfully translated with {}.").format(translator.display_name),
         )
 
     else:
-        messages.warning(
-            request,
-            _("There isn't anything left to translate.")
-        )
+        messages.warning(request, _("There isn't anything left to translate."))
 
     # Work out where to redirect to
     next_url = get_valid_next_url_from_request(request)
     if not next_url:
         # Note: You should always provide a next URL when using this view!
-        next_url = reverse('wagtailadmin_home')
+        next_url = reverse("wagtailadmin_home")
 
     return redirect(next_url)
 
 
 def edit_translatable_alias_page(request, page):
-    return render(request, 'wagtail_localize/admin/edit_translatable_alias.html', {
-        'page': page,
-        'page_for_status': page,
-        'content_type': page.cached_content_type,
-        'next': get_valid_next_url_from_request(request),
-        'locale': page.locale,
-        'translations': [
-            {
-                'locale': translation.locale,
-                'url': reverse('wagtailadmin_pages:edit', args=[translation.id]),
-            }
-            for translation in page.get_translations().only('id', 'locale').select_related('locale')
-        ],
-    })
+    return render(
+        request,
+        "wagtail_localize/admin/edit_translatable_alias.html",
+        {
+            "page": page,
+            "page_for_status": page,
+            "content_type": page.cached_content_type,
+            "next": get_valid_next_url_from_request(request),
+            "locale": page.locale,
+            "translations": [
+                {
+                    "locale": translation.locale,
+                    "url": reverse("wagtailadmin_pages:edit", args=[translation.id]),
+                }
+                for translation in page.get_translations()
+                .only("id", "locale")
+                .select_related("locale")
+            ],
+        },
+    )

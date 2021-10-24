@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0008_stringtranslation_last_translated_by'),
+        ("wagtail_localize", "0008_stringtranslation_last_translated_by"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='stringtranslation',
-            name='field_error',
+            model_name="stringtranslation",
+            name="field_error",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='stringtranslation',
-            name='has_error',
+            model_name="stringtranslation",
+            name="has_error",
             field=models.BooleanField(default=False),
         ),
     ]

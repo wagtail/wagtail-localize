@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize_test', '0015_testsnippet_small_charfield'),
+        ("wagtail_localize_test", "0015_testsnippet_small_charfield"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='testpage',
-            name='test_not_overridable_synchronized_textfield',
+            model_name="testpage",
+            name="test_not_overridable_synchronized_textfield",
             field=models.TextField(blank=True),
         ),
     ]

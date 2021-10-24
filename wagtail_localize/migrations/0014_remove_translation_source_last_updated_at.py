@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0013_translationsource_schema_version'),
+        ("wagtail_localize", "0013_translationsource_schema_version"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='translation',
-            name='source_last_updated_at',
+            model_name="translation",
+            name="source_last_updated_at",
         ),
     ]

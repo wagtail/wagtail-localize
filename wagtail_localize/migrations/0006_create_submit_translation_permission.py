@@ -4,49 +4,50 @@ from django.db import migrations
 
 
 def create_submit_translation_permission(apps, schema_editor):
-    ContentType = apps.get_model('contenttypes.ContentType')
-    Permission = apps.get_model('auth.Permission')
-    Group = apps.get_model('auth.Group')
+    ContentType = apps.get_model("contenttypes.ContentType")
+    Permission = apps.get_model("auth.Permission")
+    Group = apps.get_model("auth.Group")
 
     # Add a fake content type to hang the 'Can submit translations' permission off.
     # The fact that this doesn't correspond to an actual defined model shouldn't matter, I hope...
     wagtailadmin_content_type, created = ContentType.objects.get_or_create(
-        app_label='wagtail_localize',
-        model='translation'
+        app_label="wagtail_localize", model="translation"
     )
 
     # Create admin permission
     submit_permission, created = Permission.objects.get_or_create(
         content_type=wagtailadmin_content_type,
-        codename='submit_translation',
-        name='Can submit translations'
+        codename="submit_translation",
+        name="Can submit translations",
     )
 
     # Assign it to Editors and Moderators groups
-    for group in Group.objects.filter(name__in=['Editors', 'Moderators']):
+    for group in Group.objects.filter(name__in=["Editors", "Moderators"]):
         group.permissions.add(submit_permission)
 
 
 def remove_submit_translation_permission(apps, schema_editor):
-    ContentType = apps.get_model('contenttypes.ContentType')
-    Permission = apps.get_model('auth.Permission')
+    ContentType = apps.get_model("contenttypes.ContentType")
+    Permission = apps.get_model("auth.Permission")
     wagtailadmin_content_type = ContentType.objects.get(
-        app_label='wagtail_localize',
-        model='translation',
+        app_label="wagtail_localize",
+        model="translation",
     )
     # This cascades to Group
     Permission.objects.filter(
         content_type=wagtailadmin_content_type,
-        codename='submit_translation',
+        codename="submit_translation",
     ).delete()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0005_remove_translationsource_object'),
+        ("wagtail_localize", "0005_remove_translationsource_object"),
     ]
 
     operations = [
-        migrations.RunPython(create_submit_translation_permission, remove_submit_translation_permission),
+        migrations.RunPython(
+            create_submit_translation_permission, remove_submit_translation_permission
+        ),
     ]

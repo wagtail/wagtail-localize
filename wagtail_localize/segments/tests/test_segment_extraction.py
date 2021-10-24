@@ -1,26 +1,25 @@
-import uuid
 import unittest
+import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page, Site
 
 from wagtail_localize.segments import (
+    OverridableSegmentValue,
+    RelatedObjectSegmentValue,
     StringSegmentValue,
     TemplateSegmentValue,
-    RelatedObjectSegmentValue,
-    OverridableSegmentValue,
 )
 from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import (
+    TestChildObject,
+    TestModelWithInvalidForeignKey,
+    TestNonParentalChildObject,
     TestPage,
     TestSnippet,
-    TestChildObject,
-    TestNonParentalChildObject,
-    TestModelWithInvalidForeignKey,
 )
 
 
@@ -42,19 +41,14 @@ RICH_TEXT_TEST_OUTPUT = [
     StringSegmentValue("", "This is a heading"),
     StringSegmentValue.from_source_html(
         "",
-        'This is a paragraph. &lt;foo&gt; <b>Bold text</b>',
+        "This is a paragraph. &lt;foo&gt; <b>Bold text</b>",
     ),
     StringSegmentValue(
         "",
         StringValue('<a id="a1">This is a link</a>.'),
-        attrs={
-            "a1": {"href": "http://example.com"}
-        }
+        attrs={"a1": {"href": "http://example.com"}},
     ),
-    OverridableSegmentValue(
-        "'http://example.com'",
-        "http://example.com"
-    )
+    OverridableSegmentValue("'http://example.com'", "http://example.com"),
 ]
 
 
@@ -63,7 +57,9 @@ class TestSegmentExtraction(TestCase):
         page = make_test_page(test_charfield="Test content")
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [StringSegmentValue("test_charfield", "Test content")])
+        self.assertEqual(
+            segments, [StringSegmentValue("test_charfield", "Test content")]
+        )
 
     def test_null_charfield(self):
         page = make_test_page(test_charfield=None)
@@ -75,7 +71,9 @@ class TestSegmentExtraction(TestCase):
         page = make_test_page(test_textfield="Test content")
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [StringSegmentValue("test_textfield", "Test content")])
+        self.assertEqual(
+            segments, [StringSegmentValue("test_textfield", "Test content")]
+        )
 
     def test_emailfield(self):
         page = make_test_page(test_emailfield="test@example.com")
@@ -89,14 +87,17 @@ class TestSegmentExtraction(TestCase):
         page = make_test_page(test_slugfield="test-content")
         segments = extract_segments(page)
 
-        self.assertEqual(segments, [StringSegmentValue("test_slugfield", "test-content")])
+        self.assertEqual(
+            segments, [StringSegmentValue("test_slugfield", "test-content")]
+        )
 
     def test_urlfield(self):
         page = make_test_page(test_urlfield="http://test-content.com/foo")
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [StringSegmentValue("test_urlfield", "http://test-content.com/foo")]
+            segments,
+            [StringSegmentValue("test_urlfield", "http://test-content.com/foo")],
         )
 
     def test_richtextfield(self):
@@ -114,7 +115,8 @@ class TestSegmentExtraction(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [RelatedObjectSegmentValue.from_instance("test_snippet", test_snippet)]
+            segments,
+            [RelatedObjectSegmentValue.from_instance("test_snippet", test_snippet)],
         )
 
     def test_childobjects(self):
@@ -166,7 +168,9 @@ class TestSegmentExtraction(TestCase):
         )
 
     def test_non_overridable_synchronised_textfield(self):
-        page = make_test_page(test_not_overridable_synchronized_textfield="Test content")
+        page = make_test_page(
+            test_not_overridable_synchronized_textfield="Test content"
+        )
 
         segments = extract_segments(page)
 
@@ -195,7 +199,8 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")]
+            segments,
+            [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")],
         )
 
     def test_textblock(self):
@@ -207,7 +212,8 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")]
+            segments,
+            [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")],
         )
 
     @unittest.expectedFailure  # Not supported
@@ -220,7 +226,8 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "test@example.com")]
+            segments,
+            [StringSegmentValue(f"test_streamfield.{block_id}", "test@example.com")],
         )
 
     @unittest.expectedFailure  # Not supported
@@ -244,7 +251,9 @@ class TestSegmentExtractionWithStreamField(TestCase):
     def test_embedblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
-            str(block_id), "test_embedblock", "https://www.youtube.com/watch?v=aBByJQCaaEA"
+            str(block_id),
+            "test_embedblock",
+            "https://www.youtube.com/watch?v=aBByJQCaaEA",
         )
 
         segments = extract_segments(page)
@@ -253,7 +262,8 @@ class TestSegmentExtractionWithStreamField(TestCase):
             segments,
             [
                 OverridableSegmentValue(
-                    f"test_streamfield.{block_id}", "https://www.youtube.com/watch?v=aBByJQCaaEA"
+                    f"test_streamfield.{block_id}",
+                    "https://www.youtube.com/watch?v=aBByJQCaaEA",
                 )
             ],
         )
@@ -300,7 +310,8 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(
-            segments, [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")]
+            segments,
+            [StringSegmentValue(f"test_streamfield.{block_id}", "Test content")],
         )
 
     def test_structblock(self):
@@ -316,7 +327,9 @@ class TestSegmentExtractionWithStreamField(TestCase):
         self.assertEqual(
             segments,
             [
-                StringSegmentValue(f"test_streamfield.{block_id}.field_a", "Test content"),
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}.field_a", "Test content"
+                ),
                 StringSegmentValue(
                     f"test_streamfield.{block_id}.field_b", "Some more test content"
                 ),
@@ -336,7 +349,9 @@ class TestSegmentExtractionWithStreamField(TestCase):
             segments,
             [
                 StringSegmentValue(f"test_streamfield.{block_id}", "Test content"),
-                StringSegmentValue(f"test_streamfield.{block_id}", "Some more test content"),
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}", "Some more test content"
+                ),
             ],
         )
 
@@ -401,5 +416,5 @@ class TestSegmentExtractionWithStreamField(TestCase):
             str(e.exception),
             "The foreign key `wagtail_localize_test.TestModelWithInvalidForeignKey.fk` "
             "was registered as a translatable field but the model it points to "
-            "`wagtailcore.Site` is not translatable"
+            "`wagtailcore.Site` is not translatable",
         )

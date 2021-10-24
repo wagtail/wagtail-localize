@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0014_remove_translation_source_last_updated_at'),
+        ("wagtail_localize", "0014_remove_translation_source_last_updated_at"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translationcontext',
-            name='field_path',
-            field=models.TextField(default=''),
+            model_name="translationcontext",
+            name="field_path",
+            field=models.TextField(default=""),
             preserve_default=False,
         ),
     ]

@@ -1,17 +1,16 @@
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-
 from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import TranslatableMixin, Page
+from wagtail.core.models import Page, TranslatableMixin
 
 from wagtail_localize.segments import (
+    OverridableSegmentValue,
+    RelatedObjectSegmentValue,
     StringSegmentValue,
     TemplateSegmentValue,
-    RelatedObjectSegmentValue,
-    OverridableSegmentValue,
 )
 
 from ..fields import get_translatable_fields
@@ -22,13 +21,14 @@ def quote_path_component(text):
     """
     Puts quotes around the path compoenents, and escapes any special characters.
     """
-    return "'" + text.replace("\\", "\\\\") .replace("'", "\\'") + "'"
+    return "'" + text.replace("\\", "\\\\").replace("'", "\\'") + "'"
 
 
 class StreamFieldSegmentExtractor:
     """
     A helper class to help traverse StreamField values and extract segments.
     """
+
     def __init__(self, field, include_overridables=False):
         """
         Initialises a StreamFieldSegmentExtractor.
@@ -61,7 +61,9 @@ class StreamFieldSegmentExtractor:
             else:
                 return []
 
-        elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock, blocks.BlockQuoteBlock)):
+        elif isinstance(
+            block_type, (blocks.CharBlock, blocks.TextBlock, blocks.BlockQuoteBlock)
+        ):
             return [StringSegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
@@ -69,20 +71,22 @@ class StreamFieldSegmentExtractor:
 
             # Find all unique href values
             hrefs = set()
-            for string, attrs in strings:
+            for _string, attrs in strings:
                 for tag_attrs in attrs.values():
-                    if 'href' in tag_attrs:
-                        hrefs.add(tag_attrs['href'])
+                    if "href" in tag_attrs:
+                        hrefs.add(tag_attrs["href"])
 
-            ret = [
-                TemplateSegmentValue("", "html", template, len(strings))
-            ] + [
-                StringSegmentValue("", string, attrs=attrs)
-                for string, attrs in strings
-            ] + [
-                OverridableSegmentValue(quote_path_component(href), href)
-                for href in sorted(hrefs)
-            ]
+            ret = (
+                [TemplateSegmentValue("", "html", template, len(strings))]
+                + [
+                    StringSegmentValue("", string, attrs=attrs)
+                    for string, attrs in strings
+                ]
+                + [
+                    OverridableSegmentValue(quote_path_component(href), href)
+                    for href in sorted(hrefs)
+                ]
+            )
             return ret
 
         elif isinstance(block_type, blocks.ChooserBlock):
@@ -109,7 +113,9 @@ class StreamFieldSegmentExtractor:
         # TODO: Perhaps we need a special type for pages where it links to the translation if availabe,
         # but falls back to the source if it isn't translated yet?
         # Note: This exact same decision was made for regular foreign keys in fields.py
-        if isinstance(related_object, TranslatableMixin) and not isinstance(related_object, Page):
+        if isinstance(related_object, TranslatableMixin) and not isinstance(
+            related_object, Page
+        ):
             return [RelatedObjectSegmentValue.from_instance("", related_object)]
         else:
             return [OverridableSegmentValue("", related_object.pk)]
@@ -175,9 +181,9 @@ def extract_segments(instance):
             if is_translatable:
                 segments.extend(
                     segment.wrap(field.name)
-                    for segment in StreamFieldSegmentExtractor(field, include_overridables=extract_overridables).handle_stream_block(
-                        field.value_from_object(instance)
-                    )
+                    for segment in StreamFieldSegmentExtractor(
+                        field, include_overridables=extract_overridables
+                    ).handle_stream_block(field.value_from_object(instance))
                 )
 
         elif isinstance(field, RichTextField):
@@ -186,20 +192,22 @@ def extract_segments(instance):
 
                 # Find all unique href values
                 hrefs = set()
-                for string, attrs in strings:
+                for _string, attrs in strings:
                     for tag_attrs in attrs.values():
-                        if 'href' in tag_attrs:
-                            hrefs.add(tag_attrs['href'])
+                        if "href" in tag_attrs:
+                            hrefs.add(tag_attrs["href"])
 
-                field_segments = [
-                    TemplateSegmentValue("", "html", template, len(strings))
-                ] + [
-                    StringSegmentValue("", string, attrs=attrs)
-                    for string, attrs in strings
-                ] + [
-                    OverridableSegmentValue(quote_path_component(href), href)
-                    for href in sorted(hrefs)
-                ]
+                field_segments = (
+                    [TemplateSegmentValue("", "html", template, len(strings))]
+                    + [
+                        StringSegmentValue("", string, attrs=attrs)
+                        for string, attrs in strings
+                    ]
+                    + [
+                        OverridableSegmentValue(quote_path_component(href), href)
+                        for href in sorted(hrefs)
+                    ]
+                )
 
                 segments.extend(segment.wrap(field.name) for segment in field_segments)
 
@@ -214,14 +222,10 @@ def extract_segments(instance):
                     continue
 
                 if is_translatable:
-                    segments.append(
-                        StringSegmentValue(field.name, value)
-                    )
+                    segments.append(StringSegmentValue(field.name, value))
 
                 elif extract_overridables:
-                    segments.append(
-                        OverridableSegmentValue(field.name, value)
-                    )
+                    segments.append(OverridableSegmentValue(field.name, value))
 
         elif isinstance(field, (models.ForeignKey)):
             if is_translatable:
@@ -241,7 +245,9 @@ def extract_segments(instance):
 
                 if related_instance:
                     segments.append(
-                        RelatedObjectSegmentValue.from_instance(field.name, related_instance)
+                        RelatedObjectSegmentValue.from_instance(
+                            field.name, related_instance
+                        )
                     )
 
             elif extract_overridables:
@@ -261,7 +267,9 @@ def extract_segments(instance):
             if is_translatable:
                 for child_instance in manager.all():
                     segments.extend(
-                        segment.wrap(str(child_instance.translation_key)).wrap(field.name)
+                        segment.wrap(str(child_instance.translation_key)).wrap(
+                            field.name
+                        )
                         for segment in extract_segments(child_instance)
                     )
 

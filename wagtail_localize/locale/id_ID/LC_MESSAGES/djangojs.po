@@ -1,11 +1,11 @@
-# 
+#
 # Translators:
 # Sutrisno Efendi <kangfend@gmail.com>, 2021
 # geek pantura <geekpantura@gmail.com>, 2021
 # Ronggo Radityo <radityo3000@yahoo.com>, 2021
 # Andry Widya Putra UN <andrywidyaputra@gmail.com>, 2021
 # M. Febrian Ramadhana <febrian@ramadhana.me>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: M. Febrian Ramadhana <febrian@ramadhana.me>, 2021\n"

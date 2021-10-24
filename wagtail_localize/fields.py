@@ -2,14 +2,14 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel, get_all_child_relations
 from treebeard.mp_tree import MP_Node
-
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, TranslatableMixin
+
 
 try:
     from wagtail.core.models import COMMENTS_RELATION_NAME
 except ImportError:
-    COMMENTS_RELATION_NAME = 'comments'
+    COMMENTS_RELATION_NAME = "comments"
 
 
 class BaseTranslatableField:
@@ -65,7 +65,9 @@ class TranslatableField(BaseTranslatableField):
         field = self.get_field(obj.__class__)
 
         # Child relations should all be synchronised before translation
-        if isinstance(field, (models.ManyToOneRel)) and isinstance(field.remote_field, ParentalKey):
+        if isinstance(field, (models.ManyToOneRel)) and isinstance(
+            field.remote_field, ParentalKey
+        ):
             return True
 
         # Streamfields need to be re-synchronised before translation so the structure and non-translatable content is copied over
@@ -107,7 +109,7 @@ def get_translatable_fields(model):
 
     """
     # Note: If you update this, please update "docs/concept/translatable-fields-autogen.md"
-    if hasattr(model, 'translatable_fields'):
+    if hasattr(model, "translatable_fields"):
         return model.translatable_fields
 
     translatable_fields = []
@@ -127,20 +129,32 @@ def get_translatable_fields(model):
             continue
 
         # Ignore fields defined by MP_Node mixin
-        if issubclass(model, MP_Node) and field.name in ['path', 'depth', 'numchild']:
+        if issubclass(model, MP_Node) and field.name in ["path", "depth", "numchild"]:
             continue
 
         # Ignore some editable fields defined on Page
-        if issubclass(model, Page) and field.name in ['go_live_at', 'expire_at', 'first_published_at', 'content_type', 'owner']:
+        if issubclass(model, Page) and field.name in [
+            "go_live_at",
+            "expire_at",
+            "first_published_at",
+            "content_type",
+            "owner",
+        ]:
             continue
 
         # URL, Email and choices fields are an exception to the rule below.
         # Text fields are translatable, but these are synchronised.
-        if isinstance(field, (models.URLField, models.EmailField)) or isinstance(field, models.CharField) and field.choices:
+        if (
+            isinstance(field, (models.URLField, models.EmailField))
+            or isinstance(field, models.CharField)
+            and field.choices
+        ):
             translatable_fields.append(SynchronizedField(field.name))
 
         # Translatable text fields should be translatable
-        elif isinstance(field, (StreamField, RichTextField, models.TextField, models.CharField)):
+        elif isinstance(
+            field, (StreamField, RichTextField, models.TextField, models.CharField)
+        ):
             translatable_fields.append(TranslatableField(field.name))
 
         # Foreign keys to translatable models should be translated. Others should be synchronised
@@ -150,7 +164,10 @@ def get_translatable_fields(model):
                 continue
 
             # Ignore parent links
-            if isinstance(field, models.OneToOneField) and field.remote_field.parent_link:
+            if (
+                isinstance(field, models.OneToOneField)
+                and field.remote_field.parent_link
+            ):
                 continue
 
             # All FKs to translatable models should be translatable.
@@ -158,7 +175,9 @@ def get_translatable_fields(model):
             # TODO: Perhaps we need a special type for pages where it links to the translation if availabe,
             # but falls back to the source if it isn't translated yet?
             # Note: This exact same decision was made for page chooser blocks in segments/extract.py
-            if issubclass(field.related_model, TranslatableMixin) and not issubclass(field.related_model, Page):
+            if issubclass(field.related_model, TranslatableMixin) and not issubclass(
+                field.related_model, Page
+            ):
                 translatable_fields.append(TranslatableField(field.name))
             else:
                 translatable_fields.append(SynchronizedField(field.name))
@@ -175,7 +194,10 @@ def get_translatable_fields(model):
     if issubclass(model, ClusterableModel):
         for child_relation in get_all_child_relations(model):
             # Ignore comments
-            if issubclass(model, Page) and child_relation.name == COMMENTS_RELATION_NAME:
+            if (
+                issubclass(model, Page)
+                and child_relation.name == COMMENTS_RELATION_NAME
+            ):
                 continue
 
             if issubclass(child_relation.related_model, TranslatableMixin):
@@ -184,18 +206,19 @@ def get_translatable_fields(model):
                 translatable_fields.append(SynchronizedField(child_relation.name))
 
     # Combine with any overrides defined on the model
-    override_translatable_fields = getattr(model, 'override_translatable_fields', [])
+    override_translatable_fields = getattr(model, "override_translatable_fields", [])
 
     if override_translatable_fields:
         override_translatable_fields = {
-            field.field_name: field
-            for field in override_translatable_fields
+            field.field_name: field for field in override_translatable_fields
         }
 
         combined_translatable_fields = []
         for field in translatable_fields:
             if field.field_name in override_translatable_fields:
-                combined_translatable_fields.append(override_translatable_fields.pop(field.field_name))
+                combined_translatable_fields.append(
+                    override_translatable_fields.pop(field.field_name)
+                )
             else:
                 combined_translatable_fields.append(field)
 
@@ -222,7 +245,9 @@ def copy_synchronised_fields(source, target):
         if translatable_field.is_synchronized(source):
             field = translatable_field.get_field(target.__class__)
 
-            if isinstance(field, (models.ManyToOneRel)) and isinstance(field.remote_field, ParentalKey):
+            if isinstance(field, (models.ManyToOneRel)) and isinstance(
+                field.remote_field, ParentalKey
+            ):
                 # Use modelcluster's copy_child_relation for child relations
 
                 if issubclass(field.related_model, TranslatableMixin):
@@ -236,16 +261,23 @@ def copy_synchronised_fields(source, target):
                     child_object_map = source.copy_child_relation(field.name, target)
 
                     # Update locale of each child object and recycle PK
-                    for (child_relation, source_pk), child_objects in child_object_map.items():
+                    for (
+                        _child_relation,
+                        source_pk,
+                    ), child_objects in child_object_map.items():
                         if source_pk is None:
                             # This is a list of the child objects that were never saved
                             for child_object in child_objects:
-                                child_object.pk = existing_pks_by_translation_key.get(child_object.translation_key)
+                                child_object.pk = existing_pks_by_translation_key.get(
+                                    child_object.translation_key
+                                )
                                 child_object.locale = target.locale
                         else:
                             child_object = child_objects
 
-                            child_object.pk = existing_pks_by_translation_key.get(child_object.translation_key)
+                            child_object.pk = existing_pks_by_translation_key.get(
+                                child_object.translation_key
+                            )
                             child_object.locale = target.locale
 
                 else:
@@ -253,6 +285,4 @@ def copy_synchronised_fields(source, target):
 
             else:
                 # For all other fields, just set the attribute
-                setattr(
-                    target, field.attname, getattr(source, field.attname)
-                )
+                setattr(target, field.attname, getattr(source, field.attname))

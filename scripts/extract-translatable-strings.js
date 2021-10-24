@@ -1,6 +1,7 @@
-const { GettextExtractor, JsExtractors } = require('gettext-extractor');
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { GettextExtractor, JsExtractors } from 'gettext-extractor';
 
-let extractor = new GettextExtractor();
+const extractor = new GettextExtractor();
 
 extractor
     .createJsParser([

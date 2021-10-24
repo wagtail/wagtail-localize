@@ -1,4 +1,4 @@
-# 
+#
 # Translators:
 # Tetsuya Morimoto <tetsuya.morimoto@gmail.com>, 2021
 # Daigo Shitara <stain.witness@gmail.com>, 2021
@@ -7,7 +7,7 @@
 # Yudai Kobayashi <yudai.kobayashi.miraidenshi@gmail.com>, 2021
 # Koji Miyazawa, 2021
 # shuhei hirota, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: shuhei hirota, 2021\n"

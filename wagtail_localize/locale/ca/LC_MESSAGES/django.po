@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Roger Pons <rogerpons@gmail.com>, 2021
 # Antoni Aloy <aaloy@apsl.net>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

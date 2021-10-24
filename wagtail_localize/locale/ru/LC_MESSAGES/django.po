@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # sergeybe <sergeybe@gmail.com>, 2020
 # Sergey Mazanov <mvver@outlook.com>, 2021
 # Влад <integration.into.society@gmail.com>, 2021
 # Eugene <eugene.mechanism@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

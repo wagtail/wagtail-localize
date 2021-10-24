@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Krystof Pilnacek <krystof.pilnacek@rossum.ai>, 2020
 # Mirek Zvolský <zvolsky@seznam.cz>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Mirek Zvolský <zvolsky@seznam.cz>, 2021\n"

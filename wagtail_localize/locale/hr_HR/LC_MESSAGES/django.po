@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Dino Aljević <dino8890@protonmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

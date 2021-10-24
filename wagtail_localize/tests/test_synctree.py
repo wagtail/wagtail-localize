@@ -6,7 +6,7 @@ from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import LocaleSynchronization
 from wagtail_localize.synctree import PageIndex
-from wagtail_localize.test.models import TestPage, TestHomePage
+from wagtail_localize.test.models import TestHomePage, TestPage
 
 
 class TestPageIndex(TestCase):
@@ -26,18 +26,21 @@ class TestPageIndex(TestCase):
         fr_ca_homepage = fr_homepage.copy_for_translation(self.fr_ca_locale)
 
         en_aboutpage = self.en_homepage.add_child(
-            instance=TestPage(title="About", slug="about",)
+            instance=TestPage(
+                title="About",
+                slug="about",
+            )
         )
 
         fr_aboutpage = en_aboutpage.copy_for_translation(self.fr_locale)
-        fr_aboutpage.copy_for_translation(
-            self.fr_ca_locale, alias=True
-        )
+        fr_aboutpage.copy_for_translation(self.fr_ca_locale, alias=True)
 
         fr_ca_homepage.refresh_from_db()
         fr_ca_canadaonlypage = fr_ca_homepage.add_child(
             instance=TestPage(
-                title="Only Canada", slug="only-canada", locale=self.fr_ca_locale,
+                title="Only Canada",
+                slug="only-canada",
+                locale=self.fr_ca_locale,
             )
         )
 
@@ -49,7 +52,9 @@ class TestPageIndex(TestCase):
         self.assertEqual(
             homepage_entry.content_type, ContentType.objects.get_for_model(TestHomePage)
         )
-        self.assertEqual(homepage_entry.translation_key, self.en_homepage.translation_key)
+        self.assertEqual(
+            homepage_entry.translation_key, self.en_homepage.translation_key
+        )
         self.assertEqual(homepage_entry.source_locale, self.en_locale)
         self.assertIsNone(homepage_entry.parent_translation_key)
         self.assertEqual(
@@ -70,9 +75,7 @@ class TestPageIndex(TestCase):
         self.assertEqual(
             aboutpage_entry.locales, [self.en_locale.id, self.fr_locale.id]
         )
-        self.assertEqual(
-            aboutpage_entry.aliased_locales, [self.fr_ca_locale.id]
-        )
+        self.assertEqual(aboutpage_entry.aliased_locales, [self.fr_ca_locale.id])
 
         canadaonlypage_entry = page_index.pages[2]
         self.assertEqual(
@@ -106,7 +109,10 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         self.fr_ca_homepage = self.fr_homepage.copy_for_translation(self.fr_ca_locale)
 
         self.en_aboutpage = self.en_homepage.add_child(
-            instance=TestPage(title="About", slug="about",)
+            instance=TestPage(
+                title="About",
+                slug="about",
+            )
         )
 
         self.fr_aboutpage = self.en_aboutpage.copy_for_translation(self.fr_locale)
@@ -114,7 +120,9 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         self.fr_ca_homepage.refresh_from_db()
         self.fr_ca_canadaonlypage = self.fr_ca_homepage.add_child(
             instance=TestPage(
-                title="Only Canada", slug="only-canada", locale=self.fr_ca_locale,
+                title="Only Canada",
+                slug="only-canada",
+                locale=self.fr_ca_locale,
             )
         )
 
@@ -138,27 +146,29 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         )
 
         post_data = {
-            'title': "Foo",
-            'slug': 'foo',
-            'action-publish': 'publish',
-
-            'test_streamfield-count': '0',
-            'test_synchronized_streamfield-count': '0',
-            'comments-TOTAL_FORMS': '0',
-            'comments-INITIAL_FORMS': '0',
-            'test_childobjects-TOTAL_FORMS': '0',
-            'test_childobjects-INITIAL_FORMS': '0',
-            'test_synchronized_childobjects-TOTAL_FORMS': '0',
-            'test_synchronized_childobjects-INITIAL_FORMS': '0',
+            "title": "Foo",
+            "slug": "foo",
+            "action-publish": "publish",
+            "test_streamfield-count": "0",
+            "test_synchronized_streamfield-count": "0",
+            "comments-TOTAL_FORMS": "0",
+            "comments-INITIAL_FORMS": "0",
+            "test_childobjects-TOTAL_FORMS": "0",
+            "test_childobjects-INITIAL_FORMS": "0",
+            "test_synchronized_childobjects-TOTAL_FORMS": "0",
+            "test_synchronized_childobjects-INITIAL_FORMS": "0",
         }
         response = self.client.post(
-            reverse('wagtailadmin_pages:add', args=['wagtail_localize_test', 'testpage', self.en_homepage.id]),
-            post_data
+            reverse(
+                "wagtailadmin_pages:add",
+                args=["wagtail_localize_test", "testpage", self.en_homepage.id],
+            ),
+            post_data,
         )
 
         self.assertEqual(response.status_code, 302)
 
-        new_page = TestPage.objects.child_of(self.en_homepage).get(slug='foo')
+        new_page = TestPage.objects.child_of(self.en_homepage).get(slug="foo")
 
         # Check that it created aliases for the other locales
         fr_new_page = TestPage.objects.get(
@@ -189,7 +199,11 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         )
 
         # Spanish version shouldn't exist yet
-        self.assertFalse(TestPage.objects.filter(translation_key=new_page.translation_key, locale=self.es_locale).exists())
+        self.assertFalse(
+            TestPage.objects.filter(
+                translation_key=new_page.translation_key, locale=self.es_locale
+            ).exists()
+        )
 
         # Creating the locale synchronisation should create the page in Spanish
         LocaleSynchronization.objects.create(
@@ -197,7 +211,9 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
             sync_from=self.en_locale,
         )
 
-        es_new_page = TestPage.objects.get(translation_key=new_page.translation_key, locale=self.es_locale)
+        es_new_page = TestPage.objects.get(
+            translation_key=new_page.translation_key, locale=self.es_locale
+        )
         self.assertEqual(es_new_page.alias_of, new_page.page_ptr)
 
     def test_create_homepage_in_sync_source_locale(self):
@@ -218,22 +234,24 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
 
         # Create a homepage in English
         post_data = {
-            'title': "Home",
-            'slug': 'home',
-            'action-publish': 'publish',
-
-            'test_streamfield-count': '0',
-            'test_synchronized_streamfield-count': '0',
-            'comments-TOTAL_FORMS': '0',
-            'comments-INITIAL_FORMS': '0',
-            'test_childobjects-TOTAL_FORMS': '0',
-            'test_childobjects-INITIAL_FORMS': '0',
-            'test_synchronized_childobjects-TOTAL_FORMS': '0',
-            'test_synchronized_childobjects-INITIAL_FORMS': '0',
+            "title": "Home",
+            "slug": "home",
+            "action-publish": "publish",
+            "test_streamfield-count": "0",
+            "test_synchronized_streamfield-count": "0",
+            "comments-TOTAL_FORMS": "0",
+            "comments-INITIAL_FORMS": "0",
+            "test_childobjects-TOTAL_FORMS": "0",
+            "test_childobjects-INITIAL_FORMS": "0",
+            "test_synchronized_childobjects-TOTAL_FORMS": "0",
+            "test_synchronized_childobjects-INITIAL_FORMS": "0",
         }
         response = self.client.post(
-            reverse('wagtailadmin_pages:add', args=['wagtail_localize_test', 'testpage', root.id]),
-            post_data
+            reverse(
+                "wagtailadmin_pages:add",
+                args=["wagtail_localize_test", "testpage", root.id],
+            ),
+            post_data,
         )
 
         self.assertEqual(response.status_code, 302)

@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Jihan Chung <jihanchung20@gmail.com>, 2021
 # Kyungil Choi <hanpama@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Kyungil Choi <hanpama@gmail.com>, 2021\n"

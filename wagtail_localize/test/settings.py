@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+
 import dj_database_url
+
 
 # Build paths inside the project like this: os.path.join(PROJECT_DIR, ...)
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -164,10 +166,15 @@ WAGTAIL_SITE_NAME = "Wagtail localize test project"
 
 WAGTAIL_I18N_ENABLED = True
 
-LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [("en", "English"), ("fr", "French"), ("fr-CA", "French (Canada)"), ("es", "Spanish")]
+LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [
+    ("en", "English"),
+    ("fr", "French"),
+    ("fr-CA", "French (Canada)"),
+    ("es", "Spanish"),
+]
 
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'wagtail_localize.machine_translators.dummy.DummyTranslator',
+    "CLASS": "wagtail_localize.machine_translators.dummy.DummyTranslator",
 }
 
 

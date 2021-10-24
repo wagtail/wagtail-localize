@@ -14,134 +14,410 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('wagtailcore', '0057_page_locale_fields_notnull'),
+        ("wagtailcore", "0057_page_locale_fields_notnull"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TestHomePage',
+            name="TestHomePage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
         migrations.CreateModel(
-            name='TestModel',
+            name="TestModel",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('translation_key', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('title', models.CharField(max_length=255)),
-                ('test_charfield', models.CharField(blank=True, max_length=255)),
-                ('test_textfield', models.TextField(blank=True)),
-                ('test_emailfield', models.EmailField(blank=True, max_length=254)),
-                ('locale', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtailcore.Locale')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "translation_key",
+                    models.UUIDField(default=uuid.uuid4, editable=False),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("test_charfield", models.CharField(blank=True, max_length=255)),
+                ("test_textfield", models.TextField(blank=True)),
+                ("test_emailfield", models.EmailField(blank=True, max_length=254)),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        editable=False,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="wagtailcore.Locale",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'unique_together': {('translation_key', 'locale')},
-            },
-        ),
-        migrations.CreateModel(
-            name='TestPage',
-            fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('test_charfield', models.CharField(blank=True, max_length=255)),
-                ('test_textfield', models.TextField(blank=True)),
-                ('test_emailfield', models.EmailField(blank=True, max_length=254)),
-                ('test_slugfield', models.SlugField(blank=True)),
-                ('test_urlfield', models.URLField(blank=True)),
-                ('test_richtextfield', wagtail.core.fields.RichTextField(blank=True)),
-                ('test_streamfield', wagtail.core.fields.StreamField([('test_charblock', wagtail.core.blocks.CharBlock(max_length=255)), ('test_textblock', wagtail.core.blocks.TextBlock()), ('test_emailblock', wagtail.core.blocks.EmailBlock()), ('test_urlblock', wagtail.core.blocks.URLBlock()), ('test_richtextblock', wagtail.core.blocks.RichTextBlock()), ('test_rawhtmlblock', wagtail.core.blocks.RawHTMLBlock()), ('test_blockquoteblock', wagtail.core.blocks.BlockQuoteBlock()), ('test_structblock', wagtail.core.blocks.StructBlock([('field_a', wagtail.core.blocks.TextBlock()), ('field_b', wagtail.core.blocks.TextBlock())])), ('test_listblock', wagtail.core.blocks.ListBlock(wagtail.core.blocks.TextBlock())), ('test_nestedstreamblock', wagtail.core.blocks.StreamBlock([('block_a', wagtail.core.blocks.TextBlock()), ('block_b', wagtail.core.blocks.TextBlock())])), ('test_customstructblock', wagtail.core.blocks.StructBlock([('field_a', wagtail.core.blocks.TextBlock()), ('field_b', wagtail.core.blocks.TextBlock())]))], blank=True)),
-                ('test_customfield', wagtail_localize.test.models.TestCustomField(blank=True)),
-                ('test_synchronized_charfield', models.CharField(blank=True, max_length=255)),
-                ('test_synchronized_textfield', models.TextField(blank=True)),
-                ('test_synchronized_emailfield', models.EmailField(blank=True, max_length=254)),
-                ('test_synchronized_slugfield', models.SlugField(blank=True)),
-                ('test_synchronized_urlfield', models.URLField(blank=True)),
-                ('test_synchronized_richtextfield', wagtail.core.fields.RichTextField(blank=True)),
-                ('test_synchronized_streamfield', wagtail.core.fields.StreamField([('test_charblock', wagtail.core.blocks.CharBlock(max_length=255)), ('test_textblock', wagtail.core.blocks.TextBlock()), ('test_emailblock', wagtail.core.blocks.EmailBlock()), ('test_urlblock', wagtail.core.blocks.URLBlock()), ('test_richtextblock', wagtail.core.blocks.RichTextBlock()), ('test_rawhtmlblock', wagtail.core.blocks.RawHTMLBlock()), ('test_blockquoteblock', wagtail.core.blocks.BlockQuoteBlock()), ('test_structblock', wagtail.core.blocks.StructBlock([('field_a', wagtail.core.blocks.TextBlock()), ('field_b', wagtail.core.blocks.TextBlock())])), ('test_listblock', wagtail.core.blocks.ListBlock(wagtail.core.blocks.TextBlock())), ('test_nestedstreamblock', wagtail.core.blocks.StreamBlock([('block_a', wagtail.core.blocks.TextBlock()), ('block_b', wagtail.core.blocks.TextBlock())])), ('test_customstructblock', wagtail.core.blocks.StructBlock([('field_a', wagtail.core.blocks.TextBlock()), ('field_b', wagtail.core.blocks.TextBlock())]))], blank=True)),
-                ('test_synchronized_customfield', wagtail_localize.test.models.TestCustomField(blank=True)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('wagtailcore.page',),
-        ),
-        migrations.CreateModel(
-            name='InheritedTestModel',
-            fields=[
-                ('testmodel_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtail_localize_test.TestModel')),
-            ],
-            bases=('wagtail_localize_test.testmodel',),
-        ),
-        migrations.CreateModel(
-            name='TestSynchronizedChildObject',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('field', models.TextField()),
-                ('page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_synchronized_childobjects', to='wagtail_localize_test.TestPage')),
-            ],
-            options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "abstract": False,
+                "unique_together": {("translation_key", "locale")},
             },
         ),
         migrations.CreateModel(
-            name='TestSnippet',
+            name="TestPage",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('translation_key', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('field', models.TextField()),
-                ('locale', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtailcore.Locale')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                ("test_charfield", models.CharField(blank=True, max_length=255)),
+                ("test_textfield", models.TextField(blank=True)),
+                ("test_emailfield", models.EmailField(blank=True, max_length=254)),
+                ("test_slugfield", models.SlugField(blank=True)),
+                ("test_urlfield", models.URLField(blank=True)),
+                ("test_richtextfield", wagtail.core.fields.RichTextField(blank=True)),
+                (
+                    "test_streamfield",
+                    wagtail.core.fields.StreamField(
+                        [
+                            (
+                                "test_charblock",
+                                wagtail.core.blocks.CharBlock(max_length=255),
+                            ),
+                            ("test_textblock", wagtail.core.blocks.TextBlock()),
+                            ("test_emailblock", wagtail.core.blocks.EmailBlock()),
+                            ("test_urlblock", wagtail.core.blocks.URLBlock()),
+                            ("test_richtextblock", wagtail.core.blocks.RichTextBlock()),
+                            ("test_rawhtmlblock", wagtail.core.blocks.RawHTMLBlock()),
+                            (
+                                "test_blockquoteblock",
+                                wagtail.core.blocks.BlockQuoteBlock(),
+                            ),
+                            (
+                                "test_structblock",
+                                wagtail.core.blocks.StructBlock(
+                                    [
+                                        ("field_a", wagtail.core.blocks.TextBlock()),
+                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                    ]
+                                ),
+                            ),
+                            (
+                                "test_listblock",
+                                wagtail.core.blocks.ListBlock(
+                                    wagtail.core.blocks.TextBlock()
+                                ),
+                            ),
+                            (
+                                "test_nestedstreamblock",
+                                wagtail.core.blocks.StreamBlock(
+                                    [
+                                        ("block_a", wagtail.core.blocks.TextBlock()),
+                                        ("block_b", wagtail.core.blocks.TextBlock()),
+                                    ]
+                                ),
+                            ),
+                            (
+                                "test_customstructblock",
+                                wagtail.core.blocks.StructBlock(
+                                    [
+                                        ("field_a", wagtail.core.blocks.TextBlock()),
+                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                    ]
+                                ),
+                            ),
+                        ],
+                        blank=True,
+                    ),
+                ),
+                (
+                    "test_customfield",
+                    wagtail_localize.test.models.TestCustomField(blank=True),
+                ),
+                (
+                    "test_synchronized_charfield",
+                    models.CharField(blank=True, max_length=255),
+                ),
+                ("test_synchronized_textfield", models.TextField(blank=True)),
+                (
+                    "test_synchronized_emailfield",
+                    models.EmailField(blank=True, max_length=254),
+                ),
+                ("test_synchronized_slugfield", models.SlugField(blank=True)),
+                ("test_synchronized_urlfield", models.URLField(blank=True)),
+                (
+                    "test_synchronized_richtextfield",
+                    wagtail.core.fields.RichTextField(blank=True),
+                ),
+                (
+                    "test_synchronized_streamfield",
+                    wagtail.core.fields.StreamField(
+                        [
+                            (
+                                "test_charblock",
+                                wagtail.core.blocks.CharBlock(max_length=255),
+                            ),
+                            ("test_textblock", wagtail.core.blocks.TextBlock()),
+                            ("test_emailblock", wagtail.core.blocks.EmailBlock()),
+                            ("test_urlblock", wagtail.core.blocks.URLBlock()),
+                            ("test_richtextblock", wagtail.core.blocks.RichTextBlock()),
+                            ("test_rawhtmlblock", wagtail.core.blocks.RawHTMLBlock()),
+                            (
+                                "test_blockquoteblock",
+                                wagtail.core.blocks.BlockQuoteBlock(),
+                            ),
+                            (
+                                "test_structblock",
+                                wagtail.core.blocks.StructBlock(
+                                    [
+                                        ("field_a", wagtail.core.blocks.TextBlock()),
+                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                    ]
+                                ),
+                            ),
+                            (
+                                "test_listblock",
+                                wagtail.core.blocks.ListBlock(
+                                    wagtail.core.blocks.TextBlock()
+                                ),
+                            ),
+                            (
+                                "test_nestedstreamblock",
+                                wagtail.core.blocks.StreamBlock(
+                                    [
+                                        ("block_a", wagtail.core.blocks.TextBlock()),
+                                        ("block_b", wagtail.core.blocks.TextBlock()),
+                                    ]
+                                ),
+                            ),
+                            (
+                                "test_customstructblock",
+                                wagtail.core.blocks.StructBlock(
+                                    [
+                                        ("field_a", wagtail.core.blocks.TextBlock()),
+                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                    ]
+                                ),
+                            ),
+                        ],
+                        blank=True,
+                    ),
+                ),
+                (
+                    "test_synchronized_customfield",
+                    wagtail_localize.test.models.TestCustomField(blank=True),
+                ),
             ],
             options={
-                'abstract': False,
-                'unique_together': {('translation_key', 'locale')},
+                "abstract": False,
+            },
+            bases=("wagtailcore.page",),
+        ),
+        migrations.CreateModel(
+            name="InheritedTestModel",
+            fields=[
+                (
+                    "testmodel_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtail_localize_test.TestModel",
+                    ),
+                ),
+            ],
+            bases=("wagtail_localize_test.testmodel",),
+        ),
+        migrations.CreateModel(
+            name="TestSynchronizedChildObject",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                ("field", models.TextField()),
+                (
+                    "page",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="test_synchronized_childobjects",
+                        to="wagtail_localize_test.TestPage",
+                    ),
+                ),
+            ],
+            options={
+                "ordering": ["sort_order"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="TestSnippet",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "translation_key",
+                    models.UUIDField(default=uuid.uuid4, editable=False),
+                ),
+                ("field", models.TextField()),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        editable=False,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="wagtailcore.Locale",
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
+                "unique_together": {("translation_key", "locale")},
             },
         ),
         migrations.AddField(
-            model_name='testpage',
-            name='test_snippet',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='wagtail_localize_test.TestSnippet'),
+            model_name="testpage",
+            name="test_snippet",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="wagtail_localize_test.TestSnippet",
+            ),
         ),
         migrations.AddField(
-            model_name='testpage',
-            name='test_synchronized_snippet',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtail_localize_test.TestSnippet'),
+            model_name="testpage",
+            name="test_synchronized_snippet",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="wagtail_localize_test.TestSnippet",
+            ),
         ),
         migrations.CreateModel(
-            name='TestNonParentalChildObject',
+            name="TestNonParentalChildObject",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('translation_key', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('field', models.TextField()),
-                ('locale', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtailcore.Locale')),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_nonparentalchildobjects', to='wagtail_localize_test.TestPage')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "translation_key",
+                    models.UUIDField(default=uuid.uuid4, editable=False),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                ("field", models.TextField()),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        editable=False,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="wagtailcore.Locale",
+                    ),
+                ),
+                (
+                    "page",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="test_nonparentalchildobjects",
+                        to="wagtail_localize_test.TestPage",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'unique_together': {('translation_key', 'locale')},
+                "abstract": False,
+                "unique_together": {("translation_key", "locale")},
             },
         ),
         migrations.CreateModel(
-            name='TestChildObject',
+            name="TestChildObject",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('translation_key', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('field', models.TextField()),
-                ('locale', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtailcore.Locale')),
-                ('page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_childobjects', to='wagtail_localize_test.TestPage')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "translation_key",
+                    models.UUIDField(default=uuid.uuid4, editable=False),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                ("field", models.TextField()),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        editable=False,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="wagtailcore.Locale",
+                    ),
+                ),
+                (
+                    "page",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="test_childobjects",
+                        to="wagtail_localize_test.TestPage",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
-                'unique_together': {('translation_key', 'locale')},
+                "ordering": ["sort_order"],
+                "abstract": False,
+                "unique_together": {("translation_key", "locale")},
             },
         ),
     ]

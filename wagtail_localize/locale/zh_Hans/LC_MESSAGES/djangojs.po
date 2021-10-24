@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Ford Guo <agile.guo@gmail.com>, 2020
 # Yin Guanhao <sopium@mysterious.site>, 2021
 # 祝沙军 <zhushajun@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: 祝沙军 <zhushajun@gmail.com>, 2021\n"

@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Cihad GÜNDOĞDU <cihadgundogdu@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

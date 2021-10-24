@@ -12,9 +12,7 @@ class TestStringSegmentValue(TestCase):
 
         self.assertEqual(segment.path, "foo.bar")
         self.assertEqual(segment.order, 0)
-        self.assertEqual(
-            segment.attrs, {"a1": {"href": "http://example.com"}}
-        )
+        self.assertEqual(segment.attrs, {"a1": {"href": "http://example.com"}})
         self.assertEqual(
             segment.render_text(),
             "This is some text. <foo> Bold text A link and some more Bold text",
@@ -66,4 +64,7 @@ class TestStringSegmentValue(TestCase):
         with self.assertRaises(TypeError) as e:
             StringSegmentValue("foo.bar", None)
 
-        self.assertEqual(str(e.exception), '`string` must be either a `StringValue` or a `str`. Got `NoneType`')
+        self.assertEqual(
+            str(e.exception),
+            "`string` must be either a `StringValue` or a `str`. Got `NoneType`",
+        )

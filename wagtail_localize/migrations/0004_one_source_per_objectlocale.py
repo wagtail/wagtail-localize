@@ -8,23 +8,23 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0003_delete_translation_sources'),
+        ("wagtail_localize", "0003_delete_translation_sources"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translationsource',
-            name='last_updated_at',
+            model_name="translationsource",
+            name="last_updated_at",
             field=models.DateTimeField(default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='translationsource',
-            name='created_at',
+            model_name="translationsource",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True),
         ),
         migrations.AlterUniqueTogether(
-            name='translationsource',
-            unique_together={('object', 'locale')},
+            name="translationsource",
+            unique_together={("object", "locale")},
         ),
     ]

@@ -1,11 +1,11 @@
-# 
+#
 # Translators:
 # hanfeng <appweb.cn@gmail.com>, 2021
 # Orangle Liu <orangleliu@gmail.com>, 2021
 # serafeim <serafeim@torchbox.com>, 2021
 # Karl Hobley <karl@torchbox.com>, 2021
 # shengsheng gz <gzshengsheng@139.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: shengsheng gz <gzshengsheng@139.com>, 2021\n"

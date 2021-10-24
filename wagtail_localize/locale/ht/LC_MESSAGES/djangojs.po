@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Hantz Vius <vhantz@protonmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Hantz Vius <vhantz@protonmail.com>, 2021\n"

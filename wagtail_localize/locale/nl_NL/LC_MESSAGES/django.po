@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Thijs Kramer <thijskramer@gmail.com>, 2020
 # Maarten Kling <kling.maarten@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

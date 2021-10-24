@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # ROGER MICHAEL ASHLEY ALLEN <rogermaallen@gmail.com>, 2021
 # Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2021
 # Ahmed Miske Sidi Med <boutien321@gmail.com>, 2021
 # abdulaziz alfuhigi <abajall@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: abdulaziz alfuhigi <abajall@gmail.com>, 2021\n"

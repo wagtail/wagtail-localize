@@ -1,11 +1,11 @@
-# 
+#
 # Translators:
 # Cihad GÜNDOĞDU <cihadgundogdu@gmail.com>, 2021
 # Ragıp Ünal <ragip@ragipunal.com>, 2021
 # Halim Turan <halim_turan_61@hotmail.com>, 2021
 # Basitlik İyidir, 2021
 # Py Data Geek <pydatageek@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Py Data Geek <pydatageek@gmail.com>, 2021\n"

@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # Ocin Leung, 2021
 # ongchi <ihcgno@icloud.com>, 2021
 # Andy Kong <worminfo@gmail.com>, 2021
 # Yeh Yen-Ke <yyken@outlook.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Yeh Yen-Ke <yyken@outlook.com>, 2021\n"

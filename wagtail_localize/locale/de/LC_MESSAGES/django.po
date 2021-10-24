@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # oliverengel, 2021
 # Johannes Spielmann <j@spielmannsolutions.com>, 2021
 # Tammo van Lessen <tvanlessen@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

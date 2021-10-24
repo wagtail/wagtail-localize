@@ -13,4 +13,3 @@ file_filter = wagtail_localize/locale/<lang>/LC_MESSAGES/djangojs.po
 source_file = wagtail_localize/locale/en/LC_MESSAGES/djangojs.po
 source_lang = en
 type = PO
-

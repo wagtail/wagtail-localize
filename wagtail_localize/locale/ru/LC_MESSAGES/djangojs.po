@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Sergey Mazanov <mvver@outlook.com>, 2021
 # Mikalai Radchuk <radchuk.m@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Mikalai Radchuk <radchuk.m@gmail.com>, 2021\n"

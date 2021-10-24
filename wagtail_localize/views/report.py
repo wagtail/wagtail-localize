@@ -1,4 +1,5 @@
 import django_filters
+
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy
@@ -39,14 +40,18 @@ class ContentTypeModelChoiceFilter(django_filters.ModelChoiceFilter):
 
         # Remove child models
         translatable_models = [
-            model for model in translatable_models
-            if not any(isinstance(field, ParentalKey) for field in model._meta.get_fields())
+            model
+            for model in translatable_models
+            if not any(
+                isinstance(field, ParentalKey) for field in model._meta.get_fields()
+            )
         ]
 
         # Filter content types to only include those based on the provided type
         if descendant_of is not None:
             translatable_models = [
-                model for model in translatable_models
+                model
+                for model in translatable_models
                 if issubclass(model, descendant_of)
             ]
 
@@ -61,9 +66,14 @@ class ContentTypeModelChoiceFilter(django_filters.ModelChoiceFilter):
         translatable_models = self.get_translatable_models()
 
         # Return QuerySet of content types
-        return ContentType.objects.filter(id__in=[
-            content_type.id for content_type in ContentType.objects.get_for_models(*translatable_models).values()
-        ]).order_by('model')
+        return ContentType.objects.filter(
+            id__in=[
+                content_type.id
+                for content_type in ContentType.objects.get_for_models(
+                    *translatable_models
+                ).values()
+            ]
+        ).order_by("model")
 
     def filter(self, qs, value):
         """
@@ -75,10 +85,17 @@ class ContentTypeModelChoiceFilter(django_filters.ModelChoiceFilter):
             return qs
 
         # Filter by content types that inherit from this one as well
-        translatable_models = self.get_translatable_models(descendant_of=value.model_class())
-        return qs.filter(source__specific_content_type_id__in=[
-            content_type.id for content_type in ContentType.objects.get_for_models(*translatable_models).values()
-        ])
+        translatable_models = self.get_translatable_models(
+            descendant_of=value.model_class()
+        )
+        return qs.filter(
+            source__specific_content_type_id__in=[
+                content_type.id
+                for content_type in ContentType.objects.get_for_models(
+                    *translatable_models
+                ).values()
+            ]
+        )
 
 
 class LocaleFilter(django_filters.CharFilter):
@@ -86,24 +103,26 @@ class LocaleFilter(django_filters.CharFilter):
         if value in EMPTY_VALUES:
             return qs
 
-        return qs.filter(**{self.field_name + '__language_code': value})
+        return qs.filter(**{self.field_name + "__language_code": value})
 
 
 class TranslationsReportFilterSet(WagtailFilterSet):
-    content_type = ContentTypeModelChoiceFilter(field_name='source__specific_content_type', label=gettext_lazy("Content type"))
+    content_type = ContentTypeModelChoiceFilter(
+        field_name="source__specific_content_type", label=gettext_lazy("Content type")
+    )
     source_title = SourceTitleFilter(label=gettext_lazy("Source title"))
-    source_locale = LocaleFilter(field_name='source__locale')
+    source_locale = LocaleFilter(field_name="source__locale")
     target_locale = LocaleFilter()
 
     class Meta:
         model = Translation
-        fields = ['content_type', 'source_title', 'source_locale', 'target_locale']
+        fields = ["content_type", "source_title", "source_locale", "target_locale"]
 
 
 class TranslationsReportView(ReportView):
-    template_name = 'wagtail_localize/admin/translations_report.html'
-    title = gettext_lazy('Translations')
-    header_icon = 'site'
+    template_name = "wagtail_localize/admin/translations_report.html"
+    title = gettext_lazy("Translations")
+    header_icon = "site"
 
     filterset_class = TranslationsReportFilterSet
 

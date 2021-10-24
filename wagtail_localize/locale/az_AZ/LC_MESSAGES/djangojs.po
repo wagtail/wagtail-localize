@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Mirza Iskandarov <mirza.iskandarov@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Mirza Iskandarov <mirza.iskandarov@gmail.com>, 2021\n"

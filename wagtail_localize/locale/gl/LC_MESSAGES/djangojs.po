@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Amós Oviedo <amos.oviedo@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2021\n"

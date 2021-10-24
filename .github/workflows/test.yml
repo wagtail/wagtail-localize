@@ -18,7 +18,7 @@ jobs:
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: '3.8'
       - uses: pre-commit/action@v2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -129,7 +129,7 @@ jobs:
       - name: Test
         run: |
           coverage run testmanage.py test
-      - name: "Upload coverage to Codecov"
+      - name: 'Upload coverage to Codecov'
         uses: codecov/codecov-action@v1
         with:
           fail_ci_if_error: true

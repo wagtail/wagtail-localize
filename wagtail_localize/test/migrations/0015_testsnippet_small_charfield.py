@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize_test', '0014_auto_20210217_0924'),
+        ("wagtail_localize_test", "0014_auto_20210217_0924"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='testsnippet',
-            name='small_charfield',
+            model_name="testsnippet",
+            name="small_charfield",
             field=models.CharField(blank=True, max_length=10),
         ),
     ]

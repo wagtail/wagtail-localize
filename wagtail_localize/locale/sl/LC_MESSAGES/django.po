@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Mitja Pagon <mitja.pagon@inueni.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Luís Tiago Favas <al62006@utad.eu>, 2020
 # Tiago Henriques <trinosauro@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Tiago Henriques <trinosauro@gmail.com>, 2021\n"

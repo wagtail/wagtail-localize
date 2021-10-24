@@ -2,7 +2,7 @@ site_name: Wagtail Localize
 site_url: https://wagtail-localize.org
 repo_url: https://github.com/wagtail/wagtail-localize/
 theme:
-  name: "material"
+  name: 'material'
   custom_dir: docs/theme_overrides
   palette:
     primary: teal
@@ -31,8 +31,8 @@ plugins:
         python:
           selection:
             filters:
-              - "!^_"  # exlude all members starting with _
-              - "^__init__$"  # but always include __init__ modules and methods
+              - '!^_' # exlude all members starting with _
+              - '^__init__$' # but always include __init__ modules and methods
           setup_commands:
             - import os
             - import django
@@ -42,34 +42,34 @@ plugins:
 nav:
   - Home: index.md
   - Tutorial:
-    - 1. Project set up: tutorial/1-project-set-up.md
-    - 2. Configure Wagtail Localize: tutorial/2-configure-wagtail-localize.md
-    - 3. Translating Content: tutorial/3-content.md
-    - 4. Translating Templates: tutorial/4-templates.md
+      - 1. Project set up: tutorial/1-project-set-up.md
+      - 2. Configure Wagtail Localize: tutorial/2-configure-wagtail-localize.md
+      - 3. Translating Content: tutorial/3-content.md
+      - 4. Translating Templates: tutorial/4-templates.md
   - How To Guides:
-    - Installation guide: how-to/installation.md
-    - Configuring translatable fields: how-to/field-configuration.md
-    - Integrations:
-      - Pontoon: how-to/integrations/pontoon.md
-      - Machine Translation: how-to/integrations/machine-translation.md
-    - Migrate from other translation plugins:
-      - wagtailtrans: how-to/migrate/wagtailtrans.md
+      - Installation guide: how-to/installation.md
+      - Configuring translatable fields: how-to/field-configuration.md
+      - Integrations:
+          - Pontoon: how-to/integrations/pontoon.md
+          - Machine Translation: how-to/integrations/machine-translation.md
+      - Migrate from other translation plugins:
+          - wagtailtrans: how-to/migrate/wagtailtrans.md
   - Reference:
-    - Translatable Fields: ref/translatable-fields.md
-    - Strings: ref/strings.md
-    - Segments:
-        - Value Types: ref/segments/types.md
-        - Extraction: ref/segments/extract.md
-        - Ingestion: ref/segments/ingest.md
-    - Models:
-        - Translation Memory: ref/models/translation-memory.md
-        - Translation Management: ref/models/translation-management.md
-        - Translatable segments: ref/models/translatable-segments.md
-        - Overridable segments: ref/models/overridable-segments.md
-        - Settings: ref/models/settings.md
-    - Synctree module: ref/synctree.md
+      - Translatable Fields: ref/translatable-fields.md
+      - Strings: ref/strings.md
+      - Segments:
+          - Value Types: ref/segments/types.md
+          - Extraction: ref/segments/extract.md
+          - Ingestion: ref/segments/ingest.md
+      - Models:
+          - Translation Memory: ref/models/translation-memory.md
+          - Translation Management: ref/models/translation-management.md
+          - Translatable segments: ref/models/translatable-segments.md
+          - Overridable segments: ref/models/overridable-segments.md
+          - Settings: ref/models/settings.md
+      - Synctree module: ref/synctree.md
   - Explanations:
-    - Segments: concept/segments.md
-    - Content Paths: concept/content-paths.md
-    - Auto-generation of Translatable Fields: concept/translatable-fields-autogen.md
-    - Tree Synchronisation: concept/tree-synchronisation.md
+      - Segments: concept/segments.md
+      - Content Paths: concept/content-paths.md
+      - Auto-generation of Translatable Fields: concept/translatable-fields-autogen.md
+      - Tree Synchronisation: concept/tree-synchronisation.md

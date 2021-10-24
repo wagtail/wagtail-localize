@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # saevarom <saevar@saevar.is>, 2021
 # Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

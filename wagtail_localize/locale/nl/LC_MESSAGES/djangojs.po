@@ -1,11 +1,11 @@
-# 
+#
 # Translators:
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
 # mahulst, 2021
 # Brecht Dervaux <info@dervauxbrecht.be>, 2021
 # Rob Moorman <rob@moori.nl>, 2021
 # Thijs Kramer <thijskramer@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Thijs Kramer <thijskramer@gmail.com>, 2021\n"

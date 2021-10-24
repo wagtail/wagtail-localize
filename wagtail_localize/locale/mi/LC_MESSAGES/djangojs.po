@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Awatea Randall <awatea@octave.nz>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Awatea Randall <awatea@octave.nz>, 2021\n"

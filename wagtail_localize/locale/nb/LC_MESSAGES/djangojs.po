@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # Eirik Krogstad <eirikkr@gmail.com>, 2021
 # Robin Skahjem-Eriksen <robinds@student.matnat.uio.no>, 2021
 # Ole Kristian Losvik <ole@losol.no>, 2021
 # Stein Strindhaug <stein.strindhaug@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Stein Strindhaug <stein.strindhaug@gmail.com>, 2021\n"

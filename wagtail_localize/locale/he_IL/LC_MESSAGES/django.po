@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # 2ba49a64a97dc0c30b67cbb6522d98c8_d0a1309 <5628a6f4d3ab86b48aef276247790766_814>, 2021
 # lior abazon <abazon@v15.org.il>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

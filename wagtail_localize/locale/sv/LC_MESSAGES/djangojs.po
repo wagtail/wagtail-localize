@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Thomas Kunambi <kunambi@gmail.com>, 2020
 # Martin Sandström <martin@marteinn.se>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Martin Sandström <martin@marteinn.se>, 2021\n"

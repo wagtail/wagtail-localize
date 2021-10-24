@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Peter Coward <peter@catalpa.io>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
