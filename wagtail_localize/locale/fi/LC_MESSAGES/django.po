@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2020
 # Aarni Koskela, 2021
 # Glen Somerville <glen.somerville@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

@@ -1,19 +1,24 @@
 from django.db import models
 from django.utils.translation import gettext_lazy
-
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, InlinePanel, PageChooserPanel, \
-    StreamFieldPanel
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+    ObjectList,
+    PageChooserPanel,
+    StreamFieldPanel,
+    TabbedInterface,
+)
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, Orderable, TranslatableMixin
+from wagtail.core.models import Orderable, Page, TranslatableMixin
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import register_snippet
 
-from wagtail_localize.fields import TranslatableField, SynchronizedField
+from wagtail_localize.fields import SynchronizedField, TranslatableField
 from wagtail_localize.segments import StringSegmentValue
 
 
@@ -30,7 +35,10 @@ class TestSnippet(TranslatableMixin, models.Model):
     # To test field level validation of snippets
     small_charfield = models.CharField(max_length=10, blank=True)
 
-    translatable_fields = [TranslatableField("field"), TranslatableField("small_charfield")]
+    translatable_fields = [
+        TranslatableField("field"),
+        TranslatableField("small_charfield"),
+    ]
 
 
 @register_snippet
@@ -54,7 +62,9 @@ class CustomStructBlock(blocks.StructBlock):
 
     def get_translatable_segments(self, value):
         return [
-            StringSegmentValue("foo", "{} / {}".format(value["field_a"], value["field_b"]))
+            StringSegmentValue(
+                "foo", "{} / {}".format(value["field_a"], value["field_b"])
+            )
         ]
 
     def restore_translated_segments(self, value, segments):
@@ -70,20 +80,23 @@ class CustomStructBlock(blocks.StructBlock):
 class CustomBlockWithoutExtractMethod(blocks.Block):
     def render_form(self, *args, **kwargs):
         """Placeholder for Wagtail < 2.13"""
-        return ''
+        return ""
 
     class Meta:
         default = None
 
 
 if telepath:
+
     class CustomBlockWithoutExtractMethodAdapter(telepath.Adapter):
-        js_constructor = 'CustomBlockWithoutExtractMethod'
+        js_constructor = "CustomBlockWithoutExtractMethod"
 
         def js_args(self, block):
             return []
 
-    telepath.register(CustomBlockWithoutExtractMethodAdapter(), CustomBlockWithoutExtractMethod)
+    telepath.register(
+        CustomBlockWithoutExtractMethodAdapter(), CustomBlockWithoutExtractMethod
+    )
 
 
 class TestStreamBlock(blocks.StreamBlock):
@@ -100,11 +113,15 @@ class TestStreamBlock(blocks.StreamBlock):
     test_customstructblock = CustomStructBlock()
     test_customblockwithoutextractmethod = CustomBlockWithoutExtractMethod()
     test_pagechooserblock = blocks.PageChooserBlock()
-    test_pagechooserblock_with_restricted_types = blocks.PageChooserBlock(['wagtail_localize_test.TestHomePage', 'wagtail_localize_test.TestPage'])
+    test_pagechooserblock_with_restricted_types = blocks.PageChooserBlock(
+        ["wagtail_localize_test.TestHomePage", "wagtail_localize_test.TestPage"]
+    )
     test_imagechooserblock = ImageChooserBlock()
     test_documentchooserblock = DocumentChooserBlock()
     test_snippetchooserblock = SnippetChooserBlock(TestSnippet)
-    test_nontranslatablesnippetchooserblock = SnippetChooserBlock(NonTranslatableSnippet)
+    test_nontranslatablesnippetchooserblock = SnippetChooserBlock(
+        NonTranslatableSnippet
+    )
     test_embedblock = EmbedBlock()
 
 
@@ -118,7 +135,9 @@ class TestCustomField(models.TextField):
 
 
 class TestPage(Page):
-    test_charfield = models.CharField(gettext_lazy("char field"), max_length=255, blank=True, null=True, default='')
+    test_charfield = models.CharField(
+        gettext_lazy("char field"), max_length=255, blank=True, null=True, default=""
+    )
     test_textfield = models.TextField(blank=True)
     test_emailfield = models.EmailField(blank=True)
     test_slugfield = models.SlugField(blank=True)
@@ -144,10 +163,18 @@ class TestPage(Page):
     test_synchronized_streamfield = StreamField(TestStreamBlock, blank=True)
 
     test_synchronized_image = models.ForeignKey(
-        'wagtailimages.Image', null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
     )
     test_synchronized_document = models.ForeignKey(
-        'wagtaildocs.Document', null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+        "wagtaildocs.Document",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
     )
     test_synchronized_snippet = models.ForeignKey(
         TestSnippet, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
@@ -158,7 +185,11 @@ class TestPage(Page):
     )
 
     test_page_specific_type = models.ForeignKey(
-        'TestHomePage', null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+        "TestHomePage",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
     )
 
     test_page_with_restricted_types = models.ForeignKey(
@@ -180,7 +211,9 @@ class TestPage(Page):
         TranslatableField("test_customfield"),
         SynchronizedField("test_synchronized_charfield"),
         SynchronizedField("test_synchronized_textfield"),
-        SynchronizedField("test_not_overridable_synchronized_textfield", overridable=False),
+        SynchronizedField(
+            "test_not_overridable_synchronized_textfield", overridable=False
+        ),
         SynchronizedField("test_synchronized_emailfield"),
         SynchronizedField("test_synchronized_slugfield"),
         SynchronizedField("test_synchronized_urlfield"),
@@ -190,9 +223,9 @@ class TestPage(Page):
         SynchronizedField("test_synchronized_document"),
         SynchronizedField("test_synchronized_snippet"),
         SynchronizedField("test_synchronized_childobjects"),
-        SynchronizedField('test_page'),
-        SynchronizedField('test_page_specific_type'),
-        SynchronizedField('test_page_with_restricted_types'),
+        SynchronizedField("test_page"),
+        SynchronizedField("test_page_specific_type"),
+        SynchronizedField("test_page_with_restricted_types"),
         SynchronizedField("test_synchronized_customfield"),
     ]
 
@@ -218,9 +251,12 @@ class TestPage(Page):
         FieldPanel("test_synchronized_document"),
         FieldPanel("test_synchronized_snippet"),
         InlinePanel("test_synchronized_childobjects"),
-        PageChooserPanel('test_page'),
-        PageChooserPanel('test_page_specific_type'),
-        PageChooserPanel('test_page_with_restricted_types', ['wagtail_localize_test.TestHomePage', 'wagtail_localize_test.TestPage']),
+        PageChooserPanel("test_page"),
+        PageChooserPanel("test_page_specific_type"),
+        PageChooserPanel(
+            "test_page_with_restricted_types",
+            ["wagtail_localize_test.TestHomePage", "wagtail_localize_test.TestPage"],
+        ),
         FieldPanel("test_synchronized_customfield"),
     ]
 
@@ -276,7 +312,9 @@ class TestSynchronizedChildObject(Orderable):
 # FIXME: Rename me
 class TestNonParentalChildObject(TranslatableMixin, Orderable):
     page = models.ForeignKey(
-        TestPage, on_delete=models.CASCADE, related_name="test_nonparentalchildobjects"  # FIXME: inconsistent related_name
+        TestPage,
+        on_delete=models.CASCADE,
+        related_name="test_nonparentalchildobjects",  # FIXME: inconsistent related_name
     )
     field = models.TextField()
 
@@ -293,7 +331,9 @@ class TestGenerateTranslatableFieldsPage(Page):
     """
 
     test_charfield = models.CharField(max_length=255, blank=True)
-    test_charfield_with_choices = models.CharField(max_length=255, blank=True, choices=[('a', "A"), ('b', "B")])
+    test_charfield_with_choices = models.CharField(
+        max_length=255, blank=True, choices=[("a", "A"), ("b", "B")]
+    )
     test_textfield = models.TextField(blank=True)
     test_emailfield = models.EmailField(blank=True)
     test_slugfield = models.SlugField(blank=True)
@@ -307,7 +347,11 @@ class TestGenerateTranslatableFieldsPage(Page):
     )
 
     test_nontranslatablesnippet = models.ForeignKey(
-        NonTranslatableSnippet, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+        NonTranslatableSnippet,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
     )
 
     test_customfield = TestCustomField(blank=True)
@@ -315,13 +359,16 @@ class TestGenerateTranslatableFieldsPage(Page):
 
 class TestOverrideTranslatableFieldsPage(TestGenerateTranslatableFieldsPage):
     override_translatable_fields = [
-        SynchronizedField('test_charfield'),
-        TranslatableField('test_emailfield'),
+        SynchronizedField("test_charfield"),
+        TranslatableField("test_emailfield"),
     ]
 
 
 class TranslatableChildObject(TranslatableMixin, Orderable):
-    page = ParentalKey(TestGenerateTranslatableFieldsPage, related_name="test_translatable_childobjects")
+    page = ParentalKey(
+        TestGenerateTranslatableFieldsPage,
+        related_name="test_translatable_childobjects",
+    )
     field = models.TextField()
 
     class Meta(TranslatableMixin.Meta, Orderable.Meta):
@@ -329,17 +376,20 @@ class TranslatableChildObject(TranslatableMixin, Orderable):
 
 
 class NonTranslatableChildObject(Orderable):
-    page = ParentalKey(TestGenerateTranslatableFieldsPage, related_name="test_nontranslatable_childobjects")
+    page = ParentalKey(
+        TestGenerateTranslatableFieldsPage,
+        related_name="test_nontranslatable_childobjects",
+    )
     field = models.TextField()
 
 
 class TestModelWithInvalidForeignKey(TranslatableMixin, models.Model):
-    fk = models.ForeignKey('wagtailcore.Site', on_delete=models.CASCADE)
+    fk = models.ForeignKey("wagtailcore.Site", on_delete=models.CASCADE)
 
     # This should raise an error as the model being pointed to is not
     # translatable!
     translatable_fields = [
-        TranslatableField('fk'),
+        TranslatableField("fk"),
     ]
 
 
@@ -349,22 +399,24 @@ class PageWithCustomEditHandler(Page):
     baz_field = models.TextField()
 
     foo_panels = [
-        FieldPanel('foo_field'),
+        FieldPanel("foo_field"),
     ]
 
     bar_panels = [
-        FieldPanel('bar_field'),
-        FieldPanel('baz_field'),
+        FieldPanel("bar_field"),
+        FieldPanel("baz_field"),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(bar_panels, heading="Bar"),
-        ObjectList([InlinePanel('child_objects')], heading="Child objects"),
-        ObjectList(foo_panels, heading="Foo"),
-        ObjectList(Page.content_panels, heading="Content"),
-        ObjectList(Page.promote_panels, heading="Promote"),
-        ObjectList(Page.settings_panels, heading="Settings"),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(bar_panels, heading="Bar"),
+            ObjectList([InlinePanel("child_objects")], heading="Child objects"),
+            ObjectList(foo_panels, heading="Foo"),
+            ObjectList(Page.content_panels, heading="Content"),
+            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings"),
+        ]
+    )
 
 
 class PageWithCustomEditHandlerChildObject(TranslatableMixin, Orderable):

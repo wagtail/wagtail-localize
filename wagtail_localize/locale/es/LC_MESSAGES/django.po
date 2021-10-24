@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Amós Oviedo <amos.oviedo@gmail.com>, 2020
 # Joaquín T <joaquintita@gmail.com>, 2021
 # José Luis <alagunajs@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

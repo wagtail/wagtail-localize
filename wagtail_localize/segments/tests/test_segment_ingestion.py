@@ -1,22 +1,21 @@
-import uuid
 import unittest
+import uuid
 
 from django.test import TestCase
-
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page, Locale
+from wagtail.core.models import Locale, Page
 
 from wagtail_localize.fields import copy_synchronised_fields
 from wagtail_localize.segments import (
+    OverridableSegmentValue,
+    RelatedObjectSegmentValue,
     StringSegmentValue,
     TemplateSegmentValue,
-    RelatedObjectSegmentValue,
-    OverridableSegmentValue,
 )
 from wagtail_localize.segments.ingest import ingest_segments
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject
+from wagtail_localize.test.models import TestChildObject, TestPage, TestSnippet
 
 
 def streamfield_raw_data(stream_data):
@@ -48,22 +47,20 @@ RICH_TEXT_TEST_FRENCH_SEGMENTS = [
     StringSegmentValue("", "Ceci est une rubrique", order=10),
     StringSegmentValue.from_source_html(
         "",
-        'Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b>',
+        "Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b>",
         order=11,
     ),
     StringSegmentValue(
         "",
         StringValue('<a id="a1">Ceci est un lien</a>'),
-        attrs={
-            "a1": {"href": "http://example.com"}
-        },
+        attrs={"a1": {"href": "http://example.com"}},
         order=12,
     ),
     OverridableSegmentValue(
         "'http://example.com'",
         "http://example.fr",
         order=13,
-    )
+    ),
 ]
 
 RICH_TEXT_TEST_OUTPUT = '<h1>Ceci est une rubrique</h1><p>Ceci est un paragraphe. &lt;foo&gt; <b>Texte en gras</b></p><ul><li><a href="http://example.fr">Ceci est un lien</a></li></ul>'
@@ -397,7 +394,9 @@ class TestSegmentIngestionWithStreamField(TestCase):
     def test_embedblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
-            str(block_id), "test_embedblock", "https://www.youtube.com/watch?v=pGpCHRyUZXQ"
+            str(block_id),
+            "test_embedblock",
+            "https://www.youtube.com/watch?v=pGpCHRyUZXQ",
         )
 
         translated_page = page.copy_for_translation(self.locale)
@@ -409,7 +408,8 @@ class TestSegmentIngestionWithStreamField(TestCase):
             self.locale,
             [
                 OverridableSegmentValue(
-                    f"test_streamfield.{block_id}", "https://www.youtube.com/watch?v=aBByJQCaaEA"
+                    f"test_streamfield.{block_id}",
+                    "https://www.youtube.com/watch?v=aBByJQCaaEA",
                 )
             ],
         )

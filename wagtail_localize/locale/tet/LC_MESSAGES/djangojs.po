@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # Peter Coward <peter@catalpa.io>, 2021
 # Onorio de Jesus Afonso <onorio@catalpa.io>, 2021
 # Joanico Barros <joanico@catalpa.io>, 2021
 # Mariano de Deus <dedeus_mariano@yahoo.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Mariano de Deus <dedeus_mariano@yahoo.com>, 2021\n"

@@ -87,7 +87,11 @@ class StringSegmentValue(BaseValue):
             pass
 
         else:
-            raise TypeError("`string` must be either a `StringValue` or a `str`. Got `{}`".format(type(string).__name__))
+            raise TypeError(
+                "`string` must be either a `StringValue` or a `str`. Got `{}`".format(
+                    type(string).__name__
+                )
+            )
 
         self.string = string
         self.attrs = attrs or None
@@ -174,6 +178,7 @@ class TemplateSegmentValue(BaseValue):
         string_count (int): The number of translatablle string segments that were extracted from the template.
         order (int): The index that this segment appears on a page.
     """
+
     def __init__(self, path, format, template, string_count, **kwargs):
         """
         Initialises a new TemplateSegmentValue.
@@ -238,6 +243,7 @@ class RelatedObjectSegmentValue(BaseValue):
         translation_key (UUID): The value of the foreign object's `translation_key` field.
         order (int): The index that this segment appears on a page.
     """
+
     def __init__(self, path, content_type, translation_key, **kwargs):
         """
         Initialises a new RelatedObjectSegmentValue.
@@ -337,6 +343,7 @@ class OverridableSegmentValue(BaseValue):
         data (any): The value of the field in the source. Must be JSON-serializable.
         order (int): The index that this segment appears on a page.
     """
+
     def __init__(self, path, data, **kwargs):
         """
         Initialises a new RelatedObjectSegmentValue.
@@ -359,9 +366,7 @@ class OverridableSegmentValue(BaseValue):
         Returns:
             OverridableSegmentValue: The new segment value that's a copy of this one.
         """
-        return OverridableSegmentValue(
-            self.path, self.data, order=self.order
-        )
+        return OverridableSegmentValue(self.path, self.data, order=self.order)
 
     def is_empty(self):
         """

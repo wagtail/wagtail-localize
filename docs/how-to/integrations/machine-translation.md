@@ -2,14 +2,14 @@
 
 Wagtail Localize supports using a machine translator for translating whole pages at a time with a single button click.
 
-They are configured using the ``WAGTAILLOCALIZE_MACHINE_TRANSLATOR`` setting, which must be set to a ``dict`` like the following:
+They are configured using the `WAGTAILLOCALIZE_MACHINE_TRANSLATOR` setting, which must be set to a `dict` like the following:
 
-``` python
+```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'path.to.translator.Class',
-    'OPTIONS': {
+    "CLASS": "path.to.translator.Class",
+    "OPTIONS": {
         # ... options here
-    }
+    },
 }
 ```
 
@@ -19,12 +19,12 @@ This document describes how to configure various machine translators, as well as
 
 Website: [https://cloud.google.com/translate](https://cloud.google.com/translate)
 
-``` python
+```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'wagtail_localize.machine_translators.google.GoogleCloudTranslator',
-    'OPTIONS': {
-        'PROJECT_ID': '<Your project ID here>',
-    }
+    "CLASS": "wagtail_localize.machine_translators.google.GoogleCloudTranslator",
+    "OPTIONS": {
+        "PROJECT_ID": "<Your project ID here>",
+    },
 }
 ```
 
@@ -34,12 +34,12 @@ Website: [https://www.deepl.com/](https://www.deepl.com/)
 
 Note that You will need a pro account to get an API key.
 
-``` python
+```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'wagtail_localize.machine_translators.deepl.DeepLTranslator',
-    'OPTIONS': {
-        'AUTH_KEY': '<Your DeepL key here>',
-    }
+    "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
+    "OPTIONS": {
+        "AUTH_KEY": "<Your DeepL key here>",
+    },
 }
 ```
 
@@ -48,9 +48,9 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 The dummy translator exists primarily for testing Wagtail Localize and it only reverses the strings that are passed to
 it. But you might want to use it to try out the UI without having to sign up to any external services:
 
-``` python
+```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    'CLASS': 'wagtail_localize.machine_translators.dummy.DummyTranslator',
+    "CLASS": "wagtail_localize.machine_translators.dummy.DummyTranslator",
 }
 ```
 
@@ -81,9 +81,7 @@ class CustomTranslator(BaseMachineTranslator):
 
         # If the service does not support HTML, use plain text instead:
         return {
-            string: StringValue.from_plaintext(
-                translate_text(string.render_text())
-            )
+            string: StringValue.from_plaintext(translate_text(string.render_text()))
             for string in strings
         }
 

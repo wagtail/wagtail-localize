@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Nick Mavrakis <mavrakis.n@gmail.com>, 2021
 # George Giannoulopoulos <vdotoree@yahoo.gr>, 2021
 # 79353a696ad19dc202b261b3067b7640_bec941e, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

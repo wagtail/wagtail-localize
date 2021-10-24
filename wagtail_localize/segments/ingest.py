@@ -1,8 +1,7 @@
 from collections import defaultdict
 
-from django.db import models
-
 from django.apps import apps
+from django.db import models
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
@@ -51,7 +50,7 @@ def organise_template_segments(segments):
     def translate_href(attrs):
         """Update href in segments with their translated values."""
         if attrs:
-            for key, val in attrs.items():
+            for val in attrs.values():
                 if val and "href" in val and val["href"] in xrefs:
                     val["href"] = xrefs[val["href"]]
         return attrs
@@ -61,7 +60,8 @@ def organise_template_segments(segments):
         template.template,
         [
             (segment.string, translate_href(segment.attrs))
-            for segment in segments[1:] if isinstance(segment, StringSegmentValue)
+            for segment in segments[1:]
+            if isinstance(segment, StringSegmentValue)
         ],
     )
 
@@ -80,7 +80,11 @@ def handle_related_object(related_model, src_locale, tgt_locale, segments):
         Model: The referenced instance.
     """
     if len(segments) > 1:
-        raise ValueError("Related object field can only have a single segment. Found {}".format(len(segments)))
+        raise ValueError(
+            "Related object field can only have a single segment. Found {}".format(
+                len(segments)
+            )
+        )
 
     segment = segments[0]
 
@@ -96,6 +100,7 @@ class StreamFieldSegmentsWriter:
     """
     A helper class to help traverse StreamField values and insert translated segments.
     """
+
     def __init__(self, field, src_locale, tgt_locale):
         """
         Initialises a StreamFieldSegmentsWriter.
@@ -117,7 +122,11 @@ class StreamFieldSegmentsWriter:
 
             if isinstance(block_type, EmbedBlock):
                 if len(segments) > 1:
-                    raise ValueError("EmbedBlock can only have a single segment. Found {}".format(len(segments)))
+                    raise ValueError(
+                        "EmbedBlock can only have a single segment. Found {}".format(
+                            len(segments)
+                        )
+                    )
 
                 segment = segments[0]
 
@@ -127,9 +136,16 @@ class StreamFieldSegmentsWriter:
         if hasattr(block_type, "restore_translated_segments"):
             return block_type.restore_translated_segments(block_value, segments)
 
-        elif isinstance(block_type, (blocks.CharBlock, blocks.TextBlock, blocks.URLBlock, blocks.EmailBlock)):
+        elif isinstance(
+            block_type,
+            (blocks.CharBlock, blocks.TextBlock, blocks.URLBlock, blocks.EmailBlock),
+        ):
             if len(segments) > 1:
-                raise ValueError("TextBlock/CharBlock can only have a single segment. Found {}".format(len(segments)))
+                raise ValueError(
+                    "TextBlock/CharBlock can only have a single segment. Found {}".format(
+                        len(segments)
+                    )
+                )
 
             segment = segments[0]
 
@@ -249,7 +265,11 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
 
         elif isinstance(field, (models.TextField, models.CharField)):
             if len(field_segments) > 1:
-                raise ValueError("TextField/CharField can only have a single segment. Found {}".format(len(field_segments)))
+                raise ValueError(
+                    "TextField/CharField can only have a single segment. Found {}".format(
+                        len(field_segments)
+                    )
+                )
 
             segment = field_segments[0]
 

@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Huib Keemink <huib@creativedutchmen.com>, 2021
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
 # Thijs Kramer <thijskramer@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

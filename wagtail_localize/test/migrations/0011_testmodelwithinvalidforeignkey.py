@@ -8,22 +8,47 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '0059_apply_collection_ordering'),
-        ('wagtail_localize_test', '0010_testoverridetranslatablefieldspage'),
+        ("wagtailcore", "0059_apply_collection_ordering"),
+        ("wagtail_localize_test", "0010_testoverridetranslatablefieldspage"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TestModelWithInvalidForeignKey',
+            name="TestModelWithInvalidForeignKey",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('translation_key', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.site')),
-                ('locale', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtailcore.locale')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "translation_key",
+                    models.UUIDField(default=uuid.uuid4, editable=False),
+                ),
+                (
+                    "fk",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.site",
+                    ),
+                ),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        editable=False,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="wagtailcore.locale",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'unique_together': {('translation_key', 'locale')},
+                "abstract": False,
+                "unique_together": {("translation_key", "locale")},
             },
         ),
     ]

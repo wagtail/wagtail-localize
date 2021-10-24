@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # abdulaziz alfuhigi <abajall@gmail.com>, 2021
 # ROGER MICHAEL ASHLEY ALLEN <rogermaallen@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

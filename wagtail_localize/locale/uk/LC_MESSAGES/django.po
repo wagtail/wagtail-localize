@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Viktor Shytiuk <VicHunting@yandex.ua>, 2021
 # Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

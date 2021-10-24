@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Reinis Rozenbergs <reinisr@gmail.com>, 2021
 # Maris Serzans <maris.serzans@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Maris Serzans <maris.serzans@gmail.com>, 2021\n"

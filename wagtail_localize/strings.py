@@ -1,9 +1,8 @@
 from collections import Counter
 
+from bs4 import BeautifulSoup, NavigableString, Tag
 from django.utils.html import escape
 from django.utils.translation import gettext as _
-
-from bs4 import BeautifulSoup, NavigableString, Tag
 
 
 # List of tags that are allowed in segments
@@ -16,7 +15,7 @@ def lstrip_keep(text):
     """
     text_length = len(text)
     new_text = text.lstrip()
-    prefix = text[0:(text_length - len(new_text))]
+    prefix = text[0 : (text_length - len(new_text))]
     return new_text, prefix
 
 
@@ -27,7 +26,7 @@ def rstrip_keep(text):
     text_length = len(text)
     new_text = text.rstrip()
     if text_length != len(new_text):
-        suffix = text[-(text_length - len(new_text)):]
+        suffix = text[-(text_length - len(new_text)) :]
     else:
         suffix = ""
     return new_text, suffix
@@ -41,17 +40,25 @@ def validate_element(element):
         return
 
     # Validate tag and attributes
-    if isinstance(element, Tag) and element.name != '[document]':
+    if isinstance(element, Tag) and element.name != "[document]":
         # Block tags are not allowed in strings
         if element.name not in INLINE_TAGS:
-            raise ValueError(_("<{}> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)").format(element.name))
+            raise ValueError(
+                _(
+                    "<{}> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)"
+                ).format(element.name)
+            )
 
         # Elements can't have attributes, except for <a> tags
         keys = set(element.attrs.keys())
-        if element.name == 'a' and 'id' in keys:
-            keys.remove('id')
+        if element.name == "a" and "id" in keys:
+            keys.remove("id")
         if keys:
-            raise ValueError(_("Strings cannot have any HTML tags with attributes (except for 'id' in <a> tags)"))
+            raise ValueError(
+                _(
+                    "Strings cannot have any HTML tags with attributes (except for 'id' in <a> tags)"
+                )
+            )
 
     # Traverse children
     for child_element in element.children:
@@ -65,6 +72,7 @@ class StringValue:
     Attributes:
         data (str): The HTML fragment.
     """
+
     def __init__(self, data):
         self.data = data
 
@@ -82,17 +90,17 @@ class StringValue:
         # Escapes all HTML characters and replaces newlines with <br> tags
         elements = []
 
-        for line in text.split('\n'):
+        for line in text.split("\n"):
             if line:
                 elements.append(escape(line))
 
-            elements.append('<br>')
+            elements.append("<br>")
 
         # Remove last element which is an extra br tag
         elements.pop()
 
         # Join the elements then pass through beautiful soup to normalize the HTML
-        return cls(str(BeautifulSoup(''.join(elements), 'html.parser')))
+        return cls(str(BeautifulSoup("".join(elements), "html.parser")))
 
     @classmethod
     def from_source_html(cls, html):
@@ -125,9 +133,7 @@ class StringValue:
                         counter[element.name] += 1
                         element_id = element.name + str(counter[element.name])
                         attrs[element_id] = element.attrs
-                        element.attrs = {
-                            'id': element_id
-                        }
+                        element.attrs = {"id": element_id}
 
                     # Traverse into element children
                     walk(element)
@@ -175,8 +181,8 @@ class StringValue:
                 if isinstance(element, NavigableString):
                     texts.append(element)
 
-                elif element.name == 'br':
-                    texts.append('\n')
+                elif element.name == "br":
+                    texts.append("\n")
 
                 else:
                     walk(element)
@@ -206,8 +212,8 @@ class StringValue:
 
                 else:
                     # Restore HTML attributes
-                    if 'id' in element.attrs:
-                        element.attrs = attrs[element.attrs['id']]
+                    if "id" in element.attrs:
+                        element.attrs = attrs[element.attrs["id"]]
 
                     # Traverse into element children
                     walk(element)
@@ -239,10 +245,7 @@ class StringValue:
         return self.data
 
     def __eq__(self, other):
-        return (
-            isinstance(other, StringValue)
-            and other.data == self.data
-        )
+        return isinstance(other, StringValue) and other.data == self.data
 
     def __repr__(self):
         return "<StringValue '{}'>".format(self.data)
@@ -314,7 +317,7 @@ def extract_strings(html):
         if (
             len(elements) == 1
             and not isinstance(elements[0], NavigableString)
-            and elements[0].name != 'a'  # keep href translatable
+            and elements[0].name != "a"  # keep href translatable
             and elements[0].name in INLINE_TAGS
         ):
             wrap(elements[0].children)
@@ -485,9 +488,9 @@ def extract_ids(template):
         if not isinstance(element, Tag):
             continue
 
-        if element.name == 'a':
-            if 'id' in element.attrs:
-                ids.add(element.attrs['id'])
+        if element.name == "a":
+            if "id" in element.attrs:
+                ids.add(element.attrs["id"])
 
     return ids
 

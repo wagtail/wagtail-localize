@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-        "jsx": "react",
-        "lib": ["es2015", "dom"],
-        "noImplicitAny": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "strictNullChecks": true,
-        "esModuleInterop": true
-    },
-    "files": [
-        "wagtail_localize/static_src/main.tsx",
-        "wagtail_localize/static_src/custom.d.ts"
-    ]
+  "compilerOptions": {
+    "jsx": "react",
+    "lib": ["es2015", "dom"],
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true
+  },
+  "files": [
+    "wagtail_localize/static_src/main.tsx",
+    "wagtail_localize/static_src/custom.d.ts"
+  ]
 }

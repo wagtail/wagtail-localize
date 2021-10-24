@@ -61,17 +61,17 @@ In this section, you will set up a very basic Wagtail instance.
 
 Next, migrate the database for the first time:
 
-``` shell
+```shell
 python manage.py migrate
 ```
 
-That should create a file called ``db.sqlite3`` which contains all of the content.
+That should create a file called `db.sqlite3` which contains all of the content.
 
 **Create a user**
 
-Now create a user called ``admin``:
+Now create a user called `admin`:
 
-``` shell
+```shell
 python manage.py createsuperuser --email admin@example.com --username admin
 ```
 
@@ -79,11 +79,11 @@ python manage.py createsuperuser --email admin@example.com --username admin
 
 Finally, start a local development server:
 
-``` shell
+```shell
 python manage.py runserver
 ```
 
-Open up a browser and visit ``http://localhost:8000``. If all those steps completed correctly, you should see the Wagtail welcome screen:
+Open up a browser and visit `http://localhost:8000`. If all those steps completed correctly, you should see the Wagtail welcome screen:
 
 ---
 

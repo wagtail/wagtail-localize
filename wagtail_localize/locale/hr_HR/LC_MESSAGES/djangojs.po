@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Luka Matijević <lumatijev@gmail.com>, 2021
 # Dino Aljević <dino8890@protonmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2021\n"

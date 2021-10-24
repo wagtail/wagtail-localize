@@ -2,6 +2,7 @@ import json
 import uuid
 
 import polib
+
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.contenttypes.models import ContentType
@@ -11,23 +12,24 @@ from django.db import models, transaction
 from django.db.migrations.recorder import MigrationRecorder
 from django.db.models import (
     Case,
-    When,
-    Value,
-    IntegerField,
     Count,
-    Sum,
-    Subquery,
     Exists,
+    F,
+    IntegerField,
     OuterRef,
     Q,
-    F
+    Subquery,
+    Sum,
+    Value,
+    When,
 )
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
-from django.utils.translation import gettext as _, gettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import (
     ClusterableModel,
@@ -36,13 +38,23 @@ from modelcluster.models import (
 )
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
-from wagtail.core.models import Page, get_translatable_models, PageLogEntry, TranslatableMixin
+from wagtail.core.models import (
+    Page,
+    PageLogEntry,
+    TranslatableMixin,
+    get_translatable_models,
+)
 from wagtail.core.utils import find_available_slug
 
 from .compat import DATE_FORMAT
 from .fields import copy_synchronised_fields
-from .locales.components import register_locale_component, LocaleComponentModelForm
-from .segments import StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, OverridableSegmentValue
+from .locales.components import LocaleComponentModelForm, register_locale_component
+from .segments import (
+    OverridableSegmentValue,
+    RelatedObjectSegmentValue,
+    StringSegmentValue,
+    TemplateSegmentValue,
+)
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue, validate_translation_links
@@ -58,9 +70,8 @@ def pk(obj):
 
     ``` python
     def get_translations(target_locale):
-        return Translation.objects.filter(
-            target_locale=pk(target_locale)
-        )
+        return Translation.objects.filter(target_locale=pk(target_locale))
+
 
     # Both of these would be valid calls
     get_translations(Locale.objects.get(id=1))
@@ -93,17 +104,28 @@ def get_edit_url(instance):
         str: The URL of the edit page of the given instance.
     """
     if isinstance(instance, Page):
-        return reverse('wagtailadmin_pages:edit', args=[instance.id])
+        return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
     else:
-        return reverse('wagtailsnippets:edit', args=[instance._meta.app_label, instance._meta.model_name, quote(instance.id)])
+        return reverse(
+            "wagtailsnippets:edit",
+            args=[
+                instance._meta.app_label,
+                instance._meta.model_name,
+                quote(instance.id),
+            ],
+        )
 
 
 def get_schema_version(app_label):
     """
     Returns the name of the last applied migration for the given app label.
     """
-    migration = MigrationRecorder.Migration.objects.filter(app=app_label).order_by('applied').last()
+    migration = (
+        MigrationRecorder.Migration.objects.filter(app=app_label)
+        .order_by("applied")
+        .last()
+    )
     if migration:
         return migration.name
 
@@ -140,6 +162,7 @@ class TranslatableObject(models.Model):
             instances use. Note that this field refers to the model that has the ``locale`` and ``translation_key``
             fields and not the specific type.
     """
+
     translation_key = models.UUIDField(primary_key=True)
     content_type = models.ForeignKey(
         ContentType, on_delete=models.CASCADE, related_name="+"
@@ -206,6 +229,7 @@ class CannotSaveDraftError(Exception):
     """
     Raised when a save draft was request on a non-page model.
     """
+
     pass
 
 
@@ -227,9 +251,7 @@ class MissingRelatedObjectError(Exception):
 
 class TranslationSourceQuerySet(models.QuerySet):
     def get_for_instance(self, instance):
-        object = TranslatableObject.objects.get_for_instance(
-            instance
-        )
+        object = TranslatableObject.objects.get_for_instance(instance)
         return self.get(
             object=object,
             locale=instance.locale,
@@ -284,7 +306,7 @@ class TranslationSource(models.Model):
 
     class Meta:
         unique_together = [
-            ('object', 'locale'),
+            ("object", "locale"),
         ]
 
     @classmethod
@@ -313,7 +335,12 @@ class TranslationSource(models.Model):
         )
 
         try:
-            return TranslationSource.objects.get(object_id=object.translation_key, locale_id=instance.locale_id), False
+            return (
+                TranslationSource.objects.get(
+                    object_id=object.translation_key, locale_id=instance.locale_id
+                ),
+                False,
+            )
         except TranslationSource.DoesNotExist:
             pass
 
@@ -326,19 +353,17 @@ class TranslationSource(models.Model):
         source, created = cls.objects.update_or_create(
             object=object,
             locale=instance.locale,
-
             # You can't update the content type of a source. So if this happens,
             # it'll try and create a new source and crash (can't have more than
             # one source per object/locale)
             specific_content_type=ContentType.objects.get_for_model(instance.__class__),
-
             defaults={
-                'locale': instance.locale,
-                'object_repr': str(instance)[:200],
-                'content_json': content_json,
-                'schema_version': get_schema_version(instance._meta.app_label) or '',
-                'last_updated_at': timezone.now(),
-            }
+                "locale": instance.locale,
+                "object_repr": str(instance)[:200],
+                "content_json": content_json,
+                "schema_version": get_schema_version(instance._meta.app_label) or "",
+                "last_updated_at": timezone.now(),
+            },
         )
         source.refresh_segments()
         return source, created
@@ -374,7 +399,9 @@ class TranslationSource(models.Model):
             content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
 
         # Check if the instance has changed since the previous version
-        source = TranslationSource.objects.filter(object_id=object.translation_key, locale_id=instance.locale_id).first()
+        source = TranslationSource.objects.filter(
+            object_id=object.translation_key, locale_id=instance.locale_id
+        ).first()
 
         # Check if the instance has changed at all since the previous version
         if source:
@@ -384,19 +411,17 @@ class TranslationSource(models.Model):
         source, created = cls.objects.update_or_create(
             object=object,
             locale=instance.locale,
-
             # You can't update the content type of a source. So if this happens,
             # it'll try and create a new source and crash (can't have more than
             # one source per object/locale)
             specific_content_type=ContentType.objects.get_for_model(instance.__class__),
-
             defaults={
-                'locale': instance.locale,
-                'object_repr': str(instance)[:200],
-                'content_json': content_json,
-                'schema_version': get_schema_version(instance._meta.app_label) or '',
-                'last_updated_at': timezone.now(),
-            }
+                "locale": instance.locale,
+                "object_repr": str(instance)[:200],
+                "content_json": content_json,
+                "schema_version": get_schema_version(instance._meta.app_label) or "",
+                "last_updated_at": timezone.now(),
+            },
         )
         source.refresh_segments()
         return source, created
@@ -418,11 +443,18 @@ class TranslationSource(models.Model):
             serializable_data = get_serializable_data_for_fields(instance)
             self.content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
 
-        self.schema_version = get_schema_version(instance._meta.app_label) or ''
+        self.schema_version = get_schema_version(instance._meta.app_label) or ""
         self.object_repr = str(instance)[:200]
         self.last_updated_at = timezone.now()
 
-        self.save(update_fields=['content_json', 'schema_version', 'object_repr', 'last_updated_at'])
+        self.save(
+            update_fields=[
+                "content_json",
+                "schema_version",
+                "object_repr",
+                "last_updated_at",
+            ]
+        )
         self.refresh_segments()
 
     def get_source_instance(self):
@@ -521,8 +553,12 @@ class TranslationSource(models.Model):
         # Delete any segments that weren't mentioned
         self.stringsegment_set.exclude(id__in=seen_string_segment_ids).delete()
         self.templatesegment_set.exclude(id__in=seen_template_segment_ids).delete()
-        self.relatedobjectsegment_set.exclude(id__in=seen_related_object_segment_ids).delete()
-        self.overridablesegment_set.exclude(id__in=seen_overridable_segment_ids).delete()
+        self.relatedobjectsegment_set.exclude(
+            id__in=seen_related_object_segment_ids
+        ).delete()
+        self.overridablesegment_set.exclude(
+            id__in=seen_overridable_segment_ids
+        ).delete()
 
     def export_po(self):
         """
@@ -536,7 +572,11 @@ class TranslationSource(models.Model):
         # Get messages
         messages = []
 
-        for string_segment in StringSegment.objects.filter(source=self).order_by('order').select_related("context", "string"):
+        for string_segment in (
+            StringSegment.objects.filter(source=self)
+            .order_by("order")
+            .select_related("context", "string")
+        ):
             messages.append((string_segment.string.data, string_segment.context.path))
 
         # Build a PO file
@@ -600,7 +640,7 @@ class TranslationSource(models.Model):
             segment_value = StringSegmentValue(
                 string_segment.context.path,
                 string,
-                attrs=json.loads(string_segment.attrs)
+                attrs=json.loads(string_segment.attrs),
             ).with_order(string_segment.order)
 
             segments.append(segment_value)
@@ -642,7 +682,9 @@ class TranslationSource(models.Model):
 
         return segments
 
-    def create_or_update_translation(self, locale, user=None, publish=True, copy_parent_pages=False, fallback=False):
+    def create_or_update_translation(
+        self, locale, user=None, publish=True, copy_parent_pages=False, fallback=False
+    ):
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -677,7 +719,9 @@ class TranslationSource(models.Model):
             translation = self.get_translated_instance(locale)
         except models.ObjectDoesNotExist:
             if isinstance(original, Page):
-                translation = original.copy_for_translation(locale, copy_parents=copy_parent_pages)
+                translation = original.copy_for_translation(
+                    locale, copy_parents=copy_parent_pages
+                )
             else:
                 translation = original.copy_for_translation(locale)
 
@@ -696,27 +740,33 @@ class TranslationSource(models.Model):
                     # If the page is an alias, convert it into a regular page
                     if translation.alias_of_id:
                         translation.alias_of_id = None
-                        translation.save(update_fields=['alias_of_id'], clean=False)
+                        translation.save(update_fields=["alias_of_id"], clean=False)
 
                         # Create initial revision
-                        revision = translation.save_revision(user=user, changed=False, clean=False)
+                        revision = translation.save_revision(
+                            user=user, changed=False, clean=False
+                        )
 
                         # Log the alias conversion
                         PageLogEntry.objects.log_action(
                             instance=translation,
                             revision=revision,
-                            action='wagtail.convert_alias',
+                            action="wagtail.convert_alias",
                             user=user,
                             data={
-                                'page': {
-                                    'id': translation.id,
-                                    'title': translation.get_admin_display_title()
+                                "page": {
+                                    "id": translation.id,
+                                    "title": translation.get_admin_display_title(),
                                 },
                             },
                         )
 
                     # Make sure the slug is valid
-                    translation.slug = find_available_slug(translation.get_parent(), slugify(translation.slug), ignore_page_id=translation.id)
+                    translation.slug = find_available_slug(
+                        translation.get_parent(),
+                        slugify(translation.slug),
+                        ignore_page_id=translation.id,
+                    )
                     translation.save()
 
                     # Create a new revision
@@ -739,8 +789,7 @@ class TranslationSource(models.Model):
             for field_name, errors in e.error_dict.items():
                 try:
                     context = TranslationContext.objects.get(
-                        object=self.object,
-                        path=field_name
+                        object=self.object, path=field_name
                     )
 
                 except TranslationContext.DoesNotExist:
@@ -750,7 +799,9 @@ class TranslationSource(models.Model):
                 # Check for string translation
                 try:
                     string_translation = StringTranslation.objects.get(
-                        translation_of_id__in=StringSegment.objects.filter(source=self).values_list('string_id', flat=True),
+                        translation_of_id__in=StringSegment.objects.filter(
+                            source=self
+                        ).values_list("string_id", flat=True),
                         context=context,
                         locale=locale,
                     )
@@ -820,7 +871,9 @@ class TranslationSource(models.Model):
         if not self.schema_version:
             return False
 
-        current_schema_version = get_schema_version(self.specific_content_type.app_label)
+        current_schema_version = get_schema_version(
+            self.specific_content_type.app_label
+        )
         return self.schema_version != current_schema_version
 
 
@@ -828,6 +881,7 @@ class POImportWarning:
     """
     Base class for warnings that are yielded by Translation.import_po.
     """
+
     pass
 
 
@@ -837,7 +891,11 @@ class UnknownString(POImportWarning):
         self.string = string
 
     def __eq__(self, other):
-        return isinstance(other, UnknownString) and self.index == other.index and self.string == other.string
+        return (
+            isinstance(other, UnknownString)
+            and self.index == other.index
+            and self.string == other.string
+        )
 
     def __repr__(self):
         return f"<UnknownString {self.index} '{self.string}'>"
@@ -849,7 +907,11 @@ class UnknownContext(POImportWarning):
         self.context = context
 
     def __eq__(self, other):
-        return isinstance(other, UnknownContext) and self.index == other.index and self.context == other.context
+        return (
+            isinstance(other, UnknownContext)
+            and self.index == other.index
+            and self.context == other.context
+        )
 
     def __repr__(self):
         return f"<UnknownContext {self.index} '{self.context}'>"
@@ -862,7 +924,12 @@ class StringNotUsedInContext(POImportWarning):
         self.context = context
 
     def __eq__(self, other):
-        return isinstance(other, StringNotUsedInContext) and self.index == other.index and self.string == other.string and self.context == other.context
+        return (
+            isinstance(other, StringNotUsedInContext)
+            and self.index == other.index
+            and self.string == other.string
+            and self.context == other.context
+        )
 
     def __repr__(self):
         return f"<StringNotUsedInContext {self.index} '{self.string}' '{self.context}'>"
@@ -889,6 +956,7 @@ class Translation(models.Model):
         destination_last_updated_at (DateTimeField): The date/time of when the destination object was last updated.
         enabled (boolean): Whether this translation is enabled or not.
     """
+
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
 
     source = models.ForeignKey(
@@ -907,7 +975,7 @@ class Translation(models.Model):
 
     class Meta:
         unique_together = [
-            ('source', 'target_locale'),
+            ("source", "target_locale"),
         ]
 
     def get_target_instance(self):
@@ -965,7 +1033,9 @@ class Translation(models.Model):
                 default=Value(0),
                 output_field=IntegerField(),
             )
-        ).aggregate(total_segments=Count("pk"), translated_segments=Sum("is_translated_i"))
+        ).aggregate(
+            total_segments=Count("pk"), translated_segments=Sum("is_translated_i")
+        )
 
         return aggs["total_segments"], aggs["translated_segments"]
 
@@ -994,13 +1064,19 @@ class Translation(models.Model):
 
         string_segments = (
             StringSegment.objects.filter(source=self.source)
-            .order_by('order')
+            .order_by("order")
             .select_related("context", "string")
             .annotate_translation(self.target_locale, include_errors=True)
         )
 
         for string_segment in string_segments:
-            messages.append((string_segment.string.data, string_segment.context.path, string_segment.translation))
+            messages.append(
+                (
+                    string_segment.string.data,
+                    string_segment.context.path,
+                    string_segment.translation,
+                )
+            )
 
         # Build a PO file
         po = polib.POFile(wrapwidth=200)
@@ -1025,9 +1101,14 @@ class Translation(models.Model):
         # translation for each one. Contexts that were never translated are
         # excluded
         for translation in (
-            StringTranslation.objects
-            .filter(context__object_id=self.source.object_id, locale=self.target_locale)
-            .exclude(translation_of_id__in=StringSegment.objects.filter(source=self.source).values_list('string_id', flat=True))
+            StringTranslation.objects.filter(
+                context__object_id=self.source.object_id, locale=self.target_locale
+            )
+            .exclude(
+                translation_of_id__in=StringSegment.objects.filter(
+                    source=self.source
+                ).values_list("string_id", flat=True)
+            )
             .select_related("translation_of", "context")
             .iterator()
         ):
@@ -1043,7 +1124,9 @@ class Translation(models.Model):
         return po
 
     @transaction.atomic
-    def import_po(self, po, delete=False, user=None, translation_type='manual', tool_name=""):
+    def import_po(
+        self, po, delete=False, user=None, translation_type="manual", tool_name=""
+    ):
         """
         Imports all translatable strings with any translations that have already been made.
 
@@ -1061,21 +1144,36 @@ class Translation(models.Model):
         seen_translation_ids = set()
         warnings = []
 
-        if 'X-WagtailLocalize-TranslationID' in po.metadata and po.metadata['X-WagtailLocalize-TranslationID'] != str(self.uuid):
+        if "X-WagtailLocalize-TranslationID" in po.metadata and po.metadata[
+            "X-WagtailLocalize-TranslationID"
+        ] != str(self.uuid):
             return []
 
         for index, entry in enumerate(po):
             try:
-                string = String.objects.get(locale_id=self.source.locale_id, data=entry.msgid)
-                context = TranslationContext.objects.get(object_id=self.source.object_id, path=entry.msgctxt)
+                string = String.objects.get(
+                    locale_id=self.source.locale_id, data=entry.msgid
+                )
+                context = TranslationContext.objects.get(
+                    object_id=self.source.object_id, path=entry.msgctxt
+                )
 
                 # Ignore blank strings
                 if not entry.msgstr:
                     continue
 
                 # Ignore if the string doesn't appear in this context, and if there is not an obsolete StringTranslation
-                if not StringSegment.objects.filter(string=string, context=context).exists() and not StringTranslation.objects.filter(translation_of=string, context=context).exists():
-                    warnings.append(StringNotUsedInContext(index, entry.msgid, entry.msgctxt))
+                if (
+                    not StringSegment.objects.filter(
+                        string=string, context=context
+                    ).exists()
+                    and not StringTranslation.objects.filter(
+                        translation_of=string, context=context
+                    ).exists()
+                ):
+                    warnings.append(
+                        StringNotUsedInContext(index, entry.msgid, entry.msgctxt)
+                    )
                     continue
 
                 string_translation, created = string.translations.get_or_create(
@@ -1086,9 +1184,9 @@ class Translation(models.Model):
                         "updated_at": timezone.now(),
                         "translation_type": translation_type,
                         "tool_name": tool_name,
-                        'last_translated_by': user,
-                        'has_error': False,
-                        'field_error': "",
+                        "last_translated_by": user,
+                        "has_error": False,
+                        "field_error": "",
                     },
                 )
 
@@ -1112,7 +1210,9 @@ class Translation(models.Model):
 
         # Delete any translations that weren't mentioned
         if delete:
-            StringTranslation.objects.filter(context__object_id=self.source.object_id, locale=self.target_locale).exclude(id__in=seen_translation_ids).delete()
+            StringTranslation.objects.filter(
+                context__object_id=self.source.object_id, locale=self.target_locale
+            ).exclude(id__in=seen_translation_ids).delete()
 
         return warnings
 
@@ -1133,7 +1233,13 @@ class Translation(models.Model):
         Returns:
             Model: The translated instance.
         """
-        self.source.create_or_update_translation(self.target_locale, user=user, publish=publish, fallback=True, copy_parent_pages=True)
+        self.source.create_or_update_translation(
+            self.target_locale,
+            user=user,
+            publish=publish,
+            fallback=True,
+            copy_parent_pages=True,
+        )
 
 
 class TranslationLog(models.Model):
@@ -1187,9 +1293,12 @@ class String(models.Model):
         data (TextField): The string.
         data_hash (UUIDField): A hash of the string, for more efficient indexing of long strings.
     """
+
     UUID_NAMESPACE = uuid.UUID("59ed7d1c-7eb5-45fa-9c8b-7a7057ed56d7")
 
-    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE, related_name="source_strings")
+    locale = models.ForeignKey(
+        "wagtailcore.Locale", on_delete=models.CASCADE, related_name="source_strings"
+    )
 
     data_hash = models.UUIDField()
     data = models.TextField()
@@ -1259,6 +1368,7 @@ class TranslationContext(models.Model):
         field_path (TextField): the field path.
         path_id (UUIDField): A hash of the path for efficient indexing of long content paths.
     """
+
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="+"
     )
@@ -1297,30 +1407,39 @@ class TranslationContext(models.Model):
         Field path's were introduced in version 1.0, any contexts that were created before that release won't have one.
         """
         if not self.field_path:
+
             def get_field_path_from_field(instance, path_components):
                 field_name = path_components[0]
                 field = instance._meta.get_field(field_name)
 
                 if isinstance(field, StreamField):
+
                     def get_field_path_from_stream_block(stream_value, path_components):
                         stream_blocks_by_id = {
-                            block.id: block
-                            for block in stream_value
+                            block.id: block for block in stream_value
                         }
                         block_id = path_components[0]
                         block = stream_blocks_by_id[block_id]
-                        block_def = stream_value.stream_block.child_blocks[block.block_type]
+                        block_def = stream_value.stream_block.child_blocks[
+                            block.block_type
+                        ]
 
                         if isinstance(block_def, blocks.StructBlock):
                             return [block.block_type, path_components[1]]
 
                         elif isinstance(block_def, blocks.StreamBlock):
-                            return [block.block_type] + get_field_path_from_stream_block(block.value, path_components[1:])
+                            return [
+                                block.block_type
+                            ] + get_field_path_from_stream_block(
+                                block.value, path_components[1:]
+                            )
 
                         else:
                             return [block.block_type]
 
-                    return [field_name] + get_field_path_from_stream_block(field.value_from_object(instance), path_components[1:])
+                    return [field_name] + get_field_path_from_stream_block(
+                        field.value_from_object(instance), path_components[1:]
+                    )
 
                 elif (
                     isinstance(field, (models.ManyToOneRel))
@@ -1329,13 +1448,17 @@ class TranslationContext(models.Model):
                 ):
                     manager = getattr(instance, field_name)
                     child_instance = manager.get(translation_key=path_components[1])
-                    return [field_name] + get_field_path_from_field(child_instance, path_components[2:])
+                    return [field_name] + get_field_path_from_field(
+                        child_instance, path_components[2:]
+                    )
 
                 else:
                     return [field_name]
 
-            self.field_path = '.'.join(get_field_path_from_field(instance, self.path.split('.')))
-            self.save(update_fields=['field_path'])
+            self.field_path = ".".join(
+                get_field_path_from_field(instance, self.path.split("."))
+            )
+            self.save(update_fields=["field_path"])
 
         return self.field_path
 
@@ -1360,8 +1483,9 @@ class StringTranslation(models.Model):
         field_error (TextField): If there was a database-level validation error while saving the translated object, that
             error is tored here. Note that this only makes sense if the context is not null.
     """
-    TRANSLATION_TYPE_MANUAL = 'manual'
-    TRANSLATION_TYPE_MACHINE = 'machine'
+
+    TRANSLATION_TYPE_MANUAL = "manual"
+    TRANSLATION_TYPE_MACHINE = "machine"
     TRANSLATION_TYPE_CHOICES = [
         (TRANSLATION_TYPE_MANUAL, gettext_lazy("Manual")),
         (TRANSLATION_TYPE_MACHINE, gettext_lazy("Machine")),
@@ -1370,7 +1494,11 @@ class StringTranslation(models.Model):
     translation_of = models.ForeignKey(
         String, on_delete=models.CASCADE, related_name="translations"
     )
-    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE, related_name="string_translations")
+    locale = models.ForeignKey(
+        "wagtailcore.Locale",
+        on_delete=models.CASCADE,
+        related_name="string_translations",
+    )
     context = models.ForeignKey(
         TranslationContext,
         on_delete=models.SET_NULL,
@@ -1381,7 +1509,13 @@ class StringTranslation(models.Model):
     data = models.TextField()
     translation_type = models.CharField(max_length=20, choices=TRANSLATION_TYPE_CHOICES)
     tool_name = models.CharField(max_length=255, blank=True)
-    last_translated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
+    last_translated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -1416,14 +1550,14 @@ class StringTranslation(models.Model):
         return segment
 
     def save(self, *args, **kwargs):
-        update_fields = kwargs.get('update_fields')
+        update_fields = kwargs.get("update_fields")
         super().save(*args, **kwargs)
 
         # Set has_error if the string is invalid.
         # Since we allow translations to be made by external tools, we need to allow invalid
         # HTML in the database so that it can be fixed in Wagtail. However, we do want to know
         # if any strings are invalid so we don't use them on a page.
-        updating_data = update_fields is None or 'data' in update_fields
+        updating_data = update_fields is None or "data" in update_fields
         if updating_data and not self.has_error:
 
             try:
@@ -1431,7 +1565,7 @@ class StringTranslation(models.Model):
                 validate_translation_links(self.translation_of.data, self.data)
             except ValueError:
                 self.has_error = True
-                self.save(update_fields=['has_error'])
+                self.save(update_fields=["has_error"])
 
     def set_field_error(self, error):
         """
@@ -1447,7 +1581,7 @@ class StringTranslation(models.Model):
         self.has_error = True
         # TODO (someday): We currently only support one error at a time
         self.field_error = error[0].messages[0]
-        self.save(update_fields=['has_error', 'field_error'])
+        self.save(update_fields=["has_error", "field_error"])
 
     def get_error(self):
         """
@@ -1479,35 +1613,39 @@ class StringTranslation(models.Model):
             str: A comment to display to the user.
         """
         if self.tool_name:
-            return _("Translated with {tool_name} on {date}").format(tool_name=self.tool_name, date=self.updated_at.strftime(DATE_FORMAT))
+            return _("Translated with {tool_name} on {date}").format(
+                tool_name=self.tool_name, date=self.updated_at.strftime(DATE_FORMAT)
+            )
 
         elif self.translation_type == self.TRANSLATION_TYPE_MANUAL:
-            return _("Translated manually on {date}").format(date=self.updated_at.strftime(DATE_FORMAT))
+            return _("Translated manually on {date}").format(
+                date=self.updated_at.strftime(DATE_FORMAT)
+            )
 
         elif self.translation_type == self.TRANSLATION_TYPE_MACHINE:
-            return _("Machine translated on {date}").format(date=self.updated_at.strftime(DATE_FORMAT))
+            return _("Machine translated on {date}").format(
+                date=self.updated_at.strftime(DATE_FORMAT)
+            )
 
 
 @receiver(post_save, sender=StringTranslation)
 def post_save_string_translation(instance, **kwargs):
     # If the StringTranslation is for a page title, update that page's draft_title field
-    if instance.context.path == 'title':
+    if instance.context.path == "title":
         # Note: if this StringTranslation isn't for a page, this should do nothing
         Page.objects.filter(
-            translation_key=instance.context.object_id,
-            locale_id=instance.locale_id
+            translation_key=instance.context.object_id, locale_id=instance.locale_id
         ).update(draft_title=instance.data)
 
 
 @receiver(post_delete, sender=StringTranslation)
 def post_delete_string_translation(instance, **kwargs):
     # If the StringTranslation is for a page title, reset that page's draft title to the main title
-    if instance.context.path == 'title':
+    if instance.context.path == "title":
         # Note: if this StringTranslation isn't for a page, this should do nothing
         Page.objects.filter(
-            translation_key=instance.context.object_id,
-            locale_id=instance.locale_id
-        ).update(draft_title=F('title'))
+            translation_key=instance.context.object_id, locale_id=instance.locale_id
+        ).update(draft_title=F("title"))
 
 
 class Template(models.Model):
@@ -1524,6 +1662,7 @@ class Template(models.Model):
         template_format (CharField): The format of the template (currently, only 'html' is supported).
         string_count (PositiveIntegerField): The number of translatable stirngs that were extracted from the template.
     """
+
     BASE_UUID_NAMESPACE = uuid.UUID("4599eabc-3f8e-41a9-be61-95417d26a8cd")
 
     uuid = models.UUIDField(unique=True)
@@ -1578,7 +1717,10 @@ class SegmentOverride(models.Model):
         field_error (TextField): if there was a database-level validation error while saving the translated object, that
             error is tored here.
     """
-    locale = models.ForeignKey("wagtailcore.Locale", on_delete=models.CASCADE, related_name="overrides")
+
+    locale = models.ForeignKey(
+        "wagtailcore.Locale", on_delete=models.CASCADE, related_name="overrides"
+    )
     # FIXME: This should be a required field
     context = models.ForeignKey(
         TranslationContext,
@@ -1587,7 +1729,13 @@ class SegmentOverride(models.Model):
         blank=True,
         related_name="overrides",
     )
-    last_translated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
+    last_translated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     data_json = models.TextField()
@@ -1610,7 +1758,7 @@ class SegmentOverride(models.Model):
         self.has_error = True
         # TODO (someday): We currently only support one error at a time
         self.field_error = error[0].messages[0]
-        self.save(update_fields=['has_error', 'field_error'])
+        self.save(update_fields=["has_error", "field_error"])
 
     def get_error(self):
         """
@@ -1627,7 +1775,10 @@ class SegmentOverride(models.Model):
 
 class BaseSegment(models.Model):
     source = models.ForeignKey(TranslationSource, on_delete=models.CASCADE)
-    context = models.ForeignKey(TranslationContext, on_delete=models.PROTECT,)
+    context = models.ForeignKey(
+        TranslationContext,
+        on_delete=models.PROTECT,
+    )
     order = models.PositiveIntegerField()
 
     class Meta:
@@ -1653,11 +1804,7 @@ class StringSegmentQuerySet(models.QuerySet):
         if not include_errors:
             translations = translations.exclude(has_error=True)
 
-        return self.annotate(
-            translation=Subquery(
-                translations.values("data")
-            )
-        )
+        return self.annotate(translation=Subquery(translations.values("data")))
 
     def get_translations(self, locale):
         """
@@ -1673,7 +1820,7 @@ class StringSegmentQuerySet(models.QuerySet):
                         context_id=OuterRef("context_id"),
                     ).values("id")
                 )
-            ).values_list('translation_id', flat=True)
+            ).values_list("translation_id", flat=True)
         )
 
 
@@ -1711,6 +1858,7 @@ class StringSegment(BaseSegment):
         context (ForeignKey to TranslationContext): The context, which contains the position of the string in the source content.
         order (PositiveIntegerField): The index that this segment appears on the page.
     """
+
     string = models.ForeignKey(
         String, on_delete=models.CASCADE, related_name="segments"
     )
@@ -1732,7 +1880,8 @@ class StringSegment(BaseSegment):
         """
         string = String.from_value(language, value.string)
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=source.object_id, path=value.path,
+            object_id=source.object_id,
+            path=value.path,
         )
 
         segment, created = cls.objects.get_or_create(
@@ -1756,6 +1905,7 @@ class TemplateSegment(BaseSegment):
         context (ForeignKey to TranslationContext): The context, which contains the position of the string in the source content.
         order (PositiveIntegerField): The index that this segment appears on the page.
     """
+
     template = models.ForeignKey(
         Template, on_delete=models.CASCADE, related_name="segments"
     )
@@ -1774,7 +1924,8 @@ class TemplateSegment(BaseSegment):
         """
         template = Template.from_value(value)
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=source.object_id, path=value.path,
+            object_id=source.object_id,
+            path=value.path,
         )
 
         segment, created = cls.objects.get_or_create(
@@ -1797,6 +1948,7 @@ class RelatedObjectSegment(BaseSegment):
         context (ForeignKey to TranslationContext): The context, which contains the position of the string in the source content.
         order (PositiveIntegerField): The index that this segment appears on the page.
     """
+
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="references"
     )
@@ -1807,7 +1959,8 @@ class RelatedObjectSegment(BaseSegment):
     @classmethod
     def from_value(cls, source, value):
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=source.object_id, path=value.path,
+            object_id=source.object_id,
+            path=value.path,
         )
 
         segment, created = cls.objects.get_or_create(
@@ -1840,11 +1993,7 @@ class OverridableSegmentQuerySet(models.QuerySet):
         if not include_errors:
             overrides = overrides.exclude(has_error=True)
 
-        return self.annotate(
-            override_json=Subquery(
-                overrides.values("data_json")
-            )
-        )
+        return self.annotate(override_json=Subquery(overrides.values("data_json")))
 
     def get_overrides(self, locale):
         """
@@ -1859,7 +2008,7 @@ class OverridableSegmentQuerySet(models.QuerySet):
                         context_id=OuterRef("context_id"),
                     ).values("id")
                 )
-            ).values_list('override_id', flat=True)
+            ).values_list("override_id", flat=True)
         )
 
 
@@ -1873,6 +2022,7 @@ class OverridableSegment(BaseSegment):
         context (ForeignKey to TranslationContext): The context, which contains the position of the string in the source content.
         order (PositiveIntegerField): The index that this segment appears on the page.
     """
+
     data_json = models.TextField()
 
     objects = OverridableSegmentQuerySet.as_manager()
@@ -1887,7 +2037,8 @@ class OverridableSegment(BaseSegment):
     @classmethod
     def from_value(cls, source, value):
         context, context_created = TranslationContext.objects.get_or_create(
-            object_id=source.object_id, path=value.path,
+            object_id=source.object_id,
+            path=value.path,
         )
 
         segment, created = cls.objects.get_or_create(
@@ -1905,15 +2056,15 @@ def disable_translation_on_delete(instance, **kwargs):
     When either a source or destination object is deleted, disable the translation record.
     """
     Translation.objects.filter(
-        source__object_id=instance.translation_key,
-        enabled=True
+        source__object_id=instance.translation_key, enabled=True
     ).filter(
         # Disable translations where this object was the source
         Q(source__locale_id=instance.locale_id)
-
         # Disable translations where this object was the destination
         | Q(target_locale_id=instance.locale_id)
-    ).update(enabled=False)
+    ).update(
+        enabled=False
+    )
 
 
 def register_post_delete_signal_handlers():
@@ -1924,10 +2075,13 @@ def register_post_delete_signal_handlers():
 class LocaleSynchronizationModelForm(LocaleComponentModelForm):
     def validate_with_locale(self, locale):
         # Note, we must compare the language_codes as it may be the same locale record but the language_code was updated in this request
-        if 'sync_from' in self.cleaned_data and locale.language_code == self.cleaned_data['sync_from'].language_code:
-            raise ValidationError({
-                'sync_from': _("This locale cannot be synced into itself.")
-            })
+        if (
+            "sync_from" in self.cleaned_data
+            and locale.language_code == self.cleaned_data["sync_from"].language_code
+        ):
+            raise ValidationError(
+                {"sync_from": _("This locale cannot be synced into itself.")}
+            )
 
 
 @register_locale_component(
@@ -1948,13 +2102,19 @@ class LocaleSynchronization(models.Model):
         locale (ForeignKey to Locale): The destination Locale of the synchronisation
         sync_from (ForeignKey to Locale): The source Locale of the synchronisation
     """
-    locale = models.OneToOneField('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
-    sync_from = models.ForeignKey('wagtailcore.Locale', on_delete=models.CASCADE, related_name='+')
+
+    locale = models.OneToOneField(
+        "wagtailcore.Locale", on_delete=models.CASCADE, related_name="+"
+    )
+    sync_from = models.ForeignKey(
+        "wagtailcore.Locale", on_delete=models.CASCADE, related_name="+"
+    )
 
     base_form_class = LocaleSynchronizationModelForm
 
     def sync_trees(self, *, page_index=None):
         from .synctree import synchronize_tree
+
         synchronize_tree(self.sync_from, self.locale, page_index=page_index)
 
 

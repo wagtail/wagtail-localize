@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Ford Guo <agile.guo@gmail.com>, 2020
 # Yin Guanhao <sopium@mysterious.site>, 2021
 # hanfeng <appweb.cn@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

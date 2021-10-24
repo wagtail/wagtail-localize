@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Karl Hobley <karl@torchbox.com>, 2021
 # Adi Ron <adi@bnop.co>, 2021
 # lior abazon <abazon@v15.org.il>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: lior abazon <abazon@v15.org.il>, 2021\n"

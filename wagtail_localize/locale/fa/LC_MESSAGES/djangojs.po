@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # Mostafa Heidarian <tabvar@gmail.com>, 2020
 # Mohammad Hossein Mojtahedi <Mhm5000@gmail.com>, 2021
 # Ehsan jahanbakhsh <man207ej@gmail.com>, 2021
 # pyzenberg <pyzenberg@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: pyzenberg <pyzenberg@gmail.com>, 2021\n"

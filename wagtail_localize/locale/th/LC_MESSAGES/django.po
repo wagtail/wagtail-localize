@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Amawalee Combe <dang@getsalebox.com>, 2021
 # Walaksawan Vervoort <nula_wala@yahoo.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

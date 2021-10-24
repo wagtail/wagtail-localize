@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from django.utils.functional import cached_property
 from wagtail.core import hooks
-from wagtail.core.models import Page, Locale
+from wagtail.core.models import Locale, Page
 
 
 class PageIndex:
@@ -108,7 +108,7 @@ class PageIndex:
         Returns a new index with the pages sorted in depth-first-search order
         using their parent in their respective source locale.
         """
-        remaining_pages = set(page.translation_key for page in self.pages)
+        remaining_pages = {page.translation_key for page in self.pages}
 
         new_pages = []
 
@@ -177,7 +177,10 @@ def synchronize_tree(source_locale, target_locale, *, page_index=None):
 
     for page in pages_not_in_locale:
         # Skip pages that do not exist in the source
-        if source_locale.id not in page.locales and source_locale.id not in page.aliased_locales:
+        if (
+            source_locale.id not in page.locales
+            and source_locale.id not in page.aliased_locales
+        ):
             continue
 
         # Fetch source from database
@@ -195,23 +198,22 @@ def synchronize_tree(source_locale, target_locale, *, page_index=None):
 def create_aliases_for_new_page(page):
     # Check if the source tree needs to be synchronised into any other trees
     from .models import LocaleSynchronization
+
     locales_to_sync_to = Locale.objects.filter(
         id__in=(
-            LocaleSynchronization.objects
-            .filter(sync_from_id=page.locale_id)
-            .values_list("locale_id", flat=True)
+            LocaleSynchronization.objects.filter(
+                sync_from_id=page.locale_id
+            ).values_list("locale_id", flat=True)
         )
     )
 
     # Create aliases in all those locales
     for locale in locales_to_sync_to:
-        new_alias = page.copy_for_translation(
-            locale, copy_parents=True, alias=True
-        )
+        new_alias = page.copy_for_translation(locale, copy_parents=True, alias=True)
 
         create_aliases_for_new_page(new_alias)
 
 
-@hooks.register('after_create_page')
+@hooks.register("after_create_page")
 def after_create_page(request, page):
     create_aliases_for_new_page(page)

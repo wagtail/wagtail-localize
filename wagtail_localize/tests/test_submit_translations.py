@@ -4,16 +4,16 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.core.models import Page, Locale
+from wagtail.core.models import Locale, Page
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.test.models import (
+    NonTranslatableSnippet,
     TestPage,
+    TestSnippet,
     TestWithTranslationModeDisabledPage,
     TestWithTranslationModeEnabledPage,
-    TestSnippet,
-    NonTranslatableSnippet
 )
 
 from .utils import assert_permission_denied
@@ -30,12 +30,16 @@ def strip_user_perms():
     Removes user permissions so they can still access admin and edit pages but can't submit anything for translation.
     """
     editors_group = Group.objects.get(name="Editors")
-    editors_group.permissions.filter(codename='submit_translation').delete()
+    editors_group.permissions.filter(codename="submit_translation").delete()
 
-    for permission in Permission.objects.filter(content_type=ContentType.objects.get_for_model(TestSnippet)):
+    for permission in Permission.objects.filter(
+        content_type=ContentType.objects.get_for_model(TestSnippet)
+    ):
         editors_group.permissions.add(permission)
 
-    for permission in Permission.objects.filter(content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)):
+    for permission in Permission.objects.filter(
+        content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)
+    ):
         editors_group.permissions.add(permission)
 
     user = get_user_model().objects.get()
@@ -46,16 +50,16 @@ def strip_user_perms():
 
 @override_settings(
     LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
     WAGTAIL_CONTENT_LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
 )
 class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
@@ -77,11 +81,14 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        self.assertContains(response, (
-            f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
-            'aria-label="" class="u-link is-live ">'
-            '\n                    Translate this page\n                </a>'
-        ))
+        self.assertContains(
+            response,
+            (
+                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
+                'aria-label="" class="u-link is-live ">'
+                "\n                    Translate this page\n                </a>"
+            ),
+        )
 
     def test_hides_if_page_already_translated(self):
         self.en_blog_index.copy_for_translation(self.fr_locale)
@@ -105,16 +112,16 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
 
 @override_settings(
     LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
     WAGTAIL_CONTENT_LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
 )
 class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
@@ -148,15 +155,17 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
 
         self.assertListEqual(
-            list(response.context['form']['locales'].field.queryset),
-            [self.de_locale, self.fr_locale]
+            list(response.context["form"]["locales"].field.queryset),
+            [self.de_locale, self.fr_locale],
         )
 
         # More than one locale so show "Select all"
-        self.assertFalse(response.context['form']['select_all'].field.widget.is_hidden)
+        self.assertFalse(response.context["form"]["select_all"].field.widget.is_hidden)
 
         # Page has children so show "Include subtree"
-        self.assertFalse(response.context['form']['include_subtree'].field.widget.is_hidden)
+        self.assertFalse(
+            response.context["form"]["include_subtree"].field.widget.is_hidden
+        )
 
     def test_get_submit_page_translation_when_already_translated(self):
         # Locales that have been translated into shouldn't be included
@@ -172,12 +181,11 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
 
         self.assertListEqual(
-            list(response.context['form']['locales'].field.queryset),
-            [self.fr_locale]
+            list(response.context["form"]["locales"].field.queryset), [self.fr_locale]
         )
 
         # Since there is only one locale, the "Select All" checkbox should be hidden
-        self.assertTrue(response.context['form']['select_all'].field.widget.is_hidden)
+        self.assertTrue(response.context["form"]["select_all"].field.widget.is_hidden)
 
     def test_get_submit_page_translation_on_page_without_children(self):
         # Hide "Include subtree" input if there are no children
@@ -191,7 +199,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
 
         # Page doesn't have children so hide "Include subtree"
-        self.assertTrue(response.context['form']['include_subtree'].field.widget.is_hidden)
+        self.assertTrue(
+            response.context["form"]["include_subtree"].field.widget.is_hidden
+        )
 
     def test_get_submit_page_translation_without_permissions(self):
         strip_user_perms()
@@ -211,7 +221,7 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
                 "wagtail_localize:submit_page_translation",
                 args=[1],
             ),
-            follow=True
+            follow=True,
         )
 
         self.assertEqual(response.status_code, 404)
@@ -239,7 +249,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertTrue(translated_page.live)
 
     def test_post_submit_page_translation_submits_linked_snippets(self):
-        self.en_blog_index.test_snippet = TestSnippet.objects.create(field="My test snippet")
+        self.en_blog_index.test_snippet = TestSnippet.objects.create(
+            field="My test snippet"
+        )
         self.en_blog_index.save()
 
         response = self.client.post(
@@ -254,7 +266,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        page_translation = Translation.objects.get(source__specific_content_type=ContentType.objects.get_for_model(TestPage))
+        page_translation = Translation.objects.get(
+            source__specific_content_type=ContentType.objects.get_for_model(TestPage)
+        )
         self.assertEqual(page_translation.source.locale, self.en_locale)
         self.assertEqual(page_translation.target_locale, self.fr_locale)
         self.assertTrue(page_translation.created_at)
@@ -263,7 +277,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertTrue(translated_page.live)
 
-        snippet_translation = Translation.objects.get(source__specific_content_type=ContentType.objects.get_for_model(TestSnippet))
+        snippet_translation = Translation.objects.get(
+            source__specific_content_type=ContentType.objects.get_for_model(TestSnippet)
+        )
         self.assertEqual(snippet_translation.source.locale, self.en_locale)
         self.assertEqual(snippet_translation.target_locale, self.fr_locale)
         self.assertTrue(snippet_translation.created_at)
@@ -285,16 +301,12 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         )
 
         # Check French translation
-        fr_translation = Translation.objects.get(
-            target_locale=self.fr_locale
-        )
+        fr_translation = Translation.objects.get(target_locale=self.fr_locale)
         self.assertEqual(fr_translation.source.locale, self.en_locale)
         self.assertTrue(fr_translation.created_at)
 
         # Check German translation
-        de_translation = Translation.objects.get(
-            target_locale=self.de_locale
-        )
+        de_translation = Translation.objects.get(target_locale=self.de_locale)
         self.assertEqual(de_translation.source.locale, self.en_locale)
         self.assertTrue(de_translation.created_at)
 
@@ -384,8 +396,12 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
         # Just check the translations were created in the right place
         self.assertEqual(translated_page.get_parent(), translated_parent_page.page_ptr)
-        self.assertEqual(translated_parent_page.get_parent(), translated_grandparent_page)
-        self.assertEqual(translated_grandparent_page.get_parent(), Page.objects.get(depth=1))
+        self.assertEqual(
+            translated_parent_page.get_parent(), translated_grandparent_page
+        )
+        self.assertEqual(
+            translated_grandparent_page.get_parent(), Page.objects.get(depth=1)
+        )
 
     def test_post_submit_page_translation_with_missing_locale(self):
         response = self.client.post(
@@ -416,7 +432,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
     def test_post_submit_page_translation_reactivates_deleted_translation(self):
         # Create a disabled translation record
         # This simulates the case where the page was previously translated into that locale but later deleted
-        source, created = TranslationSource.get_or_create_from_instance(self.en_blog_index)
+        source, created = TranslationSource.get_or_create_from_instance(
+            self.en_blog_index
+        )
         translation = Translation.objects.create(
             source=source,
             target_locale=self.fr_locale,
@@ -446,10 +464,14 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertTrue(translated_page.live)
 
-    def test_post_submit_page_translation_doesnt_reactivate_deactivated_translation(self):
+    def test_post_submit_page_translation_doesnt_reactivate_deactivated_translation(
+        self,
+    ):
         # Like the previous test, this creates a disabled translation record, but this
         # time, the translation has not been deleted. It should not reactivate in this case
-        source, created = TranslationSource.get_or_create_from_instance(self.en_blog_index)
+        source, created = TranslationSource.get_or_create_from_instance(
+            self.en_blog_index
+        )
         translation = Translation.objects.create(
             source=source,
             target_locale=self.fr_locale,
@@ -457,7 +479,7 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         translation.save_target()
 
         translation.enabled = False
-        translation.save(update_fields=['enabled'])
+        translation.save(update_fields=["enabled"])
 
         response = self.client.post(
             reverse(
@@ -497,8 +519,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
     def test_post_submit_page_translation_with_disabled_mode_per_page_type(self):
         custom_page = make_test_page(
-            self.en_homepage, cls=TestWithTranslationModeDisabledPage,
-            title="Translation mode test", slug="translation-mode-test"
+            self.en_homepage,
+            cls=TestWithTranslationModeDisabledPage,
+            title="Translation mode test",
+            slug="translation-mode-test",
         )
         response = self.client.post(
             reverse(
@@ -516,10 +540,14 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertFalse(translation.enabled)
 
     @override_settings(WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE="simple")
-    def test_post_submit_page_translation_with_global_mode_disabled_but_enabled_per_page_type(self):
+    def test_post_submit_page_translation_with_global_mode_disabled_but_enabled_per_page_type(
+        self,
+    ):
         custom_page = make_test_page(
-            self.en_homepage, cls=TestWithTranslationModeEnabledPage,
-            title="Translation mode test", slug="translation-mode-test"
+            self.en_homepage,
+            cls=TestWithTranslationModeEnabledPage,
+            title="Translation mode test",
+            slug="translation-mode-test",
         )
         response = self.client.post(
             reverse(
@@ -539,16 +567,16 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
 @override_settings(
     LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
     WAGTAIL_CONTENT_LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
 )
 class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
@@ -567,20 +595,27 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
 
     def test(self):
         response = self.client.get(
-            reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'testsnippet'])
+            reverse(
+                "wagtailsnippets:list", args=["wagtail_localize_test", "testsnippet"]
+            )
         )
 
         extra = ' title="Translate"' if WAGTAIL_VERSION >= (2, 15) else ""
-        self.assertContains(response, (
-            f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"{extra}>Translate</a>'
-        ))
+        self.assertContains(
+            response,
+            (
+                f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"{extra}>Translate</a>'
+            ),
+        )
 
     def test_hides_if_snippet_already_translated(self):
         de_snippet = self.en_snippet.copy_for_translation(self.de_locale)
         de_snippet.save()
 
         response = self.client.get(
-            reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'testsnippet'])
+            reverse(
+                "wagtailsnippets:list", args=["wagtail_localize_test", "testsnippet"]
+            )
         )
 
         self.assertNotContains(response, "Translate")
@@ -589,7 +624,10 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         self.en_snippet.copy_for_translation(self.de_locale)
 
         response = self.client.get(
-            reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'nontranslatablesnippet'])
+            reverse(
+                "wagtailsnippets:list",
+                args=["wagtail_localize_test", "nontranslatablesnippet"],
+            )
         )
 
         self.assertNotContains(response, "Translate")
@@ -598,7 +636,9 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         strip_user_perms()
 
         response = self.client.get(
-            reverse("wagtailsnippets:list", args=['wagtail_localize_test', 'testsnippet'])
+            reverse(
+                "wagtailsnippets:list", args=["wagtail_localize_test", "testsnippet"]
+            )
         )
 
         self.assertNotContains(response, "Translate")
@@ -606,16 +646,16 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
 
 @override_settings(
     LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
     WAGTAIL_CONTENT_LANGUAGES=[
-        ('en', "English"),
-        ('fr', "French"),
-        ('de', "German"),
-        ('es', "Spanish"),
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
     ],
 )
 class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
@@ -634,31 +674,33 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.get(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id],
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
             )
         )
 
         self.assertEqual(response.status_code, 200)
 
         self.assertListEqual(
-            list(response.context['form']['locales'].field.queryset),
-            [self.de_locale, self.fr_locale]
+            list(response.context["form"]["locales"].field.queryset),
+            [self.de_locale, self.fr_locale],
         )
 
         # More than one locale so show "Select all"
-        self.assertFalse(response.context['form']['select_all'].field.widget.is_hidden)
+        self.assertFalse(response.context["form"]["select_all"].field.widget.is_hidden)
 
         # Snippets can't have children so hide include_subtree
-        self.assertTrue(response.context['form']['include_subtree'].field.widget.is_hidden)
+        self.assertTrue(
+            response.context["form"]["include_subtree"].field.widget.is_hidden
+        )
 
     def test_get_submit_snippet_translation_when_not_snippet(self):
         response = self.client.get(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtailcore', 'page', 1],
+                args=["wagtailcore", "page", 1],
             ),
             # Need to follow as Django will initiall redirect to /en/admin/
-            follow=True
+            follow=True,
         )
 
         self.assertEqual(response.status_code, 404)
@@ -667,10 +709,10 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.get(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtailcore', 'foo', 1],
+                args=["wagtailcore", "foo", 1],
             ),
             # Need to follow as Django will initiall redirect to /en/admin/
-            follow=True
+            follow=True,
         )
 
         self.assertEqual(response.status_code, 404)
@@ -679,10 +721,14 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.get(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'nontranslatablesnippet', self.not_translatable_snippet.id],
+                args=[
+                    "wagtail_localize_test",
+                    "nontranslatablesnippet",
+                    self.not_translatable_snippet.id,
+                ],
             ),
             # Need to follow as Django will initiall redirect to /en/admin/
-            follow=True
+            follow=True,
         )
 
         self.assertEqual(response.status_code, 404)
@@ -693,7 +739,7 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.get(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id],
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
             )
         )
 
@@ -707,31 +753,34 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.get(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id],
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
             )
         )
 
         self.assertEqual(response.status_code, 200)
 
         self.assertListEqual(
-            list(response.context['form']['locales'].field.queryset),
-            [self.fr_locale]
+            list(response.context["form"]["locales"].field.queryset), [self.fr_locale]
         )
 
         # Since there is only one locale, the "Select All" checkbox should be hidden
-        self.assertTrue(response.context['form']['select_all'].field.widget.is_hidden)
+        self.assertTrue(response.context["form"]["select_all"].field.widget.is_hidden)
 
     def test_post_submit_snippet_translation(self):
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id],
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
             ),
             {"locales": [self.fr_locale.id]},
         )
 
         self.assertRedirects(
-            response, reverse("wagtailsnippets:edit", args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id])
+            response,
+            reverse(
+                "wagtailsnippets:edit",
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
+            ),
         )
 
         translation = Translation.objects.get()
@@ -747,26 +796,26 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id],
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
             ),
             {"locales": [self.fr_locale.id, self.de_locale.id]},
         )
 
         self.assertRedirects(
-            response, reverse("wagtailsnippets:edit", args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id])
+            response,
+            reverse(
+                "wagtailsnippets:edit",
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
+            ),
         )
 
         # Check French translation
-        fr_translation = Translation.objects.get(
-            target_locale=self.fr_locale
-        )
+        fr_translation = Translation.objects.get(target_locale=self.fr_locale)
         self.assertEqual(fr_translation.source.locale, self.en_locale)
         self.assertTrue(fr_translation.created_at)
 
         # Check German translation
-        de_translation = Translation.objects.get(
-            target_locale=self.de_locale
-        )
+        de_translation = Translation.objects.get(target_locale=self.de_locale)
         self.assertEqual(de_translation.source.locale, self.en_locale)
         self.assertTrue(de_translation.created_at)
 
@@ -774,7 +823,7 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id],
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
             ),
             {"locales": []},
         )
@@ -789,7 +838,7 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
-                args=['wagtail_localize_test', 'testsnippet', self.en_snippet.id],
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
             ),
             {"locales": [self.fr_locale.id]},
         )

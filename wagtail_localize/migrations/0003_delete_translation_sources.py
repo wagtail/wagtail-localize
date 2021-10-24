@@ -7,13 +7,17 @@ from django.db.models import OuterRef, Subquery
 def delete_translation_sources(apps, schema_editor):
     # Delete all but the latest source for each object
 
-    TranslatableObject = apps.get_model('wagtail_localize.TranslatableObject')
-    TranslationSource = apps.get_model('wagtail_localize.TranslationSource')
+    TranslatableObject = apps.get_model("wagtail_localize.TranslatableObject")
+    TranslationSource = apps.get_model("wagtail_localize.TranslationSource")
 
-    lastest_sources = TranslationSource.objects.filter(object_id=OuterRef('translation_key')).order_by('-created_at').values('id')[:1]
+    lastest_sources = (
+        TranslationSource.objects.filter(object_id=OuterRef("translation_key"))
+        .order_by("-created_at")
+        .values("id")[:1]
+    )
     sources_to_keep = TranslatableObject.objects.annotate(
         latest_source_id=Subquery(lastest_sources)
-    ).values_list('latest_source_id', flat=True)
+    ).values_list("latest_source_id", flat=True)
 
     TranslationSource.objects.exclude(id__in=sources_to_keep).delete()
 
@@ -21,7 +25,7 @@ def delete_translation_sources(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0002_translation'),
+        ("wagtail_localize", "0002_translation"),
     ]
 
     operations = [

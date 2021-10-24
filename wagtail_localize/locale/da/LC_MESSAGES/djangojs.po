@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # MRostgaard <Mrostgaard@gmail.com>, 2021
 # Asger Sørensen <asger.soerensen@live.com>, 2021
 # Mads Kronborg <madskronborg99@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Mads Kronborg <madskronborg99@gmail.com>, 2021\n"

@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Loic Teixeira, 2021
 # Léo <leo@naeka.fr>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Léo <leo@naeka.fr>, 2021\n"

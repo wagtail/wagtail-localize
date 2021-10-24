@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Antoni Aloy <aaloy@apsl.net>, 2021
 # David Llop, 2021
 # Roger Pons <rogerpons@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Roger Pons <rogerpons@gmail.com>, 2021\n"

@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Ronggo Radityo <radityo3000@yahoo.com>, 2021
 # Sutrisno Efendi <kangfend@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

@@ -1,18 +1,19 @@
 import polib
+
 from django.test import TestCase
 from django.utils import timezone
-from wagtail.core.models import Page, Locale
+from wagtail.core.models import Locale, Page
 
 from wagtail_localize.models import (
-    TranslationSource,
-    String,
-    StringTranslation,
-    TranslationContext,
-    Translation,
-    UnknownString,
-    UnknownContext,
-    StringNotUsedInContext,
     CannotSaveDraftError,
+    String,
+    StringNotUsedInContext,
+    StringTranslation,
+    Translation,
+    TranslationContext,
+    TranslationSource,
+    UnknownContext,
+    UnknownString,
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
@@ -53,7 +54,7 @@ class TestGetProgress(TestCase):
             title="Test page",
             slug="test-slug",
             test_charfield="Test content",
-            test_textfield="More test content"
+            test_textfield="More test content",
         )
         self.source = TranslationSource.objects.get()
         self.translation = Translation.objects.create(
@@ -61,8 +62,12 @@ class TestGetProgress(TestCase):
             target_locale=self.fr_locale,
         )
 
-        self.test_charfield_context = TranslationContext.objects.get(path="test_charfield")
-        self.test_textfield_context = TranslationContext.objects.get(path="test_textfield")
+        self.test_charfield_context = TranslationContext.objects.get(
+            path="test_charfield"
+        )
+        self.test_textfield_context = TranslationContext.objects.get(
+            path="test_textfield"
+        )
 
         self.test_content_string = String.objects.get(data="Test content")
         self.more_test_content_string = String.objects.get(data="More test content")
@@ -135,7 +140,12 @@ class TestExportPO(TestCase):
         self.en_locale = Locale.objects.get(language_code="en")
         self.fr_locale = Locale.objects.create(language_code="fr")
 
-        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content", test_textfield="This is some test content")
+        self.page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="This is some test content",
+            test_textfield="This is some test content",
+        )
         self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
         self.translation = Translation.objects.create(
@@ -146,10 +156,20 @@ class TestExportPO(TestCase):
     def test_export_po(self):
         po = self.translation.export_po()
 
-        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type', 'X-WagtailLocalize-TranslationID'})
-        self.assertEqual(po.metadata['MIME-Version'], '1.0')
-        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
-        self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
+        self.assertEqual(
+            po.metadata.keys(),
+            {
+                "POT-Creation-Date",
+                "MIME-Version",
+                "Content-Type",
+                "X-WagtailLocalize-TranslationID",
+            },
+        )
+        self.assertEqual(po.metadata["MIME-Version"], "1.0")
+        self.assertEqual(po.metadata["Content-Type"], "text/plain; charset=utf-8")
+        self.assertEqual(
+            po.metadata["X-WagtailLocalize-TranslationID"], str(self.translation.uuid)
+        )
 
         self.assertEqual(len(po), 2)
         self.assertEqual(po[0].msgid, "This is some test content")
@@ -174,10 +194,20 @@ class TestExportPO(TestCase):
 
         po = self.translation.export_po()
 
-        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type', 'X-WagtailLocalize-TranslationID'})
-        self.assertEqual(po.metadata['MIME-Version'], '1.0')
-        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
-        self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
+        self.assertEqual(
+            po.metadata.keys(),
+            {
+                "POT-Creation-Date",
+                "MIME-Version",
+                "Content-Type",
+                "X-WagtailLocalize-TranslationID",
+            },
+        )
+        self.assertEqual(po.metadata["MIME-Version"], "1.0")
+        self.assertEqual(po.metadata["Content-Type"], "text/plain; charset=utf-8")
+        self.assertEqual(
+            po.metadata["X-WagtailLocalize-TranslationID"], str(self.translation.uuid)
+        )
 
         self.assertEqual(len(po), 2)
         self.assertEqual(po[0].msgid, "This is some test content")
@@ -194,8 +224,13 @@ class TestExportPO(TestCase):
         self.assertFalse(po[1].obsolete)
 
     def test_export_po_with_obsolete_translation(self):
-        obsolete_string = String.from_value(self.en_locale, StringValue("This is an obsolete string"))
-        String.from_value(self.en_locale, StringValue("This is an obsolete string that was never translated"))
+        obsolete_string = String.from_value(
+            self.en_locale, StringValue("This is an obsolete string")
+        )
+        String.from_value(
+            self.en_locale,
+            StringValue("This is an obsolete string that was never translated"),
+        )
 
         StringTranslation.objects.create(
             translation_of=obsolete_string,
@@ -206,10 +241,20 @@ class TestExportPO(TestCase):
 
         po = self.translation.export_po()
 
-        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type', 'X-WagtailLocalize-TranslationID'})
-        self.assertEqual(po.metadata['MIME-Version'], '1.0')
-        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
-        self.assertEqual(po.metadata['X-WagtailLocalize-TranslationID'], str(self.translation.uuid))
+        self.assertEqual(
+            po.metadata.keys(),
+            {
+                "POT-Creation-Date",
+                "MIME-Version",
+                "Content-Type",
+                "X-WagtailLocalize-TranslationID",
+            },
+        )
+        self.assertEqual(po.metadata["MIME-Version"], "1.0")
+        self.assertEqual(po.metadata["Content-Type"], "text/plain; charset=utf-8")
+        self.assertEqual(
+            po.metadata["X-WagtailLocalize-TranslationID"], str(self.translation.uuid)
+        )
 
         # The non-obsolete strings come first
         self.assertEqual(len(po), 3)
@@ -237,7 +282,11 @@ class TestImportPO(TestCase):
         self.en_locale = Locale.objects.get(language_code="en")
         self.fr_locale = Locale.objects.create(language_code="fr")
 
-        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content")
+        self.page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="This is some test content",
+        )
         self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
         self.translation = Translation.objects.create(
@@ -246,7 +295,9 @@ class TestImportPO(TestCase):
         )
 
     def test_import_po(self):
-        obsolete_string = String.from_value(self.en_locale, StringValue("This is an obsolete string"))
+        obsolete_string = String.from_value(
+            self.en_locale, StringValue("This is an obsolete string")
+        )
         StringTranslation.objects.create(
             translation_of=obsolete_string,
             context=TranslationContext.objects.get(path="test_charfield"),
@@ -275,23 +326,34 @@ class TestImportPO(TestCase):
                 msgid="This is an obsolete string",
                 msgctxt="test_charfield",
                 msgstr="C'est encore une chaîne obsolète",
-                obsolete=True
+                obsolete=True,
             )
         )
 
         warnings = self.translation.import_po(po)
         self.assertEqual(warnings, [])
 
-        translation = StringTranslation.objects.get(translation_of__data="This is some test content")
-        self.assertEqual(translation.context, TranslationContext.objects.get(path="test_charfield"))
+        translation = StringTranslation.objects.get(
+            translation_of__data="This is some test content"
+        )
+        self.assertEqual(
+            translation.context, TranslationContext.objects.get(path="test_charfield")
+        )
         self.assertEqual(translation.locale, self.fr_locale)
         self.assertEqual(translation.data, "Contenu de test")
 
         # Obsolete strings still get updated
-        translation = StringTranslation.objects.get(translation_of__data="This is an obsolete string")
-        self.assertEqual(translation.context, TranslationContext.objects.get(path="test_charfield"))
+        translation = StringTranslation.objects.get(
+            translation_of__data="This is an obsolete string"
+        )
+        self.assertEqual(
+            translation.context, TranslationContext.objects.get(path="test_charfield")
+        )
         self.assertEqual(translation.locale, self.fr_locale)
-        self.assertEqual(translation.data, "C'est encore une chaîne obsolète",)
+        self.assertEqual(
+            translation.data,
+            "C'est encore une chaîne obsolète",
+        )
 
     def test_import_po_deletes_translations(self):
         StringTranslation.objects.create(
@@ -302,7 +364,9 @@ class TestImportPO(TestCase):
         )
 
         StringTranslation.objects.create(
-            translation_of=String.from_value(self.en_locale, StringValue("This is an obsolete string")),
+            translation_of=String.from_value(
+                self.en_locale, StringValue("This is an obsolete string")
+            ),
             context=TranslationContext.objects.get(path="test_charfield"),
             locale=self.fr_locale,
             data="Ceci est une chaîne obsolète",
@@ -329,7 +393,7 @@ class TestImportPO(TestCase):
             "POT-Creation-Date": str(timezone.now()),
             "MIME-Version": "1.0",
             "Content-Type": "text/plain; charset=utf-8",
-            "X-WagtailLocalize-TranslationID": 'foo',
+            "X-WagtailLocalize-TranslationID": "foo",
         }
 
         po.append(
@@ -347,7 +411,12 @@ class TestImportPO(TestCase):
         self.assertFalse(StringTranslation.objects.exists())
 
     def test_warnings(self):
-        String.from_value(self.en_locale, StringValue("This string exists in the database but isn't relevant to this object"))
+        String.from_value(
+            self.en_locale,
+            StringValue(
+                "This string exists in the database but isn't relevant to this object"
+            ),
+        )
 
         po = polib.POFile(wrapwidth=200)
         po.metadata = {
@@ -383,11 +452,18 @@ class TestImportPO(TestCase):
 
         warnings = self.translation.import_po(po)
 
-        self.assertEqual(warnings, [
-            StringNotUsedInContext(0, "This string exists in the database but isn't relevant to this object", "test_charfield"),
-            UnknownString(1, "This string doesn't exist"),
-            UnknownContext(2, "invalidcontext"),
-        ])
+        self.assertEqual(
+            warnings,
+            [
+                StringNotUsedInContext(
+                    0,
+                    "This string exists in the database but isn't relevant to this object",
+                    "test_charfield",
+                ),
+                UnknownString(1, "This string doesn't exist"),
+                UnknownContext(2, "invalidcontext"),
+            ],
+        )
 
 
 class TestGetStatus(TestCase):
@@ -398,7 +474,7 @@ class TestGetStatus(TestCase):
             title="Test page",
             slug="test-slug",
             test_charfield="Test content",
-            test_textfield="More test content"
+            test_textfield="More test content",
         )
         self.source = TranslationSource.objects.get()
         self.translation = Translation.objects.create(
@@ -406,14 +482,20 @@ class TestGetStatus(TestCase):
             target_locale=self.fr_locale,
         )
 
-        self.test_charfield_context = TranslationContext.objects.get(path="test_charfield")
-        self.test_textfield_context = TranslationContext.objects.get(path="test_textfield")
+        self.test_charfield_context = TranslationContext.objects.get(
+            path="test_charfield"
+        )
+        self.test_textfield_context = TranslationContext.objects.get(
+            path="test_textfield"
+        )
 
         self.test_content_string = String.objects.get(data="Test content")
         self.more_test_content_string = String.objects.get(data="More test content")
 
     def test_get_status_display(self):
-        self.assertEqual(self.translation.get_status_display(), "Waiting for translations")
+        self.assertEqual(
+            self.translation.get_status_display(), "Waiting for translations"
+        )
 
     def test_get_status_display_with_translations(self):
         StringTranslation.objects.create(
@@ -441,7 +523,7 @@ class TestSaveTarget(TestCase):
             title="Test page",
             slug="test-slug",
             test_charfield="Test content",
-            test_textfield="More test content"
+            test_textfield="More test content",
         )
         self.source = TranslationSource.objects.get()
         self.translation = Translation.objects.create(
@@ -449,8 +531,12 @@ class TestSaveTarget(TestCase):
             target_locale=self.fr_locale,
         )
 
-        self.test_charfield_context = TranslationContext.objects.get(path="test_charfield")
-        self.test_textfield_context = TranslationContext.objects.get(path="test_textfield")
+        self.test_charfield_context = TranslationContext.objects.get(
+            path="test_charfield"
+        )
+        self.test_textfield_context = TranslationContext.objects.get(
+            path="test_textfield"
+        )
 
         self.test_content_string = String.objects.get(data="Test content")
         self.more_test_content_string = String.objects.get(data="More test content")
@@ -560,7 +646,7 @@ class TestDeleteSourceDisablesTranslation(TestCase):
             title="Test page",
             slug="test-slug",
             test_charfield="Test content",
-            test_textfield="More test content"
+            test_textfield="More test content",
         )
 
         source = TranslationSource.objects.get()
@@ -605,7 +691,7 @@ class TestDeleteDestinationDisablesTranslation(TestCase):
             title="Test page",
             slug="test-slug",
             test_charfield="Test content",
-            test_textfield="More test content"
+            test_textfield="More test content",
         )
 
         source = TranslationSource.objects.get()

@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Mateusz <undefined5102@gmail.com>, 2021
 # Łukasz Bołdys (Lukasz Boldys), 2021
 # Miłosz Miśkiewicz, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

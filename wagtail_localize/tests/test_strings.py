@@ -2,9 +2,9 @@ from django.test import TestCase
 
 from wagtail_localize.strings import (
     StringValue,
+    extract_ids,
     extract_strings,
     restore_strings,
-    extract_ids,
     validate_translation_links,
 )
 
@@ -23,41 +23,61 @@ class TestStringValueFromSourceHTML(TestCase):
         self.assertEqual(
             attrs,
             {
-                'a1': {'href': 'https://en.wikipedia.org/wiki/Staple_food'},
-                'a2': {'href': 'https://en.wikipedia.org/wiki/Dough'},
-                'a3': {'href': 'https://en.wikipedia.org/wiki/Flour'},
-                'a4': {'href': 'https://en.wikipedia.org/wiki/Water'},
-            }
+                "a1": {"href": "https://en.wikipedia.org/wiki/Staple_food"},
+                "a2": {"href": "https://en.wikipedia.org/wiki/Dough"},
+                "a3": {"href": "https://en.wikipedia.org/wiki/Flour"},
+                "a4": {"href": "https://en.wikipedia.org/wiki/Water"},
+            },
         )
 
     def test_validation(self):
         # All of these should be allowed
         StringValue.from_source_html("Foo bar baz")
-        StringValue.from_source_html("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
-        StringValue.from_source_html("&lt;script&gt; this should be interpreted as text.")
+        StringValue.from_source_html(
+            "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text"
+        )
+        StringValue.from_source_html(
+            "&lt;script&gt; this should be interpreted as text."
+        )
         StringValue.from_source_html("Foo<br/>bar<br/>baz")
-        StringValue.from_source_html('<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>')
+        StringValue.from_source_html(
+            '<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>'
+        )
 
     def test_block_tags_not_allowed(self):
         with self.assertRaises(ValueError) as e:
             StringValue.from_source_html("<p>Foo bar baz</p>")
 
         self.assertIsInstance(e.exception, ValueError)
-        self.assertEqual(e.exception.args, ('<p> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)',))
+        self.assertEqual(
+            e.exception.args,
+            (
+                "<p> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)",
+            ),
+        )
 
         with self.assertRaises(ValueError) as e:
             StringValue.from_source_html("<img/>")
 
         self.assertIsInstance(e.exception, ValueError)
-        self.assertEqual(e.exception.args, ('<img> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)',))
+        self.assertEqual(
+            e.exception.args,
+            (
+                "<img> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)",
+            ),
+        )
 
 
 class TestStringValueFromTranslatedHTML(TestCase):
     def test_validation(self):
         # All of these should be allowed
         StringValue.from_translated_html("Foo bar baz")
-        StringValue.from_translated_html("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text")
-        StringValue.from_translated_html("&lt;script&gt; this should be interpreted as text.")
+        StringValue.from_translated_html(
+            "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text"
+        )
+        StringValue.from_translated_html(
+            "&lt;script&gt; this should be interpreted as text."
+        )
         StringValue.from_translated_html("Foo<br/>bar<br/>baz")
         StringValue.from_translated_html('<a id="1">staple food</a>')
 
@@ -66,20 +86,37 @@ class TestStringValueFromTranslatedHTML(TestCase):
             StringValue.from_translated_html("<p>Foo bar baz</p>")
 
         self.assertIsInstance(e.exception, ValueError)
-        self.assertEqual(e.exception.args, ('<p> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)',))
+        self.assertEqual(
+            e.exception.args,
+            (
+                "<p> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)",
+            ),
+        )
 
         with self.assertRaises(ValueError) as e:
             StringValue.from_translated_html("<img/>")
 
         self.assertIsInstance(e.exception, ValueError)
-        self.assertEqual(e.exception.args, ('<img> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)',))
+        self.assertEqual(
+            e.exception.args,
+            (
+                "<img> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)",
+            ),
+        )
 
     def test_attributes_not_allowed(self):
         with self.assertRaises(ValueError) as e:
-            StringValue.from_translated_html('<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>')
+            StringValue.from_translated_html(
+                '<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>'
+            )
 
         self.assertIsInstance(e.exception, ValueError)
-        self.assertEqual(e.exception.args, ("Strings cannot have any HTML tags with attributes (except for 'id' in <a> tags)",))
+        self.assertEqual(
+            e.exception.args,
+            (
+                "Strings cannot have any HTML tags with attributes (except for 'id' in <a> tags)",
+            ),
+        )
 
 
 class TestStringValueFromPlaintext(TestCase):
@@ -121,10 +158,10 @@ class TestRenderHTML(TestCase):
         )
 
         attrs = {
-            'a1': {'href': 'https://en.wikipedia.org/wiki/Staple_food'},
-            'a2': {'href': 'https://en.wikipedia.org/wiki/Dough'},
-            'a3': {'href': 'https://en.wikipedia.org/wiki/Flour'},
-            'a4': {'href': 'https://en.wikipedia.org/wiki/Water'},
+            "a1": {"href": "https://en.wikipedia.org/wiki/Staple_food"},
+            "a2": {"href": "https://en.wikipedia.org/wiki/Dough"},
+            "a3": {"href": "https://en.wikipedia.org/wiki/Flour"},
+            "a4": {"href": "https://en.wikipedia.org/wiki/Water"},
         }
 
         self.assertEqual(
@@ -140,7 +177,8 @@ class TestStringRenderText(TestCase):
         )
 
         self.assertEqual(
-            string.render_text(), "This is a paragraph. This is some bold and now italic text"
+            string.render_text(),
+            "This is a paragraph. This is some bold and now italic text",
         )
 
     def test_special_chars_unescaped(self):
@@ -175,8 +213,12 @@ class TextExtractStrings(TestCase):
         self.assertEqual(
             strings,
             [
-                StringValue.from_source_html('<b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.'),
-                StringValue.from_source_html('Proportions of types of flour and other ingredients vary widely, as do modes of preparation. As a result, types, shapes, sizes, and textures of breads differ around the world. Bread may be\xa0<a href="https://en.wikipedia.org/wiki/Leaven">leavened</a>\xa0by processes such as reliance on naturally occurring\xa0<a href="https://en.wikipedia.org/wiki/Sourdough">sourdough</a>\xa0microbes, chemicals, industrially produced yeast, or high-pressure aeration. Some bread is cooked before it can leaven, including for traditional or religious reasons. Non-cereal ingredients such as fruits, nuts and fats may be included. Commercial bread commonly contains additives to improve flavor, texture, color, shelf life, and ease of manufacturing.'),
+                StringValue.from_source_html(
+                    '<b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.'
+                ),
+                StringValue.from_source_html(
+                    'Proportions of types of flour and other ingredients vary widely, as do modes of preparation. As a result, types, shapes, sizes, and textures of breads differ around the world. Bread may be\xa0<a href="https://en.wikipedia.org/wiki/Leaven">leavened</a>\xa0by processes such as reliance on naturally occurring\xa0<a href="https://en.wikipedia.org/wiki/Sourdough">sourdough</a>\xa0microbes, chemicals, industrially produced yeast, or high-pressure aeration. Some bread is cooked before it can leaven, including for traditional or religious reasons. Non-cereal ingredients such as fruits, nuts and fats may be included. Commercial bread commonly contains additives to improve flavor, texture, color, shelf life, and ease of manufacturing.'
+                ),
             ],
         )
 
@@ -212,8 +254,12 @@ class TextExtractStrings(TestCase):
             strings,
             [
                 StringValue.from_source_html("Foo bar baz"),
-                StringValue.from_source_html("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text"),
-                StringValue.from_source_html("&lt;script&gt; this should be interpreted as text."),
+                StringValue.from_source_html(
+                    "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text"
+                ),
+                StringValue.from_source_html(
+                    "&lt;script&gt; this should be interpreted as text."
+                ),
                 StringValue.from_source_html("List item one"),
                 StringValue.from_source_html("List item two"),
             ],
@@ -229,21 +275,19 @@ class TextExtractStrings(TestCase):
             '<p><i><text position="0"></text> <p><text position="1"></text></p></i></p>',
         )
 
-        self.assertEqual(strings, [
-            StringValue.from_source_html("Foo"),
-            StringValue.from_source_html("Bar")
-        ])
+        self.assertEqual(
+            strings,
+            [StringValue.from_source_html("Foo"), StringValue.from_source_html("Bar")],
+        )
 
     def test_br_tag_is_treated_as_inline_tag(self):
-        template, strings = extract_strings(
-            "<p><b>Foo <i>Bar<br/>Baz</i></b></p>"
-        )
+        template, strings = extract_strings("<p><b>Foo <i>Bar<br/>Baz</i></b></p>")
 
         self.assertHTMLEqual(template, '<p><b><text position="0"></text></b></p>')
 
-        self.assertEqual(strings, [
-            StringValue.from_source_html("Foo <i>Bar<br/>Baz</i>")
-        ])
+        self.assertEqual(
+            strings, [StringValue.from_source_html("Foo <i>Bar<br/>Baz</i>")]
+        )
 
     def test_br_tag_is_removed_when_it_appears_at_beginning_of_segment(self):
         template, strings = extract_strings("<p><i><br/>Foo</i></p>")
@@ -275,8 +319,12 @@ class TestRestoreStrings(TestCase):
             <p><text position="1"></text></p>
             """,
             [
-                StringValue.from_source_html('<b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.'),
-                StringValue.from_source_html('Proportions of types of flour and other ingredients vary widely, as do modes of preparation. As a result, types, shapes, sizes, and textures of breads differ around the world. Bread may be\xa0<a href="https://en.wikipedia.org/wiki/Leaven">leavened</a>\xa0by processes such as reliance on naturally occurring\xa0<a href="https://en.wikipedia.org/wiki/Sourdough">sourdough</a>\xa0microbes, chemicals, industrially produced yeast, or high-pressure aeration. Some bread is cooked before it can leaven, including for traditional or religious reasons. Non-cereal ingredients such as fruits, nuts and fats may be included. Commercial bread commonly contains additives to improve flavor, texture, color, shelf life, and ease of manufacturing.'),
+                StringValue.from_source_html(
+                    '<b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.'
+                ),
+                StringValue.from_source_html(
+                    'Proportions of types of flour and other ingredients vary widely, as do modes of preparation. As a result, types, shapes, sizes, and textures of breads differ around the world. Bread may be\xa0<a href="https://en.wikipedia.org/wiki/Leaven">leavened</a>\xa0by processes such as reliance on naturally occurring\xa0<a href="https://en.wikipedia.org/wiki/Sourdough">sourdough</a>\xa0microbes, chemicals, industrially produced yeast, or high-pressure aeration. Some bread is cooked before it can leaven, including for traditional or religious reasons. Non-cereal ingredients such as fruits, nuts and fats may be included. Commercial bread commonly contains additives to improve flavor, texture, color, shelf life, and ease of manufacturing.'
+                ),
             ],
         )
 
@@ -302,8 +350,12 @@ class TestRestoreStrings(TestCase):
             """,
             [
                 StringValue.from_source_html("Foo bar baz"),
-                StringValue.from_source_html("This is a paragraph. <b>This is some bold <i>and now italic</i></b> text"),
-                StringValue.from_source_html("&lt;script&gt; this should be interpreted as text."),
+                StringValue.from_source_html(
+                    "This is a paragraph. <b>This is some bold <i>and now italic</i></b> text"
+                ),
+                StringValue.from_source_html(
+                    "&lt;script&gt; this should be interpreted as text."
+                ),
                 StringValue.from_source_html("List item one"),
                 StringValue.from_source_html("<b>List item two</b>"),
             ],
@@ -353,7 +405,7 @@ class IDsValidationTestCase(TestCase):
             <strong>
                 <a id="a2">lien 2</a>
             <strong>
-            """
+            """,
         )
 
     def test_validate_translation_links_raises_error_if_new_ids(self):
@@ -372,6 +424,8 @@ class IDsValidationTestCase(TestCase):
                     <a id="a3">lien 3</a>
                     <a id="a4">lien 4</a>
                 <strong>
-                """
+                """,
             )
-        self.assertEqual(e.exception.args, ("Unrecognised id found in an <a> tag: a3, a4",))
+        self.assertEqual(
+            e.exception.args, ("Unrecognised id found in an <a> tag: a3, a4",)
+        )

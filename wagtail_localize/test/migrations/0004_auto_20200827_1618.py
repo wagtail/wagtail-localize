@@ -8,18 +8,29 @@ import modelcluster.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize_test', '0003_nontranslatablechildobject_testgeneratetranslatablefieldspage_translatablechildobject'),
+        (
+            "wagtail_localize_test",
+            "0003_nontranslatablechildobject_testgeneratetranslatablefieldspage_translatablechildobject",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='nontranslatablechildobject',
-            name='page',
-            field=modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_nontranslatable_childobjects', to='wagtail_localize_test.TestGenerateTranslatableFieldsPage'),
+            model_name="nontranslatablechildobject",
+            name="page",
+            field=modelcluster.fields.ParentalKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="test_nontranslatable_childobjects",
+                to="wagtail_localize_test.TestGenerateTranslatableFieldsPage",
+            ),
         ),
         migrations.AlterField(
-            model_name='translatablechildobject',
-            name='page',
-            field=modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_translatable_childobjects', to='wagtail_localize_test.TestGenerateTranslatableFieldsPage'),
+            model_name="translatablechildobject",
+            name="page",
+            field=modelcluster.fields.ParentalKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="test_translatable_childobjects",
+                to="wagtail_localize_test.TestGenerateTranslatableFieldsPage",
+            ),
         ),
     ]

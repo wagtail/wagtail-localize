@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Amós Oviedo <amos.oviedo@gmail.com>, 2020
 # José Luis <alagunajs@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: José Luis <alagunajs@gmail.com>, 2021\n"

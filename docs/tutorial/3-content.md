@@ -10,31 +10,29 @@ snippets.
 
 Firstly, start a new app for the blog models:
 
-``` shell
+```shell
 python manage.py startapp blog
 ```
 
-Then, add this app into ``INSTALLED_APPS``:
+Then, add this app into `INSTALLED_APPS`:
 
-``` python
+```python
 INSTALLED_APPS = [
-    'home',
-    'search',
+    "home",
+    "search",
     # Insert this
-    'blog',
-
-    'wagtail_localize',
-    'wagtail_localize.locales',
-
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
+    "blog",
+    "wagtail_localize",
+    "wagtail_localize.locales",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
     # ...
 ]
 ```
 
-Now, open ``blog/models.py`` and copy and paste the following code into it:
+Now, open `blog/models.py` and copy and paste the following code into it:
 
-``` python
+```python
 from django.db import models
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core import blocks
@@ -51,7 +49,7 @@ class ImageBlock(blocks.StructBlock):
     caption = blocks.CharBlock(required=False)
 
     class Meta:
-        icon = 'image'
+        icon = "image"
 
 
 class StoryBlock(blocks.StreamBlock):
@@ -71,41 +69,36 @@ class BlogCategory(TranslatableMixin):
 class BlogPostPage(Page):
     publication_date = models.DateField(null=True, blank=True)
     image = models.ForeignKey(
-        'wagtailimages.Image',
-        on_delete=models.SET_NULL,
-        null=True
+        "wagtailimages.Image", on_delete=models.SET_NULL, null=True
     )
     body = StreamField(StoryBlock())
     category = models.ForeignKey(
-        BlogCategory,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='blog_posts'
+        BlogCategory, on_delete=models.SET_NULL, null=True, related_name="blog_posts"
     )
 
     content_panels = Page.content_panels + [
-        FieldPanel('publication_date'),
-        ImageChooserPanel('image'),
-        StreamFieldPanel('body'),
-        SnippetChooserPanel('category'),
+        FieldPanel("publication_date"),
+        ImageChooserPanel("image"),
+        StreamFieldPanel("body"),
+        SnippetChooserPanel("category"),
     ]
 
-    parent_page_types = ['blog.BlogIndexPage']
+    parent_page_types = ["blog.BlogIndexPage"]
 
 
 class BlogIndexPage(Page):
     introduction = models.TextField(blank=True)
 
     content_panels = Page.content_panels + [
-        FieldPanel('introduction'),
+        FieldPanel("introduction"),
     ]
 
-    parent_page_types = ['home.HomePage']
+    parent_page_types = ["home.HomePage"]
 ```
 
 Then add those models to the database by running the following commands in your terminal:
 
-``` shell
+```shell
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -122,10 +115,10 @@ the following screenshot, and publish it.
 Then navigate to the new blog index page, click "Add child page" then click "Blog post page". Fill it in how you like,
 but make sure that you cover the following:
 
- - Upload an image and add it to the "Image" field
- - Create a "Blog Category" and select it in the "Category" field
- - Add an item in the paragraph block, with some text and a couple of list items. Use some inline formatting
-   (bold, italic, etc) and add a link
+- Upload an image and add it to the "Image" field
+- Create a "Blog Category" and select it in the "Category" field
+- Add an item in the paragraph block, with some text and a couple of list items. Use some inline formatting
+  (bold, italic, etc) and add a link
 
 ![Blog post page being edited in Wagtail](/_static/tutorial/wagtail-edit-source.png)
 
@@ -181,7 +174,7 @@ breaks this link.
 ### 3. Related object segments
 
 Any translatable related objects that are linked to the original page are automatically submitted for translation when
-the page is submitted. For example, the ``BlogCategory`` model is translatable, so Wagtail Localize has automatically
+the page is submitted. For example, the `BlogCategory` model is translatable, so Wagtail Localize has automatically
 submitted the "Dog" blog category, that was linked from the original page, for translation:
 
 ![A translated blog category](/_static/tutorial/wagtail-translated-snippet.png)

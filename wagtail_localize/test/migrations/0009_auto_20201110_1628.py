@@ -6,16 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize_test', '0008_flaglocalecomponent'),
+        ("wagtail_localize_test", "0008_flaglocalecomponent"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='testpage',
-            name='test_charfield',
-            field=models.CharField(blank=True, default='', max_length=255, null=True, verbose_name='char field'),
+            model_name="testpage",
+            name="test_charfield",
+            field=models.CharField(
+                blank=True,
+                default="",
+                max_length=255,
+                null=True,
+                verbose_name="char field",
+            ),
         ),
         migrations.DeleteModel(
-            name='FlagLocaleComponent',
+            name="FlagLocaleComponent",
         ),
     ]

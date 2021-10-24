@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0012_localesynchronization'),
+        ("wagtail_localize", "0012_localesynchronization"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translationsource',
-            name='schema_version',
+            model_name="translationsource",
+            name="schema_version",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

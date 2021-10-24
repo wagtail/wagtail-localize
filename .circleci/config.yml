@@ -27,7 +27,7 @@ jobs:
       - type: cache-save
         key: node-modules-{{ .Branch }}-{{ checksum "package-lock.json" }}
         paths:
-          - "node_modules"
+          - 'node_modules'
 
   test:
     docker:
@@ -37,15 +37,15 @@ jobs:
 
       - type: cache-restore
         keys:
-         - pip-{{ .Branch }}-
-         - pip-main-
+          - pip-{{ .Branch }}-
+          - pip-main-
 
       - run: pip install -e .[testing]
 
       - type: cache-save
         key: pip-{{ .Branch }}-{{ epoch }}
         paths:
-          - "~/.cache/pip"
+          - '~/.cache/pip'
 
       - run: python testmanage.py test
 
@@ -66,20 +66,20 @@ jobs:
           command: python ./.circleci/report_nightly_build_failure.py
 
 workflows:
-    version: 2
-    test:
-      jobs:
-        - flake8
-        - prettier
-        - test
+  version: 2
+  test:
+    jobs:
+      - flake8
+      - prettier
+      - test
 
-    nightly:
-      jobs:
-        - nightly-wagtail-test
-      triggers:
-        - schedule:
-            cron: "0 0 * * *"
-            filters:
-              branches:
-                only:
-                  - main
+  nightly:
+    jobs:
+      - nightly-wagtail-test
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only:
+                - main

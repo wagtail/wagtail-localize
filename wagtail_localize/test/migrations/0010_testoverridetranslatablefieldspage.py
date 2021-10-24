@@ -7,18 +7,28 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize_test', '0009_auto_20201110_1628'),
+        ("wagtail_localize_test", "0009_auto_20201110_1628"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TestOverrideTranslatableFieldsPage',
+            name="TestOverrideTranslatableFieldsPage",
             fields=[
-                ('testgeneratetranslatablefieldspage_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtail_localize_test.testgeneratetranslatablefieldspage')),
+                (
+                    "testgeneratetranslatablefieldspage_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtail_localize_test.testgeneratetranslatablefieldspage",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtail_localize_test.testgeneratetranslatablefieldspage',),
+            bases=("wagtail_localize_test.testgeneratetranslatablefieldspage",),
         ),
     ]

@@ -7,21 +7,41 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtail_localize', '0009_stringtranslation_errors'),
+        ("wagtail_localize", "0009_stringtranslation_errors"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='OverridableSegment',
+            name="OverridableSegment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order', models.PositiveIntegerField()),
-                ('data_json', models.TextField()),
-                ('context', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='wagtail_localize.translationcontext')),
-                ('source', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtail_localize.translationsource')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order", models.PositiveIntegerField()),
+                ("data_json", models.TextField()),
+                (
+                    "context",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="wagtail_localize.translationcontext",
+                    ),
+                ),
+                (
+                    "source",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtail_localize.translationsource",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

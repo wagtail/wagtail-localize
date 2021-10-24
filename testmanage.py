@@ -56,7 +56,7 @@ def runtests():
     try:
         execute_from_command_line(argv)
     finally:
-        from wagtail.tests.settings import STATIC_ROOT, MEDIA_ROOT
+        from wagtail.tests.settings import MEDIA_ROOT, STATIC_ROOT
 
         shutil.rmtree(STATIC_ROOT, ignore_errors=True)
         shutil.rmtree(MEDIA_ROOT, ignore_errors=True)

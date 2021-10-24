@@ -1,7 +1,7 @@
-# 
+#
 # Translators:
 # Luiz Boaretto <lboaretto@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2021\n"

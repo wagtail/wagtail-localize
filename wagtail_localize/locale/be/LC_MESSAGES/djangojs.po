@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Stas Rudakou <stas@garage22.net>, 2021
 # Tatsiana Tsygan <art.tatsiana@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2021\n"

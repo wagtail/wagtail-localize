@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # oliverengel, 2021
 # Moritz Pfeiffer <moritz@alp-phone.ch>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Moritz Pfeiffer <moritz@alp-phone.ch>, 2021\n"

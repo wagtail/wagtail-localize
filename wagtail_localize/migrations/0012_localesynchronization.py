@@ -7,17 +7,39 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '0059_apply_collection_ordering'),
-        ('wagtail_localize', '0011_segmentoverride'),
+        ("wagtailcore", "0059_apply_collection_ordering"),
+        ("wagtail_localize", "0011_segmentoverride"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LocaleSynchronization',
+            name="LocaleSynchronization",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('locale', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.locale')),
-                ('sync_from', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.locale')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "locale",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="wagtailcore.locale",
+                    ),
+                ),
+                (
+                    "sync_from",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="wagtailcore.locale",
+                    ),
+                ),
             ],
         ),
     ]

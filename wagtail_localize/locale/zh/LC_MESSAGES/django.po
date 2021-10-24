@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Orangle Liu <orangleliu@gmail.com>, 2021
 # serafeim <serafeim@torchbox.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"

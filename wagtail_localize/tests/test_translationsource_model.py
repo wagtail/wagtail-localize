@@ -5,20 +5,26 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page, Locale, PageLogEntry
+from wagtail.core.models import Locale, Page, PageLogEntry
 
 from wagtail_localize.models import (
-    TranslationSource,
+    MissingRelatedObjectError,
+    MissingTranslationError,
+    SourceDeletedError,
     String,
     StringTranslation,
-    SourceDeletedError,
-    MissingTranslationError,
-    MissingRelatedObjectError,
     TranslationContext,
+    TranslationSource,
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import TestPage, TestSnippet, TestChildObject, TestSynchronizedChildObject, TestNonParentalChildObject
+from wagtail_localize.test.models import (
+    TestChildObject,
+    TestNonParentalChildObject,
+    TestPage,
+    TestSnippet,
+    TestSynchronizedChildObject,
+)
 
 
 def create_test_page(**kwargs):
@@ -86,7 +92,9 @@ class TestGetOrCreateFromInstance(TestCase):
             last_updated_at=timezone.now(),
         )
 
-        new_source, created = TranslationSource.get_or_create_from_instance(self.snippet)
+        new_source, created = TranslationSource.get_or_create_from_instance(
+            self.snippet
+        )
 
         self.assertEqual(source, new_source)
         self.assertEqual(
@@ -136,7 +144,9 @@ class TestUpdateOrCreateFromInstance(TestCase):
             last_updated_at=timezone.now(),
         )
 
-        new_source, created = TranslationSource.update_or_create_from_instance(self.snippet)
+        new_source, created = TranslationSource.update_or_create_from_instance(
+            self.snippet
+        )
 
         self.assertFalse(created)
 
@@ -179,7 +189,9 @@ class TestAsInstanceForPage(TestCase):
 class TestAsInstanceForSnippet(TestCase):
     def setUp(self):
         self.snippet = TestSnippet.objects.create(field="This is some test content")
-        self.source, created = TranslationSource.get_or_create_from_instance(self.snippet)
+        self.source, created = TranslationSource.get_or_create_from_instance(
+            self.snippet
+        )
 
     def test(self):
         # To show it actually is using the translation source and not the live object,
@@ -199,15 +211,22 @@ class TestAsInstanceForSnippet(TestCase):
 
 class TestExportPO(TestCase):
     def setUp(self):
-        self.page = create_test_page(title="Test page", slug="test-page", test_charfield="This is some test content", test_textfield="This is some test content")
+        self.page = create_test_page(
+            title="Test page",
+            slug="test-page",
+            test_charfield="This is some test content",
+            test_textfield="This is some test content",
+        )
         self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
     def test_export_po(self):
         po = self.source.export_po()
 
-        self.assertEqual(po.metadata.keys(), {'POT-Creation-Date', 'MIME-Version', 'Content-Type'})
-        self.assertEqual(po.metadata['MIME-Version'], '1.0')
-        self.assertEqual(po.metadata['Content-Type'], 'text/plain; charset=utf-8')
+        self.assertEqual(
+            po.metadata.keys(), {"POT-Creation-Date", "MIME-Version", "Content-Type"}
+        )
+        self.assertEqual(po.metadata["MIME-Version"], "1.0")
+        self.assertEqual(po.metadata["Content-Type"], "text/plain; charset=utf-8")
 
         self.assertEqual(len(po), 2)
         self.assertEqual(po[0].msgid, "This is some test content")
@@ -259,7 +278,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         self.assertTrue(created)
         self.assertEqual(new_page.title, "Test page")
-        self.assertEqual(new_page.slug, 'test-page-fr')
+        self.assertEqual(new_page.slug, "test-page-fr")
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
@@ -277,7 +296,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         new_page, created = self.source.create_or_update_translation(self.dest_locale)
 
         self.assertTrue(created)
-        self.assertEqual(new_page.slug, 'test-page-fr-1')
+        self.assertEqual(new_page.slug, "test-page-fr-1")
 
     def test_create_child(self):
         child_page = create_test_page(
@@ -287,7 +306,9 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             test_charfield="This is some test content",
             test_snippet=self.snippet,
         )
-        child_source, created = TranslationSource.get_or_create_from_instance(child_page)
+        child_source, created = TranslationSource.get_or_create_from_instance(
+            child_page
+        )
 
         translated_parent = self.page.copy_for_translation(self.dest_locale)
 
@@ -301,9 +322,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
             data="Ceci est du contenu de test",
         )
 
-        new_page, created = child_source.create_or_update_translation(
-            self.dest_locale
-        )
+        new_page, created = child_source.create_or_update_translation(self.dest_locale)
 
         self.assertTrue(created)
         self.assertEqual(new_page.get_parent(), translated_parent)
@@ -361,31 +380,31 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.page.test_synchronized_customfield = "Test synchronised content"
 
         # Add some child objects
-        self.page.test_childobjects.add(
-            TestChildObject(
-                field="A test child object"
-            )
-        )
+        self.page.test_childobjects.add(TestChildObject(field="A test child object"))
 
         # Remove one of the child objects to test that deletions are syncrhonised
-        self.page.test_synchronized_childobjects.remove(self.page.test_synchronized_childobjects.get(field="Test child object that existed before initial translation and was deleted"))
-        self.page.test_synchronized_childobjects.add(
-            TestSynchronizedChildObject(
-                field="A test synchronized object"
+        self.page.test_synchronized_childobjects.remove(
+            self.page.test_synchronized_childobjects.get(
+                field="Test child object that existed before initial translation and was deleted"
             )
+        )
+        self.page.test_synchronized_childobjects.add(
+            TestSynchronizedChildObject(field="A test synchronized object")
         )
 
         # Non-parental child objects are created differently because modelcluster doesn't help us
         TestNonParentalChildObject.objects.create(
-            page=self.page,
-            field="A non-parental child object"
+            page=self.page, field="A non-parental child object"
         )
 
         # Save the page
         revision = self.page.save_revision()
         revision.publish()
         self.page.refresh_from_db()
-        source_with_changed_content, created = TranslationSource.update_or_create_from_instance(self.page)
+        (
+            source_with_changed_content,
+            created,
+        ) = TranslationSource.update_or_create_from_instance(self.page)
 
         # Check translation hasn't been updated yet
         translated.refresh_from_db()
@@ -397,10 +416,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         )
         self.page.save_revision().publish()
 
-        (
-            new_page,
-            created,
-        ) = source_with_changed_content.create_or_update_translation(
+        (new_page, created,) = source_with_changed_content.create_or_update_translation(
             self.dest_locale,
             fallback=True,
         )
@@ -442,8 +458,13 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         # Test both the non deleted and new synchronised child objects remain
         self.assertEqual(
-            set(new_page.test_synchronized_childobjects.values_list('field', flat=True)),
-            {"A test synchronized object", "Test child object that existed before initial translation and was not deleted"}
+            set(
+                new_page.test_synchronized_childobjects.values_list("field", flat=True)
+            ),
+            {
+                "A test synchronized object",
+                "Test child object that existed before initial translation and was not deleted",
+            },
         )
 
         # Non parental child objects should be ignored
@@ -473,7 +494,10 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         revision = self.page.save_revision()
         revision.publish()
         self.page.refresh_from_db()
-        source_with_streamfield, created = TranslationSource.update_or_create_from_instance(self.page)
+        (
+            source_with_streamfield,
+            created,
+        ) = TranslationSource.update_or_create_from_instance(self.page)
 
         # Create a translation for the new context
         StringTranslation.objects.create(
@@ -526,14 +550,18 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.translation.delete()
         self.translated_snippet.delete()
 
-        translated_page, created = self.source.create_or_update_translation(self.dest_locale, fallback=True)
+        translated_page, created = self.source.create_or_update_translation(
+            self.dest_locale, fallback=True
+        )
 
         self.assertEqual(translated_page.test_snippet, self.snippet)
         self.assertEqual(translated_page.test_charfield, "This is some test content")
 
     def test_create_with_fallback_true(self):
         # Like the previous test, but this time we have valid data, so it shouldn't fallback
-        translated_page, created = self.source.create_or_update_translation(self.dest_locale, fallback=True)
+        translated_page, created = self.source.create_or_update_translation(
+            self.dest_locale, fallback=True
+        )
 
         self.assertEqual(translated_page.test_snippet, self.translated_snippet)
         self.assertEqual(translated_page.test_charfield, "Ceci est du contenu de test")
@@ -546,7 +574,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertFalse(created)
         self.assertIsNone(new_page.alias_of)
         self.assertEqual(new_page.title, "Test page")
-        self.assertEqual(new_page.slug, 'test-page-fr')
+        self.assertEqual(new_page.slug, "test-page-fr")
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
         self.assertEqual(new_page.translation_key, self.page.translation_key)
         self.assertEqual(new_page.locale, self.dest_locale)
@@ -555,13 +583,21 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         )
 
         # Check a log was created for the alias conversion
-        self.assertTrue(PageLogEntry.objects.filter(page=new_page, action='wagtail.convert_alias').exists())
+        self.assertTrue(
+            PageLogEntry.objects.filter(
+                page=new_page, action="wagtail.convert_alias"
+            ).exists()
+        )
 
 
 class TestCreateOrUpdateTranslationForSnippet(TestCase):
     def setUp(self):
-        self.snippet = TestSnippet.objects.create(field="Test snippet content", small_charfield="Small text")
-        self.source, created = TranslationSource.get_or_create_from_instance(self.snippet)
+        self.snippet = TestSnippet.objects.create(
+            field="Test snippet content", small_charfield="Small text"
+        )
+        self.source, created = TranslationSource.get_or_create_from_instance(
+            self.snippet
+        )
         self.source_locale = Locale.objects.get(language_code="en")
         self.dest_locale = Locale.objects.create(language_code="fr")
 
@@ -592,7 +628,9 @@ class TestCreateOrUpdateTranslationForSnippet(TestCase):
         )
 
     def test_create(self):
-        new_snippet, created = self.source.create_or_update_translation(self.dest_locale)
+        new_snippet, created = self.source.create_or_update_translation(
+            self.dest_locale
+        )
 
         self.assertTrue(created)
         self.assertEqual(new_snippet.field, "Tester le contenu de l'extrait")
@@ -609,12 +647,17 @@ class TestCreateOrUpdateTranslationForSnippet(TestCase):
         with self.assertRaises(ValidationError) as e:
             self.source.create_or_update_translation(self.dest_locale)
 
-        self.assertEqual(e.exception.messages, ['Ensure this value has at most 10 characters (it has 11).'])
+        self.assertEqual(
+            e.exception.messages,
+            ["Ensure this value has at most 10 characters (it has 11)."],
+        )
 
     def test_update(self):
         self.snippet.copy_for_translation(self.dest_locale).save()
 
-        new_snippet, created = self.source.create_or_update_translation(self.dest_locale)
+        new_snippet, created = self.source.create_or_update_translation(
+            self.dest_locale
+        )
 
         self.assertFalse(created)
         self.assertEqual(new_snippet.field, "Tester le contenu de l'extrait")
@@ -633,7 +676,10 @@ class TestCreateOrUpdateTranslationForSnippet(TestCase):
         with self.assertRaises(ValidationError) as e:
             self.source.create_or_update_translation(self.dest_locale)
 
-        self.assertEqual(e.exception.messages, ['Ensure this value has at most 10 characters (it has 11).'])
+        self.assertEqual(
+            e.exception.messages,
+            ["Ensure this value has at most 10 characters (it has 11)."],
+        )
 
 
 class TestGetEphemeralTranslatedInstance(TestCase):
@@ -652,7 +698,9 @@ class TestGetEphemeralTranslatedInstance(TestCase):
         self.translated_page = self.page.copy_for_translation(self.dest_locale)
 
         # Add a test child object and update the test_textfield. Then update the translation source
-        self.page.test_childobjects.add(TestChildObject(field="This is a test child object"))
+        self.page.test_childobjects.add(
+            TestChildObject(field="This is a test child object")
+        )
         self.page.test_textfield = "Updated textfield"
         self.page.save_revision().publish()
         self.source.update_from_db()
@@ -672,18 +720,25 @@ class TestGetEphemeralTranslatedInstance(TestCase):
             translation_of=String.objects.get(data="This is a test child object"),
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
-                object_id=self.page.translation_key, path="test_childobjects.{}.field".format(self.page.test_childobjects.get().translation_key)
+                object_id=self.page.translation_key,
+                path="test_childobjects.{}.field".format(
+                    self.page.test_childobjects.get().translation_key
+                ),
             ),
             data="Ceci est un objet enfant de test",
         )
 
     def test_get_ephemeral_translated_instance(self):
-        new_page = self.source.get_ephemeral_translated_instance(self.dest_locale, fallback=True)
+        new_page = self.source.get_ephemeral_translated_instance(
+            self.dest_locale, fallback=True
+        )
 
         self.assertEqual(new_page.id, self.translated_page.id)
         self.assertEqual(new_page.test_charfield, "Ceci est du contenu de test")
         self.assertEqual(new_page.test_textfield, "Updated textfield")
-        self.assertEqual(new_page.test_childobjects.get().field, "Ceci est un objet enfant de test")
+        self.assertEqual(
+            new_page.test_childobjects.get().field, "Ceci est un objet enfant de test"
+        )
         self.assertFalse(
             self.source.translation_logs.filter(locale=self.dest_locale).exists()
         )
@@ -691,8 +746,12 @@ class TestGetEphemeralTranslatedInstance(TestCase):
         # Check the saved page has not been changed
         self.translated_page.refresh_from_db()
         self.assertEqual(self.translated_page.title, "Test page")
-        self.assertEqual(self.translated_page.test_charfield, "This is some test content")
-        self.assertEqual(self.translated_page.test_textfield, "This is some more test content")
+        self.assertEqual(
+            self.translated_page.test_charfield, "This is some test content"
+        )
+        self.assertEqual(
+            self.translated_page.test_textfield, "This is some more test content"
+        )
         self.assertFalse(self.translated_page.test_childobjects.exists())
 
     def test_without_fallback(self):
@@ -729,11 +788,11 @@ class TestSchemaOutOfDate(TestCase):
         self.assertFalse(self.source.schema_out_of_date())
 
     def test_schema_is_in_date_if_source_schema_version_is_unknown(self):
-        self.source.schema_version = ''
+        self.source.schema_version = ""
         self.source.save()
         self.assertFalse(self.source.schema_out_of_date())
 
     def test_schema_is_out_of_date_if_source_schema_version_is_old(self):
-        self.source.schema_version = '0001_initial'
+        self.source.schema_version = "0001_initial"
         self.source.save()
         self.assertTrue(self.source.schema_out_of_date())

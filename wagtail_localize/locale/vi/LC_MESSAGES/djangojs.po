@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Luan Nguyen <lihavim@gmail.com>, 2021
 # Hồng Quân Nguyễn <ng.hong.quan@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Hồng Quân Nguyễn <ng.hong.quan@gmail.com>, 2021\n"

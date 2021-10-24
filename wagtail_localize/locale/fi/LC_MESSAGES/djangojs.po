@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2021
 # Valter Maasalo <vmaasalo@gmail.com>, 2021
 # Aarni Koskela, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Aarni Koskela, 2021\n"
