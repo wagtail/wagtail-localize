@@ -35,7 +35,7 @@ repos:
     rev: 'v1.18.2'
     hooks:
       - id: prettier
-        types_or: [markdown, css, scss, javascript, json, ts, tsx]
+        types_or: [markdown, css, scss, javascript, json, yaml, ts, tsx]
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: 'v8.1.0'
     hooks:

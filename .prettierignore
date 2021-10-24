@@ -1,0 +1,9 @@
+coverage
+node_modules
+static
+venv
+.venv
+.git
+*.html
+package-lock.json
+docs/ref/*
