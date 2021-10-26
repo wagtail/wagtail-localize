@@ -54,6 +54,7 @@ nav:
       - Machine Translation: how-to/integrations/machine-translation.md
     - Migrate from other translation plugins:
       - wagtailtrans: how-to/migrate/wagtailtrans.md
+      - wagtail-modeltranslation: how-to/migrate/wagtail-modeltranslation.md
   - Reference:
     - Translatable Fields: ref/translatable-fields.md
     - Strings: ref/strings.md
