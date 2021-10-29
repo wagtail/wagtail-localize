@@ -5,3 +5,4 @@ venv
 .venv
 .tox
 !.eslintrc.js
+scripts/extract-translatable-strings.js
