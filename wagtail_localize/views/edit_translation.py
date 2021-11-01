@@ -309,7 +309,7 @@ def get_segment_location_info(
 
         return {"type": "unknown"}
 
-    def widget_from_block(block):
+    def widget_from_block(block, content_components=None):
         if isinstance(block, blocks.PageChooserBlock):
             return {
                 "type": "page_chooser",
@@ -359,6 +359,15 @@ def get_segment_location_info(
             return {
                 "type": "text",
             }
+        elif (
+            isinstance(block, blocks.StructBlock)
+            and content_components
+            and isinstance(content_components, list)
+        ):
+            block_field_name = content_components.pop(0)
+            return widget_from_block(
+                block.child_blocks.get(block_field_name), content_components
+            )
 
         return {"type": "unknown"}
 
@@ -369,6 +378,7 @@ def get_segment_location_info(
         if isinstance(block_type, blocks.StructBlock):
             block_field_name = field_path_components[2]
             block_field = block_type.child_blocks[block_field_name].label
+
         else:
             block_field = None
 
@@ -379,7 +389,9 @@ def get_segment_location_info(
             "blockId": content_path_components[1],
             "fieldHelpText": "",
             "subField": block_field,
-            "widget": widget_from_block(block_type) if widget else None,
+            "widget": widget_from_block(block_type, content_path_components[2:])
+            if widget
+            else None,
         }
 
     elif (
