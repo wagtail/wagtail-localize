@@ -10,58 +10,36 @@ msgstr ""
 "Language-Team: Romanian (https://www.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
-"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
+"2:1));\n"
 
-#: machine_translators/dummy.py:45
 msgid "Dummy translator"
 msgstr "Traducător fals"
 
-#: models.py:976
 msgid "Up to date"
 msgstr "Actualizat"
 
-#: models.py:978
 msgid "Waiting for translations"
 msgstr "Aștept traduceri"
 
-#: models.py:1310
 msgid "Manual"
 msgstr "Manual"
 
-#: models.py:1311
 msgid "Machine"
 msgstr "Automat"
 
-#: models.py:1426
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr "Tradus cu {tool_name} la data de {date}"
 
-#: models.py:1429
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr "Tradus manual la {date}"
 
-#: models.py:1432
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr "Tradus automat la {date}"
 
-#: models.py:1873
-msgid "This locale cannot be synced into itself."
-msgstr ""
-
-#: models.py:1878
-msgid "Synchronise content from another locale"
-msgstr ""
-
-#: models.py:1880
-msgid ""
-"Choose a locale to synchronise content from. Any existing and future content"
-" authored in the selected locale will be automatically copied to this one."
-msgstr ""
-
-#: strings.py:47
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -69,7 +47,6 @@ msgstr ""
 "Eticheta <{}> nu este permisă. Șirurile de text pot să conțină numai "
 "etichete inline HTML (precum <b>, <a>)"
 
-#: strings.py:54
 msgid ""
 "Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
 "tags)"
@@ -77,72 +54,40 @@ msgstr ""
 "Șirurile de text nu pot să conțină etichete HTML cu atribute cu excepția "
 "'id' în etichetele <a>"
 
-#: strings.py:501
-msgid "Unrecognised id found in an <a> tag: {}"
-msgstr ""
-
-#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
-#, python-format
-msgid ""
-"This page hasn't been translated yet. It is mirroring the <a "
-"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
-"page</a>."
-msgstr ""
-
-#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:81
 msgid "Translate this page"
 msgstr "Traduceți această pagină"
 
-#: templates/wagtail_localize/admin/edit_translation.html:6
-#, python-format
-msgid "Translation of %(instance)s into %(locale)s"
-msgstr ""
-
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
 msgid "Submit"
 msgstr "Trimite"
 
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
 msgid "Go back"
 msgstr "Înapoi"
 
-#: templates/wagtail_localize/admin/translations_report.html:10
-#: views/report.py:93
 msgid "Content type"
 msgstr "Tip de conținut"
 
-#: templates/wagtail_localize/admin/translations_report.html:13
 msgid "Source"
 msgstr "Sursă"
 
-#: templates/wagtail_localize/admin/translations_report.html:16
 msgid "Target"
 msgstr "Ţintă"
 
-#: templates/wagtail_localize/admin/translations_report.html:19
 msgid "Status"
 msgstr "Status"
 
-#: templates/wagtail_localize/admin/translations_report.html:49
 msgid "No translations found."
 msgstr "Nu s-au găsit traduceri."
 
-#: templates/wagtail_localize/admin/update_translations.html:11
 msgid "Why would I sync my page?"
 msgstr "De ce să-mi sincronizez pagina?"
 
-#: templates/wagtail_localize/admin/update_translations.html:12
 msgid ""
-"Changes are not automatically applied between translated pages. Syncing will"
-" add new content for translation and remove deleted content."
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
 msgstr ""
 "Modificările nu sunt aplicate automate între pagini traduse. Sincronizarea "
 "va adăuga conținutul noi și va elimina conținutul șters."
 
-#: templates/wagtail_localize/admin/update_translations.html:15
 #, python-format
 msgid ""
 "The last sync date was %(last_sync_date)s. You are about to sync the "
@@ -151,11 +96,9 @@ msgstr ""
 "Ultima sincronizare a fost pe %(last_sync_date)s. Sunteți pe cale să "
 "sincronizați următoarele:"
 
-#: views/edit_translation.py:125
 msgid "Content"
 msgstr "Conținut"
 
-#: views/edit_translation.py:435
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
@@ -165,117 +108,84 @@ msgstr ""
 "{locale}. Vă rugăm să le remediați, sau apăsați publicare din nou pentru a "
 "ignore aceste traduceri pentru moment."
 
-#: views/edit_translation.py:450
 #, python-brace-format
-msgid ""
-"Published '{object}' in {locale} with missing translations - see below."
+msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr "'{object}' publicat(ă) în {locale} cu traduceri lipsă - vezi mai jos."
 
-#: views/edit_translation.py:456
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "A publicat '{object}' în {locale}."
 
-#: views/edit_translation.py:624
-#, python-brace-format
-msgid ""
-"The data model for '{model_name}' has been changed since the last "
-"translation sync. If any new fields have been added recently, these may not "
-"be visible until the next translation sync."
-msgstr ""
-
-#: views/edit_translation.py:752
 msgid "Translation has been stopped."
 msgstr "Traducerea a fost oprită."
 
-#: views/edit_translation.py:766
 msgid "Translation has been restarted."
 msgstr "Traducerea a fost reîncepută."
 
-#: views/edit_translation.py:902
 msgid "Please upload a valid PO file."
 msgstr "Încărcați fișier PO valid."
 
-#: views/edit_translation.py:911
 msgid "Cannot import PO file that was created for a different translation."
 msgstr "Fișierul PO creat pentru o traducere diferita nu poate fi importat."
 
-#: views/edit_translation.py:920
 msgid "Successfully imported translations from PO File."
 msgstr "Traducerile din fișier PO au fost importate cu succes."
 
-#: views/edit_translation.py:988
 msgid "Successfully translated with {}."
 msgstr "Traducere de succes cu {}."
 
-#: views/edit_translation.py:994
 msgid "There isn't anything left to translate."
 msgstr "Nu mai este nimic de tradus."
 
-#: views/report.py:94
 msgid "Source title"
 msgstr "Titlu sursă"
 
-#: views/report.py:105 wagtail_hooks.py:231
 msgid "Translations"
 msgstr "Traduceri"
 
-#: views/submit_translations.py:23
 msgid "Select all"
 msgstr "Selectează toate"
 
-#: views/submit_translations.py:25
 msgid "Locales"
 msgstr "Localizări"
 
-#: views/submit_translations.py:27
 msgid "All child pages will be created."
 msgstr "Toate paginile descendete vor fi create."
 
-#: views/submit_translations.py:39
 msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Include pagini descendente ({} pagină)"
 msgstr[1] "Include pagini descendente ({} pagini)"
 msgstr[2] "Include pagini descendente ({} pagini)"
 
-#: views/submit_translations.py:116 wagtail_hooks.py:109
 msgid "Translate"
 msgstr "Traduceți"
 
-#: views/submit_translations.py:176
 msgid "{} locales"
 msgstr "{} localizări"
 
-#: views/submit_translations.py:197
 msgid "Translate page"
 msgstr "Traduce pagină"
 
-#: views/submit_translations.py:215
 #, python-brace-format
 msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr "Pagina '{page_title}' a fost trimisă pentru traducere în {locales}"
 
-#: views/submit_translations.py:224
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr "Traduce {model_name}"
 
-#: views/submit_translations.py:240
 #, python-brace-format
 msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
-msgstr ""
-"{model_name} '{object}' a fost trimis(ă) pentru traducere în {locales}"
+msgstr "{model_name} '{object}' a fost trimis(ă) pentru traducere în {locales}"
 
-#: views/update_translations.py:20
 msgid "Publish immediately"
 msgstr "Publichează imediat"
 
-#: views/update_translations.py:21
 msgid ""
 "This will apply the updates and publish immediately, before any new "
 "translations happen."
@@ -283,33 +193,26 @@ msgstr ""
 "Aceasta va aplica modificările și va publica imediat, înainte de orice "
 "traduceri noi."
 
-#: views/update_translations.py:28
 msgid "Update existing translations"
 msgstr "Actualizează traduceri existente"
 
-#: views/update_translations.py:46
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
 msgstr "Traducerile pentru '{object}' au fost actualizate"
 
-#: wagtail_hooks.py:90
 msgid "Sync translated pages"
 msgstr "Sincronizează pagini traduse"
 
-#: wagtail_hooks.py:111
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "Traduce '%(title)s'"
 
-#: wagtail_hooks.py:123
 msgid "Sync translated snippets"
 msgstr "Sincronizează fragmente traduse"
 
-#: wagtail_hooks.py:125
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizează traducerile pentru '%(title)s'"
 
-#: wagtail_hooks.py:155 wagtail_hooks.py:200
 msgid "Restart translation"
 msgstr "Reîncepe traducerea"

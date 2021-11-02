@@ -11,212 +11,137 @@ msgstr ""
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:840
 msgid "[DELETED]"
 msgstr "[RADERAD]"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
 msgid "Apply editor lock"
 msgstr "Tillämpa redaktörslås"
 
-#: wagtail_localize/static_src/common/components/Header/index.tsx:213
 msgid "Breadcrumb"
 msgstr "Sökvägsnavigering"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:416
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:582
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:724
-msgid "Change %s"
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:693
 msgid "Change document"
 msgstr "Ändra dokument"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:662
 msgid "Change image"
 msgstr "Ändra bild"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:631
 msgid "Change page"
 msgstr "Ändra sida"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
 msgid "Changed"
 msgstr "Ändrad"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:87
-msgid "Choose a %s"
-msgstr ""
-
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:67
 msgid "Choose a document"
 msgstr "Välj ett dokument"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:65
 msgid "Choose a page"
 msgstr "Välj en sida"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:79
 msgid "Choose an image"
 msgstr "Välj en bild"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:37
 msgid "Delete"
 msgstr "Radera"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:94
 msgid "Download PO file"
 msgstr "Ladda ner PO fil"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:87
 msgid "Download PO file and input translations offline"
 msgstr "Ladda ner PO fil och uppdatera översättningar offline"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:151
 msgid "Draft"
 msgstr "Utkast"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:606
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:848
 msgid "Edit"
 msgstr "Redigera"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:59
 msgid "Edit this %s"
 msgstr "Redigera %s"
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:49
 msgid "Edit this document"
 msgstr "Redigera detta dokument"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:61
 msgid "Edit this image"
 msgstr "Redigera denna bild"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:47
 msgid "Edit this page"
 msgstr "Redigera denna sida"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:71
-msgid "Fetching %s information..."
-msgstr ""
-
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:56
 msgid "Fetching document information..."
 msgstr "Hämtar dokumentinformation"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:68
 msgid "Fetching image information..."
 msgstr "Hämtar bildinformation"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:54
 msgid "Fetching page information..."
 msgstr "Hämtar sidoinformation"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:123
 msgid "Live"
 msgstr "Publicerad"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:58
 msgid "Lock"
 msgstr "Lås"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:823
 msgid "Not translated"
 msgstr "Inte översatt"
 
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:118
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:139
 msgid "Preview"
 msgstr "Förhandsgranska"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
 msgid "Publish in "
 msgstr "Publicera på"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:136
 msgid "Published"
 msgstr "Publicerad"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:134
 msgid "Published on "
 msgstr "Publicera på "
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:110
 msgid "Publishing..."
 msgstr "Publicerar..."
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
 msgid "Remove editor lock"
 msgstr "Ta bort redaktörslås"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:749
-msgid "Revert to %s version"
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:421
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:585
 msgid "Save"
 msgstr "Spara"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:437
 msgid "Saving..."
 msgstr "Sparar..."
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:808
 msgid "segments translated"
 msgstr "segment översatta"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:145
 msgid "Server error"
 msgstr "Serverfel"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:25
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:28
 msgid "Stop translation"
 msgstr "Stoppa översättning"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
-msgid "There are unsaved segments. Please save or cancel them before leaving."
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:857
 msgid "Translate"
 msgstr "Översätt"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:138
 msgid "Translate all missing strings with "
 msgstr "Översätt alla saknade strängar med"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:162
 msgid "Translate with "
 msgstr "Översätt med"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
 msgid "Unlock"
 msgstr "Lås upp"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:90
 msgid "Unpublish"
 msgstr "Avpublicera"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:108
 msgid "Upload PO file"
 msgstr "Ladda upp PO fil"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:100
 msgid "Upload translated PO file to submit translations"
 msgstr "Ladda upp översatt PO-fil för att spara översättningar"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:555
 msgid "Uses %s version"
 msgstr "Använder version %s "

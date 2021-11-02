@@ -13,58 +13,37 @@ msgstr ""
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: machine_translators/dummy.py:45
 msgid "Dummy translator"
 msgstr "Фиктивный переводчик"
 
-#: models.py:976
 msgid "Up to date"
 msgstr "до даты"
 
-#: models.py:978
 msgid "Waiting for translations"
 msgstr "Ожидание переводов"
 
-#: models.py:1310
 msgid "Manual"
 msgstr "Ручной"
 
-#: models.py:1311
 msgid "Machine"
 msgstr "Машина"
 
-#: models.py:1426
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr "Переведено с {tool_name} в {date}"
 
-#: models.py:1429
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr "Переведено в ручную в {date}"
 
-#: models.py:1432
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr "Машинный перевод в {date}"
 
-#: models.py:1873
-msgid "This locale cannot be synced into itself."
-msgstr ""
-
-#: models.py:1878
-msgid "Synchronise content from another locale"
-msgstr ""
-
-#: models.py:1880
-msgid ""
-"Choose a locale to synchronise content from. Any existing and future content"
-" authored in the selected locale will be automatically copied to this one."
-msgstr ""
-
-#: strings.py:47
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -72,80 +51,37 @@ msgstr ""
 "Тег <{}> недопустим. Строки могут содержать только стандартные встроенные "
 "теги HTML (например, <b>, <a>)."
 
-#: strings.py:54
 msgid ""
 "Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
 "tags)"
 msgstr ""
-"Строки не могут иметь никаких HTML-тегов с атрибутами (кроме id в тегах "
-"<a>)."
+"Строки не могут иметь никаких HTML-тегов с атрибутами (кроме id в тегах <a>)."
 
-#: strings.py:501
-msgid "Unrecognised id found in an <a> tag: {}"
-msgstr ""
-
-#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
-#, python-format
-msgid ""
-"This page hasn't been translated yet. It is mirroring the <a "
-"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
-"page</a>."
-msgstr ""
-
-#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:81
 msgid "Translate this page"
 msgstr "Перевести эту страницу"
 
-#: templates/wagtail_localize/admin/edit_translation.html:6
-#, python-format
-msgid "Translation of %(instance)s into %(locale)s"
-msgstr ""
-
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
 msgid "Submit"
 msgstr "Отправить"
 
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
 msgid "Go back"
 msgstr "Обратно"
 
-#: templates/wagtail_localize/admin/translations_report.html:10
-#: views/report.py:93
 msgid "Content type"
 msgstr "Тип содержимого"
 
-#: templates/wagtail_localize/admin/translations_report.html:13
-msgid "Source"
-msgstr ""
-
-#: templates/wagtail_localize/admin/translations_report.html:16
-msgid "Target"
-msgstr ""
-
-#: templates/wagtail_localize/admin/translations_report.html:19
 msgid "Status"
 msgstr "Статус"
 
-#: templates/wagtail_localize/admin/translations_report.html:49
-msgid "No translations found."
-msgstr ""
-
-#: templates/wagtail_localize/admin/update_translations.html:11
 msgid "Why would I sync my page?"
 msgstr "Зачем мне синхронизировать страницу?"
 
-#: templates/wagtail_localize/admin/update_translations.html:12
 msgid ""
-"Changes are not automatically applied between translated pages. Syncing will"
-" add new content for translation and remove deleted content."
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
 msgstr ""
 "Изменения не применяются автоматически между переведенными страницами. "
 "Синхронизация добавит новый контент для перевода и удалит удаленный контент."
 
-#: templates/wagtail_localize/admin/update_translations.html:15
 #, python-format
 msgid ""
 "The last sync date was %(last_sync_date)s. You are about to sync the "
@@ -154,11 +90,9 @@ msgstr ""
 "Дата последней синхронизации: %(last_sync_date)s. Вы собираетесь "
 "синхронизировать следующее:"
 
-#: views/edit_translation.py:125
 msgid "Content"
 msgstr "Содержимое"
 
-#: views/edit_translation.py:435
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
@@ -168,75 +102,45 @@ msgstr ""
 "исправьте их, или нажмите Опубликовать снова, чтобы игнорировать их на "
 "текущий момент"
 
-#: views/edit_translation.py:450
 #, python-brace-format
-msgid ""
-"Published '{object}' in {locale} with missing translations - see below."
+msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 "Опубликован '{object}' в {locale} с пропущенными переводами - смотрите ниже."
 
-#: views/edit_translation.py:456
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "Опубликован '{object}' в {locale} "
 
-#: views/edit_translation.py:624
-#, python-brace-format
-msgid ""
-"The data model for '{model_name}' has been changed since the last "
-"translation sync. If any new fields have been added recently, these may not "
-"be visible until the next translation sync."
-msgstr ""
-
-#: views/edit_translation.py:752
 msgid "Translation has been stopped."
 msgstr "Перевод был остановлен"
 
-#: views/edit_translation.py:766
 msgid "Translation has been restarted."
 msgstr "Перевод был перезапущен"
 
-#: views/edit_translation.py:902
 msgid "Please upload a valid PO file."
 msgstr "Пожалуйста загрузите правильный PO файл"
 
-#: views/edit_translation.py:911
 msgid "Cannot import PO file that was created for a different translation."
 msgstr "Невозможно загрузить PO файл, который был создан для другого перевода"
 
-#: views/edit_translation.py:920
 msgid "Successfully imported translations from PO File."
 msgstr "Перевод из PO файла успешно загружен"
 
-#: views/edit_translation.py:988
 msgid "Successfully translated with {}."
 msgstr "Успешно переведено с {}"
 
-#: views/edit_translation.py:994
 msgid "There isn't anything left to translate."
 msgstr "Для перевода ничего не осталось."
 
-#: views/report.py:94
-msgid "Source title"
-msgstr ""
-
-#: views/report.py:105 wagtail_hooks.py:231
-msgid "Translations"
-msgstr ""
-
-#: views/submit_translations.py:23
 msgid "Select all"
 msgstr "Выбрать все"
 
-#: views/submit_translations.py:25
 msgid "Locales"
 msgstr "Локали"
 
-#: views/submit_translations.py:27
 msgid "All child pages will be created."
 msgstr "Все дочерние страницы были созданы"
 
-#: views/submit_translations.py:39
 msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Содержит ({} страницу)"
@@ -244,19 +148,15 @@ msgstr[1] "Содержит дочерние страницы ({} страниц
 msgstr[2] "Содержит дочерние страницы ({} страниц)"
 msgstr[3] "Содержит дочерние страницы ({} страниц)"
 
-#: views/submit_translations.py:116 wagtail_hooks.py:109
 msgid "Translate"
 msgstr "Перевести"
 
-#: views/submit_translations.py:176
 msgid "{} locales"
 msgstr "{} локалей"
 
-#: views/submit_translations.py:197
 msgid "Translate page"
 msgstr "Перевести страницу"
 
-#: views/submit_translations.py:215
 #, python-brace-format
 msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
@@ -264,58 +164,45 @@ msgid ""
 msgstr ""
 "Страница '{page_title}' успешно подтверждена для перевода на  {locales}"
 
-#: views/submit_translations.py:224
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr "Перевести {model_name}"
 
-#: views/submit_translations.py:240
 #, python-brace-format
 msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
-msgstr ""
-" {model_name} '{object}' успешно подтвержден для перевода на {locales}"
+msgstr " {model_name} '{object}' успешно подтвержден для перевода на {locales}"
 
-#: views/update_translations.py:20
 msgid "Publish immediately"
 msgstr "Опубликовать немедленно"
 
-#: views/update_translations.py:21
 msgid ""
 "This will apply the updates and publish immediately, before any new "
 "translations happen."
 msgstr ""
-"Это применит обновления и опубликует немедленно, до появления новых "
-"переводов"
+"Это применит обновления и опубликует немедленно, до появления новых переводов"
 
-#: views/update_translations.py:28
 msgid "Update existing translations"
 msgstr "Обновить существующие переводы"
 
-#: views/update_translations.py:46
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
 msgstr "Переводы для  '{object}' обновлены успешно"
 
-#: wagtail_hooks.py:90
 msgid "Sync translated pages"
 msgstr "Синхронизировать переведенные страницы"
 
-#: wagtail_hooks.py:111
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "Перевести '%(title)s'"
 
-#: wagtail_hooks.py:123
 msgid "Sync translated snippets"
 msgstr "Синхронизировать переведенные сниппеты"
 
-#: wagtail_hooks.py:125
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Синхронизировать переводы '%(title)s'"
 
-#: wagtail_hooks.py:155 wagtail_hooks.py:200
 msgid "Restart translation"
 msgstr "Запустить перевод заново"
