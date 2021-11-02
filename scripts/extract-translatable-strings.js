@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { GettextExtractor, JsExtractors } from 'gettext-extractor';
+const { GettextExtractor, JsExtractors } = require('gettext-extractor');
 
 const extractor = new GettextExtractor();
 
