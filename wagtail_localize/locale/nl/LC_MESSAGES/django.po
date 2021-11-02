@@ -2,23 +2,267 @@
 # Translators:
 # Huib Keemink <huib@creativedutchmen.com>, 2021
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
-# Thijs Kramer <thijskramer@gmail.com>, 2021
+# Loic Teixeira, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Thijs Kramer <thijskramer@gmail.com>, 2021\n"
+"Last-Translator: Loic Teixeira, 2021\n"
 "Language-Team: Dutch (https://www.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Dummy translator"
+msgstr "Dummy-vertaler"
+
+msgid "Up to date"
+msgstr "Actueel"
+
+msgid "Waiting for translations"
+msgstr "Wachtend op vertalingen"
+
+msgid "Manual"
+msgstr "Handmatig"
+
+msgid "Machine"
+msgstr "Machine"
+
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Vertaald met {tool_name} op {date}"
+
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Handmatig vertaald op {date}"
+
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Automatisch vertaald op {date}"
+
+msgid "This locale cannot be synced into itself."
+msgstr "Deze taalregio kan niet met zichzelf worden gesynchroniseerd."
+
+msgid "Synchronise content from another locale"
+msgstr "Synchroniseer inhoud van een andere taalregio"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Kies een taalregio om inhoud van te synchroniseren. Alle bestaande en "
+"toekomstige inhoud die in de geselecteerde taalregio is geschreven, wordt "
+"automatisch naar deze gekopieerd."
+
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"De tag <{}> is niet toegestaan. Teksten mogen alleen standaard  HTML tags "
+"(zoals bijv. <b> of <a>) bevatten. "
+
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"Teksten mogen geen HTML tags met attributen bevatten (behalve het attribuut "
+"'id' in <a> tags)"
+
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Niet herkende id gevonden in <a>tag: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Deze pagina is nog niet vertaald. Het is een kopie van <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)spagina</"
+"a>."
+
+msgid "Translate this page"
+msgstr "Vertaal deze pagina"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Vertaling van %(instance)snaar %(locale)s"
+
+msgid "Submit"
+msgstr "Verzenden"
+
+msgid "Go back"
+msgstr "Ga terug"
+
 msgid "Content type"
-msgstr "Inhoudstype"
+msgstr "Content type"
+
+msgid "Source"
+msgstr "Bron"
+
+msgid "Target"
+msgstr "Doel"
 
 msgid "Status"
 msgstr "Status"
 
+msgid "No translations found."
+msgstr "Geen vertalingen gevonden."
+
+msgid "Why would I sync my page?"
+msgstr "Waarom synchroniseren?"
+
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
+msgstr ""
+"Wijzigingen worden niet automatisch voor alle vertaalde pagina's "
+"doorgevoerd. Synchroniseren zorgt ervoor dat er nieuwe vertaalbare teksten "
+"worden toegevoegd en dat verwijderde teksten daadwerkelijk verwijderd worden."
+
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"De laatste synchronisatie vond plaats op %(last_sync_date)s. Het volgende "
+"zal gesynchroniseerd worden:"
+
 msgid "Content"
 msgstr "Inhoud"
+
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Er zijn nieuwe validatiefouten gevonden bij het publiceren van '{object}' in "
+"{locale}. Los de fouten op of publiceer opnieuw om deze vertalingen voor nu "
+"te negeren."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"'{object}' in {locale} is met ontbrekende vertalingen gepubliceerd - zie "
+"hieronder."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "'{object}' in {locale} gepubliceerd."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Het data model voor '{model_name}' is gewijzigd sinds de laatste "
+"vertaalsynchronisatie. Als er recentelijk nieuwe velden zijn toegevoegd, "
+"zijn deze mogelijk pas zichtbaar bij de volgende vertaalsynchronisatie."
+
+msgid "Translation has been stopped."
+msgstr "Gestopt met vertalen."
+
+msgid "Translation has been restarted."
+msgstr "Opnieuw gestart met vertalen."
+
+msgid "Please upload a valid PO file."
+msgstr "Upload een geldig PO-bestand."
+
+msgid "Cannot import PO file that was created for a different translation."
+msgstr ""
+"Het is niet mogelijk een PO-bestand te importeren dat voor een andere "
+"vertaling gemaakt is."
+
+msgid "Successfully imported translations from PO File."
+msgstr "Het importeren van vertalingen uit het PO-bestand is geslaagd."
+
+msgid "Successfully translated with {}."
+msgstr "Succesvol vertaald met {}."
+
+msgid "There isn't anything left to translate."
+msgstr "Er is niets meer te vertalen."
+
+msgid "Source title"
+msgstr "Bron titel"
+
+msgid "Translations"
+msgstr "Vertalingen"
+
+msgid "Select all"
+msgstr "Selecteer alles"
+
+msgid "Locales"
+msgstr "Taalregio's"
+
+msgid "All child pages will be created."
+msgstr "Alle onderliggende pagina's zullen worden aangemaakt."
+
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Neem onderliggende boomstructuur mee ({} pagina)"
+msgstr[1] "Neem onderliggende boomstructuur mee ({} pagina's)"
+
+msgid "Translate"
+msgstr "Vertaal"
+
+msgid "{} locales"
+msgstr "{} taalregio's"
+
+msgid "Translate page"
+msgstr "Vertaal pagina"
+
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"De pagina '{page_title}' is succesvol verzonden om in {locales} vertaald te "
+"worden."
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Vertaal {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"{model_name} '{object}' is succesvol verzonden om vertaald te worden in het "
+"{locales}"
+
+msgid "Publish immediately"
+msgstr "Direct publiceren"
+
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Dit zal de wijzigingen toepassen en direct publiceren, voordat er "
+"vertalingen plaatsgevonden hebben."
+
+msgid "Update existing translations"
+msgstr "Huidige vertalingen bijwerken"
+
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "Vertalingen voor '{object}' zijn succesvol bijgewerkt"
+
+msgid "Sync translated pages"
+msgstr "Synchroniseer vertaalde pagina's"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Vertaal '%(title)s'"
+
+msgid "Sync translated snippets"
+msgstr "Synchroniseer vertaalde knipsels"
+
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Synchroniseer vertalingen van '%(title)s'"
+
+msgid "Restart translation"
+msgstr "Start vertaling opnieuw"

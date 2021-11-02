@@ -3,12 +3,13 @@
 # Ford Guo <agile.guo@gmail.com>, 2020
 # Yin Guanhao <sopium@mysterious.site>, 2021
 # hanfeng <appweb.cn@gmail.com>, 2021
+# Favo Yang <favoyang@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: hanfeng <appweb.cn@gmail.com>, 2021\n"
+"Last-Translator: Favo Yang <favoyang@gmail.com>, 2021\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -42,6 +43,19 @@ msgstr "手工翻译于 {date}"
 msgid "Machine translated on {date}"
 msgstr "机器翻译于 {date}"
 
+msgid "This locale cannot be synced into itself."
+msgstr "此区域无法被同步到自身。"
+
+msgid "Synchronise content from another locale"
+msgstr "从另一个区域同步内容。"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"选择要同步内容的区域。在所选区域中编写的任何现有和将来的内容都将自动复制到此"
+"区域。"
+
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -52,8 +66,24 @@ msgid ""
 "tags)"
 msgstr "字符串不能包含任何带有属性的 HTML 标签（除了<a>标签的“id”属性）"
 
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "在一个<a>标签中存在无法被识别的ID：{}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"这个页面还未被翻译。它将镜像<a href=\"%(edit_original_page_url)s\" target="
+"\"_blank\">%(original_locale)s页面</a>。"
+
 msgid "Translate this page"
 msgstr "翻译此页"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "由%(instance)s翻译到%(locale)s"
 
 msgid "Submit"
 msgstr "提交"
@@ -64,8 +94,17 @@ msgstr "返回"
 msgid "Content type"
 msgstr "内容类型"
 
+msgid "Source"
+msgstr "源"
+
+msgid "Target"
+msgstr "目标"
+
 msgid "Status"
 msgstr "状态"
+
+msgid "No translations found."
+msgstr "未能找到翻译。"
 
 msgid "Why would I sync my page?"
 msgstr "我为什么需要同步我的页面？"
@@ -101,6 +140,15 @@ msgstr "在 {locale} 中发布未翻译的 '{object}' - 详情如下."
 msgid "Published '{object}' in {locale}."
 msgstr "已在 {locale} 中发布 '{object}' ."
 
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"自从上次翻译同步后，“{model_name}”的数据模型已经被修改。如果新的字段于近期被"
+"添加，这些字段可能不可见直到下一次翻译同步。"
+
 msgid "Translation has been stopped."
 msgstr "翻译已停止"
 
@@ -121,6 +169,12 @@ msgstr "成功翻译 {}."
 
 msgid "There isn't anything left to translate."
 msgstr "无任何需要翻译的."
+
+msgid "Source title"
+msgstr "原标题"
+
+msgid "Translations"
+msgstr "翻译"
 
 msgid "Select all"
 msgstr "全选"

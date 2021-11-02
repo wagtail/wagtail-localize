@@ -1,23 +1,33 @@
 #
 # Translators:
 # MA Rahman <ugikot@gmail.com>, 2021
+# Mahmud Abdur Rahman <clanlord.ikot@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: MA Rahman <ugikot@gmail.com>, 2021\n"
+"Last-Translator: Mahmud Abdur Rahman <clanlord.ikot@gmail.com>, 2021\n"
 "Language-Team: Bengali (https://www.transifex.com/torchbox/teams/8009/bn/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: bn\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Apply editor lock"
+msgstr "এডিটর লক প্রয়োগ করুন"
+
 msgid "Delete"
 msgstr "মুছে ফেলুন "
+
+msgid "Edit"
+msgstr "সম্পাদনা করুন"
 
 msgid "Lock"
 msgstr "লক করুন "
 
 msgid "Save"
 msgstr "সংরক্ষণ"
+
+msgid "Unlock"
+msgstr "আনলক"
 
 msgid "Unpublish"
 msgstr "অপ্রকাশিত করুন "

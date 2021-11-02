@@ -23,6 +23,9 @@ msgstr "Morzsamenü"
 msgid "Cancel"
 msgstr "Mégsem"
 
+msgid "Change %s"
+msgstr "%s megváltoztatása"
+
 msgid "Change document"
 msgstr "Dokumentum cseréje"
 
@@ -34,6 +37,9 @@ msgstr "Oldal megváltoztatása"
 
 msgid "Changed"
 msgstr "Módosítva"
+
+msgid "Choose a %s"
+msgstr "%s kiválasztása"
 
 msgid "Choose a document"
 msgstr "Dokumentum kiválasztása"
@@ -71,6 +77,9 @@ msgstr "Kép szerkesztése"
 msgid "Edit this page"
 msgstr "Oldal szerkesztése"
 
+msgid "Fetching %s information..."
+msgstr "%s adatainak lekérdezése..."
+
 msgid "Fetching document information..."
 msgstr "Dokumentum információinak lekérése..."
 
@@ -107,6 +116,9 @@ msgstr "Közzététel..."
 msgid "Remove editor lock"
 msgstr "Szerkesztési zár feloldása"
 
+msgid "Revert to %s version"
+msgstr "Visszaváltás erre a verzióra: %s"
+
 msgid "Save"
 msgstr "Mentés"
 
@@ -121,6 +133,11 @@ msgstr "Szerverhiba"
 
 msgid "Stop translation"
 msgstr "Fordítás megállítása"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Mentetlen részeket találtunk. Kérjük mentse vagy dobja el őket, mielőtt "
+"elhagyja az oldalt."
 
 msgid "Translate"
 msgstr "Fordítás"

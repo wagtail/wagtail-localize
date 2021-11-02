@@ -1,13 +1,13 @@
 #
 # Translators:
-# Istvan Farkas <istvan.farkas@gmail.com>, 2020
 # Laszlo Molnar <lazlowmiller@gmail.com>, 2021
+# Istvan Farkas <istvan.farkas@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Laszlo Molnar <lazlowmiller@gmail.com>, 2021\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2021\n"
 "Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,6 +41,20 @@ msgstr "Kézzel fordítva ekkor: {date}"
 msgid "Machine translated on {date}"
 msgstr "Géppel fordítva ekkor: {date}"
 
+msgid "This locale cannot be synced into itself."
+msgstr "Egy nyelvet nem lehet saját magával szinkronizálni"
+
+msgid "Synchronise content from another locale"
+msgstr "Tartalom szinkronizálása másik nyelvből"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Kérjük válassza ki, melyik nyelvről szeretné a tartalmakat szinkronizálni. "
+"Minden jelenlegi és jövőbeli tartalom a kiválasztott nyelvből át lesz "
+"másolva ebbe automatikusan."
+
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -55,8 +69,25 @@ msgstr ""
 "A szövegekben nem lehet olyan HTML tag, aminem tulajdonságai vannak (kivéve "
 "az 'id'-t a <a> tagekben)"
 
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Érvénytelen id egy <a> tagben: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Ez az oldal még nem lett lefordítva. Jelenleg ennek az oldalnak a másolata: "
+"<a href=\"%(edit_original_page_url)s\" target=\"_blank\">"
+"%(original_locale)s</a>."
+
 msgid "Translate this page"
 msgstr "Oldal lefordítása"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "%(instance)s fordítása %(locale)s nyelvre"
 
 msgid "Submit"
 msgstr "Beküldés"
@@ -64,8 +95,20 @@ msgstr "Beküldés"
 msgid "Go back"
 msgstr "Vissza"
 
+msgid "Content type"
+msgstr "Tartalom tipusa"
+
+msgid "Source"
+msgstr "Forrás"
+
+msgid "Target"
+msgstr "Cél"
+
 msgid "Status"
 msgstr "Állapot"
+
+msgid "No translations found."
+msgstr "Nem található fordítás."
 
 msgid "Why would I sync my page?"
 msgstr "Miért akarnám szinkronizálni az oldalam?"
@@ -107,6 +150,16 @@ msgstr ""
 msgid "Published '{object}' in {locale}."
 msgstr "A(z) '{object}' {locale} verziója publikálva."
 
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"A(z) '{model_name'} adatszerkezete megváltozott a legutóbbi fordítás "
+"szinkron óta. Ha új mezők lettek hozzáadva mostanában, akkor a következő "
+"fordítási szinkron műveletig ezek nem láthatók."
+
 msgid "Translation has been stopped."
 msgstr "A fordítás megállítva."
 
@@ -128,6 +181,12 @@ msgstr "Sikeres fordítás ezzel: {}"
 
 msgid "There isn't anything left to translate."
 msgstr "Nem maradt fordítanivaló."
+
+msgid "Source title"
+msgstr "Forrás címe"
+
+msgid "Translations"
+msgstr "Fordítások"
 
 msgid "Select all"
 msgstr "Összes kijelölése"
@@ -163,6 +222,14 @@ msgstr ""
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr "{model_name} fordítása"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"A(z) '{page_title}' {model_name} be lett küldve fordításra a következő "
+"nyelveken: {locales}"
 
 msgid "Publish immediately"
 msgstr "Azonnali közzététel"

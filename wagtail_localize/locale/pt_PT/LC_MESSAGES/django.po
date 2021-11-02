@@ -3,12 +3,13 @@
 # Luís Tiago Favas <al62006@utad.eu>, 2020
 # Tiago Henriques <trinosauro@gmail.com>, 2021
 # Jose Lourenco <jose@lourenco.ws>, 2021
+# Diogo Silva <diogo_silva30@hotmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Jose Lourenco <jose@lourenco.ws>, 2021\n"
+"Last-Translator: Diogo Silva <diogo_silva30@hotmail.com>, 2021\n"
 "Language-Team: Portuguese (Portugal) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -71,6 +72,9 @@ msgstr "Tipo de conteúdo"
 msgid "Status"
 msgstr "Estado"
 
+msgid "No translations found."
+msgstr "Nenhuma tradução encontrada."
+
 msgid "Why would I sync my page?"
 msgstr "Porquê sincronizar a minha página?"
 
@@ -130,6 +134,9 @@ msgstr "Tradução sucedida com {}."
 
 msgid "There isn't anything left to translate."
 msgstr "Não existe mais nada para traduzir."
+
+msgid "Translations"
+msgstr "Traduções"
 
 msgid "Select all"
 msgstr "Selecionar tudo"

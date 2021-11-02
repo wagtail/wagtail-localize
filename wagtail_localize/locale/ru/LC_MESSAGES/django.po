@@ -2,14 +2,14 @@
 # Translators:
 # sergeybe <sergeybe@gmail.com>, 2020
 # Sergey Mazanov <mvver@outlook.com>, 2021
-# Влад <integration.into.society@gmail.com>, 2021
 # Eugene <eugene.mechanism@gmail.com>, 2021
+# Влад <integration.into.society@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Eugene <eugene.mechanism@gmail.com>, 2021\n"
+"Last-Translator: Влад <integration.into.society@gmail.com>, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -44,6 +44,20 @@ msgstr "Переведено в ручную в {date}"
 msgid "Machine translated on {date}"
 msgstr "Машинный перевод в {date}"
 
+msgid "This locale cannot be synced into itself."
+msgstr "Этот языковой стандарт не может быть синхронизирован сам с собой."
+
+msgid "Synchronise content from another locale"
+msgstr "Синхронизировать контент из другой локали"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Выберите языковой стандарт для синхронизации содержимого. Любой существующий "
+"и будущий контент, созданный в выбранной локали, будет автоматически "
+"скопирован в этот."
+
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -57,8 +71,25 @@ msgid ""
 msgstr ""
 "Строки не могут иметь никаких HTML-тегов с атрибутами (кроме id в тегах <a>)."
 
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Нераспознанный идентификатор найден в <a> тег(ах): {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Эта страница еще не переведена. Она отражает <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"страницу </a>."
+
 msgid "Translate this page"
 msgstr "Перевести эту страницу"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Перевод с %(instance)s на %(locale)s"
 
 msgid "Submit"
 msgstr "Отправить"
@@ -69,8 +100,17 @@ msgstr "Обратно"
 msgid "Content type"
 msgstr "Тип содержимого"
 
+msgid "Source"
+msgstr "Исходник"
+
+msgid "Target"
+msgstr "Перевод"
+
 msgid "Status"
 msgstr "Статус"
+
+msgid "No translations found."
+msgstr "Переводов не найдено."
 
 msgid "Why would I sync my page?"
 msgstr "Зачем мне синхронизировать страницу?"
@@ -111,6 +151,16 @@ msgstr ""
 msgid "Published '{object}' in {locale}."
 msgstr "Опубликован '{object}' в {locale} "
 
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Модель данных для \"{model_name}\" была изменена с момента последней "
+"синхронизации перевода. Если какие-либо новые поля были добавлены недавно, "
+"они могут быть не видны до следующей синхронизации перевода."
+
 msgid "Translation has been stopped."
 msgstr "Перевод был остановлен"
 
@@ -131,6 +181,12 @@ msgstr "Успешно переведено с {}"
 
 msgid "There isn't anything left to translate."
 msgstr "Для перевода ничего не осталось."
+
+msgid "Source title"
+msgstr "Название источника"
+
+msgid "Translations"
+msgstr "Переводы"
 
 msgid "Select all"
 msgstr "Выбрать все"

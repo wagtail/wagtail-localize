@@ -1,10 +1,12 @@
 #
 # Translators:
 # Luiz Boaretto <lboaretto@gmail.com>, 2021
+# Rodrigo de Almeida Sottomaior Macedo <rmsolucoeseminformatica@protonmail.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2021\n"
+"Last-Translator: Rodrigo de Almeida Sottomaior Macedo "
+"<rmsolucoeseminformatica@protonmail.com>, 2021\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,6 +25,9 @@ msgstr "Breadcrumb"
 msgid "Cancel"
 msgstr "Cancelar"
 
+msgid "Change %s"
+msgstr "Alterar %s"
+
 msgid "Change document"
 msgstr "Alterar documento"
 
@@ -34,6 +39,9 @@ msgstr "Alterar página"
 
 msgid "Changed"
 msgstr "Alterado"
+
+msgid "Choose a %s"
+msgstr "Escolha um %s"
 
 msgid "Choose a document"
 msgstr "Escolha um documento"
@@ -71,6 +79,9 @@ msgstr "Editar esta imagem"
 msgid "Edit this page"
 msgstr "Editar esta página"
 
+msgid "Fetching %s information..."
+msgstr "Buscando %s informação..."
+
 msgid "Fetching document information..."
 msgstr "Buscando informações do documento..."
 
@@ -107,6 +118,9 @@ msgstr "Publicando..."
 msgid "Remove editor lock"
 msgstr "Remover bloqueio do editor"
 
+msgid "Revert to %s version"
+msgstr "Reverter para %s versão"
+
 msgid "Save"
 msgstr "Salvar"
 
@@ -121,6 +135,9 @@ msgstr "Erro de servidor"
 
 msgid "Stop translation"
 msgstr "Parar tradução"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr "Existem segmentos não salvos. Salve ou cancele-os antes de sair."
 
 msgid "Translate"
 msgstr "Traduzir"

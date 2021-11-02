@@ -1,14 +1,14 @@
 #
 # Translators:
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2020
 # Aarni Koskela, 2021
 # Glen Somerville <glen.somerville@gmail.com>, 2021
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Glen Somerville <glen.somerville@gmail.com>, 2021\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2021\n"
 "Language-Team: Finnish (https://www.transifex.com/torchbox/teams/8009/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fi\n"
@@ -19,6 +19,20 @@ msgstr "Ajan tasalla"
 
 msgid "Waiting for translations"
 msgstr "Odottaa käännöksiä"
+
+msgid "Manual"
+msgstr "Manuaalinen"
+
+msgid "Machine"
+msgstr "Kone"
+
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Käännetty manuaalisesti {date}"
+
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Käännetty koneellisesti {date}"
 
 msgid "Translate this page"
 msgstr "Käännä tämä sivu"
@@ -32,8 +46,17 @@ msgstr "Siirry takaisin"
 msgid "Content type"
 msgstr "Sisällön tyyppi"
 
+msgid "Source"
+msgstr "Lähde"
+
+msgid "Target"
+msgstr "Kohde"
+
 msgid "Status"
 msgstr "Tila"
+
+msgid "No translations found."
+msgstr "Käännöksiä ei löytynyt."
 
 msgid "Why would I sync my page?"
 msgstr "Miksi synkronoisin sivuni?"
@@ -44,11 +67,20 @@ msgstr "Sisältö"
 msgid "Translation has been stopped."
 msgstr "Käännös on lopetettu."
 
+msgid "Translation has been restarted."
+msgstr "Käännös on käynnistetty uudelleen."
+
 msgid "Please upload a valid PO file."
 msgstr "Lähetä kelvollinen PO-tiedosto."
 
 msgid "Successfully imported translations from PO File."
 msgstr "Käännökset tuotiin onnistuneesti PO-tiedostosta."
+
+msgid "There isn't anything left to translate."
+msgstr "Mitään käännettävää ei ole enää jäljellä."
+
+msgid "Translations"
+msgstr "Käännökset"
 
 msgid "Select all"
 msgstr "Valitse kaikki"
@@ -78,3 +110,6 @@ msgstr "Synkronoi käännetyt sivut"
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "Käännä '%(title)s'"
+
+msgid "Restart translation"
+msgstr "Käynnistä käännös uudelleen"

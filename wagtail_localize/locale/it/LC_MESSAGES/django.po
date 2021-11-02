@@ -1,22 +1,265 @@
 #
 # Translators:
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
+# Marco Badan <marco.badan@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021\n"
+"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2021\n"
 "Language-Team: Italian (https://www.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Dummy translator"
+msgstr "Traduttore fittizio"
+
+msgid "Up to date"
+msgstr "Aggiornato"
+
+msgid "Waiting for translations"
+msgstr "In attesa di traduzioni"
+
+msgid "Manual"
+msgstr "Manuale"
+
+msgid "Machine"
+msgstr "Automatica"
+
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Tradotto con {tool_name} il {date}"
+
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Tradotta manualmente il {date}"
+
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Tradotto automaticamente {date}"
+
+msgid "This locale cannot be synced into itself."
+msgstr "Questa localizzazione non può essere sincronizzata con se stessa."
+
+msgid "Synchronise content from another locale"
+msgstr "Sincronizza contenuto da un'altra localizzazione"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Scegli una lingua da cui sincronizzare il contenuto. Qualsiasi contenuto "
+"esistente e futuro creato nella localizzazione selezionata verrà "
+"automaticamente copiato in questo."
+
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"<{}> tag non permessa. Le stringhe possono contenere solo tag inline HTML "
+"standard (come <b>, <a>)"
+
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"Le stringhe non possono avere tag HTML con attributi (con eccezione di 'id' "
+"nelle tag <a> )"
+
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Id non riconosciuto trovato in una tag <a>: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Questa pagina non è stata ancora tradotta. Sta rispecchiando <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">la pagina "
+"%(original_locale)s</a>."
+
+msgid "Translate this page"
+msgstr "Traduci questa pagina"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Traduzione di %(instance)s in %(locale)s"
+
+msgid "Submit"
+msgstr "Invia"
+
+msgid "Go back"
+msgstr "Torna indietro"
+
 msgid "Content type"
 msgstr "Tipo di contenuto"
+
+msgid "Source"
+msgstr "Fonte"
+
+msgid "Target"
+msgstr "Obiettivo"
 
 msgid "Status"
 msgstr "Stato"
 
+msgid "No translations found."
+msgstr "Nessuna traduzione trovata."
+
+msgid "Why would I sync my page?"
+msgstr "Perché dovrei sincronizzare la mia pagina?"
+
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
+msgstr ""
+"Le modifiche non vengono applicate automaticamente tra le pagine tradotte. "
+"La sincronizzazione aggiungerà nuovi contenuti per la traduzione e rimuoverà "
+"i contenuti eliminati."
+
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"L'ultima data di sincronizzazione è stata %(last_sync_date)s. Stai per "
+"sincronizzare quanto segue:"
+
 msgid "Content"
 msgstr "Contenuto"
+
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Sono stati rilevati nuovi errori di validazione durante la pubblicazione di "
+"'{object}' in {locale}. Correggile o fai nuovamente clic su pubblica per "
+"ignorare queste traduzioni per ora."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"Pubblicato '{object}' in {locale} con traduzioni mancanti - vedi sotto."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Pubblicato '{object}' in {locale}."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Il modello dati per \"{model_name}\" è stato modificato dall'ultima "
+"sincronizzazione della traduzione. Se di recente sono stati aggiunti nuovi "
+"campi, questi potrebbero non essere visibili fino alla successiva "
+"sincronizzazione della traduzione."
+
+msgid "Translation has been stopped."
+msgstr "La traduzione è stata interrotta."
+
+msgid "Translation has been restarted."
+msgstr "La traduzione è stata riavviata."
+
+msgid "Please upload a valid PO file."
+msgstr "Carica un file PO valido."
+
+msgid "Cannot import PO file that was created for a different translation."
+msgstr "Impossibile importare il file PO creato per una traduzione differente."
+
+msgid "Successfully imported translations from PO File."
+msgstr "Traduzioni importate con successo dal file PO."
+
+msgid "Successfully translated with {}."
+msgstr "Tradotto con successo con {}."
+
+msgid "There isn't anything left to translate."
+msgstr "Non è rimasto nulla da tradurre."
+
+msgid "Source title"
+msgstr "File sorgente"
+
+msgid "Translations"
+msgstr "Traduzioni"
+
+msgid "Select all"
+msgstr "Seleziona tutti"
+
+msgid "Locales"
+msgstr "Lingue"
+
+msgid "All child pages will be created."
+msgstr "Tutte le pagine figlio verranno create."
+
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Includi sottoalbero ({} pagina)"
+msgstr[1] "Include includi sottoalbero  ({} pagine)"
+
+msgid "Translate"
+msgstr "Traduci"
+
+msgid "{} locales"
+msgstr "{} lingue"
+
+msgid "Translate page"
+msgstr "Traduci pagina"
+
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"La pagina '{page_title}' è stata inviata con successo per la traduzione in "
+"{locales}"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Traduci {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Il {model_name} '{object}' è stato inviato con successo per la traduzione in "
+"{locales}"
+
+msgid "Publish immediately"
+msgstr "Pubblica immediatamente"
+
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Questo applicherà gli aggiornamenti e li pubblicherà immediatamente, prima "
+"che avvengano nuove traduzioni."
+
+msgid "Update existing translations"
+msgstr "Aggiorna traduzioni esistenti"
+
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "Traduzioni aggiornate con successo per '{object}'"
+
+msgid "Sync translated pages"
+msgstr "Sincronizza pagine tradotte"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Traduci '%(title)s'"
+
+msgid "Sync translated snippets"
+msgstr "Sincronizza snippets tradotti"
+
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Sincronizza traduzioni per '%(title)s'"
+
+msgid "Restart translation"
+msgstr "Ricomincia traduzione"

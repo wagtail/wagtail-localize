@@ -1,14 +1,14 @@
 #
 # Translators:
-# Amós Oviedo <amos.oviedo@gmail.com>, 2020
 # Joaquín T <joaquintita@gmail.com>, 2021
 # José Luis <alagunajs@gmail.com>, 2021
+# Amós Oviedo <amos.oviedo@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: José Luis <alagunajs@gmail.com>, 2021\n"
+"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2021\n"
 "Language-Team: Spanish (https://www.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -41,6 +41,20 @@ msgstr "Traducido manualmente el {date}"
 msgid "Machine translated on {date}"
 msgstr "Máquina traducida el {date}"
 
+msgid "This locale cannot be synced into itself."
+msgstr "Esta región no puede ser sincronizada en sí misma."
+
+msgid "Synchronise content from another locale"
+msgstr "Sincronizar contentido desde otra región"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Selecciona una región desde la que sincronizar contenido. Cualquier "
+"contenido existente y futuro escrito en la región seleccionada será "
+"automáticamente copiado a ésta."
+
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -55,8 +69,25 @@ msgstr ""
 "Las cadenas no pueden tener etiquetas HTML con atributos (excepto para 'id' "
 "en etiquetas <a>)"
 
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Id no reconocido en una etiqueta <a>: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Esta página no ha sido traducida aún. Está reflejando la <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">página %(original_locale)s</"
+"a>."
+
 msgid "Translate this page"
 msgstr "Traducir esta página"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Traducción de %(instance)s a %(locale)s"
 
 msgid "Submit"
 msgstr "Enviar"
@@ -67,8 +98,17 @@ msgstr "Atrás"
 msgid "Content type"
 msgstr "Tipo de contenido"
 
+msgid "Source"
+msgstr "Origen"
+
+msgid "Target"
+msgstr "Destino"
+
 msgid "Status"
 msgstr "Estado"
+
+msgid "No translations found."
+msgstr "No se encontraron traducciones."
 
 msgid "Why would I sync my page?"
 msgstr "¿Por qué sincronizaría mi página?"
@@ -110,6 +150,17 @@ msgstr ""
 msgid "Published '{object}' in {locale}."
 msgstr "Publicado '{object}' en {locale}."
 
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"El modelo de datos para '{model_name}' ha sido cambiado desde la última "
+"sincronización de traducción. Si algunos campos nuevos han sido añadidos "
+"recientemente, estos podrían no ser visibles hasta la próxima sincronizción "
+"de traducción."
+
 msgid "Translation has been stopped."
 msgstr "La traducción ha sido parada."
 
@@ -132,6 +183,12 @@ msgstr "Traducido con éxito con {}."
 
 msgid "There isn't anything left to translate."
 msgstr "No hay nada más para traducir."
+
+msgid "Source title"
+msgstr "Título fuente"
+
+msgid "Translations"
+msgstr "Traducciones"
 
 msgid "Select all"
 msgstr "Seleccionar todo"

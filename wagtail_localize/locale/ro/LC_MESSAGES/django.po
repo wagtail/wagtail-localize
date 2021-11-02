@@ -40,6 +40,20 @@ msgstr "Tradus manual la {date}"
 msgid "Machine translated on {date}"
 msgstr "Tradus automat la {date}"
 
+msgid "This locale cannot be synced into itself."
+msgstr "Această localizare nu poate fi sincronizată în sine."
+
+msgid "Synchronise content from another locale"
+msgstr "Sincronizează conținut din altă localizare"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Alege o localizare pentru a sincroniza conținut. Orice conținut curent sau "
+"conținut creat în localizarea selectată va fi copiat automat în localizarea "
+"selectată."
+
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -54,8 +68,25 @@ msgstr ""
 "Șirurile de text nu pot să conțină etichete HTML cu atribute cu excepția "
 "'id' în etichetele <a>"
 
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Id nerecunoscut găsit întru-un tag <a>: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Aceată pagină n-a fost tradusă și reflectă <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">pagina %(original_locale)s</"
+"a>."
+
 msgid "Translate this page"
 msgstr "Traduceți această pagină"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Traducerea %(instance)s în %(locale)s"
 
 msgid "Submit"
 msgstr "Trimite"
@@ -115,6 +146,16 @@ msgstr "'{object}' publicat(ă) în {locale} cu traduceri lipsă - vezi mai jos.
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "A publicat '{object}' în {locale}."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Modelul de date pentru '{model_name}' a fost schimbat de la ultima "
+"sincronizare de traduceri. Dacă au fost adăgate câmpuri noi, s-ar putea să "
+"nu fie vizible până la următoarea sincronizare de traduceri."
 
 msgid "Translation has been stopped."
 msgstr "Traducerea a fost oprită."

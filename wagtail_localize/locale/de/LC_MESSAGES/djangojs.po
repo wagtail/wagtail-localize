@@ -1,11 +1,11 @@
 #
 # Translators:
-# oliverengel, 2021
 # Moritz Pfeiffer <moritz@alp-phone.ch>, 2021
+# oliverengel <codeangel@posteo.de>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Moritz Pfeiffer <moritz@alp-phone.ch>, 2021\n"
+"Last-Translator: oliverengel <codeangel@posteo.de>, 2021\n"
 "Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -23,6 +23,9 @@ msgstr "Brotkrümel"
 msgid "Cancel"
 msgstr "Abbrechen"
 
+msgid "Change %s"
+msgstr "Ändere %s"
+
 msgid "Change document"
 msgstr "Dokument ändern"
 
@@ -34,6 +37,9 @@ msgstr "Seite ändern"
 
 msgid "Changed"
 msgstr "Geändert"
+
+msgid "Choose a %s"
+msgstr "Wähle einen %s aus"
 
 msgid "Choose a document"
 msgstr "Dokument auswählen"
@@ -71,6 +77,9 @@ msgstr "Dieses Bild bearbeiten"
 msgid "Edit this page"
 msgstr "Diese Seite bearbeiten"
 
+msgid "Fetching %s information..."
+msgstr "Informationen werden %s eingesammelt..."
+
 msgid "Fetching document information..."
 msgstr "Dokumentinformationen werden gesammelt…"
 
@@ -107,6 +116,9 @@ msgstr "Veröffentlichen..."
 msgid "Remove editor lock"
 msgstr "Editor-Sperre aufheben"
 
+msgid "Revert to %s version"
+msgstr "Zu Version %s zurückkehren"
+
 msgid "Save"
 msgstr "Speichern"
 
@@ -121,6 +133,11 @@ msgstr "Serverfehler"
 
 msgid "Stop translation"
 msgstr "Übersetzung stoppen"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Es gibt ungespeicherte Segmente. Bitte vor dem Verlassen speichern oder "
+"abbrechen. "
 
 msgid "Translate"
 msgstr "Übersetzen"
