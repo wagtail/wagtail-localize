@@ -81,6 +81,7 @@ jobs:
           - python: '3.9'
             django: '3.2'
             wagtail: 'main'
+            postgres: '10.8'
             experimental: true
         exclude:
           # Exclude tests of Django 2.2 and Wagtail 2.14 together
