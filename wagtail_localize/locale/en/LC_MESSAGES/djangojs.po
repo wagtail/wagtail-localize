@@ -172,7 +172,7 @@ msgstr ""
 
 #: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:25
 #: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:28
-msgid "Stop translation"
+msgid "Stop Synced translation"
 msgstr ""
 
 #: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 14:17+0000\n"
+"POT-Creation-Date: 2021-11-02 13:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,26 +18,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: test/models.py:21
+#: test/models.py:34
 msgid "field"
 msgstr ""
 
-#: test/models.py:66
+#: test/models.py:112
 msgid "text block"
 msgstr ""
 
-#: test/models.py:96
+#: test/models.py:150
 msgid "char field"
 msgstr ""
 
-#: tests/test_edit_translation.py:467
+#: tests/test_edit_translation.py:955
 msgid "Default"
 msgstr ""
 
-#: tests/test_edit_translation.py:468
+#: tests/test_edit_translation.py:956
 msgid "First mode"
 msgstr ""
 
-#: tests/test_edit_translation.py:469
+#: tests/test_edit_translation.py:957
 msgid "Second mode"
 msgstr ""
