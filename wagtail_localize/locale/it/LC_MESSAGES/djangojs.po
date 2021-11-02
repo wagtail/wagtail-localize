@@ -5,20 +5,45 @@
 # Alessio Di Stasio <aledista@gmail.com>, 2021
 # Stefano Marchetto <airbatum@gmail.com>, 2021
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
+# Marco Badan <marco.badan@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021\n"
+"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2021\n"
 "Language-Team: Italian (https://www.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "[DELETED]"
+msgstr "[DELETED]"
+
 msgid "Apply editor lock"
 msgstr "Applica il blocco dell'editor"
 
+msgid "Breadcrumb"
+msgstr "Breadcrumb"
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Change %s"
+msgstr "Cambia %s"
+
+msgid "Change document"
+msgstr "Cambia documento"
+
 msgid "Change image"
 msgstr "Cambia immagine"
+
+msgid "Change page"
+msgstr "Cambia pagina"
+
+msgid "Changed"
+msgstr "Modificato"
+
+msgid "Choose a %s"
+msgstr "Scegli un %s"
 
 msgid "Choose a document"
 msgstr "Scegli un documento"
@@ -31,6 +56,12 @@ msgstr "Scegli una immagine"
 
 msgid "Delete"
 msgstr "Elimina"
+
+msgid "Download PO file"
+msgstr "Scarica file PO"
+
+msgid "Download PO file and input translations offline"
+msgstr "Scarica file PO e inserisci le traduzioni offline"
 
 msgid "Draft"
 msgstr "Bozza"
@@ -50,17 +81,47 @@ msgstr "Modifica questa immagine"
 msgid "Edit this page"
 msgstr "Modifica questa pagina"
 
+msgid "Fetching %s information..."
+msgstr "Raccolta informazioni per %s in corso... "
+
+msgid "Fetching document information..."
+msgstr "Raccolta informazioni documento in corso..."
+
+msgid "Fetching image information..."
+msgstr "Raccolta informazioni immagine in corso..."
+
+msgid "Fetching page information..."
+msgstr "Raccolta informazioni pagina in corso..."
+
 msgid "Live"
 msgstr "Live"
 
 msgid "Lock"
 msgstr "Blocca"
 
+msgid "Not translated"
+msgstr "Non tradotto"
+
 msgid "Preview"
 msgstr "Anteprima"
 
+msgid "Publish in "
+msgstr "Pubblicata in"
+
+msgid "Published"
+msgstr "Pubblicata"
+
+msgid "Published on "
+msgstr "Pubblicata il"
+
 msgid "Publishing..."
 msgstr "Pubblicazione in corso..."
+
+msgid "Remove editor lock"
+msgstr "Rimuovi blocco editor"
+
+msgid "Revert to %s version"
+msgstr "Torna alla versione %s"
 
 msgid "Save"
 msgstr "Salva"
@@ -68,8 +129,39 @@ msgstr "Salva"
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
 
+msgid "segments translated"
+msgstr "segmenti tradotti"
+
+msgid "Server error"
+msgstr "Errore del Server"
+
+msgid "Stop translation"
+msgstr "Interrompi traduzione"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Ci sono segmenti non salvati. Per favore salva o annulla prima di uscire."
+
+msgid "Translate"
+msgstr "Traduci"
+
+msgid "Translate all missing strings with "
+msgstr "Traduci le stringhe mancanti con"
+
+msgid "Translate with "
+msgstr "Traduci con"
+
 msgid "Unlock"
 msgstr "Sblocca"
 
 msgid "Unpublish"
 msgstr "Annulla pubblicazione"
+
+msgid "Upload PO file"
+msgstr "Carica file PO"
+
+msgid "Upload translated PO file to submit translations"
+msgstr "Carica file PO tradotto per inviare le traduzioni"
+
+msgid "Uses %s version"
+msgstr "Utilizza la versione %s"

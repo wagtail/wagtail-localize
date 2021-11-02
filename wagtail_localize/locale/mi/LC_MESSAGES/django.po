@@ -27,6 +27,10 @@ msgstr "Pukapuka tohutohu"
 msgid "Machine"
 msgstr "Mīhini"
 
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "E Whakamāoritia mē te {Ingoa_utauta} ki runga {te rā}"
+
 msgid "Status"
 msgstr "Tūnga"
 

@@ -23,6 +23,9 @@ msgstr "Brauðmolar"
 msgid "Cancel"
 msgstr "Hætta við"
 
+msgid "Change %s"
+msgstr "Breyta %s"
+
 msgid "Change document"
 msgstr "Breyta skrá"
 
@@ -34,6 +37,9 @@ msgstr "Breyta síðu"
 
 msgid "Changed"
 msgstr "Breytt"
+
+msgid "Choose a %s"
+msgstr "Veldu %s"
 
 msgid "Choose a document"
 msgstr "Veldu skrá"
@@ -71,6 +77,9 @@ msgstr "Breyta þessari mynd"
 msgid "Edit this page"
 msgstr "Breyta þessari síðu"
 
+msgid "Fetching %s information..."
+msgstr "Sæki upplýsingar um %s ..."
+
 msgid "Fetching document information..."
 msgstr "Sæki upplýsingar um skrá..."
 
@@ -107,6 +116,9 @@ msgstr "Set í birtingu..."
 msgid "Remove editor lock"
 msgstr "Fjarlægja skriflás"
 
+msgid "Revert to %s version"
+msgstr "Skipta yfir í útgáfu %s "
+
 msgid "Save"
 msgstr "Vista"
 
@@ -121,6 +133,11 @@ msgstr "Villa á netþjóni"
 
 msgid "Stop translation"
 msgstr "Hætta þýðingu"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Það eru óvistaðir hlutar. Vinsamlegast vistið eða hættið við breytingarnar "
+"áður en farið er."
 
 msgid "Translate"
 msgstr "Þýða"

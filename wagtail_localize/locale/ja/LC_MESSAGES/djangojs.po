@@ -5,16 +5,19 @@
 # 石田秀 <ishidashu@gmail.com>, 2021
 # 山本 卓也 <takuya.miraidenshi@gmail.com>, 2021
 # Yudai Kobayashi <yudai.kobayashi.miraidenshi@gmail.com>, 2021
-# Koji Miyazawa, 2021
 # shuhei hirota, 2021
+# kojikojikojikoji, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: shuhei hirota, 2021\n"
+"Last-Translator: kojikojikojikoji, 2021\n"
 "Language-Team: Japanese (https://www.transifex.com/torchbox/teams/8009/ja/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Apply editor lock"
+msgstr "エディターロック機能を適用する"
 
 msgid "Breadcrumb"
 msgstr "パンくず"

@@ -1,14 +1,14 @@
 #
 # Translators:
 # Mateusz <undefined5102@gmail.com>, 2021
-# Łukasz Bołdys (Lukasz Boldys), 2021
 # Miłosz Miśkiewicz, 2021
+# Łukasz Bołdys (Lukasz Boldys), 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Miłosz Miśkiewicz, 2021\n"
+"Last-Translator: Łukasz Bołdys (Lukasz Boldys), 2021\n"
 "Language-Team: Polish (https://www.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -46,8 +46,46 @@ msgstr "Lokalizacja nie może zostać zsynchronizowana sama ze sobą."
 msgid "Synchronise content from another locale"
 msgstr "Zsynchronizuj zawartość z innej lokalizacji"
 
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Wybierz ustawienia regionalne celem synchronizacji zawartości. Każda "
+"istniejąca i przyszła zawartość utworzona w wybranych ustawieniach "
+"regionalnych będzie automatycznie skopiowana do wybranych."
+
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"Znacznik <{}> jest niedozwolony. Ciągi znaków mogą zawierać tylko "
+"standardowe znaczniki HTML (takie jak <b>,<a>)"
+
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"Ciągi znaków nie mogą zawierać żadnych znaczników HTML z atrybutami (za "
+"wyjątkiem 'id' w znacznikach <a>)"
+
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Nierozpoznane id znaleziono w znaczniku <a>: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Ta strona nie została jeszcze przetłumaczona. Jest ona kopią strony <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s</a>."
+
 msgid "Translate this page"
 msgstr "Przetłumacz tę stronę"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Tłumaczenie %(instance)s w %(locale)s"
 
 msgid "Submit"
 msgstr "Wyślij"
@@ -69,6 +107,25 @@ msgstr "Status"
 
 msgid "No translations found."
 msgstr "Nie znaleziono tłumaczeń."
+
+msgid "Why would I sync my page?"
+msgstr "Dlaczego synchronizować moją stronę?"
+
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
+msgstr ""
+"Zmiany nie są aplikowane automatycznie pomiędzy przetłumaczonymi stronami. "
+"Synchronizacja doda nową treść dla tłumaczeń i pozbędzie się usuniętej "
+"treści."
+
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"Data ostaniej synchronizacji: %(last_sync_date)s. Masz zamiar synchronizować "
+"następujące: "
 
 msgid "Content"
 msgstr "Treść"

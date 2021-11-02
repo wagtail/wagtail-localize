@@ -77,6 +77,9 @@ msgstr "Editează această imagine"
 msgid "Edit this page"
 msgstr "Editează această pagină"
 
+msgid "Fetching %s information..."
+msgstr "Preluare informație despre %s..."
+
 msgid "Fetching document information..."
 msgstr "Preluare informație despre document..."
 
@@ -113,6 +116,9 @@ msgstr "Publicare..."
 msgid "Remove editor lock"
 msgstr "Elimină blocaj editorial"
 
+msgid "Revert to %s version"
+msgstr "Revină la versiunea %s"
+
 msgid "Save"
 msgstr "Salvează"
 
@@ -127,6 +133,9 @@ msgstr "Eroare de server"
 
 msgid "Stop translation"
 msgstr "Oprește traducere"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr "Există segment nesalvate. Salvează sau anulează înainte de plecare."
 
 msgid "Translate"
 msgstr "Traduce"

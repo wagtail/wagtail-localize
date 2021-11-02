@@ -2,12 +2,14 @@
 # Translators:
 # Viktor Shytiuk <VicHunting@yandex.ua>, 2021
 # Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
+# Anastasiia La, 2021
+# Yuri Fabirovsky <yfabirovsky@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021\n"
+"Last-Translator: Yuri Fabirovsky <yfabirovsky@gmail.com>, 2021\n"
 "Language-Team: Ukrainian (https://www.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,8 +19,251 @@ msgstr ""
 "100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
 "(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 
+msgid "Dummy translator"
+msgstr "Фіктивний переклад"
+
+msgid "Up to date"
+msgstr "Актуально"
+
+msgid "Waiting for translations"
+msgstr "Очікує на переклад"
+
+msgid "Manual"
+msgstr "Ручний"
+
+msgid "Machine"
+msgstr "Машинний"
+
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Перекладено за допомогою {tool_name} {date}"
+
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Перекладено вручну {date}"
+
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Машинно перекладено {date}"
+
+msgid "This locale cannot be synced into itself."
+msgstr "Ця локаль не може бути синхронізованою в себе."
+
+msgid "Synchronise content from another locale"
+msgstr "Синхронізувати вміст з іншої локалі"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Виберіть локаль для синхронізації вмісту. Будь-який наявний та майбутній "
+"вміст, створений у вибраній локалі, буде автоматично скопійований у цей. "
+
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"Тег <{}> заборонений. Рядки можуть містити лише стандартні вбудовані HTML "
+"теги (наприклад, <b>, <a>) "
+
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"Рядки не можуть містити HTML теги з атрибутами (за винятком \"id\" у "
+"<a>тегах) "
+
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Нерозпізнаний ідентифікатор знайдений у <a>тегу: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Ця сторінка ще не перекладена. Це дзеркальне відображення <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">"
+"%(original_locale)sсторінки</a>."
+
+msgid "Translate this page"
+msgstr "Перекладіть цю сторінку"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Переклад %(instance)s в %(locale)s"
+
+msgid "Submit"
+msgstr "Застосувати"
+
+msgid "Go back"
+msgstr "Повернутися назад"
+
+msgid "Content type"
+msgstr "Тип контенту"
+
+msgid "Source"
+msgstr "Джерело"
+
+msgid "Target"
+msgstr "Ціль"
+
 msgid "Status"
 msgstr "Статус"
 
+msgid "No translations found."
+msgstr "Не знайдено перекладу."
+
+msgid "Why would I sync my page?"
+msgstr "Чому я повинен синхронізувати свою сторінку?"
+
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
+msgstr ""
+"Зміни не застосовуються автоматично між перекладеними сторінками. "
+"Синхронізація додасть новий контент для перекладу та прибере видалений."
+
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"Остання дата синхронізації була %(last_sync_date)s. Ви збираєтесь "
+"синхронізувати наступне: "
+
 msgid "Content"
 msgstr "Контент"
+
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Під час публікації \"{object}\" у {locale} були виявлені нові помилки. "
+"Виправте їх або натисніть ще раз опублікувати, щоб поки проігнорувати ці "
+"переклади."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"Опубліковано '{object}' в {locale} з відсутніми перекладами - дивись нижче."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Опубліковано '{object}' в {locale}."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Модель даних для \"{model_name}\" була змінена після останньої синхронізації "
+"перекладу. Якщо нещодавно були додані нові поля, вони можуть не "
+"відображатися до наступної синхронізації перекладу. "
+
+msgid "Translation has been stopped."
+msgstr "Переклад зупинено."
+
+msgid "Translation has been restarted."
+msgstr "Переклад перезапущено."
+
+msgid "Please upload a valid PO file."
+msgstr "Будь ласка, завантажте кореткний PO файл."
+
+msgid "Cannot import PO file that was created for a different translation."
+msgstr ""
+"Неможливо імпортувати PO файл, тому що він був створений для інших перекладу."
+
+msgid "Successfully imported translations from PO File."
+msgstr "Успішно імпортовано переклади з PO файлу."
+
+msgid "Successfully translated with {}."
+msgstr "Успішно перекладено за допомогою {}."
+
+msgid "There isn't anything left to translate."
+msgstr "Немає нічого перекладати."
+
+msgid "Source title"
+msgstr "Заголовок джерела"
+
+msgid "Translations"
+msgstr "Переклади"
+
+msgid "Select all"
+msgstr "Обрати все"
+
+msgid "Locales"
+msgstr "Локалі"
+
+msgid "All child pages will be created."
+msgstr "Всі дочірні сторінки буде створено."
+
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Включає гілку ({} сторінка)"
+msgstr[1] "Включає гілку ({} сторінок)"
+msgstr[2] "Включає гілку ({} сторінок)"
+msgstr[3] "Включає гілку ({} сторінок)"
+
+msgid "Translate"
+msgstr "Перекласти"
+
+msgid "{} locales"
+msgstr "{} локалі"
+
+msgid "Translate page"
+msgstr "Перекласти сторінку"
+
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr "Сторінка '{page_title}' успішно надіслано для перекладу на {locales}"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Перекласти {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Об'єкт '{object}' моделі {model_name} успішно надіслано для перекладу на "
+"{locales}"
+
+msgid "Publish immediately"
+msgstr "Опублікувати негайно"
+
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Це застосує оновлення та опублікує їх негайно, до того, як відбудуться нові "
+"переклади."
+
+msgid "Update existing translations"
+msgstr "Оновити існуючі переклади"
+
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "Успішно оновлено переклади для '{object}'"
+
+msgid "Sync translated pages"
+msgstr "Синхронізувати перекладені сторінки"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Перекладено '%(title)s'"
+
+msgid "Sync translated snippets"
+msgstr "Синхронізувати перекладені уривки"
+
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Синхронізувати переклади для '%(title)s'"
+
+msgid "Restart translation"
+msgstr "Перезапустити переклад"

@@ -1,11 +1,11 @@
 #
 # Translators:
-# Amós Oviedo <amos.oviedo@gmail.com>, 2020
 # José Luis <alagunajs@gmail.com>, 2021
+# Amós Oviedo <amos.oviedo@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: José Luis <alagunajs@gmail.com>, 2021\n"
+"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2021\n"
 "Language-Team: Spanish (https://www.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -23,6 +23,9 @@ msgstr "Breadcrumb"
 msgid "Cancel"
 msgstr "Cancelar"
 
+msgid "Change %s"
+msgstr "Cambiar %s"
+
 msgid "Change document"
 msgstr "Cambiar documento"
 
@@ -34,6 +37,9 @@ msgstr "Cambiar página"
 
 msgid "Changed"
 msgstr "Cambiado"
+
+msgid "Choose a %s"
+msgstr "Seleccionar un %s"
 
 msgid "Choose a document"
 msgstr "Seleccionar un documento"
@@ -71,6 +77,9 @@ msgstr "Editar esta imagen"
 msgid "Edit this page"
 msgstr "Editar esta página"
 
+msgid "Fetching %s information..."
+msgstr "Obtebiendo información %s..."
+
 msgid "Fetching document information..."
 msgstr "Obteniendo información del documento..."
 
@@ -107,6 +116,9 @@ msgstr "Publicando..."
 msgid "Remove editor lock"
 msgstr "Eliminar bloqueo del editor"
 
+msgid "Revert to %s version"
+msgstr "Revertir a versión %s"
+
 msgid "Save"
 msgstr "Guardar"
 
@@ -121,6 +133,10 @@ msgstr "Error del servidor"
 
 msgid "Stop translation"
 msgstr "Parar traducción"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Hay segmentos sin guardar. Por favor, guárdalos o cancélalos antes de salir."
 
 msgid "Translate"
 msgstr "Traducir"

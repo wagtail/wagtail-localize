@@ -2,10 +2,11 @@
 # Translators:
 # Luís Tiago Favas <al62006@utad.eu>, 2020
 # Tiago Henriques <trinosauro@gmail.com>, 2021
+# Diogo Silva <diogo_silva30@hotmail.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Tiago Henriques <trinosauro@gmail.com>, 2021\n"
+"Last-Translator: Diogo Silva <diogo_silva30@hotmail.com>, 2021\n"
 "Language-Team: Portuguese (Portugal) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,6 +25,9 @@ msgstr "Sugestão de navegação"
 msgid "Cancel"
 msgstr "Cancelar"
 
+msgid "Change %s"
+msgstr "Alterar %s"
+
 msgid "Change document"
 msgstr "Alterar documento"
 
@@ -35,6 +39,9 @@ msgstr "Alterar página"
 
 msgid "Changed"
 msgstr "Alterado"
+
+msgid "Choose a %s"
+msgstr "Escolha um %s"
 
 msgid "Choose a document"
 msgstr "Escolher um documento"

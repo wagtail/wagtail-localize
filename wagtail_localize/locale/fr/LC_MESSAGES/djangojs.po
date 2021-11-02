@@ -1,11 +1,11 @@
 #
 # Translators:
-# Loic Teixeira, 2021
 # Léo <leo@naeka.fr>, 2021
+# Loic Teixeira, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Léo <leo@naeka.fr>, 2021\n"
+"Last-Translator: Loic Teixeira, 2021\n"
 "Language-Team: French (https://www.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -23,6 +23,9 @@ msgstr "Fil d'Ariane"
 msgid "Cancel"
 msgstr "Annuler"
 
+msgid "Change %s"
+msgstr "Modifier %s"
+
 msgid "Change document"
 msgstr "Changer le document"
 
@@ -34,6 +37,9 @@ msgstr "Changer la page"
 
 msgid "Changed"
 msgstr "Modifié(e)(s)"
+
+msgid "Choose a %s"
+msgstr "Choisir un(e) %s"
 
 msgid "Choose a document"
 msgstr "Choisir un document"
@@ -71,6 +77,9 @@ msgstr "Modifier cette image"
 msgid "Edit this page"
 msgstr "Modifier cette page"
 
+msgid "Fetching %s information..."
+msgstr "Récupération des informations de %s en cours."
+
 msgid "Fetching document information..."
 msgstr "Récupération des informations du document en cours."
 
@@ -107,6 +116,9 @@ msgstr "Publication..."
 msgid "Remove editor lock"
 msgstr "Supprimer un verrou éditeur"
 
+msgid "Revert to %s version"
+msgstr "Revenir à la version %s"
+
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -121,6 +133,11 @@ msgstr "Erreur du serveur"
 
 msgid "Stop translation"
 msgstr "Arrêter la traduction"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Il y a des segments non enregistrés. Veuillez les enregistrer ou les annuler "
+"avant de quitter."
 
 msgid "Translate"
 msgstr "Traduire"

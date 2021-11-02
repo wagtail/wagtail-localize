@@ -1,11 +1,11 @@
 #
 # Translators:
-# Thomas Kunambi <kunambi@gmail.com>, 2020
 # Martin Sandström <martin@marteinn.se>, 2021
+# Thomas Kunambi <kunambi@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Martin Sandström <martin@marteinn.se>, 2021\n"
+"Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2021\n"
 "Language-Team: Swedish (https://www.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -23,6 +23,9 @@ msgstr "Sökvägsnavigering"
 msgid "Cancel"
 msgstr "Avbryt"
 
+msgid "Change %s"
+msgstr "Ändra %s"
+
 msgid "Change document"
 msgstr "Ändra dokument"
 
@@ -34,6 +37,9 @@ msgstr "Ändra sida"
 
 msgid "Changed"
 msgstr "Ändrad"
+
+msgid "Choose a %s"
+msgstr "Välj en %s"
 
 msgid "Choose a document"
 msgstr "Välj ett dokument"
@@ -71,6 +77,9 @@ msgstr "Redigera denna bild"
 msgid "Edit this page"
 msgstr "Redigera denna sida"
 
+msgid "Fetching %s information..."
+msgstr "Hämtar %s information..."
+
 msgid "Fetching document information..."
 msgstr "Hämtar dokumentinformation"
 
@@ -107,6 +116,9 @@ msgstr "Publicerar..."
 msgid "Remove editor lock"
 msgstr "Ta bort redaktörslås"
 
+msgid "Revert to %s version"
+msgstr "Återställ till %s version"
+
 msgid "Save"
 msgstr "Spara"
 
@@ -121,6 +133,11 @@ msgstr "Serverfel"
 
 msgid "Stop translation"
 msgstr "Stoppa översättning"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Det finns osparade segment. Vänligen spara eller återställ dem innan du "
+"lämnar."
 
 msgid "Translate"
 msgstr "Översätt"

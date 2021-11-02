@@ -1,18 +1,21 @@
 #
 # Translators:
 # Ocin Leung, 2021
-# ongchi <ihcgno@icloud.com>, 2021
 # Andy Kong <worminfo@gmail.com>, 2021
 # Yeh Yen-Ke <yyken@outlook.com>, 2021
+# ongchi <ihcgno@icloud.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Yeh Yen-Ke <yyken@outlook.com>, 2021\n"
+"Last-Translator: ongchi <ihcgno@icloud.com>, 2021\n"
 "Language-Team: Chinese Traditional (https://www.transifex.com/torchbox/"
 "teams/8009/zh-Hant/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh-Hant\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Apply editor lock"
+msgstr "套用編輯鎖定"
 
 msgid "Cancel"
 msgstr "取消"
@@ -64,6 +67,9 @@ msgstr "已發佈"
 
 msgid "Save"
 msgstr "儲存"
+
+msgid "Saving..."
+msgstr "儲存中..."
 
 msgid "Unlock"
 msgstr "解鎖"

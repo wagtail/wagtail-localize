@@ -4,10 +4,12 @@
 # Vladyslav Herasymenko <drimacus182@gmail.com>, 2021
 # Viktor Shytiuk <VicHunting@yandex.ua>, 2021
 # Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
+# Yuri Fabirovsky <yfabirovsky@gmail.com>, 2021
+# Anastasiia La, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021\n"
+"Last-Translator: Anastasiia La, 2021\n"
 "Language-Team: Ukrainian (https://www.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +19,35 @@ msgstr ""
 "100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
 "(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 
+msgid "[DELETED]"
+msgstr "[Видалено]"
+
 msgid "Apply editor lock"
 msgstr "Застосувати редакторське блокування"
 
+msgid "Breadcrumb"
+msgstr "Ланцюжок навігації"
+
+msgid "Cancel"
+msgstr "Скасувати"
+
+msgid "Change %s"
+msgstr "Змінено %s"
+
+msgid "Change document"
+msgstr "Змінити документ"
+
 msgid "Change image"
 msgstr "Змінити зображення"
+
+msgid "Change page"
+msgstr "Змінити сторінку"
+
+msgid "Changed"
+msgstr "Змінено"
+
+msgid "Choose a %s"
+msgstr "Оберіть %s"
 
 msgid "Choose a document"
 msgstr "Обрати документ"
@@ -34,6 +60,12 @@ msgstr "Оберіть зображення"
 
 msgid "Delete"
 msgstr "Видалити"
+
+msgid "Download PO file"
+msgstr "Завантажити PO-файл"
+
+msgid "Download PO file and input translations offline"
+msgstr "Завантажити PO-файл і ввести переклад офлайн"
 
 msgid "Draft"
 msgstr "Чернетка"
@@ -53,17 +85,47 @@ msgstr "Редагувати зображення"
 msgid "Edit this page"
 msgstr "Редагувати цю сторінку"
 
+msgid "Fetching %s information..."
+msgstr "Вилучення %s інформації"
+
+msgid "Fetching document information..."
+msgstr "Вилучення інформації про документ"
+
+msgid "Fetching image information..."
+msgstr "Вилучення інформації про зображення"
+
+msgid "Fetching page information..."
+msgstr "Виручення інформації про сторінку"
+
 msgid "Live"
 msgstr "Наживо"
 
 msgid "Lock"
 msgstr "Блокувати"
 
+msgid "Not translated"
+msgstr "Не перекладено"
+
 msgid "Preview"
 msgstr "Попередній перегляд"
 
+msgid "Publish in "
+msgstr "Опублікувати в"
+
 msgid "Published"
 msgstr "Опубліковано"
+
+msgid "Published on "
+msgstr "Опублікувати на"
+
+msgid "Publishing..."
+msgstr "Публікація..."
+
+msgid "Remove editor lock"
+msgstr "Зняти блокування редактора"
+
+msgid "Revert to %s version"
+msgstr "Повернутися до версії %s"
 
 msgid "Save"
 msgstr "Зберегти"
@@ -71,8 +133,40 @@ msgstr "Зберегти"
 msgid "Saving..."
 msgstr "Зберігання"
 
+msgid "segments translated"
+msgstr "перекладені сегменти"
+
+msgid "Server error"
+msgstr "Помилка серверу"
+
+msgid "Stop translation"
+msgstr "Зупинити переклад"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Наявні незбережені сегменти. Будь ласка, збережіть або скасуйте їх перед "
+"виходом."
+
+msgid "Translate"
+msgstr "Перекласти"
+
+msgid "Translate all missing strings with "
+msgstr "Перекласти всі відсутні рядки за допомогою"
+
+msgid "Translate with "
+msgstr "Перекласти за допомогою"
+
 msgid "Unlock"
 msgstr "Розблокувати"
 
 msgid "Unpublish"
 msgstr "Зняти з публікації"
+
+msgid "Upload PO file"
+msgstr "Завантажити PO-файл"
+
+msgid "Upload translated PO file to submit translations"
+msgstr "Завантажити перекладений PO-файл, щоб зберегти переклади"
+
+msgid "Uses %s version"
+msgstr "Використовує версію %s"

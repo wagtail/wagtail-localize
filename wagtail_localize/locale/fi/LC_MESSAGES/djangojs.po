@@ -1,12 +1,12 @@
 #
 # Translators:
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2021
 # Valter Maasalo <vmaasalo@gmail.com>, 2021
 # Aarni Koskela, 2021
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Aarni Koskela, 2021\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2021\n"
 "Language-Team: Finnish (https://www.transifex.com/torchbox/teams/8009/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fi\n"
@@ -24,6 +24,9 @@ msgstr "Linkkipolku"
 msgid "Cancel"
 msgstr "Peruuta"
 
+msgid "Change %s"
+msgstr "Vaihda %s"
+
 msgid "Change document"
 msgstr "Vaihda dokumentti"
 
@@ -35,6 +38,9 @@ msgstr "Vaihda sivu"
 
 msgid "Changed"
 msgstr "Vaihdettu"
+
+msgid "Choose a %s"
+msgstr "Valitse %s"
 
 msgid "Choose a document"
 msgstr "Valitse dokumentti"
@@ -72,6 +78,15 @@ msgstr "Muokkaa tätä kuvaa"
 msgid "Edit this page"
 msgstr "Muokkaa tätä sivua"
 
+msgid "Fetching document information..."
+msgstr "Noudetaan dokumentin tietoja..."
+
+msgid "Fetching image information..."
+msgstr "Noudetaan kuvan tietoja..."
+
+msgid "Fetching page information..."
+msgstr "Noudetaan sivun tietoja..."
+
 msgid "Live"
 msgstr "Julkinen"
 
@@ -87,6 +102,9 @@ msgstr "Esikatsele"
 msgid "Published"
 msgstr "Julkaistu"
 
+msgid "Published on "
+msgstr "Julkaistu"
+
 msgid "Publishing..."
 msgstr "Julkaistaan..."
 
@@ -99,11 +117,24 @@ msgstr "Tallenna"
 msgid "Saving..."
 msgstr "Tallennetaan..."
 
+msgid "segments translated"
+msgstr "segmenttiä käännetty"
+
 msgid "Server error"
 msgstr "Palvelinvirhe"
 
+msgid "Stop translation"
+msgstr "Lopeta kääntäminen"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Tallentamattomia segmenttejä. Tallenna ne tai peruuta ennen poistumista."
+
 msgid "Translate"
 msgstr "Käännä"
+
+msgid "Translate with "
+msgstr "Käännä käyttäen"
 
 msgid "Unlock"
 msgstr "Avaa lukitus"

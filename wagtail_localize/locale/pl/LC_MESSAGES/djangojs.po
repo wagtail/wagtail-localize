@@ -1,10 +1,11 @@
 #
 # Translators:
 # Miłosz Miśkiewicz, 2021
+# Łukasz Bołdys (Lukasz Boldys), 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Miłosz Miśkiewicz, 2021\n"
+"Last-Translator: Łukasz Bołdys (Lukasz Boldys), 2021\n"
 "Language-Team: Polish (https://www.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -24,6 +25,9 @@ msgstr "Breadcrumb"
 msgid "Cancel"
 msgstr "Anuluj"
 
+msgid "Change %s"
+msgstr "Zmień %s"
+
 msgid "Change document"
 msgstr "Zmień dokument"
 
@@ -35,6 +39,9 @@ msgstr "Zmień stronę"
 
 msgid "Changed"
 msgstr "Zmieniono"
+
+msgid "Choose a %s"
+msgstr "Wybierz %s"
 
 msgid "Choose a document"
 msgstr "Wybierz dokument"
@@ -72,6 +79,9 @@ msgstr "Edytuj obraz"
 msgid "Edit this page"
 msgstr "Edytuj tę stronę"
 
+msgid "Fetching %s information..."
+msgstr "Pobieranie informacji o %s..."
+
 msgid "Fetching document information..."
 msgstr "Pobieranie informacji na temat dokumentu..."
 
@@ -108,6 +118,9 @@ msgstr "Publikowanie..."
 msgid "Remove editor lock"
 msgstr "Usuń blokadę edytorską"
 
+msgid "Revert to %s version"
+msgstr "Przywróć wersję %s"
+
 msgid "Save"
 msgstr "Zapisz"
 
@@ -122,6 +135,9 @@ msgstr "Błąd serwera"
 
 msgid "Stop translation"
 msgstr "Zatrzymaj tłumaczenie"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr "Istnieją niezapisane fragmenty. Zapisz lub anuluj je przed wyjściem."
 
 msgid "Translate"
 msgstr "Tłumacz"

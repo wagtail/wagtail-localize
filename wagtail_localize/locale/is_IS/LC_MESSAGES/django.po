@@ -41,6 +41,19 @@ msgstr "Þýtt handvirkt þann {date}"
 msgid "Machine translated on {date}"
 msgstr "Þýtt sjálfkrafa þann {date}"
 
+msgid "This locale cannot be synced into itself."
+msgstr "Þetta tungumál er ekki hægt að uppfæra með sjálfum sér."
+
+msgid "Synchronise content from another locale"
+msgstr "Uppfæra efni frá öðru tungumáli"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Veldu tungumál til að uppfæra efni frá. Allt núverandi og framtíðar efni sem "
+"skrifað er í völdu tungumál verður sjálfvirkt afritað yfir í þetta tungumál."
+
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -53,8 +66,25 @@ msgid ""
 "tags)"
 msgstr "Texti má ekki innihalda HTML tög með eigindum (nema 'id' í <a> tögum)"
 
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Óþekkt id fannst í <a> tagi: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Þessi síða hefur enn ekki verið þýdd. Hún er að spegla <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s síðuna."
+"</a>."
+
 msgid "Translate this page"
 msgstr "Þýða þessa síðu"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Þýðing á %(instance)s í %(locale)s"
 
 msgid "Submit"
 msgstr "Senda"
@@ -62,8 +92,20 @@ msgstr "Senda"
 msgid "Go back"
 msgstr "Til baka"
 
+msgid "Content type"
+msgstr "efnistegund"
+
+msgid "Source"
+msgstr "Upprunasíða"
+
+msgid "Target"
+msgstr "Þýdd síða"
+
 msgid "Status"
 msgstr "Staða"
+
+msgid "No translations found."
+msgstr "Engar þýðingar fundust."
 
 msgid "Why would I sync my page?"
 msgstr "Af hverju ætti ég að samræma síðuna mína?"
@@ -103,6 +145,16 @@ msgstr "Birti '{object}' í {locale} en það vantar þýðingar - sjá hér að
 msgid "Published '{object}' in {locale}."
 msgstr "Birti '{object}' í {locale}."
 
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Módelinu '{model_name}' hefur verið breytt síðan þýðingar voru síðast "
+"uppfærðar. Ef einhverjum nýjum svæðum hefur verið bætt við nýlega, þá eru "
+"þeir mögulega ekki sjáanlegir fyrr en þýðingar verða uppfærðar næst."
+
 msgid "Translation has been stopped."
 msgstr "Þýðing hefur verið stöðvuð."
 
@@ -123,6 +175,12 @@ msgstr "Tókast að þýða með {}"
 
 msgid "There isn't anything left to translate."
 msgstr "Það er ekkert eftir til að þýða."
+
+msgid "Source title"
+msgstr "Titill upprunasíðu"
+
+msgid "Translations"
+msgstr "Þýðingar"
 
 msgid "Select all"
 msgstr "Velja allt"

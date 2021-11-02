@@ -39,6 +39,19 @@ msgstr "Manuellt översatt på {date}"
 msgid "Machine translated on {date}"
 msgstr "Maskinöversatt på {date}"
 
+msgid "This locale cannot be synced into itself."
+msgstr "Detta språk kan inte bli synkroniserat till sig själv."
+
+msgid "Synchronise content from another locale"
+msgstr "Synkronisera innehållet från annat språk"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Välj ett språk att synkronisera innehåll från. All existerande och framtida "
+"innehåll skriven i det valda språk kommer automatiskt kopieras till detta."
+
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -53,8 +66,25 @@ msgstr ""
 "Strängar får inte innehålla HTML taggar med attribut (förutom 'id' i <a> "
 "taggar)"
 
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Okänt id hittat i en <a> tagg: {}"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Den här sidan har inte blivit översatt ännu. Den speglar <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s sidan</"
+"a>."
+
 msgid "Translate this page"
 msgstr "Översätt den här sidan"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Översättning av %(instance)s till %(locale)s"
 
 msgid "Submit"
 msgstr "Skicka"
@@ -62,8 +92,20 @@ msgstr "Skicka"
 msgid "Go back"
 msgstr "Gå tillbaka"
 
+msgid "Content type"
+msgstr "Innehållstyp"
+
+msgid "Source"
+msgstr "Källa"
+
+msgid "Target"
+msgstr "Mål"
+
 msgid "Status"
 msgstr "Status"
+
+msgid "No translations found."
+msgstr "Inga översättningar funna."
 
 msgid "Why would I sync my page?"
 msgstr "Varför borde jag synkronisera min sida?"
@@ -105,6 +147,16 @@ msgstr ""
 msgid "Published '{object}' in {locale}."
 msgstr "Publicerade '{object}' på {locale}."
 
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Datamodellen för '{model_name}' har ändrats sedan den senaste "
+"översättningsynkroniseringen. Om nya fält har lagts till nyligen, kommer de "
+"ev. inte synas förrän nästa överssättningsynkronisering."
+
 msgid "Translation has been stopped."
 msgstr "Översättning har stoppats."
 
@@ -126,6 +178,12 @@ msgstr "Lyckades översätta med {}."
 
 msgid "There isn't anything left to translate."
 msgstr "Det finns ingenting kvar att översätta."
+
+msgid "Source title"
+msgstr "Källtitel"
+
+msgid "Translations"
+msgstr "Översättningar"
 
 msgid "Select all"
 msgstr "Markera allt"

@@ -2,10 +2,11 @@
 # Translators:
 # Sergey Mazanov <mvver@outlook.com>, 2021
 # Mikalai Radchuk <radchuk.m@gmail.com>, 2021
+# Влад <integration.into.society@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Mikalai Radchuk <radchuk.m@gmail.com>, 2021\n"
+"Last-Translator: Влад <integration.into.society@gmail.com>, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -25,6 +26,9 @@ msgstr "Навигационная цепочка"
 msgid "Cancel"
 msgstr "Отменить"
 
+msgid "Change %s"
+msgstr "Изменить %s"
+
 msgid "Change document"
 msgstr "Изменить документ"
 
@@ -36,6 +40,9 @@ msgstr "Изменить страницу"
 
 msgid "Changed"
 msgstr "Изменено"
+
+msgid "Choose a %s"
+msgstr "Выбрать%s"
 
 msgid "Choose a document"
 msgstr "Выберите документ"
@@ -73,6 +80,9 @@ msgstr "Редактировать это изображение"
 msgid "Edit this page"
 msgstr "Редактировать эту страницу"
 
+msgid "Fetching %s information..."
+msgstr "Получение %s информации"
+
 msgid "Fetching document information..."
 msgstr "Получение информации о документе..."
 
@@ -109,6 +119,9 @@ msgstr "Публикация..."
 msgid "Remove editor lock"
 msgstr "Убрать блокировку редактора"
 
+msgid "Revert to %s version"
+msgstr "Вернуться к версии %s"
+
 msgid "Save"
 msgstr "Сохранить"
 
@@ -123,6 +136,11 @@ msgstr "Ошибка сервера"
 
 msgid "Stop translation"
 msgstr "Остановить перевод"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Есть несохраненные сегменты. Пожалуйста, сохраните или отмените их перед "
+"выходом."
 
 msgid "Translate"
 msgstr "Перевести"
