@@ -9,214 +9,141 @@ msgstr ""
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:840
 msgid "[DELETED]"
 msgstr "[УДАЛЕНО]"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
 msgid "Apply editor lock"
 msgstr "Применить блокировку редактора"
 
-#: wagtail_localize/static_src/common/components/Header/index.tsx:213
 msgid "Breadcrumb"
 msgstr "Навигационная цепочка"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:416
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:582
 msgid "Cancel"
 msgstr "Отменить"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:724
-msgid "Change %s"
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:693
 msgid "Change document"
 msgstr "Изменить документ"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:662
 msgid "Change image"
 msgstr "Изменить изображение"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:631
 msgid "Change page"
 msgstr "Изменить страницу"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
 msgid "Changed"
 msgstr "Изменено"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:87
-msgid "Choose a %s"
-msgstr ""
-
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:67
 msgid "Choose a document"
 msgstr "Выберите документ"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:65
 msgid "Choose a page"
 msgstr "Выберите страницу"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:79
 msgid "Choose an image"
 msgstr "Выберите изображение"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:37
 msgid "Delete"
 msgstr "Удалить"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:94
 msgid "Download PO file"
 msgstr "Загрузить PO файл"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:87
 msgid "Download PO file and input translations offline"
 msgstr "Скачать PO-файл и вводить переводы в автономном режиме"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:151
 msgid "Draft"
 msgstr "Черновик"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:606
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:848
 msgid "Edit"
 msgstr "Редактировать"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:59
 msgid "Edit this %s"
 msgstr "Править %s"
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:49
 msgid "Edit this document"
 msgstr "Редактировать этот документ"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:61
 msgid "Edit this image"
 msgstr "Редактировать это изображение"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:47
 msgid "Edit this page"
 msgstr "Редактировать эту страницу"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:71
-msgid "Fetching %s information..."
-msgstr ""
-
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:56
 msgid "Fetching document information..."
 msgstr "Получение информации о документе..."
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:68
 msgid "Fetching image information..."
 msgstr "Получение информации об изображении..."
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:54
 msgid "Fetching page information..."
 msgstr "Получение информации о странице..."
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:123
 msgid "Live"
 msgstr "Опубликовано"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:58
 msgid "Lock"
 msgstr "Блокировка"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:823
 msgid "Not translated"
 msgstr "Не переведено"
 
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:118
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:139
 msgid "Preview"
 msgstr "Предварительный просмотр"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
 msgid "Publish in "
 msgstr "Опубликовать в"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:136
 msgid "Published"
 msgstr "Опубликовано"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:134
 msgid "Published on "
 msgstr "Опубликовано на"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:110
 msgid "Publishing..."
 msgstr "Публикация..."
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
 msgid "Remove editor lock"
 msgstr "Убрать блокировку редактора"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:749
-msgid "Revert to %s version"
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:421
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:585
 msgid "Save"
 msgstr "Сохранить"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:437
 msgid "Saving..."
 msgstr "Сохранение..."
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:808
 msgid "segments translated"
 msgstr "Переведенные сегменты"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:145
 msgid "Server error"
 msgstr "Ошибка сервера"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:25
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:28
 msgid "Stop translation"
 msgstr "Остановить перевод"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
-msgid "There are unsaved segments. Please save or cancel them before leaving."
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:857
 msgid "Translate"
 msgstr "Перевести"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:138
 msgid "Translate all missing strings with "
 msgstr "Перевести все пропущенные строки с"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:162
 msgid "Translate with "
 msgstr "Перевести с"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
 msgid "Unlock"
 msgstr "Разблокировать"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:90
 msgid "Unpublish"
 msgstr "Отменить публикацию"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:108
 msgid "Upload PO file"
 msgstr "Загрузить PO файл"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:100
 msgid "Upload translated PO file to submit translations"
 msgstr "Загрузить переведенный PO файл для отправки переводов"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:555
 msgid "Uses %s version"
 msgstr "Используется %s версия"

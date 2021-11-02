@@ -7,217 +7,143 @@
 msgid ""
 msgstr ""
 "Last-Translator: 祝沙军 <zhushajun@gmail.com>, 2021\n"
-"Language-Team: Chinese (China) (https://www.transifex.com/torchbox/teams/8009/zh_CN/)\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
+"teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:840
 msgid "[DELETED]"
 msgstr "[已删除]"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
 msgid "Apply editor lock"
 msgstr "应用锁编辑"
 
-#: wagtail_localize/static_src/common/components/Header/index.tsx:213
 msgid "Breadcrumb"
 msgstr "面包屑"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:416
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:582
 msgid "Cancel"
 msgstr "取消"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:724
-msgid "Change %s"
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:693
 msgid "Change document"
 msgstr "修改文档"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:662
 msgid "Change image"
 msgstr "修改图片"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:631
 msgid "Change page"
 msgstr "修改页面"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
 msgid "Changed"
 msgstr "修改"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:87
-msgid "Choose a %s"
-msgstr ""
-
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:67
 msgid "Choose a document"
 msgstr "选择一个文档"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:65
 msgid "Choose a page"
 msgstr "选择一个页面"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:79
 msgid "Choose an image"
 msgstr "选择一个图片"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:37
 msgid "Delete"
 msgstr "删除"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:94
 msgid "Download PO file"
 msgstr "下载 PO 文件"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:87
 msgid "Download PO file and input translations offline"
 msgstr "下载 PO 文件并且线下翻译"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:151
 msgid "Draft"
 msgstr "草稿"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:606
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:848
 msgid "Edit"
 msgstr "编辑"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:59
 msgid "Edit this %s"
 msgstr "编辑这个 %s"
 
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:49
 msgid "Edit this document"
 msgstr "编辑此文档"
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:61
 msgid "Edit this image"
 msgstr "编辑此图片"
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:47
 msgid "Edit this page"
 msgstr "编辑此页面"
 
-#: wagtail_localize/static_src/common/components/SnippetChooser/index.tsx:71
-msgid "Fetching %s information..."
-msgstr ""
-
-#: wagtail_localize/static_src/common/components/DocumentChooser/index.tsx:56
 msgid "Fetching document information..."
 msgstr "正在获取文档信息..."
 
-#: wagtail_localize/static_src/common/components/ImageChooser/index.tsx:68
 msgid "Fetching image information..."
 msgstr "正在获取图片信息..."
 
-#: wagtail_localize/static_src/common/components/PageChooser/index.tsx:54
 msgid "Fetching page information..."
 msgstr "正在获取页面信息..."
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:123
 msgid "Live"
 msgstr "发布"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:58
 msgid "Lock"
 msgstr "锁定"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:823
 msgid "Not translated"
 msgstr "未翻译"
 
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:118
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:139
 msgid "Preview"
 msgstr "预览"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
 msgid "Publish in "
 msgstr "发布在"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:136
 msgid "Published"
 msgstr "已发布"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/header.tsx:134
 msgid "Published on "
 msgstr "发布在"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:110
 msgid "Publishing..."
 msgstr "正在发布……"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
 msgid "Remove editor lock"
 msgstr "移除编辑锁定"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:749
-msgid "Revert to %s version"
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:421
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:585
 msgid "Save"
 msgstr "保存"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:437
 msgid "Saving..."
 msgstr "正在保存……"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:808
 msgid "segments translated"
 msgstr "片段已翻译"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:145
 msgid "Server error"
 msgstr "服务器错误"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:25
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:28
 msgid "Stop translation"
 msgstr "停止翻译"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
-msgid "There are unsaved segments. Please save or cancel them before leaving."
-msgstr ""
-
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:479
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:857
 msgid "Translate"
 msgstr "翻译"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:138
 msgid "Translate all missing strings with "
 msgstr "翻译所有缺失的字符串"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:162
 msgid "Translate with "
 msgstr "翻译"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
 msgid "Unlock"
 msgstr "解锁"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:90
 msgid "Unpublish"
 msgstr "取消发布"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:108
 msgid "Upload PO file"
 msgstr "上传 PO 文件"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/toolbox.tsx:100
 msgid "Upload translated PO file to submit translations"
 msgstr "上传翻译好的 PO 文件来提交翻译"
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:555
 msgid "Uses %s version"
 msgstr "使用%s版本"

@@ -9,293 +9,185 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 14:17+0000\n"
 "Last-Translator: hanfeng <appweb.cn@gmail.com>, 2021\n"
-"Language-Team: Chinese (China) (https://www.transifex.com/torchbox/teams/8009/zh_CN/)\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
+"teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: machine_translators/dummy.py:45
 msgid "Dummy translator"
 msgstr "虚拟译者"
 
-#: models.py:976
 msgid "Up to date"
 msgstr "保持最新"
 
-#: models.py:978
 msgid "Waiting for translations"
 msgstr "待翻译"
 
-#: models.py:1310
 msgid "Manual"
 msgstr "人工"
 
-#: models.py:1311
 msgid "Machine"
 msgstr "机器"
 
-#: models.py:1426
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr "由 {tool_name} 翻译于 {date}"
 
-#: models.py:1429
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr "手工翻译于 {date}"
 
-#: models.py:1432
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr "机器翻译于 {date}"
 
-#: models.py:1873
-msgid "This locale cannot be synced into itself."
-msgstr ""
-
-#: models.py:1878
-msgid "Synchronise content from another locale"
-msgstr ""
-
-#: models.py:1880
-msgid ""
-"Choose a locale to synchronise content from. Any existing and future content"
-" authored in the selected locale will be automatically copied to this one."
-msgstr ""
-
-#: strings.py:47
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
 msgstr "<{}> 标签不被允许。字符串只能包含标准的 HTML 内联标签（比如 <b>, <a>）"
 
-#: strings.py:54
 msgid ""
 "Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
 "tags)"
 msgstr "字符串不能包含任何带有属性的 HTML 标签（除了<a>标签的“id”属性）"
 
-#: strings.py:501
-msgid "Unrecognised id found in an <a> tag: {}"
-msgstr ""
-
-#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
-#, python-format
-msgid ""
-"This page hasn't been translated yet. It is mirroring the <a "
-"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
-"page</a>."
-msgstr ""
-
-#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:81
 msgid "Translate this page"
 msgstr "翻译此页"
 
-#: templates/wagtail_localize/admin/edit_translation.html:6
-#, python-format
-msgid "Translation of %(instance)s into %(locale)s"
-msgstr ""
-
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
 msgid "Submit"
 msgstr "提交"
 
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
 msgid "Go back"
 msgstr "返回"
 
-#: templates/wagtail_localize/admin/translations_report.html:10
-#: views/report.py:93
 msgid "Content type"
 msgstr "内容类型"
 
-#: templates/wagtail_localize/admin/translations_report.html:13
-msgid "Source"
-msgstr ""
-
-#: templates/wagtail_localize/admin/translations_report.html:16
-msgid "Target"
-msgstr ""
-
-#: templates/wagtail_localize/admin/translations_report.html:19
 msgid "Status"
 msgstr "状态"
 
-#: templates/wagtail_localize/admin/translations_report.html:49
-msgid "No translations found."
-msgstr ""
-
-#: templates/wagtail_localize/admin/update_translations.html:11
 msgid "Why would I sync my page?"
 msgstr "我为什么需要同步我的页面？"
 
-#: templates/wagtail_localize/admin/update_translations.html:12
 msgid ""
-"Changes are not automatically applied between translated pages. Syncing will"
-" add new content for translation and remove deleted content."
-msgstr "改动无法自动应用于翻译的页面。同步会添加待翻译的新内容，并移除已删除的内容。"
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
+msgstr ""
+"改动无法自动应用于翻译的页面。同步会添加待翻译的新内容，并移除已删除的内容。"
 
-#: templates/wagtail_localize/admin/update_translations.html:15
 #, python-format
 msgid ""
 "The last sync date was %(last_sync_date)s. You are about to sync the "
 "following:"
 msgstr "上次同步在%(last_sync_date)s。将同步这些："
 
-#: views/edit_translation.py:125
 msgid "Content"
 msgstr "内容"
 
-#: views/edit_translation.py:435
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
 "Please fix them or click publish again to ignore these translations for now."
-msgstr "在发布{locale}的“{object}”时发现了新的验证错误。请修复他们或再次点击发布以暂时忽略这些有错误的翻译。"
+msgstr ""
+"在发布{locale}的“{object}”时发现了新的验证错误。请修复他们或再次点击发布以暂"
+"时忽略这些有错误的翻译。"
 
-#: views/edit_translation.py:450
 #, python-brace-format
-msgid ""
-"Published '{object}' in {locale} with missing translations - see below."
+msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr "在 {locale} 中发布未翻译的 '{object}' - 详情如下."
 
-#: views/edit_translation.py:456
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "已在 {locale} 中发布 '{object}' ."
 
-#: views/edit_translation.py:624
-#, python-brace-format
-msgid ""
-"The data model for '{model_name}' has been changed since the last "
-"translation sync. If any new fields have been added recently, these may not "
-"be visible until the next translation sync."
-msgstr ""
-
-#: views/edit_translation.py:752
 msgid "Translation has been stopped."
 msgstr "翻译已停止"
 
-#: views/edit_translation.py:766
 msgid "Translation has been restarted."
 msgstr "翻译已重新开始"
 
-#: views/edit_translation.py:902
 msgid "Please upload a valid PO file."
 msgstr "请上传一个有效的 PO 文件."
 
-#: views/edit_translation.py:911
 msgid "Cannot import PO file that was created for a different translation."
 msgstr "不能导入其他翻译创建的 PO 文件."
 
-#: views/edit_translation.py:920
 msgid "Successfully imported translations from PO File."
 msgstr "成功从PO文件导入翻译."
 
-#: views/edit_translation.py:988
 msgid "Successfully translated with {}."
 msgstr "成功翻译 {}."
 
-#: views/edit_translation.py:994
 msgid "There isn't anything left to translate."
 msgstr "无任何需要翻译的."
 
-#: views/report.py:94
-msgid "Source title"
-msgstr ""
-
-#: views/report.py:105 wagtail_hooks.py:231
-msgid "Translations"
-msgstr ""
-
-#: views/submit_translations.py:23
 msgid "Select all"
 msgstr "全选"
 
-#: views/submit_translations.py:25
 msgid "Locales"
 msgstr "区域"
 
-#: views/submit_translations.py:27
 msgid "All child pages will be created."
 msgstr "所有的子页面将被创建."
 
-#: views/submit_translations.py:39
 msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "包含下级 ({} 页面)"
 
-#: views/submit_translations.py:116 wagtail_hooks.py:109
 msgid "Translate"
 msgstr "翻译"
 
-#: views/submit_translations.py:176
 msgid "{} locales"
 msgstr "{} 区域"
 
-#: views/submit_translations.py:197
 msgid "Translate page"
 msgstr "翻译页面"
 
-#: views/submit_translations.py:215
 #, python-brace-format
 msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr "页面 '{page_title}' 的翻译成功提交到 {locales}"
 
-#: views/submit_translations.py:224
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr "翻译 {model_name}"
 
-#: views/submit_translations.py:240
 #, python-brace-format
 msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
 msgstr "{model_name} '{object}' 的翻译成功提交到 {locales}"
 
-#: views/update_translations.py:20
 msgid "Publish immediately"
 msgstr "立即发布"
 
-#: views/update_translations.py:21
 msgid ""
 "This will apply the updates and publish immediately, before any new "
 "translations happen."
 msgstr "这将立即应用更改并发布，不等待新的翻译完成。"
 
-#: views/update_translations.py:28
 msgid "Update existing translations"
 msgstr "更新已存在的翻译"
 
-#: views/update_translations.py:46
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
 msgstr "成功更新翻译 '{object}' "
 
-#: wagtail_hooks.py:90
 msgid "Sync translated pages"
 msgstr "同步翻译的页面"
 
-#: wagtail_hooks.py:111
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "翻译 '%(title)s'"
 
-#: wagtail_hooks.py:123
 msgid "Sync translated snippets"
 msgstr "同步翻译的片段"
 
-#: wagtail_hooks.py:125
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "同步 '%(title)s' 的翻译"
 
-#: wagtail_hooks.py:155 wagtail_hooks.py:200
 msgid "Restart translation"
 msgstr "重新翻译"
