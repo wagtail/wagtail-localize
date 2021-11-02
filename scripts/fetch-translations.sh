@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 # Delete old translation files (except "en" which is the source translation)
-find ../wagtail -iname *.po ! -iwholename */en/* -delete
+find ../wagtail-localize -iname *.po ! -iwholename */en/* -delete
 
 # Fetch new translations from transifex
 tx pull -a --minimum-perc=1
@@ -11,4 +11,4 @@ tx pull -a --minimum-perc=1
 #  - Blank, fuzzy and obsolete translations
 #  - The line numbers above each translation
 # These things are only needed by translators (which they won't be seen by) and make the translation updates difficult to check
-find ../wagtail -iname *.po ! -iwholename */en/* -exec msgattrib --translated --no-fuzzy --no-obsolete --no-location -o {} {} \;
+find ../wagtail-localize -iname *.po ! -iwholename */en/* -exec msgattrib --translated --no-fuzzy --no-obsolete --no-location -o {} {} \;

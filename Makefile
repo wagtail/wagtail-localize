@@ -10,3 +10,6 @@ dev: npm_deps
 messages:
 	node ./scripts/extract-translatable-strings.js
 	cd wagtail_localize && python ../testmanage.py makemessages --locale=en
+
+fetch-translations:
+	./scripts/fetch-translations.sh
