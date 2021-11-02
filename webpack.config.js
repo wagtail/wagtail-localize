@@ -1,4 +1,5 @@
-import path from 'path';
+/* eslint @typescript-eslint/no-var-requires: "off" */
+const path = require('path');
 
 module.exports = {
     entry: './wagtail_localize/static_src/main.tsx',
