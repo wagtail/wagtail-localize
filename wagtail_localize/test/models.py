@@ -56,6 +56,14 @@ class TestNestedStreamBlock(blocks.StreamBlock):
     block_b = blocks.TextBlock()
 
 
+class TestChooserStructBlock(blocks.StructBlock):
+    page = blocks.PageChooserBlock()
+
+
+class TestNestedChooserStructBlock(blocks.StructBlock):
+    nested_page = TestChooserStructBlock()
+
+
 class CustomStructBlock(blocks.StructBlock):
     field_a = blocks.TextBlock()
     field_b = blocks.TextBlock()
@@ -123,6 +131,9 @@ class TestStreamBlock(blocks.StreamBlock):
         NonTranslatableSnippet
     )
     test_embedblock = EmbedBlock()
+
+    test_chooserstructblock = TestChooserStructBlock()
+    test_nestedchooserstructblock = TestNestedChooserStructBlock()
 
 
 class TestCustomField(models.TextField):
