@@ -24,28 +24,25 @@ class BaseTranslatableField:
 
     def is_editable(self, obj):
         """
-        Returns True if the field is editable on the given object
+        Returns True if the field is editable on the given object.
         """
         return True
 
     def is_translated(self, obj):
         """
-        Returns True if the value of this field on the given object should be
-        extracted and submitted for translation
+        Returns True if the value of this field on the given object should be extracted and submitted for translation.
         """
         return False
 
     def is_synchronized(self, obj):
         """
-        Returns True if the value of this field on the given object should be
-        copied when translations are created/updated
+        Returns True if the value of this field on the given object should be copied when translations are created/updated.
         """
         return False
 
     def is_overridable(self, obj):
         """
-        Returns True if the value of this field can be overridden. This is only
-        applicable to fields that are synchronized
+        Returns True if the value of this field can be overridden. This is only applicable to fields that are synchronized.
         """
         return self.is_synchronized(obj)
 
@@ -55,7 +52,7 @@ class BaseTranslatableField:
 
 class TranslatableField(BaseTranslatableField):
     """
-    A field that should be translated whenever the original page changes
+    A field that should be translated whenever the original page changes.
     """
 
     def is_translated(self, obj):

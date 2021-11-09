@@ -11,7 +11,7 @@ INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong", "br"]
 
 def lstrip_keep(text):
     """
-    Like lstrip, but also returns the whitespace that was stripped off
+    Like lstrip, but also returns the whitespace that was stripped off.
     """
     text_length = len(text)
     new_text = text.lstrip()
@@ -21,7 +21,7 @@ def lstrip_keep(text):
 
 def rstrip_keep(text):
     """
-    Like rstrip, but also returns the whitespace that was stripped off
+    Like rstrip, but also returns the whitespace that was stripped off.
     """
     text_length = len(text)
     new_text = text.rstrip()
@@ -301,7 +301,7 @@ def extract_strings(html):
 
     def wrap(elements):
         """
-        Wraps the given elements with a <text> tag
+        Wraps the given elements with a <text> tag.
 
         The elements must be contiguous siblings or this might screw up the tree.
         """
@@ -325,7 +325,7 @@ def extract_strings(html):
 
         def ignore_if_at_end(element):
             """
-            Returns True if the given element should be ignored if it is at one of the ends
+            Returns True if the given element should be ignored if it is at one of the ends.
             """
             if isinstance(element, NavigableString):
                 return False

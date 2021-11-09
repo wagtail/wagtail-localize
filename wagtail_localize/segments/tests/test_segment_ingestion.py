@@ -20,7 +20,7 @@ from wagtail_localize.test.models import TestChildObject, TestPage, TestSnippet
 
 def streamfield_raw_data(stream_data):
     """
-    Extracts raw_data from streamfields. The attribute for doing this changed in Wagtail 2.12
+    Extracts raw_data from streamfields. The attribute for doing this changed in Wagtail 2.12.
     """
     if WAGTAIL_VERSION >= (2, 12):
         return stream_data.raw_data

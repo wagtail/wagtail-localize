@@ -77,7 +77,7 @@ class ContentTypeModelChoiceFilter(django_filters.ModelChoiceFilter):
 
     def filter(self, qs, value):
         """
-        Filters the QuerySet to only include translations for the select content type and any descendant content types
+        Filters the QuerySet to only include translations for the select content type and any descendant content types.
 
         Called from django_filters.
         """

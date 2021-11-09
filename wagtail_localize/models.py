@@ -150,11 +150,9 @@ class TranslatableObjectManager(models.Manager):
 
 class TranslatableObject(models.Model):
     """
-    A TranslatableObject represents a set of instances of a translatable model
-    that are all translations of each another.
+    A TranslatableObject represents a set of instances of a translatable model that are all translations of each another.
 
-    In Wagtail, objects are considered translations of each other when they are
-    of the same content type and have the same `translation_key` value.
+    In Wagtail, objects are considered translations of each other when they are of the same content type and have the same `translation_key` value.
 
     Attributes:
         translation_key (UUIDField): The translation_key that value that is used by the instances.
@@ -429,8 +427,7 @@ class TranslationSource(models.Model):
     @transaction.atomic
     def update_from_db(self):
         """
-        Retrieves the source instance from the database and updates this TranslationSource
-        with its current contents.
+        Retrieves the source instance from the database and updates this TranslationSource with its current contents.
 
         Raises:
             Model.DoesNotExist: If the source instance has been deleted.
@@ -686,9 +683,7 @@ class TranslationSource(models.Model):
         self, locale, user=None, publish=True, copy_parent_pages=False, fallback=False
     ):
         """
-        Creates/updates a translation of the object into the specified locale
-        based on the content of this source and the translated strings
-        currently in translation memory.
+        Creates/updates a translation of the object into the specified locale based on the content of this source and the translated strings currently in translation memory.
 
         Args:
             locale (Locale): The target locale to generate the translation for.
@@ -865,8 +860,7 @@ class TranslationSource(models.Model):
 
     def schema_out_of_date(self):
         """
-        Returns True if the app that contains the model this source was generated from
-        has been updated since the source was last updated.
+        Returns True if the app that contains the model this source was generated from has been updated since the source was last updated.
         """
         if not self.schema_version:
             return False
@@ -1402,7 +1396,7 @@ class TranslationContext(models.Model):
 
     def get_field_path(self, instance):
         """
-        Gets the field path for this context
+        Gets the field path for this context.
 
         Field path's were introduced in version 1.0, any contexts that were created before that release won't have one.
         """
@@ -1788,9 +1782,7 @@ class BaseSegment(models.Model):
 class StringSegmentQuerySet(models.QuerySet):
     def annotate_translation(self, locale, include_errors=False):
         """
-        Adds a 'translation' field to the segments containing the
-        text content of the segment translated into the specified
-        locale.
+        Adds a 'translation' field to the segments containing the text content of the segment translated into the specified locale.
 
         By default, this would exclude any translations that have
         an error. To include these, set `include_errors` to True.
@@ -1808,8 +1800,7 @@ class StringSegmentQuerySet(models.QuerySet):
 
     def get_translations(self, locale):
         """
-        Returns a queryset of StringTranslations that match any of the
-        strings in this queryset.
+        Returns a queryset of StringTranslations that match any of the strings in this queryset.
         """
         return StringTranslation.objects.filter(
             id__in=self.annotate(
@@ -1979,8 +1970,7 @@ class RelatedObjectSegment(BaseSegment):
 class OverridableSegmentQuerySet(models.QuerySet):
     def annotate_override_json(self, locale, include_errors=False):
         """
-        Adds an 'override_json' field to the segments containing the
-        JSON-formatted data for segments that have been overriden.
+        Adds an 'override_json' field to the segments containing the JSON-formatted data for segments that have been overriden.
 
         By default, this would exclude any overrides that have
         an error. To include these, set `include_errors` to True.
@@ -1997,8 +1987,7 @@ class OverridableSegmentQuerySet(models.QuerySet):
 
     def get_overrides(self, locale):
         """
-        Returns a queryset of SegmentOverrides that override any of the
-        segments in this queryset.
+        Returns a queryset of SegmentOverrides that override any of the segments in this queryset.
         """
         return SegmentOverride.objects.filter(
             id__in=self.annotate(
@@ -2030,7 +2019,7 @@ class OverridableSegment(BaseSegment):
     @property
     def data(self):
         """
-        Returns the decoded JSON data that's stored in .data_json
+        Returns the decoded JSON data that's stored in .data_json.
         """
         return json.loads(self.data_json)
 

@@ -105,8 +105,7 @@ class PageIndex:
 
     def sort_by_tree_position(self):
         """
-        Returns a new index with the pages sorted in depth-first-search order
-        using their parent in their respective source locale.
+        Returns a new index with the pages sorted in depth-first-search order using their parent in their respective source locale.
         """
         remaining_pages = {page.translation_key for page in self.pages}
 
