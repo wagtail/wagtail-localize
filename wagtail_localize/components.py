@@ -1,6 +1,32 @@
 from django import forms
 
 
+TRANSLATION_COMPONENTS = []
+
+
+def get_translation_components():
+    return TRANSLATION_COMPONENTS
+
+
+def register_translation_component(*, heading, help_text=None, required=False):
+    def _wrapper(model):
+        if model not in TRANSLATION_COMPONENTS:
+            TRANSLATION_COMPONENTS.append(
+                {
+                    "heading": heading,
+                    "help_text": help_text,
+                    "required": required,
+                    "model": model,
+                    "slug": model._meta.db_table,
+                }
+            )
+            TRANSLATION_COMPONENTS.sort(key=lambda x: x["model"]._meta.verbose_name)
+
+        return model
+
+    return _wrapper
+
+
 class BaseComponentManager:
     def __init__(self, components):
         self.components = components
