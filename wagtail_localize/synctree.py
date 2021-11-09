@@ -130,7 +130,8 @@ class PageIndex:
     def not_translated_into(self, locale):
         """
         Returns an index of pages that are not translated into the specified locale.
-        This includes pages that have and don't have a placeholder
+
+        This includes pages that have and don't have a placeholder.
         """
         pages = [page for page in self.pages if locale.id not in page.locales]
 

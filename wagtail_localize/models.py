@@ -62,8 +62,7 @@ from .strings import StringValue, validate_translation_links
 
 def pk(obj):
     """
-    A helper that gets the primary key of a model instance if one is passed in.
-    If not, this returns the parameter itself.
+    A helper that gets the primary key of a model instance if one is passed in. If not, this returns the parameter itself.
 
     This allows functions to have parameters that accept either a primary key
     or model instance. For example:
