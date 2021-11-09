@@ -3142,8 +3142,7 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
 
 class TestEditAlias(WagtailTestUtils, TestCase):
     """
-    Tests that Wagtail Localize's custom edit alias template is rendered for aliases
-    that have a different locale to their original.
+    Tests that Wagtail Localize's custom edit alias template is rendered for aliases that have a different locale to their original.
     """
 
     def setUp(self):

@@ -87,7 +87,7 @@ class CustomStructBlock(blocks.StructBlock):
 
 class CustomBlockWithoutExtractMethod(blocks.Block):
     def render_form(self, *args, **kwargs):
-        """Placeholder for Wagtail < 2.13"""
+        """Placeholder for Wagtail < 2.13."""
         return ""
 
     class Meta:

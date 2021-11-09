@@ -3,7 +3,7 @@ from wagtail.core.models import Page, get_translatable_models
 
 def get_locale_usage(locale):
     """
-    Returns the number of pages and other objects that use a locale
+    Returns the number of pages and other objects that use a locale.
     """
     num_pages = Page.objects.filter(locale=locale).exclude(depth=1).count()
 

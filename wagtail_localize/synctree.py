@@ -105,8 +105,7 @@ class PageIndex:
 
     def sort_by_tree_position(self):
         """
-        Returns a new index with the pages sorted in depth-first-search order
-        using their parent in their respective source locale.
+        Returns a new index with the pages sorted in depth-first-search order using their parent in their respective source locale.
         """
         remaining_pages = {page.translation_key for page in self.pages}
 
@@ -131,7 +130,8 @@ class PageIndex:
     def not_translated_into(self, locale):
         """
         Returns an index of pages that are not translated into the specified locale.
-        This includes pages that have and don't have a placeholder
+
+        This includes pages that have and don't have a placeholder.
         """
         pages = [page for page in self.pages if locale.id not in page.locales]
 
