@@ -179,41 +179,40 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
         form = self.get_form()
 
         if form.is_valid():
-            with transaction.atomic():
-                translator = TranslationCreator(
-                    self.request.user, form.cleaned_data["locales"]
-                )
-                translator.create_translations(self.object)
-
-                # Now add the sub tree (if the obj is a page)
-                if isinstance(self.object, Page):
-                    if form.cleaned_data["include_subtree"]:
-
-                        def _walk(current_page):
-                            for child_page in current_page.get_children():
-                                translator.create_translations(child_page)
-
-                                if child_page.numchild:
-                                    _walk(child_page)
-
-                        _walk(self.object)
-
-                if len(form.cleaned_data["locales"]) == 1:
-                    locales = form.cleaned_data["locales"][0].get_display_name()
-
-                else:
-                    # Note: always plural
-                    locales = _("{} locales").format(len(form.cleaned_data["locales"]))
-
-                # TODO: Button that links to page in translations report when we have it
-                messages.success(self.request, self.get_success_message(locales))
-
-                return redirect(
-                    self.get_success_url() or self.get_default_success_url()
-                )
+            return self.form_valid()
 
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+    @transaction.atomic
+    def form_valid(self, form):
+        translator = TranslationCreator(self.request.user, form.cleaned_data["locales"])
+        translator.create_translations(self.object)
+
+        # Now add the sub tree (if the obj is a page)
+        if isinstance(self.object, Page):
+            if form.cleaned_data["include_subtree"]:
+
+                def _walk(current_page):
+                    for child_page in current_page.get_children():
+                        translator.create_translations(child_page)
+
+                        if child_page.numchild:
+                            _walk(child_page)
+
+                _walk(self.object)
+
+        if len(form.cleaned_data["locales"]) == 1:
+            locales = form.cleaned_data["locales"][0].get_display_name()
+
+        else:
+            # Note: always plural
+            locales = _("{} locales").format(len(form.cleaned_data["locales"]))
+
+        # TODO: Button that links to page in translations report when we have it
+        messages.success(self.request, self.get_success_message(locales))
+
+        return redirect(self.get_success_url() or self.get_default_success_url())
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.has_perms(["wagtail_localize.submit_translation"]):
