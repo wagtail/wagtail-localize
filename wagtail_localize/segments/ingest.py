@@ -231,10 +231,9 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
     Args:
         original_obj (Model): The original instance that the segments were extracted from.
         translated_obj (Model): The translated instance that we are ingesting segments into.
-        src_local (Locale): The locale of the source instance.
+        src_locale (Locale): The locale of the source instance.
         tgt_locale (Locale): The locale of the translated instance
-        segments (list[StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, or OverridableSegmentValue]):
-            The segment values to ingest
+        segments (list[StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, or OverridableSegmentValue]): The segment values to ingest
     """
     # Get segments by field name
     segments_by_field_name = defaultdict(list)
