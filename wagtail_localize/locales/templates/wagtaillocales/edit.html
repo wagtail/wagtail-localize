@@ -1,5 +1,5 @@
 {% extends "wagtailadmin/base.html" %}
-{% load i18n %}
+{% load i18n wagtailadmin_tags %}
 
 {% block titletag %}{{ view.page_title }} {{ view.get_page_subtitle }}{% endblock %}
 
@@ -34,23 +34,7 @@
                 {% endblock %}
             </ul>
 
-            {% for component, component_instance, component_form in components %}
-                <section class="component-form{% if component.required %} component-form--required{% endif %} {% if not component.required and not component_form.enabled.value %} component-form--disabled{% endif %}">
-                    <h3>{{ component.heading }}</h3>
-                    <p>{{ component.help_text }}</p>
-
-                    <ul class="fields component-form__fields">
-                        {% for field in component_form.visible_fields %}
-                            {% include "wagtailadmin/shared/field_as_li.html" with li_classes="component-form__fieldname-"|add:field.name %}
-                        {% endfor %}
-                    </ul>
-
-                    {% if not component.required %}
-                        <button type="button" class="button button-small component-form__enable-button">{% trans "Enable "%}</button>
-                        <button type="button" class="button button-small no component-form__disable-button">{% trans "Disable "%}</button>
-                    {% endif %}
-                </section>
-            {% endfor %}
+            {% include "wagtail_localize/admin/_components.html" with components=components only %}
 
             <ul class="fields">
                 <li>
@@ -74,27 +58,7 @@
         {{ component_form.media.js }}
     {% endfor %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Component enable buttons
-            document.querySelectorAll('.component-form__enable-button').forEach(function (enableButton) {
-                enableButton.addEventListener('click', function () {
-                    var componentForm = enableButton.closest('.component-form');
-                    componentForm.classList.remove('component-form--disabled');
-                    componentForm.querySelector('.component-form__fieldname-enabled input').checked = true;
-                });
-            });
-
-            // Component disable buttons
-            document.querySelectorAll('.component-form__disable-button').forEach(function (disableButton) {
-                disableButton.addEventListener('click', function () {
-                    var componentForm = disableButton.closest('.component-form');
-                    componentForm.classList.add('component-form--disabled');
-                    componentForm.querySelector('.component-form__fieldname-enabled input').checked = false;
-                });
-            });
-        });
-    </script>
+    <script type="text/javascript" src="{% versioned_static 'wagtail_localize/js/wagtail-localize-component-form.js' %}"></script>
 {% endblock %}
 
 {% block extra_css %}
@@ -105,48 +69,5 @@
         {{ component_form.media.css }}
     {% endfor %}
 
-    <style>
-        /* Put a box around component forms */
-        .component-form {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
-
-        /* Align component form buttons to the right */
-        .component-form button {
-            float: right;
-        }
-        .component-form::after {
-            content: ' ';
-            display: table;
-            clear: both;
-        }
-
-        /* Hide the enabled checkbox */
-        .component-form__fieldname-enabled {
-            display: none;
-        }
-
-        /* Hide fields if the form is disabled */
-        .component-form--disabled .component-form__fields {
-            display: none;
-        }
-
-        /* Show enabled button if the form is disabled */
-        .component-form__enable-button {
-            display: none;
-        }
-
-        .component-form--disabled .component-form__enable-button {
-            display: block;
-        }
-
-        /* Hide disabled button if the form is disabled */
-        .component-form--disabled .component-form__disable-button {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{% versioned_static 'wagtail_localize/css/wagtail-localize-component-form.css' %}" />
 {% endblock %}
