@@ -11,8 +11,8 @@
         </ul>
 
         {% if not component.required %}
-            <button type="button" class="button button-small component-form__enable-button">{% trans "Enable "%}</button>
-            <button type="button" class="button button-small no component-form__disable-button">{% trans "Disable "%}</button>
+            <button type="button" class="button button-small component-form__enable-button">{% if component.enable_text %}{{ component.enable_text }}{% else %}{% trans "Enable" %}{% endif %}</button>
+            <button type="button" class="button button-small no component-form__disable-button">{% if component.disable_text %}{{ component.disable_text }}{% else %}{% trans "Disable" %}{% endif %}</button>
         {% endif %}
     </section>
 {% endfor %}
