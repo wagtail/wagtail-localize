@@ -40,13 +40,19 @@ class BaseComponentManager:
         raise NotImplementedError
 
     @classmethod
+    def get_component_instance(cls, component_model, instance=None):
+        raise NotImplementedError
+
+    @classmethod
     def from_request(cls, request, instance=None):
         components = []
 
         for component in cls.get_components():
             component_model = component["model"]
 
-            component_instance = component_model.objects.filter(locale=instance).first()
+            component_instance = cls.get_component_instance(
+                component_model, instance=instance
+            )
             edit_handler = cls.get_component_edit_handler(component_model).bind_to(
                 model=component_model, instance=component_instance, request=request
             )

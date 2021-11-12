@@ -42,6 +42,10 @@ class ComponentManager(BaseComponentManager):
     def get_component_edit_handler(cls, component_model):
         return get_locale_component_edit_handler(component_model)
 
+    @classmethod
+    def get_component_instance(cls, component_model, instance=None):
+        return component_model.objects.filter(locale=instance).first()
+
     def is_valid(self, locale, *args, **kwargs):
         is_valid = True
 
