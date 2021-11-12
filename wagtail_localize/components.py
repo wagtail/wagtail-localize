@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 
 TRANSLATION_COMPONENTS = []
@@ -8,7 +9,9 @@ def get_translation_components():
     return TRANSLATION_COMPONENTS
 
 
-def register_translation_component(*, heading, help_text=None, required=False):
+def register_translation_component(
+    *, heading, help_text=None, required=False, enable_text=None, disable_text=None
+):
     def _wrapper(model):
         if model not in TRANSLATION_COMPONENTS:
             TRANSLATION_COMPONENTS.append(
@@ -18,6 +21,8 @@ def register_translation_component(*, heading, help_text=None, required=False):
                     "required": required,
                     "model": model,
                     "slug": model._meta.db_table,
+                    "enable_text": enable_text,
+                    "disable_text": disable_text or _("Disable"),
                 }
             )
             TRANSLATION_COMPONENTS.sort(key=lambda x: x["model"]._meta.verbose_name)
