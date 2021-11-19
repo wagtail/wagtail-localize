@@ -25,7 +25,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <form method="POST">
+        <form method="POST" novalidate>
             {% csrf_token %}
 
             {% if next_url %}
@@ -54,15 +54,38 @@
                         {% endif %}
                     {% endfor %}
                 {% endblock %}
+            </ul>
+
+            {% include "wagtail_localize/admin/_components.html" with components=components only %}
+
+            <ul class="fields">
                 <li><input type="submit" value="{% trans 'Submit' %}" class="button" />{% if back_url %} <a href="{{ back_url }}" class="button button-secondary">{% trans "Go back" %}</a>{% endif %}</li>
             </ul>
         </form>
     </div>
 {% endblock %}
 
+{% block extra_js %}
+    {{ block.super }}
+    {{ form.media.js }}
+
+    {% for component_model, component_instance, component_form in components %}
+        {{ component_form.media.js }}
+    {% endfor %}
+
+    <script type="text/javascript" src="{% versioned_static 'wagtail_localize/js/wagtail-localize-component-form.js' %}"></script>
+{% endblock %}
 
 {% block extra_css %}
     {{ block.super }}
+
+    {{ form.media.css }}
+
+    {% for component_model, component_instance, component_form in components %}
+        {{ component_form.media.css }}
+    {% endfor %}
+
+    <link rel="stylesheet" href="{% versioned_static 'wagtail_localize/css/wagtail-localize-component-form.css' %}" />
 
     <style>
         .publish-translations-field {

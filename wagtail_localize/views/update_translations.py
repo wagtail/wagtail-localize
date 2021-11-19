@@ -13,6 +13,7 @@ from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Page
 
 from wagtail_localize.models import TranslationSource
+from wagtail_localize.views.submit_translations import TranslationComponentManager
 
 
 class UpdateTranslationsForm(forms.Form):
@@ -102,6 +103,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                 "form": self.get_form(),
                 "next_url": self.get_success_url(),
                 "back_url": self.get_success_url() or self.get_default_success_url(),
+                "components": self.components,
             }
         )
         return context
@@ -109,32 +111,41 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
     def post(self, request, **kwargs):
         form = self.get_form()
 
-        if form.is_valid():
-            with transaction.atomic():
-                self.object.update_from_db()
-
-                if form.cleaned_data["publish_translations"]:
-                    for translation in self.object.translations.filter(
-                        enabled=True
-                    ).select_related("target_locale"):
-                        try:
-                            translation.save_target(user=request.user, publish=True)
-                        except ValidationError:
-                            pass
-
-                # TODO: Button that links to page in translations report when we have it
-                messages.success(self.request, self.get_success_message())
-
-                return redirect(
-                    self.get_success_url() or self.get_default_success_url()
-                )
+        if form.is_valid() and self.components.is_valid():
+            return self.form_valid(form)
 
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+    @transaction.atomic
+    def form_valid(self, form):
+        self.object.update_from_db()
+
+        if form.cleaned_data["publish_translations"]:
+            for translation in self.object.translations.filter(
+                enabled=True
+            ).select_related("target_locale"):
+                try:
+                    translation.save_target(user=self.request.user, publish=True)
+                except ValidationError:
+                    pass
+
+        self.components.save(
+            self.object,
+            sources_and_translations={
+                self.object: list(self.object.translations.filter(enabled=True))
+            },
+        )
+
+        # TODO: Button that links to page in translations report when we have it
+        messages.success(self.request, self.get_success_message())
+
+        return redirect(self.get_success_url() or self.get_default_success_url())
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.has_perms(["wagtail_localize.submit_translation"]):
             raise PermissionDenied
 
         self.object = self.get_object()
+        self.components = TranslationComponentManager.from_request(self.request)
         return super().dispatch(request, *args, **kwargs)
