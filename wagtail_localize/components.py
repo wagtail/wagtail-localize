@@ -1,5 +1,12 @@
+import functools
+
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.edit_handlers import (
+    ObjectList,
+    extract_panel_definitions_from_model_class,
+)
+from wagtail.admin.forms import WagtailAdminModelForm
 
 
 TRANSLATION_COMPONENTS = []
@@ -114,3 +121,72 @@ class BaseComponentManager:
 
     def __iter__(self):
         return iter(self.components)
+
+
+@functools.lru_cache()
+def get_translation_component_edit_handler(model):
+    if hasattr(model, "edit_handler"):
+        # use the edit handler specified on the class
+        return model.edit_handler
+    else:
+        panels = extract_panel_definitions_from_model_class(model)
+        return ObjectList(
+            panels,
+            base_form_class=getattr(model, "base_form_class", WagtailAdminModelForm),
+        )
+
+
+class TranslationComponentManager(BaseComponentManager):
+    """
+    The translation component manager handles all registered components for translation.
+
+    Classes registered as translation components should implement a `get_or_create_from_source_and_translation_data`
+    method which takes `translation_source`, `translations` and kwargs as parameters.
+    """
+
+    @classmethod
+    def get_components(cls):
+        return get_translation_components()
+
+    @classmethod
+    def get_component_edit_handler(cls, component_model):
+        return get_translation_component_edit_handler(component_model)
+
+    @classmethod
+    def get_component_instance(cls, component_model, instance=None):
+        return None
+
+    def save(self, origin_instance, sources_and_translations=None):
+        for component, component_instance, component_form in self.components:
+            if component["required"] or component_form["enabled"].value():
+                if hasattr(
+                    component["model"], "get_or_create_from_source_and_translation_data"
+                ):
+                    component_instance = component_form.save(commit=False)
+                    data = self._get_component_form_data(
+                        component_instance, component_form.cleaned_data
+                    )
+
+                    self._save_component_instances(
+                        component["model"], sources_and_translations, **data
+                    )
+                else:
+                    component_form.save()
+
+    def _get_component_form_data(self, component_instance, cleaned_data):
+        return {
+            field.name: getattr(component_instance, field.name)
+            for field in component_instance._meta.get_fields()
+            if field.name in cleaned_data
+        }
+
+    def _save_component_instances(
+        self, component_model, sources_and_translations, **kwargs
+    ):
+        for translation_source, translations in sources_and_translations.items():
+            try:
+                component_model.get_or_create_from_source_and_translation_data(
+                    translation_source, translations, **kwargs
+                )
+            except TypeError:
+                continue
