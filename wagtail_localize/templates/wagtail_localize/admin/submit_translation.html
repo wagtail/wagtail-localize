@@ -1,4 +1,3 @@
-
 {% extends "wagtailadmin/base.html" %}
 {% load i18n wagtailadmin_tags %}
 {% block titletag %}{{ view.get_title }} {{ view.get_subtitle }}{% endblock %}
@@ -7,7 +6,7 @@
     {% include "wagtailadmin/shared/header.html" with title=view.get_title subtitle=view.get_subtitle icon="doc-empty-inverse" %}
 
     <div class="nice-padding">
-        <form method="POST">
+        <form method="POST" novalidate>
             {% csrf_token %}
 
             {% if next_url %}
@@ -22,6 +21,11 @@
                         {% include "wagtailadmin/shared/field_as_li.html" %}
                     {% endfor %}
                 {% endblock %}
+            </ul>
+
+            {% include "wagtail_localize/admin/_components.html" with components=components only %}
+
+            <ul class="fields">
                 <li><input type="submit" value="{% trans 'Submit' %}" class="button" />{% if back_url %} <a href="{{ back_url }}" class="button button-secondary">{% trans "Go back" %}</a>{% endif %}</li>
             </ul>
         </form>
@@ -44,4 +48,21 @@
             });
         });
     </script>
+
+    {% for component_model, component_instance, component_form in components %}
+        {{ component_form.media.js }}
+    {% endfor %}
+
+    <script type="text/javascript" src="{% versioned_static 'wagtail_localize/js/wagtail-localize-component-form.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    {{ form.media.css }}
+
+    {% for component_model, component_instance, component_form in components %}
+        {{ component_form.media.css }}
+    {% endfor %}
+
+    <link rel="stylesheet" href="{% versioned_static 'wagtail_localize/css/wagtail-localize-component-form.css' %}" />
 {% endblock %}

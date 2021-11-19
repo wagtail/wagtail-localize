@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -15,6 +17,7 @@ from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
+from wagtail_localize.components import TranslationComponentManager
 from wagtail_localize.models import Translation, TranslationSource
 
 
@@ -83,6 +86,7 @@ class TranslationCreator:
         self.user = user
         self.target_locales = target_locales
         self.seen_objects = set()
+        self.mappings = defaultdict(list)
 
     def create_translations(self, instance, include_related_objects=True):
         if isinstance(instance, Page):
@@ -116,6 +120,7 @@ class TranslationCreator:
             translation_mode = getattr(
                 settings, "WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE", "synced"
             )
+        translation_enabled = translation_mode == "synced"
 
         # Set up translation records
         for target_locale in self.target_locales:
@@ -125,8 +130,10 @@ class TranslationCreator:
             translation, created = Translation.objects.update_or_create(
                 source=source,
                 target_locale=target_locale,
-                defaults={"enabled": translation_mode == "synced"},
+                defaults={"enabled": translation_enabled},
             )
+
+            self.mappings[source].append(translation)
 
             try:
                 translation.save_target(user=self.user)
@@ -171,6 +178,7 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
                 "form": self.get_form(),
                 "next_url": self.get_success_url(),
                 "back_url": self.get_success_url() or self.get_default_success_url(),
+                "components": self.components,
             }
         )
         return context
@@ -178,8 +186,8 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
     def post(self, request, **kwargs):
         form = self.get_form()
 
-        if form.is_valid():
-            return self.form_valid()
+        if form.is_valid() and self.components.is_valid():
+            return self.form_valid(form)
 
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
@@ -209,6 +217,8 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
             # Note: always plural
             locales = _("{} locales").format(len(form.cleaned_data["locales"]))
 
+        self.components.save(self.object, sources_and_translations=translator.mappings)
+
         # TODO: Button that links to page in translations report when we have it
         messages.success(self.request, self.get_success_message(locales))
 
@@ -219,6 +229,7 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
             raise PermissionDenied
 
         self.object = self.get_object()
+        self.components = TranslationComponentManager.from_request(self.request)
         return super().dispatch(request, *args, **kwargs)
 
 
