@@ -18,7 +18,9 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import register_snippet
 
+from wagtail_localize.components import register_translation_component
 from wagtail_localize.fields import SynchronizedField, TranslatableField
+from wagtail_localize.models import TranslationSource
 from wagtail_localize.segments import StringSegmentValue
 
 
@@ -436,3 +438,35 @@ class PageWithCustomEditHandlerChildObject(TranslatableMixin, Orderable):
 
     class Meta(TranslatableMixin.Meta, Orderable.Meta):
         pass
+
+
+@register_translation_component(
+    heading=gettext_lazy("Custom translation view component"),
+    help_text=gettext_lazy("This is the component help text"),
+    enable_text=gettext_lazy("Add custom data"),
+    disable_text=gettext_lazy("Do not send add custom data"),
+)
+class CustomTranslationData(models.Model):
+    translation_source = models.ForeignKey(
+        TranslationSource, on_delete=models.CASCADE, editable=False
+    )
+    custom_text_field = models.CharField(max_length=255)
+
+    @classmethod
+    def get_or_create_from_source_and_translation_data(
+        cls, translation_source, translations, **kwargs
+    ):
+        custom_data, created = CustomTranslationData.objects.get_or_create(
+            translation_source=translation_source, **kwargs
+        )
+
+        return custom_data, created
+
+
+@register_translation_component(
+    heading=gettext_lazy("Notes"),
+    enable_text=gettext_lazy("Add notes"),
+    disable_text=gettext_lazy("Do not add notes"),
+)
+class CustomButSimpleTranslationData(models.Model):
+    notes = models.CharField(max_length=255)
