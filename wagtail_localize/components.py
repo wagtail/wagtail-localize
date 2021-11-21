@@ -1,4 +1,5 @@
 import functools
+import inspect
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -39,6 +40,14 @@ def register_translation_component(
     return _wrapper
 
 
+def accepts_parameter(func, param):
+    """
+    Determine whether the callable `func` has a signature that accepts the given parameter
+    """
+    signature = inspect.signature(func)
+    return param in signature.parameters
+
+
 class BaseComponentManager:
     def __init__(self, components):
         self.components = components
@@ -52,18 +61,18 @@ class BaseComponentManager:
         raise NotImplementedError
 
     @classmethod
-    def get_component_instance(cls, component_model, instance=None):
+    def get_component_instance(cls, component_model, source_object_instance=None):
         raise NotImplementedError
 
     @classmethod
-    def from_request(cls, request, instance=None):
+    def from_request(cls, request, source_object_instance=None):
         components = []
 
         for component in cls.get_components():
             component_model = component["model"]
 
             component_instance = cls.get_component_instance(
-                component_model, instance=instance
+                component_model, source_object_instance=source_object_instance
             )
             edit_handler = cls.get_component_edit_handler(component_model).bind_to(
                 model=component_model, instance=component_instance, request=request
@@ -86,15 +95,19 @@ class BaseComponentManager:
 
             prefix = "component-{}".format(component_model._meta.db_table)
 
+            form_kwargs = {
+                "instance": component_instance,
+                "prefix": prefix,
+            }
+            if accepts_parameter(form_class, "source_object_instance"):
+                form_kwargs["source_object_instance"] = source_object_instance
+            if accepts_parameter(form_class, "user"):
+                form_kwargs["user"] = request.user
+
             if request.method == "POST":
-                form = form_class(
-                    request.POST,
-                    request.FILES,
-                    instance=component_instance,
-                    prefix=prefix,
-                )
+                form = form_class(request.POST, request.FILES, **form_kwargs)
             else:
-                form = form_class(instance=component_instance, prefix=prefix)
+                form = form_class(**form_kwargs)
 
             components.append((component, component_instance, form))
 
@@ -153,10 +166,10 @@ class TranslationComponentManager(BaseComponentManager):
         return get_translation_component_edit_handler(component_model)
 
     @classmethod
-    def get_component_instance(cls, component_model, instance=None):
+    def get_component_instance(cls, component_model, source_object_instance=None):
         return None
 
-    def save(self, origin_instance, sources_and_translations=None):
+    def save(self, source_object_instance, sources_and_translations=None):
         for component, component_instance, component_form in self.components:
             if component["required"] or component_form["enabled"].value():
                 if hasattr(

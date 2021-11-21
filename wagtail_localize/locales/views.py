@@ -43,8 +43,8 @@ class ComponentManager(BaseComponentManager):
         return get_locale_component_edit_handler(component_model)
 
     @classmethod
-    def get_component_instance(cls, component_model, instance=None):
-        return component_model.objects.filter(locale=instance).first()
+    def get_component_instance(cls, component_model, source_object_instance=None):
+        return component_model.objects.filter(locale=source_object_instance).first()
 
     def is_valid(self, locale, *args, **kwargs):
         is_valid = True
@@ -134,7 +134,9 @@ class EditView(generic.EditView):
     queryset = Locale.all_objects.all()
 
     def get_components(self):
-        return ComponentManager.from_request(self.request, instance=self.object)
+        return ComponentManager.from_request(
+            self.request, source_object_instance=self.object
+        )
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
