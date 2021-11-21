@@ -16,13 +16,7 @@ from wagtail_localize.test.models import (
     TestWithTranslationModeEnabledPage,
 )
 
-from .utils import assert_permission_denied
-
-
-def make_test_page(parent, cls=None, **kwargs):
-    cls = cls or TestPage
-    kwargs.setdefault("title", "Test page")
-    return parent.add_child(instance=cls(**kwargs))
+from .utils import assert_permission_denied, make_test_page
 
 
 def strip_user_perms():

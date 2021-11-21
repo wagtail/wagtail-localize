@@ -5,13 +5,9 @@ from wagtail.core.models import Locale, Page
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import Translation, TranslationSource
-from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.test.models import TestSnippet
 
-
-def make_test_page(parent, cls=None, **kwargs):
-    cls = cls or TestPage
-    kwargs.setdefault("title", "Test page")
-    return parent.add_child(instance=cls(**kwargs))
+from .utils import make_test_page
 
 
 @override_settings(
