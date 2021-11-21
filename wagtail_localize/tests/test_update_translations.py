@@ -8,15 +8,9 @@ from wagtail.core.models import Locale, Page
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import StringSegment, Translation, TranslationSource
-from wagtail_localize.test.models import NonTranslatableSnippet, TestPage, TestSnippet
+from wagtail_localize.test.models import NonTranslatableSnippet, TestSnippet
 
-from .utils import assert_permission_denied
-
-
-def make_test_page(parent, cls=None, **kwargs):
-    cls = cls or TestPage
-    kwargs.setdefault("title", "Test page")
-    return parent.add_child(instance=cls(**kwargs))
+from .utils import assert_permission_denied, make_test_page
 
 
 def strip_user_perms():
