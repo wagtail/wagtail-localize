@@ -147,5 +147,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
             raise PermissionDenied
 
         self.object = self.get_object()
-        self.components = TranslationComponentManager.from_request(self.request)
+        self.components = TranslationComponentManager.from_request(
+            self.request, source_object_instance=self.object
+        )
         return super().dispatch(request, *args, **kwargs)
