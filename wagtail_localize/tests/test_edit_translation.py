@@ -2064,7 +2064,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             },
         )
 
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_edit_translation_without_snippet_perms(self):
         string = String.objects.get(data="Test snippet")
@@ -2084,7 +2084,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             },
         )
 
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
 
 @freeze_time("2020-08-21")
@@ -2224,7 +2224,7 @@ class TestEditOverrideAPIView(EditTranslationTestData, APITestCase):
             },
         )
 
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
 
 class TestDownloadPOFileView(EditTranslationTestData, TestCase):
