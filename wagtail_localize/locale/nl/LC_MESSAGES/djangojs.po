@@ -134,9 +134,6 @@ msgstr "vertaalde segmenten"
 msgid "Server error"
 msgstr "Server error"
 
-msgid "Stop translation"
-msgstr "Stop vertaling"
-
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 "Er zijn niet opgeslagen segmenten. Bewaar deze of annuleer voor weggaan."

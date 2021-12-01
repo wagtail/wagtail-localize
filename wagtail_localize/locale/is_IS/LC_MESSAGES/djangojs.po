@@ -131,9 +131,6 @@ msgstr "hlutar þýddir"
 msgid "Server error"
 msgstr "Villa á netþjóni"
 
-msgid "Stop translation"
-msgstr "Hætta þýðingu"
-
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 "Það eru óvistaðir hlutar. Vinsamlegast vistið eða hættið við breytingarnar "

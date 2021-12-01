@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 14:17+0000\n"
+"POT-Creation-Date: 2021-11-02 13:15+0000\n"
 "Last-Translator: Diogo Silva <diogo_silva30@hotmail.com>, 2021\n"
 "Language-Team: Portuguese (Portugal) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
@@ -210,6 +210,3 @@ msgstr "Sincronizar trechos traduzidos"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizar traduções de '%(title)s'"
-
-msgid "Restart translation"
-msgstr "Reiniciar tradução"

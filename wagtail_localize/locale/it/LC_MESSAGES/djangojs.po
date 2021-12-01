@@ -135,8 +135,8 @@ msgstr "segmenti tradotti"
 msgid "Server error"
 msgstr "Errore del Server"
 
-msgid "Stop translation"
-msgstr "Interrompi traduzione"
+msgid "Stop Synced translation"
+msgstr "Interrompi traduzione sincronizzata"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

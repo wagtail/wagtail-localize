@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 14:17+0000\n"
+"POT-Creation-Date: 2021-11-02 13:15+0000\n"
 "Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2021\n"
 "Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
@@ -261,6 +261,3 @@ msgstr "Lefordított elemek szinkronizálása"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "'%(title)s' fordításainak szinkronizálása"
-
-msgid "Restart translation"
-msgstr "Fordítás újraindítása"

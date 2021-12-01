@@ -2,10 +2,11 @@
 # Translators:
 # José Luis <alagunajs@gmail.com>, 2021
 # Amós Oviedo <amos.oviedo@gmail.com>, 2021
+# Kevin Gutiérrez, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2021\n"
+"Last-Translator: Kevin Gutiérrez, 2021\n"
 "Language-Team: Spanish (https://www.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -131,8 +132,8 @@ msgstr "segmentos traducidos"
 msgid "Server error"
 msgstr "Error del servidor"
 
-msgid "Stop translation"
-msgstr "Parar traducción"
+msgid "Stop Synced translation"
+msgstr "Parar traducción sincronizada"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

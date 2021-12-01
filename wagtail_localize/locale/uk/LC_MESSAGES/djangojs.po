@@ -139,9 +139,6 @@ msgstr "перекладені сегменти"
 msgid "Server error"
 msgstr "Помилка серверу"
 
-msgid "Stop translation"
-msgstr "Зупинити переклад"
-
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 "Наявні незбережені сегменти. Будь ласка, збережіть або скасуйте їх перед "

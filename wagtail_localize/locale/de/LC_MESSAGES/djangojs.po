@@ -2,10 +2,11 @@
 # Translators:
 # Moritz Pfeiffer <moritz@alp-phone.ch>, 2021
 # oliverengel <codeangel@posteo.de>, 2021
+# Krzysztof Jeziorny <github@jeziorny.net>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: oliverengel <codeangel@posteo.de>, 2021\n"
+"Last-Translator: Krzysztof Jeziorny <github@jeziorny.net>, 2021\n"
 "Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -131,8 +132,8 @@ msgstr "Abschnitte übersetzt"
 msgid "Server error"
 msgstr "Serverfehler"
 
-msgid "Stop translation"
-msgstr "Übersetzung stoppen"
+msgid "Stop Synced translation"
+msgstr "Synchronisierte Übersetzung stoppen"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

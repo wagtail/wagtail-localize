@@ -133,9 +133,6 @@ msgstr "segmenty przetłumaczone"
 msgid "Server error"
 msgstr "Błąd serwera"
 
-msgid "Stop translation"
-msgstr "Zatrzymaj tłumaczenie"
-
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Istnieją niezapisane fragmenty. Zapisz lub anuluj je przed wyjściem."
 

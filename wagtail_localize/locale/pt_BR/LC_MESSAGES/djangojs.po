@@ -2,11 +2,11 @@
 # Translators:
 # Luiz Boaretto <lboaretto@gmail.com>, 2021
 # Rodrigo de Almeida Sottomaior Macedo <rmsolucoeseminformatica@protonmail.com>, 2021
+# Iuri L. Machado, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Rodrigo de Almeida Sottomaior Macedo "
-"<rmsolucoeseminformatica@protonmail.com>, 2021\n"
+"Last-Translator: Iuri L. Machado, 2021\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -133,8 +133,8 @@ msgstr "segmentos traduzidos"
 msgid "Server error"
 msgstr "Erro de servidor"
 
-msgid "Stop translation"
-msgstr "Parar tradução"
+msgid "Stop Synced translation"
+msgstr "Parar tradução sincronizada"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Existem segmentos não salvos. Salve ou cancele-os antes de sair."

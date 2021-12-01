@@ -4,10 +4,11 @@
 # Yin Guanhao <sopium@mysterious.site>, 2021
 # 祝沙军 <zhushajun@gmail.com>, 2021
 # Favo Yang <favoyang@gmail.com>, 2021
+# 汇民 王 <whuim@qq.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Favo Yang <favoyang@gmail.com>, 2021\n"
+"Last-Translator: 汇民 王 <whuim@qq.com>, 2021\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -134,8 +135,8 @@ msgstr "片段已翻译"
 msgid "Server error"
 msgstr "服务器错误"
 
-msgid "Stop translation"
-msgstr "停止翻译"
+msgid "Stop Synced translation"
+msgstr "停止同步翻译"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "存在未保存的部分。请保存或取消修改后再离开。"

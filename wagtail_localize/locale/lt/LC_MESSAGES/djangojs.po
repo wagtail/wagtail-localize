@@ -122,9 +122,6 @@ msgstr "segmentai išversti"
 msgid "Server error"
 msgstr "Serverio klaida"
 
-msgid "Stop translation"
-msgstr "Stabdyti vertimą"
-
 msgid "Translate"
 msgstr "Versti"
 

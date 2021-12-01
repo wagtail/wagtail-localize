@@ -131,9 +131,6 @@ msgstr "segment översatta"
 msgid "Server error"
 msgstr "Serverfel"
 
-msgid "Stop translation"
-msgstr "Stoppa översättning"
-
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 "Det finns osparade segment. Vänligen spara eller återställ dem innan du "

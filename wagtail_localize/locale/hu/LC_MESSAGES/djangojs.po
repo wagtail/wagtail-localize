@@ -131,9 +131,6 @@ msgstr "részek lefordítva"
 msgid "Server error"
 msgstr "Szerverhiba"
 
-msgid "Stop translation"
-msgstr "Fordítás megállítása"
-
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 "Mentetlen részeket találtunk. Kérjük mentse vagy dobja el őket, mielőtt "

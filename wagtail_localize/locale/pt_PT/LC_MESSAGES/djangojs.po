@@ -127,9 +127,6 @@ msgstr "segmentos traduzidos"
 msgid "Server error"
 msgstr "Erro de servidor"
 
-msgid "Stop translation"
-msgstr "Parar tradução"
-
 msgid "Translate"
 msgstr "Traduzir"
 

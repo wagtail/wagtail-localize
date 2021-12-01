@@ -3,12 +3,13 @@
 # Joaquín T <joaquintita@gmail.com>, 2021
 # José Luis <alagunajs@gmail.com>, 2021
 # Amós Oviedo <amos.oviedo@gmail.com>, 2021
+# Kevin Gutiérrez, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2021\n"
+"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"Last-Translator: Kevin Gutiérrez, 2021\n"
 "Language-Team: Spanish (https://www.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -264,5 +265,5 @@ msgstr "Sincronizar fragmentos traducidos"
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizar traducción de '%(title)s'"
 
-msgid "Restart translation"
-msgstr "Reiniciar traducción"
+msgid "Start Synced translation"
+msgstr "Iniciar traducción sincronizada"

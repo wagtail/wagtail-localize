@@ -123,9 +123,6 @@ msgstr "segmenttiä käännetty"
 msgid "Server error"
 msgstr "Palvelinvirhe"
 
-msgid "Stop translation"
-msgstr "Lopeta kääntäminen"
-
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 "Tallentamattomia segmenttejä. Tallenna ne tai peruuta ennen poistumista."

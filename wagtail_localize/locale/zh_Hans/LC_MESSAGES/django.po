@@ -4,12 +4,13 @@
 # Yin Guanhao <sopium@mysterious.site>, 2021
 # hanfeng <appweb.cn@gmail.com>, 2021
 # Favo Yang <favoyang@gmail.com>, 2021
+# 汇民 王 <whuim@qq.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 14:17+0000\n"
-"Last-Translator: Favo Yang <favoyang@gmail.com>, 2021\n"
+"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"Last-Translator: 汇民 王 <whuim@qq.com>, 2021\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -243,5 +244,5 @@ msgstr "同步翻译的片段"
 msgid "Sync translations of '%(title)s'"
 msgstr "同步 '%(title)s' 的翻译"
 
-msgid "Restart translation"
-msgstr "重新翻译"
+msgid "Start Synced translation"
+msgstr "同步翻译"

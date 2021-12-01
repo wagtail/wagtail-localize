@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 14:17+0000\n"
+"POT-Creation-Date: 2021-11-02 13:15+0000\n"
 "Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021\n"
 "Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
@@ -252,6 +252,3 @@ msgstr "Samræma þýdd snifsi"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Samræma þýðingar á '%(title)s'"
-
-msgid "Restart translation"
-msgstr "Endurhefja þýðingar"

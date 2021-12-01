@@ -131,8 +131,8 @@ msgstr "segmente traduse"
 msgid "Server error"
 msgstr "Eroare de server"
 
-msgid "Stop translation"
-msgstr "Oprește traducere"
+msgid "Stop Synced translation"
+msgstr "Oprește traducere sincronizată"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Există segment nesalvate. Salvează sau anulează înainte de plecare."

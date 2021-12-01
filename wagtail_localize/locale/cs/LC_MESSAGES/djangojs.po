@@ -120,9 +120,6 @@ msgstr "úseků přeloženo"
 msgid "Server error"
 msgstr "Chyba na serveru"
 
-msgid "Stop translation"
-msgstr "Zastavit překlad"
-
 msgid "Translate"
 msgstr "Přeložit"
 
