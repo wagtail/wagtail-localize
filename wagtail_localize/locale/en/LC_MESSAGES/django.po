@@ -2,11 +2,15 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
 "#-#-#-#-#  messages-py.pot  #-#-#-#-#\n"
+
+#: components.py:33 templates/wagtail_localize/admin/_components.html:17
+msgid "Disable"
+msgstr ""
 
 #: machine_translators/dummy.py:45
 msgid "Dummy translator"
@@ -73,6 +77,10 @@ msgstr ""
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr ""
 
+#: templates/wagtail_localize/admin/_components.html:16
+msgid "Enable"
+msgstr ""
+
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:8
 #, python-format
 msgid ""
@@ -91,13 +99,13 @@ msgstr ""
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr ""
 
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
+#: templates/wagtail_localize/admin/submit_translation.html:29
+#: templates/wagtail_localize/admin/update_translations.html:62
 msgid "Submit"
 msgstr ""
 
-#: templates/wagtail_localize/admin/submit_translation.html:25
-#: templates/wagtail_localize/admin/update_translations.html:57
+#: templates/wagtail_localize/admin/submit_translation.html:29
+#: templates/wagtail_localize/admin/update_translations.html:62
 msgid "Go back"
 msgstr ""
 
@@ -204,70 +212,70 @@ msgstr ""
 msgid "Translations"
 msgstr ""
 
-#: views/submit_translations.py:24
+#: views/submit_translations.py:27
 msgid "Select all"
 msgstr ""
 
-#: views/submit_translations.py:26
+#: views/submit_translations.py:29
 msgid "Locales"
 msgstr ""
 
-#: views/submit_translations.py:31
+#: views/submit_translations.py:34
 msgid "All child pages will be created."
 msgstr ""
 
-#: views/submit_translations.py:45
+#: views/submit_translations.py:48
 msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: views/submit_translations.py:139 wagtail_hooks.py:194
+#: views/submit_translations.py:146 wagtail_hooks.py:194
 msgid "Translate"
 msgstr ""
 
-#: views/submit_translations.py:206
+#: views/submit_translations.py:218
 msgid "{} locales"
 msgstr ""
 
-#: views/submit_translations.py:227
+#: views/submit_translations.py:239
 msgid "Translate page"
 msgstr ""
 
-#: views/submit_translations.py:246
+#: views/submit_translations.py:258
 #, python-brace-format
 msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
 
-#: views/submit_translations.py:252
+#: views/submit_translations.py:264
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr ""
 
-#: views/submit_translations.py:278
+#: views/submit_translations.py:290
 #, python-brace-format
 msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
 
-#: views/update_translations.py:20
+#: views/update_translations.py:21
 msgid "Publish immediately"
 msgstr ""
 
-#: views/update_translations.py:22
+#: views/update_translations.py:23
 msgid ""
 "This will apply the updates and publish immediately, before any new "
 "translations happen."
 msgstr ""
 
-#: views/update_translations.py:30
+#: views/update_translations.py:31
 msgid "Update existing translations"
 msgstr ""
 
-#: views/update_translations.py:50
+#: views/update_translations.py:51
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
 msgstr ""

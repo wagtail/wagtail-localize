@@ -441,10 +441,10 @@ class PageWithCustomEditHandlerChildObject(TranslatableMixin, Orderable):
 
 
 @register_translation_component(
-    heading=gettext_lazy("Custom translation view component"),
-    help_text=gettext_lazy("This is the component help text"),
-    enable_text=gettext_lazy("Add custom data"),
-    disable_text=gettext_lazy("Do not send add custom data"),
+    heading="Custom translation view component",
+    help_text="This is the component help text",
+    enable_text="Add custom data",
+    disable_text="Do not send add custom data",
 )
 class CustomTranslationData(models.Model):
     translation_source = models.ForeignKey(
@@ -464,9 +464,9 @@ class CustomTranslationData(models.Model):
 
 
 @register_translation_component(
-    heading=gettext_lazy("Notes"),
-    enable_text=gettext_lazy("Add notes"),
-    disable_text=gettext_lazy("Do not add notes"),
+    heading="Notes",
+    enable_text="Add notes",
+    disable_text="Do not add notes",
 )
 class CustomButSimpleTranslationData(models.Model):
     notes = models.CharField(max_length=255)
