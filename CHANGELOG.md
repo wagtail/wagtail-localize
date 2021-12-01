@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2021-12-01
+
+### Added
+
+- [Add mechanism for new form components in the submit/update translation views](https://github.com/wagtail/wagtail-localize/pull/491) (@zerolab, sponsored by Twilio)
+
 ## [1.0.0] - 2021-11-02
 
 ### Added
@@ -36,7 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/wagtail/wagtail-localize/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wagtail/wagtail-localize/compare/v1.0rc4...v1.0.0
 [1.0rc4]: https://github.com/wagtail/wagtail-localize/compare/v1.0rc3...v1.0rc4
 [1.0rc3]: https://github.com/wagtail/wagtail-localize/compare/v1.0rc2...v1.0rc3

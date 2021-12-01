@@ -5,6 +5,6 @@ default_app_config = "wagtail_localize.apps.WagtailLocalizeAppConfig"
 
 
 # release must be one of alpha, beta, rc, or final
-VERSION = (1, 0, 0, "final", 1)
+VERSION = (1, 0, 1, "final", 1)
 
 __version__ = get_version(VERSION)
