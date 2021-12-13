@@ -206,6 +206,7 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
             title="Blog post",
             slug="blog-post",
             test_charfield="Test content",
+            test_richtextfield="<p>rich text</p>",
         )
 
         self.en_snippet = TestSnippet.objects.create(field="Test snippet")
@@ -350,6 +351,30 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         # The FR version should be updated
         self.fr_blog_post.refresh_from_db()
         self.assertEqual(self.fr_blog_post.test_charfield, "Edited blog post")
+
+    def test_post_update_page_translation_with_publish_translations_and_cleared_text_field(
+        self,
+    ):
+        self.en_blog_post.test_charfield = ""
+        self.en_blog_post.test_richtextfield = ""
+        self.en_blog_post.save_revision().publish()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {"publish_translations": "on"},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        # The FR version should be updated
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "")
+        self.assertEqual(self.fr_blog_post.test_richtextfield, "")
 
     def test_post_update_snippet_translation(self):
         self.en_snippet.field = "Edited snippet"

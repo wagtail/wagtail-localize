@@ -61,16 +61,24 @@ class TranslatableField(BaseTranslatableField):
     def is_translated(self, obj):
         return True
 
-    def is_synchronized(self, obj):
-        field = self.get_field(obj.__class__)
+    def is_synchronized(self, source):
+        field = self.get_field(source.__class__)
 
         # Child relations should all be synchronised before translation
-        if isinstance(field, (models.ManyToOneRel)) and isinstance(
+        if isinstance(field, models.ManyToOneRel) and isinstance(
             field.remote_field, ParentalKey
         ):
             return True
 
-        # Streamfields need to be re-synchronised before translation so the structure and non-translatable content is copied over
+        # We have a text field that has been cleared so we should mark it as synchronised
+        if (
+            isinstance(field, (RichTextField, models.TextField, models.CharField))
+            and getattr(source, field.attname) == ""
+        ):
+            return True
+
+        # Streamfields need to be re-synchronised before translation so
+        # the structure and non-translatable content is copied over
         return isinstance(field, StreamField)
 
     def __repr__(self):
@@ -245,7 +253,7 @@ def copy_synchronised_fields(source, target):
         if translatable_field.is_synchronized(source):
             field = translatable_field.get_field(target.__class__)
 
-            if isinstance(field, (models.ManyToOneRel)) and isinstance(
+            if isinstance(field, models.ManyToOneRel) and isinstance(
                 field.remote_field, ParentalKey
             ):
                 # Use modelcluster's copy_child_relation for child relations
