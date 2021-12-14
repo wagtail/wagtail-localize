@@ -506,3 +506,70 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.assertTrue(
             self.fr_blog_post.view_restrictions.first().pk, view_restriction.pk
         )
+
+    def test_post_update_page_translation_after_source_privacy_removed(self):
+        PageViewRestriction.objects.create(
+            restriction_type="login", page=self.fr_blog_post
+        )
+
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+        self.fr_blog_post.refresh_from_db()
+        self.assertFalse(self.fr_blog_post.view_restrictions.exists())
+
+    def test_post_update_page_translation_after_source_privacy_changed(self):
+        PageViewRestriction.objects.create(
+            restriction_type="login", page=self.en_blog_post
+        )
+
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+
+        self.fr_blog_post.refresh_from_db()
+        self.assertTrue(self.fr_blog_post.view_restrictions.exists())
+        self.assertTrue(
+            self.fr_blog_post.view_restrictions.first().restriction_type, "login"
+        )
+
+        # change the restriction for the source
+        self.en_blog_post.view_restrictions.all().update(
+            restriction_type="password", password="test"
+        )
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+        self.fr_blog_post.refresh_from_db()
+        translated_restriction = self.fr_blog_post.view_restrictions.first()
+        self.assertTrue(translated_restriction.restriction_type, "password")
+        self.assertTrue(translated_restriction.password, "test")
+
+        self.en_blog_post.view_restrictions.all().delete()
+
+        test_group = Group.objects.create(name="Test Group")
+        restriction = PageViewRestriction.objects.create(
+            restriction_type="groups", page=self.en_blog_post
+        )
+        restriction.groups.set([test_group])
+
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+        self.fr_blog_post.refresh_from_db()
+        translated_restriction = self.fr_blog_post.view_restrictions.first()
+        self.assertTrue(translated_restriction.restriction_type, "groups")
+        self.assertEqual(translated_restriction.groups.count(), 1)
+        self.assertEqual(translated_restriction.groups.first(), test_group)
