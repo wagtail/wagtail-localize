@@ -881,7 +881,7 @@ class TranslationSource(models.Model):
 
     def sync_view_restrictions(self, original, translation_page):
         """
-        Creates a corresponding view restriction object for the translated page
+        Synchronizes view restriction object for the translated page
 
         Args:
             original (Page|Snippet): The original instance.
@@ -891,12 +891,42 @@ class TranslationSource(models.Model):
             return
 
         if original.view_restrictions.exists():
-            view_restriction, child_object_map = _copy(
-                original.view_restrictions.first(),
-                exclude_fields=["id"],
-                update_attrs={"page": translation_page},
-            )
-            view_restriction.save()
+            original_restriction = original.view_restrictions.first()
+            if not translation_page.view_restrictions.exists():
+                view_restriction, child_object_map = _copy(
+                    original_restriction,
+                    exclude_fields=["id"],
+                    update_attrs={"page": translation_page},
+                )
+                view_restriction.save()
+            else:
+                # if both exist, sync them
+                translation_restriction = translation_page.view_restrictions.first()
+                should_save = False
+                if (
+                    translation_restriction.restriction_type
+                    != original_restriction.restriction_type
+                ):
+                    translation_restriction.restriction_type = (
+                        original_restriction.restriction_type
+                    )
+                    should_save = True
+                if translation_restriction.password != original_restriction.password:
+                    translation_restriction.password = original_restriction.password
+                    should_save = True
+                if list(
+                    original_restriction.groups.values_list("pk", flat=True)
+                ) != list(translation_restriction.groups.values_list("pk", flat=True)):
+                    translation_restriction.groups.set(
+                        original_restriction.groups.all()
+                    )
+
+                if should_save:
+                    translation_restriction.save()
+
+        elif translation_page.view_restrictions.exists():
+            # the original no longer has the restriction, so drop it
+            translation_page.view_restrictions.all().delete()
 
     def update_target_view_restrictions(self, locale):
         """
