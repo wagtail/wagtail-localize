@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.core.models import Locale, Page
+from wagtail.core.models import Locale, Page, PageViewRestriction
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import Translation, TranslationSource
@@ -557,6 +557,27 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
         translation = Translation.objects.get()
         self.assertTrue(translation.enabled)
+
+    def test_post_submit_page_translation_from_page_with_privacy_settings(self):
+        view_restriction = PageViewRestriction.objects.create(
+            restriction_type="login", page=self.en_blog_index
+        )
+
+        self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_index.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        # The translated page should've been created and published, and have a view restriction
+        translated_page = self.en_blog_index.get_translation(self.fr_locale)
+        self.assertTrue(translated_page.live)
+        self.assertTrue(translated_page.view_restrictions.exists())
+        self.assertTrue(
+            translated_page.view_restrictions.first().pk, view_restriction.pk
+        )
 
 
 @override_settings(

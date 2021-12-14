@@ -121,20 +121,28 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
     def form_valid(self, form):
         self.object.update_from_db()
 
+        enabled_translations = self.object.translations.filter(enabled=True)
+
         if form.cleaned_data["publish_translations"]:
-            for translation in self.object.translations.filter(
-                enabled=True
-            ).select_related("target_locale"):
+            for translation in enabled_translations.select_related("target_locale"):
                 try:
                     translation.save_target(user=self.request.user, publish=True)
+                except ValidationError:
+                    pass
+        else:
+            for translation in enabled_translations.select_related(
+                "source", "target_locale"
+            ):
+                try:
+                    translation.source.update_target_view_restrictions(
+                        translation.target_locale
+                    )
                 except ValidationError:
                     pass
 
         self.components.save(
             self.object,
-            sources_and_translations={
-                self.object: list(self.object.translations.filter(enabled=True))
-            },
+            sources_and_translations={self.object: list(enabled_translations)},
         )
 
         # TODO: Button that links to page in translations report when we have it

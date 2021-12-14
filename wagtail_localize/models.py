@@ -42,6 +42,7 @@ from wagtail.core.models import (
     Page,
     PageLogEntry,
     TranslatableMixin,
+    _copy,
     get_translatable_models,
 )
 from wagtail.core.utils import find_available_slug
@@ -772,6 +773,8 @@ class TranslationSource(models.Model):
                     # Create a new revision
                     page_revision = translation.save_revision(user=user)
 
+                    self.sync_view_restrictions(original, translation)
+
                     if publish:
                         page_revision.publish()
 
@@ -875,6 +878,45 @@ class TranslationSource(models.Model):
             self.specific_content_type.app_label
         )
         return self.schema_version != current_schema_version
+
+    def sync_view_restrictions(self, original, translation_page):
+        """
+        Creates a corresponding view restriction object for the translated page
+
+        Args:
+            original (Page|Snippet): The original instance.
+            translation_page (Page|Snippet): The translated instance.
+        """
+        if not isinstance(original, Page) or not isinstance(translation_page, Page):
+            return
+
+        if original.view_restrictions.exists():
+            view_restriction, child_object_map = _copy(
+                original.view_restrictions.first(),
+                exclude_fields=["id"],
+                update_attrs={"page": translation_page},
+            )
+            view_restriction.save()
+
+    def update_target_view_restrictions(self, locale):
+        """
+        Creates a corresponding view restriction object for the translated page for the given locale
+
+        Args:
+            locale (Locale): The target locale
+        """
+        original = self.as_instance()
+
+        # Only update restrictions for pages
+        if not isinstance(original, Page):
+            return
+
+        try:
+            translation_page = self.get_translated_instance(locale)
+        except models.ObjectDoesNotExist:
+            return
+
+        self.sync_view_restrictions(original, translation_page)
 
 
 class POImportWarning:

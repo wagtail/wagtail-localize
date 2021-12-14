@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.core.models import Locale, Page
+from wagtail.core.models import Locale, Page, PageViewRestriction
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import StringSegment, Translation, TranslationSource
@@ -471,3 +471,38 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         # The FR version shouldn't be updated
         self.fr_blog_post.refresh_from_db()
         self.assertEqual(self.fr_blog_post.test_charfield, "Test content")
+
+    def test_post_update_page_translation_after_source_privacy_added(self):
+        view_restriction = PageViewRestriction.objects.create(
+            restriction_type="login", page=self.en_blog_post
+        )
+
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+        self.fr_blog_post.refresh_from_db()
+        self.assertTrue(self.fr_blog_post.view_restrictions.exists())
+        self.assertTrue(
+            self.fr_blog_post.view_restrictions.first().pk, view_restriction.pk
+        )
+
+    def test_post_update_page_translation_with_publish_after_source_privacy_added(self):
+        view_restriction = PageViewRestriction.objects.create(
+            restriction_type="login", page=self.en_blog_post
+        )
+
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {"publish_translations": "on"},
+        )
+        self.fr_blog_post.refresh_from_db()
+        self.assertTrue(self.fr_blog_post.view_restrictions.exists())
+        self.assertTrue(
+            self.fr_blog_post.view_restrictions.first().pk, view_restriction.pk
+        )
