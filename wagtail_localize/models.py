@@ -234,6 +234,14 @@ class CannotSaveDraftError(Exception):
     pass
 
 
+class NoViewRestrictionsError(Exception):
+    """
+    Raised when trying to sync view restrictions for non-Page objects
+    """
+
+    pass
+
+
 class MissingTranslationError(Exception):
     def __init__(self, segment, locale):
         self.segment = segment
@@ -888,7 +896,7 @@ class TranslationSource(models.Model):
             translation_page (Page|Snippet): The translated instance.
         """
         if not isinstance(original, Page) or not isinstance(translation_page, Page):
-            return
+            raise NoViewRestrictionsError
 
         if original.view_restrictions.exists():
             original_restriction = original.view_restrictions.first()
@@ -943,7 +951,7 @@ class TranslationSource(models.Model):
 
         try:
             translation_page = self.get_translated_instance(locale)
-        except models.ObjectDoesNotExist:
+        except Page.DoesNotExist:
             return
 
         self.sync_view_restrictions(original, translation_page)

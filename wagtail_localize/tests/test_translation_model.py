@@ -1,3 +1,5 @@
+from unittest import mock
+
 import polib
 
 from django.test import TestCase
@@ -6,6 +8,7 @@ from wagtail.core.models import Locale, Page
 
 from wagtail_localize.models import (
     CannotSaveDraftError,
+    NoViewRestrictionsError,
     String,
     StringNotUsedInContext,
     StringTranslation,
@@ -748,3 +751,47 @@ class TestDeleteDestinationDisablesTranslation(TestCase):
         es_translation.refresh_from_db()
         self.assertFalse(fr_translation.enabled)
         self.assertTrue(es_translation.enabled)
+
+
+class TestTranslationSourceViewRestrictions(TestCase):
+    def setUp(self):
+        self.fr_locale = Locale.objects.create(language_code="fr")
+
+        self.page = create_test_page(
+            title="Test page",
+            slug="test-slug",
+            test_charfield="Test content",
+            test_textfield="More test content",
+        )
+        self.source = TranslationSource.objects.get()
+        self.translation = Translation.objects.create(
+            source=self.source,
+            target_locale=self.fr_locale,
+        )
+
+    @mock.patch("wagtail_localize.models.TranslationSource.sync_view_restrictions")
+    @mock.patch.object(
+        TranslationSource, "get_translated_instance", side_effect=Page.DoesNotExist()
+    )
+    def test_update_target_view_restrictions_with_missing_translation(
+        self, get_translated_instance, sync_view_restrictions
+    ):
+        self.source.update_target_view_restrictions(self.fr_locale)
+
+        self.assertEqual(get_translated_instance.call_count, 1)
+        self.assertEqual(sync_view_restrictions.call_count, 0)
+
+    @mock.patch("wagtail_localize.models.TranslationSource.get_translated_instance")
+    def test_update_target_restrictions_ignores_snippets(self, get_translated_instance):
+        snippet = TestSnippet.objects.create(field="Test content")
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+
+        source.update_target_view_restrictions(self.fr_locale)
+        self.assertEqual(get_translated_instance.call_count, 0)
+
+    def test_sync_view_restrictions_raises_exception_for_snippets(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+
+        with self.assertRaises(NoViewRestrictionsError):
+            source.sync_view_restrictions(snippet, snippet)
