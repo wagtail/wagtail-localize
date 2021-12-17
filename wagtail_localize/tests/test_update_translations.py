@@ -1,6 +1,9 @@
+from unittest import mock
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
@@ -548,3 +551,40 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.assertTrue(translated_restriction.restriction_type, "groups")
         self.assertEqual(translated_restriction.groups.count(), 1)
         self.assertEqual(translated_restriction.groups.first(), test_group)
+
+        another_group = Group.objects.create(name="Another Group")
+        restriction.groups.set([another_group])
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+        self.fr_blog_post.refresh_from_db()
+        translated_restriction = self.fr_blog_post.view_restrictions.first()
+        self.assertEqual(translated_restriction.groups.first(), another_group)
+
+    @mock.patch(
+        "wagtail_localize.models.TranslationSource.update_target_view_restrictions"
+    )
+    def test_post_update_page_translation_will_run_update_target_view_restrictions(
+        self, update_target_view_restrictions
+    ):
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+        self.assertEqual(update_target_view_restrictions.call_count, 1)
+
+        # now let's try with an exception
+        update_target_view_restrictions.side_effect = ValidationError("oops")
+        self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+        )
+        # one call from the first post, and one from above
+        self.assertEqual(update_target_view_restrictions.call_count, 2)
