@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy
@@ -2225,6 +2225,13 @@ class TestEditOverrideAPIView(EditTranslationTestData, APITestCase):
         )
 
         self.assertEqual(response.status_code, 403)
+
+    def test_update_override_with_default_permissions_classes(self):
+        with override_settings(REST_FRAMEWORK={'DEFAULT_PERMISSION_CLASSES': ["rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"]}):
+            from wagtail_localize.views.edit_translation import edit_override
+            from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+            print(edit_override.view_class.permission_classes)
+            assert edit_override.view_class.permission_classes == [DjangoModelPermissionsOrAnonReadOnly]
 
 
 class TestDownloadPOFileView(EditTranslationTestData, TestCase):

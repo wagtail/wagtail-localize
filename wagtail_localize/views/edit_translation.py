@@ -1043,7 +1043,7 @@ def edit_string_translation(request, translation_id, string_segment_id):
 
 
 @api_view(["PUT", "DELETE"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def edit_override(request, translation_id, overridable_segment_id):
     translation = get_object_or_404(Translation, id=translation_id)
     overridable_segment = get_object_or_404(
