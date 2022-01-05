@@ -188,3 +188,11 @@ if WAGTAIL_VERSION >= (2, 15):
             "BACKEND": "wagtail.search.backends.database",
         }
     }
+
+# wagtail localize should not use DEFAULT_PERMISSION_CLASSES
+# see: https://github.com/wagtail/wagtail-localize/issues/499
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ],
+}
