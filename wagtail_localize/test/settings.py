@@ -179,3 +179,12 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+
+# wagtail localize should not use DEFAULT_PERMISSION_CLASSES
+# see: https://github.com/wagtail/wagtail-localize/issues/499
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ],
+}
