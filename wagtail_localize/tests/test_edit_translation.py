@@ -11,11 +11,16 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy
 from freezegun import freeze_time
+from rest_framework.permissions import (
+    DjangoModelPermissionsOrAnonReadOnly,
+    IsAuthenticated,
+)
+from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.core.blocks import StreamValue
@@ -42,6 +47,10 @@ from wagtail_localize.test.models import (
     TestHomePage,
     TestPage,
     TestSnippet,
+)
+from wagtail_localize.views.edit_translation import (
+    edit_override,
+    edit_string_translation,
 )
 from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
@@ -2086,6 +2095,22 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
 
         self.assertEqual(response.status_code, 403)
 
+    @override_settings(
+        REST_FRAMEWORK={
+            "DEFAULT_PERMISSION_CLASSES": [
+                "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+            ]
+        }
+    )
+    def test_edit_translation_with_drf_default_permissions_classes(self):
+        self.assertEqual(
+            api_settings.DEFAULT_PERMISSION_CLASSES,
+            [DjangoModelPermissionsOrAnonReadOnly],
+        )
+        self.assertEqual(
+            edit_string_translation.view_class.permission_classes, [IsAuthenticated]
+        )
+
 
 @freeze_time("2020-08-21")
 class TestEditOverrideAPIView(EditTranslationTestData, APITestCase):
@@ -2225,6 +2250,20 @@ class TestEditOverrideAPIView(EditTranslationTestData, APITestCase):
         )
 
         self.assertEqual(response.status_code, 403)
+
+    @override_settings(
+        REST_FRAMEWORK={
+            "DEFAULT_PERMISSION_CLASSES": [
+                "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+            ]
+        }
+    )
+    def test_update_override_with_drf_default_permissions_classes(self):
+        self.assertEqual(
+            api_settings.DEFAULT_PERMISSION_CLASSES,
+            [DjangoModelPermissionsOrAnonReadOnly],
+        )
+        self.assertEqual(edit_override.view_class.permission_classes, [IsAuthenticated])
 
 
 class TestDownloadPOFileView(EditTranslationTestData, TestCase):
