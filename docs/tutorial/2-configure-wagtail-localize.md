@@ -57,7 +57,7 @@ WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
 
 ### Enable `LocaleMiddleware`
 
-Django's `LocaleMiddleware` detects a user's browser language and forwards them to the most approapriate language
+Django's `LocaleMiddleware` detects a user's browser language and forwards them to the most appropriate language
 version of the website.
 
 To enable it, insert `'django.middleware.locale.LocaleMiddleware'` into the middleware setting
