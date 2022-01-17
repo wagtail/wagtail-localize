@@ -1200,31 +1200,38 @@ def machine_translate(request, translation_id):
         )
 
     if segments:
-        translations = translator.translate(
-            translation.source.locale, translation.target_locale, segments.keys()
-        )
+        try:
+            translations = translator.translate(
+                translation.source.locale, translation.target_locale, segments.keys()
+            )
 
-        with transaction.atomic():
-            for string, contexts in segments.items():
-                for string_id, context_id in contexts:
-                    StringTranslation.objects.get_or_create(
-                        translation_of_id=string_id,
-                        locale=translation.target_locale,
-                        context_id=context_id,
-                        defaults={
-                            "data": translations[string].data,
-                            "translation_type": StringTranslation.TRANSLATION_TYPE_MACHINE,
-                            "tool_name": translator.display_name,
-                            "last_translated_by": request.user,
-                            "has_error": False,
-                            "field_error": "",
-                        },
-                    )
+            with transaction.atomic():
+                for string, contexts in segments.items():
+                    for string_id, context_id in contexts:
+                        StringTranslation.objects.get_or_create(
+                            translation_of_id=string_id,
+                            locale=translation.target_locale,
+                            context_id=context_id,
+                            defaults={
+                                "data": translations[string].data,
+                                "translation_type": StringTranslation.TRANSLATION_TYPE_MACHINE,
+                                "tool_name": translator.display_name,
+                                "last_translated_by": request.user,
+                                "has_error": False,
+                                "field_error": "",
+                            },
+                        )
 
-        messages.success(
-            request,
-            _("Successfully translated with {}.").format(translator.display_name),
-        )
+            messages.success(
+                request,
+                _("Successfully translated with {}.").format(translator.display_name),
+            )
+
+        except Exception as e:
+            messages.error(
+                request,
+                _("Translation failed: {}.").format(str(e)),
+            )
 
     else:
         messages.warning(request, _("There isn't anything left to translate."))
