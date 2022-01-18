@@ -44,7 +44,7 @@ class DeepLTranslator(BaseMachineTranslator):
         )
 
         if response.status_code != HTTPStatus.OK:
-            raise ApiEndpointError(response.code, response.reason, response.text)
+            raise ApiEndpointError(response.status_code, response.reason, response.text)
 
         return {
             string: StringValue(translation["text"])
