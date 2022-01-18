@@ -413,6 +413,48 @@ class TestImportPO(TestCase):
         # Should delete both the translations
         self.assertFalse(StringTranslation.objects.exists())
 
+    def test_import_po_with_valid_string_clears_has_error_flag(self):
+        translation = StringTranslation.objects.create(
+            translation_of=String.objects.get(data="This is some test content"),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data=(
+                "This value is way too long for a char field so it should fail to publish and add an error to the translation. "
+                "This value is way too long for a char field so it should fail to publish and add an error to the translation. "
+                "This value is way too long for a char field so it should fail to publish and add an error to the translation."
+            ),
+            has_error=True,
+            field_error="Ensure this value has at most 255 characters (it has 329).",
+        )
+        self.assertTrue(translation.has_error)
+
+        po = polib.POFile(wrapwidth=200)
+        po.metadata = {
+            "POT-Creation-Date": str(timezone.now()),
+            "MIME-Version": "1.0",
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-WagtailLocalize-TranslationID": str(self.translation.uuid),
+        }
+
+        po.append(
+            polib.POEntry(
+                msgid="This is some test content",
+                msgctxt="test_charfield",
+                msgstr="Contenu de test",
+            )
+        )
+
+        warnings = self.translation.import_po(po)
+        self.assertEqual(warnings, [])
+
+        translation.refresh_from_db()
+        self.assertEqual(
+            translation.context, TranslationContext.objects.get(path="test_charfield")
+        )
+        self.assertEqual(translation.locale, self.fr_locale)
+        self.assertEqual(translation.data, "Contenu de test")
+        self.assertFalse(translation.has_error)
+
     def test_warnings(self):
         String.from_value(
             self.en_locale,
