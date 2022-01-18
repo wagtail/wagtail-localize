@@ -80,6 +80,9 @@ class StringSegmentValue(BaseValue):
             attrs (dict, optional): A dict of HTML attributes that were stripped out of the string.
             order (int, optional): The index that this segment appears on a page.
         """
+        # handle string = None case (new fields without a value, possibly unsaved page after migrtion)
+        if string is None:
+            string = ""
         if isinstance(string, str):
             string = StringValue.from_plaintext(string)
 
