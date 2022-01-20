@@ -1,7 +1,13 @@
+from django import VERSION as DJANGO_VERSION
+
 from .version import get_version
 
 
-default_app_config = "wagtail_localize.apps.WagtailLocalizeAppConfig"
+if DJANGO_VERSION >= (3, 2):
+    # The declaration is only needed for older Django versions
+    pass
+else:
+    default_app_config = "wagtail_localize.apps.WagtailLocalizeAppConfig"
 
 
 # release must be one of alpha, beta, rc, or final
