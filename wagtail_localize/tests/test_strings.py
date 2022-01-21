@@ -195,6 +195,13 @@ class TestStringRenderText(TestCase):
 
 class TextExtractStrings(TestCase):
     def test_extract_strings(self):
+        template, strings = extract_strings(None)
+
+        self.assertHTMLEqual(
+            template,
+            "",
+        )
+
         template, strings = extract_strings(
             """
             <p><b>Bread</b>\xa0is a\xa0<a href="https://en.wikipedia.org/wiki/Staple_food">staple food</a>\xa0prepared from a\xa0<a href="https://en.wikipedia.org/wiki/Dough">dough</a>\xa0of\xa0<a href="https://en.wikipedia.org/wiki/Flour">flour</a>\xa0and\xa0<a href="https://en.wikipedia.org/wiki/Water">water</a>, usually by\xa0<a href="https://en.wikipedia.org/wiki/Baking">baking</a>. Throughout recorded history it has been popular around the world and is one of the oldest artificial foods, having been of importance since the dawn of\xa0<a href="https://en.wikipedia.org/wiki/Agriculture#History">agriculture</a>.</p>
