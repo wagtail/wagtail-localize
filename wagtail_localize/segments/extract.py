@@ -2,6 +2,7 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from modelcluster.fields import ParentalKey
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, TranslatableMixin
@@ -133,8 +134,14 @@ class StreamFieldSegmentExtractor:
         return segments
 
     def handle_list_block(self, list_block):
-        # TODO
-        return []
+        segments = []
+        if WAGTAIL_VERSION >= (2, 16):
+            for block in list_block.bound_blocks:
+                segments.extend(
+                    segment.wrap(block.id)
+                    for segment in self.handle_block(block.block, block.value)
+                )
+        return segments
 
     def handle_stream_block(self, stream_block):
         segments = []

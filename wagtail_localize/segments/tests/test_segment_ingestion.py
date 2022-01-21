@@ -567,28 +567,31 @@ class TestSegmentIngestionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.expectedFailure  # Not supported (probably won't ever be due to lack of path stability)
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16), "ListBlocks are supported starting Wagtail 2.16"
+    )
     def test_listblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
             str(block_id), "test_listblock", ["Test content", "Some more test content"]
         )
-
         translated_page = page.copy_for_translation(self.locale)
 
+        translated_strings = ["Tester le contenu", "Encore du contenu de test"]
+        block_ids = [
+            item.id for item in translated_page.test_streamfield[0].value.bound_blocks
+        ]
+        expected_segments = [
+            StringSegmentValue(
+                f"test_streamfield.{block_id}.{item_id}",
+                translated_strings[index],
+                order=index,
+            )
+            for index, item_id in enumerate(block_ids)
+        ]
+
         ingest_segments(
-            page,
-            translated_page,
-            self.src_locale,
-            self.locale,
-            [
-                StringSegmentValue(
-                    f"test_streamfield.{block_id}", "Tester le contenu", order=0
-                ),
-                StringSegmentValue(
-                    f"test_streamfield.{block_id}", "Encore du contenu de test", order=1
-                ),
-            ],
+            page, translated_page, self.src_locale, self.locale, expected_segments
         )
 
         translated_page.save()
@@ -600,7 +603,18 @@ class TestSegmentIngestionWithStreamField(TestCase):
                 {
                     "id": str(block_id),
                     "type": "test_listblock",
-                    "value": ["Tester le contenu", "Encore du contenu de test"],
+                    "value": [
+                        {
+                            "type": "item",
+                            "value": "Tester le contenu",
+                            "id": block_ids[0],
+                        },
+                        {
+                            "type": "item",
+                            "value": "Encore du contenu de test",
+                            "id": block_ids[1],
+                        },
+                    ],
                 }
             ],
         )

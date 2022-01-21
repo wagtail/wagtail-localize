@@ -36,6 +36,7 @@ from modelcluster.models import (
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
 from wagtail.core.models import (
@@ -1514,6 +1515,10 @@ class TranslationContext(models.Model):
                             ] + get_field_path_from_stream_block(
                                 block.value, path_components[1:]
                             )
+                        elif isinstance(
+                            block_def, blocks.ListBlock
+                        ) and WAGTAIL_VERSION >= (2, 16):
+                            return [block.block_type, path_components[1]]
 
                         else:
                             return [block.block_type]
