@@ -43,7 +43,7 @@ setup(
     ],
     install_requires=["Django>=2.2,<4.0", "Wagtail>=2.11,<2.17", "polib>=1.1,<2.0"],
     extras_require={
-        "testing": ["dj-database-url==0.5.0", "freezegun==0.3.15"],
+        "testing": ["dj-database-url==0.5.0", "freezegun==1.1.0"],
         "documentation": [
             "mkdocs==1.1.2",
             "mkdocs-material==6.2.8",
