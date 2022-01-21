@@ -297,6 +297,9 @@ def extract_strings(html):
         tuple[str, list[tuple[StringValue, dict]]]: Returns a template string, and list 2-tuples containing a
             StringValue and dict of HTML attribute
     """
+    # handle case when after a migration a field remains NULL in DB
+    if html is None:
+        html = ""
     soup = BeautifulSoup(html, "html.parser")
 
     def wrap(elements):
