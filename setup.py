@@ -4,16 +4,19 @@ from os import path
 
 from setuptools import find_packages, setup
 
-from wagtail_localize import __version__
-
 
 this_directory = path.abspath(path.dirname(__file__))
+
+version = {}
+with open(path.join(this_directory, "wagtail_localize", "version.py")) as f:
+    exec(f.read(), version)
+
 with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
     name="wagtail-localize",
-    version=__version__,
+    version=version["__version__"],
     description="Translation plugin for Wagtail CMS",
     long_description=long_description,
     long_description_content_type="text/markdown",
