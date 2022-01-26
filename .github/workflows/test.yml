@@ -84,6 +84,11 @@ jobs:
             wagtail: 'main'
             postgres: '10.8'
             experimental: true
+          - python: '3.10'
+            django: '4.0'
+            wagtail: 'main'
+            postgres: '10.8'
+            experimental: true
     services:
       postgres:
         image: postgres:${{ matrix.postgres }}
