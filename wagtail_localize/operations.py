@@ -72,8 +72,11 @@ class TranslationCreator:
 
             self.mappings[source].append(translation)
 
+            # Determine whether or not to publish the translation.
+            publish = getattr(instance, "live", True)
+
             try:
-                translation.save_target(user=self.user)
+                translation.save_target(user=self.user, publish=publish)
             except ValidationError:
                 pass
 

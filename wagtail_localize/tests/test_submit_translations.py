@@ -584,6 +584,29 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             translated_page.view_restrictions.first().pk, view_restriction.pk
         )
 
+    def test_post_submit_page_translation_from_draft_source_still_draft(self):
+        custom_page = make_test_page(
+            self.en_homepage,
+            cls=TestPage,
+            title="Translation draft state test",
+            slug="translation-draft-state-test",
+            live=False,
+        )
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[custom_page.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        translated_page = Translation.objects.get().get_target_instance()
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+        )
+        self.assertFalse(translated_page.live)
+
 
 @override_settings(
     LANGUAGES=[
