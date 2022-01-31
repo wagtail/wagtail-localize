@@ -9,7 +9,7 @@
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat)](https://github.com/psf/black)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white&style=flat)](https://github.com/pre-commit/pre-commit)
 
-Wagtail Localize is a translation plugin for the [Wagtail CMS](https://wagtail.io). It allows pages or snippets to be translated within Wagtail's admin interface. It also provides integrations with external translations services such as [Pontoon](https://pontoon.mozilla.org/) or [DeepL](https://www.deepl.com/), and importing/exporting translations with PO files.
+Wagtail Localize is a translation plugin for the [Wagtail CMS](https://wagtail.org). It allows pages or snippets to be translated within Wagtail's admin interface. It also provides integrations with external translations services such as [Pontoon](https://pontoon.mozilla.org/) or [DeepL](https://www.deepl.com/), and importing/exporting translations with PO files.
 
 [Documentation](https://www.wagtail-localize.org)
 [Changelog](https://github.com/wagtail/wagtail-localize/blob/main/CHANGELOG.md)
@@ -20,7 +20,7 @@ Wagtail Localize requires the following:
 
 - Python (3.7, 3.8, 3.9)
 - Django (2.2, 3.0, 3.1, 3.2)
-- Wagtail (2.11, 2.12, 2.13, 2.14, 2.15) with [internationalisation enabled](https://docs.wagtail.io/en/stable/advanced_topics/i18n.html#configuration)
+- Wagtail (2.11, 2.12, 2.13, 2.14, 2.15) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
 
 ## Installation
 
@@ -91,7 +91,7 @@ To run the test app interactively, use `tox -e interactive`, visit `http://127.0
 
 ## Support
 
-For support, please use [GitHub Discussions](https://github.com/wagtail/wagtail-localize/discussions) or ask a question on the `#multi-language` channel on [Wagtail's Slack instance](https://wagtail.io/slack/).
+For support, please use [GitHub Discussions](https://github.com/wagtail/wagtail-localize/discussions) or ask a question on the `#multi-language` channel on [Wagtail's Slack instance](`https://wagtail.org/slack/`).
 
 ## Thanks
 
