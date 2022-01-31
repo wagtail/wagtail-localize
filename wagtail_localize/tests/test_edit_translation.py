@@ -727,7 +727,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {
                 "id": str(url_block_id),
                 "type": "test_urlblock",
-                "value": "https://wagtail.io/",
+                "value": "https://wagtail.org/",
             },
             {
                 "id": str(page_block_id),
@@ -785,7 +785,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                 (
                     f"test_streamfield.{url_block_id}",
                     {"type": "text"},
-                    "https://wagtail.io/",
+                    "https://wagtail.org/",
                 ),
                 (
                     f"test_streamfield.{page_block_id}",
