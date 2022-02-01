@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy
 from freezegun import freeze_time
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import (
     DjangoModelPermissionsOrAnonReadOnly,
     IsAuthenticated,
@@ -2111,6 +2112,23 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
             edit_string_translation.view_class.permission_classes, [IsAuthenticated]
         )
 
+    @override_settings(
+        REST_FRAMEWORK={
+            "DEFAULT_AUTHENTICATION_CLASSES": [
+                "rest_framework.authentication.TokenAuthentication"
+            ]
+        }
+    )
+    def test_update_override_with_drf_default_authentication_classes(self):
+        self.assertEqual(
+            api_settings.DEFAULT_AUTHENTICATION_CLASSES,
+            [TokenAuthentication],
+        )
+        self.assertEqual(
+            edit_string_translation.view_class.authentication_classes,
+            [SessionAuthentication],
+        )
+
 
 @freeze_time("2020-08-21")
 class TestEditOverrideAPIView(EditTranslationTestData, APITestCase):
@@ -2264,6 +2282,22 @@ class TestEditOverrideAPIView(EditTranslationTestData, APITestCase):
             [DjangoModelPermissionsOrAnonReadOnly],
         )
         self.assertEqual(edit_override.view_class.permission_classes, [IsAuthenticated])
+
+    @override_settings(
+        REST_FRAMEWORK={
+            "DEFAULT_AUTHENTICATION_CLASSES": [
+                "rest_framework.authentication.TokenAuthentication"
+            ]
+        }
+    )
+    def test_update_override_with_drf_default_authentication_classes(self):
+        self.assertEqual(
+            api_settings.DEFAULT_AUTHENTICATION_CLASSES,
+            [TokenAuthentication],
+        )
+        self.assertEqual(
+            edit_override.view_class.authentication_classes, [SessionAuthentication]
+        )
 
 
 class TestDownloadPOFileView(EditTranslationTestData, TestCase):
