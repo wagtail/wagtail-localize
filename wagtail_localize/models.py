@@ -1280,6 +1280,7 @@ class Translation(models.Model):
                         string_translation.tool_name = tool_name
                         string_translation.last_translated_by = user
                         string_translation.updated_at = timezone.now()
+                        string_translation.has_error = False  # reset the error flag.
                         string_translation.save()
 
             except TranslationContext.DoesNotExist:
