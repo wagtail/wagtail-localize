@@ -13,7 +13,10 @@ from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
 )
-from wagtail_localize.segments.extract import extract_segments
+from wagtail_localize.segments.extract import (
+    StreamFieldSegmentExtractor,
+    extract_segments,
+)
 from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import (
     TestChildObject,
@@ -338,12 +341,26 @@ class TestSegmentExtractionWithStreamField(TestCase):
         )
 
     @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16), "ListBlocks are supported starting Wagtail 2.16"
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
     )
     def test_listblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
-            str(block_id), "test_listblock", ["Test content", "Some more test content"]
+            str(block_id),
+            "test_listblock",
+            [
+                {
+                    "type": "item",
+                    "value": "Test content",
+                    "id": "11111111-1111-1111-1111-111111111111",
+                },
+                {
+                    "type": "item",
+                    "value": "Some more test content",
+                    "id": "22222222-2222-2222-2222-222222222222",
+                },
+            ],
         )
 
         expected_segments = [
@@ -352,6 +369,19 @@ class TestSegmentExtractionWithStreamField(TestCase):
         ]
         segments = extract_segments(page)
         self.assertEqual(segments, expected_segments)
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
+    def test_listblock_not_extracted_when_not_in_block_format(self):
+        page = make_test_page_with_streamfield_block(
+            uuid.uuid4(), "test_listblock", ["Test content", "Some more test content"]
+        )
+        segments = StreamFieldSegmentExtractor(
+            page.test_streamfield
+        ).handle_stream_block(page.test_streamfield)
+        self.assertEqual(segments, [])
 
     def test_nestedstreamblock(self):
         block_id = uuid.uuid4()
