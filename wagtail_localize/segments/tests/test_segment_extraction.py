@@ -3,6 +3,7 @@ import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Page, Site
 
@@ -12,7 +13,10 @@ from wagtail_localize.segments import (
     StringSegmentValue,
     TemplateSegmentValue,
 )
-from wagtail_localize.segments.extract import extract_segments
+from wagtail_localize.segments.extract import (
+    StreamFieldSegmentExtractor,
+    extract_segments,
+)
 from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import (
     TestChildObject,
@@ -336,24 +340,48 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.expectedFailure  # Not supported (probably won't ever be due to lack of path stability)
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
     def test_listblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
-            str(block_id), "test_listblock", ["Test content", "Some more test content"]
-        )
-
-        segments = extract_segments(page)
-
-        self.assertEqual(
-            segments,
+            str(block_id),
+            "test_listblock",
             [
-                StringSegmentValue(f"test_streamfield.{block_id}", "Test content"),
-                StringSegmentValue(
-                    f"test_streamfield.{block_id}", "Some more test content"
-                ),
+                {
+                    "type": "item",
+                    "value": "Test content",
+                    "id": "11111111-1111-1111-1111-111111111111",
+                },
+                {
+                    "type": "item",
+                    "value": "Some more test content",
+                    "id": "22222222-2222-2222-2222-222222222222",
+                },
             ],
         )
+
+        expected_segments = [
+            StringSegmentValue(f"test_streamfield.{block_id}.{item.id}", item.value)
+            for item in page.test_streamfield[0].value.bound_blocks
+        ]
+        segments = extract_segments(page)
+        self.assertEqual(segments, expected_segments)
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
+    def test_listblock_not_extracted_when_not_in_block_format(self):
+        page = make_test_page_with_streamfield_block(
+            uuid.uuid4(), "test_listblock", ["Test content", "Some more test content"]
+        )
+        segments = StreamFieldSegmentExtractor(
+            page.test_streamfield
+        ).handle_stream_block(page.test_streamfield)
+        self.assertEqual(segments, [])
 
     def test_nestedstreamblock(self):
         block_id = uuid.uuid4()
