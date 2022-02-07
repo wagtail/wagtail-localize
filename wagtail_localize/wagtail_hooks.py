@@ -12,6 +12,7 @@ from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
+from wagtail.core.log_actions import LogFormatter
 from wagtail.core.models import Locale, Page, TranslatableMixin
 
 
@@ -415,3 +416,21 @@ def register_wagtail_localize2_report_menu_item():
         icon_name="site",
         order=9000,
     )
+
+
+@hooks.register("register_log_actions")
+def wagtail_localize_log_actions(actions):
+    @actions.register_action("wagtail_localize.convert_to_alias")
+    class ConvertToAliasActionFormatter(LogFormatter):
+        label = _("Convert page to alias")
+
+        def format_message(self, log_entry):
+            try:
+                return _(
+                    "Converted page '%(title)s' to an alias of the translation source page '%(source_title)s'"
+                ) % {
+                    "title": log_entry.data["page"]["title"],
+                    "source_title": log_entry.data["source"]["title"],
+                }
+            except KeyError:
+                return _("Converted page to an alias of the translation source page")

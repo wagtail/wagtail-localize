@@ -6,7 +6,7 @@ from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from wagtail.admin import messages
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core.models import Page
+from wagtail.core.models import Page, PageLogEntry
 
 from wagtail_localize.models import TranslationSource
 
@@ -18,24 +18,39 @@ def convert_to_alias(request, page_id):
 
     try:
         # Attempt to get the source page id, if it exists
-        source_page_id = Page.objects.filter(
+        source_page = Page.objects.get(
             translation_key=page.translation_key,
             locale_id=TranslationSource.objects.get(
                 object_id=page.translation_key,
                 specific_content_type=page.content_type_id,
             ).locale_id,
-        ).values_list("pk", flat=True)[0]
-    except (Page.DoesNotExist, TranslationSource.DoesNotExist, IndexError):
+        )
+    except (Page.DoesNotExist, TranslationSource.DoesNotExist):
         raise Http404
 
     with transaction.atomic():
         next_url = get_valid_next_url_from_request(request)
 
         if request.method == "POST":
-            page.alias_of_id = source_page_id
+            page.alias_of_id = source_page.id
             page.save(update_fields=["alias_of_id"], clean=False)
 
-            # TODO: log entry
+            PageLogEntry.objects.log_action(
+                instance=page,
+                revision=page.get_latest_revision(),
+                action="wagtail_localize.convert_to_alias",
+                user=request.user,
+                data={
+                    "page": {
+                        "id": page.id,
+                        "title": page.get_admin_display_title(),
+                    },
+                    "source": {
+                        "id": source_page.id,
+                        "title": source_page.get_admin_display_title(),
+                    },
+                },
+            )
 
             messages.success(
                 request,
