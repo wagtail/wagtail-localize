@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -19,6 +20,7 @@ def convert_to_alias(request, page_id):
     try:
         # Attempt to get the source page id, if it exists
         source_page = Page.objects.get(
+            ~Q(pk=page.pk),
             translation_key=page.translation_key,
             locale_id=TranslationSource.objects.get(
                 object_id=page.translation_key,

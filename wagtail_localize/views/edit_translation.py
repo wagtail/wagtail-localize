@@ -777,13 +777,17 @@ def edit_translation(request, translation, instance):
     if isinstance(instance, Page):
         try:
             # Check that there is a parent page.
-            add_convert_to_alias_url = Page.objects.filter(
-                translation_key=instance.translation_key,
-                locale_id=TranslationSource.objects.get(
-                    object_id=instance.translation_key,
-                    specific_content_type=instance.content_type_id,
-                ).locale_id,
-            ).exists()
+            add_convert_to_alias_url = (
+                Page.objects.filter(
+                    translation_key=instance.translation_key,
+                    locale_id=TranslationSource.objects.get(
+                        object_id=instance.translation_key,
+                        specific_content_type=instance.content_type_id,
+                    ).locale_id,
+                )
+                .exclude(pk=instance.pk)
+                .exists()
+            )
         except (TranslationSource.DoesNotExist, IndexError):
             add_convert_to_alias_url = False
     else:

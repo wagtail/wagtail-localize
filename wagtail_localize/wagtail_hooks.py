@@ -2,6 +2,7 @@ from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
@@ -307,17 +308,20 @@ class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
         if context["view"] != "edit":
             return False
         page = context["page"]
-
-        return (
-            page.alias_of_id is None
-            and Page.objects.filter(
-                translation_key=page.translation_key,
-                locale_id=TranslationSource.objects.get(
-                    object_id=page.translation_key,
-                    specific_content_type=page.content_type_id,
-                ).locale_id,
-            ).exists()
-        )
+        try:
+            return (
+                page.alias_of_id is None
+                and Page.objects.filter(
+                    ~Q(pk=page.pk),
+                    translation_key=page.translation_key,
+                    locale_id=TranslationSource.objects.get(
+                        object_id=page.translation_key,
+                        specific_content_type=page.content_type_id,
+                    ).locale_id,
+                ).exists()
+            )
+        except TranslationSource.DoesNotExist:
+            return False
 
     if WAGTAIL_VERSION >= (2, 15):
 
