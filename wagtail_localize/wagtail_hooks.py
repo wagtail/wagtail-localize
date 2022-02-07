@@ -12,7 +12,7 @@ from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
-from wagtail.core.models import Locale, TranslatableMixin
+from wagtail.core.models import Locale, Page, TranslatableMixin
 
 
 # The `wagtail.snippets.action_menu` module is introduced in https://github.com/wagtail/wagtail/pull/6384
@@ -309,10 +309,12 @@ class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
 
         return (
             page.alias_of_id is None
-            and Translation.objects.filter(
-                source__object_id=page.translation_key,
-                target_locale_id=page.locale_id,
-                enabled=False,
+            and Page.objects.filter(
+                translation_key=page.translation_key,
+                locale_id=TranslationSource.objects.get(
+                    object_id=page.translation_key,
+                    specific_content_type=page.content_type_id,
+                ).locale_id,
             ).exists()
         )
 
