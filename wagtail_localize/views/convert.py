@@ -8,7 +8,7 @@ from wagtail.admin import messages
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Page
 
-from wagtail_localize.models import Translation
+from wagtail_localize.models import TranslationSource
 
 
 def convert_to_alias(request, page_id):
@@ -17,18 +17,15 @@ def convert_to_alias(request, page_id):
         raise PermissionDenied
 
     try:
-        source_locale_id = Translation.objects.filter(
-            source__object_id=page.translation_key,
-            target_locale_id=page.locale_id,
-        ).values_list("source__locale_id", flat=True)[0]
-    except (Translation.DoesNotExist, IndexError):
-        raise Http404
-
-    try:
+        # Attempt to get the source page id, if it exists
         source_page_id = Page.objects.filter(
-            translation_key=page.translation_key, locale_id=source_locale_id
+            translation_key=page.translation_key,
+            locale_id=TranslationSource.objects.get(
+                object_id=page.translation_key,
+                specific_content_type=page.content_type_id,
+            ).locale_id,
         ).values_list("pk", flat=True)[0]
-    except (Page.DoesNotExist, IndexError):
+    except (Page.DoesNotExist, TranslationSource.DoesNotExist, IndexError):
         raise Http404
 
     with transaction.atomic():
