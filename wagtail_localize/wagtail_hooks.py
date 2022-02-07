@@ -13,9 +13,11 @@ from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
-from wagtail.core.log_actions import LogFormatter
 from wagtail.core.models import Locale, Page, TranslatableMixin
 
+
+if WAGTAIL_VERSION >= (2, 15):
+    from wagtail.core.log_actions import LogFormatter
 
 # The `wagtail.snippets.action_menu` module is introduced in https://github.com/wagtail/wagtail/pull/6384
 # FIXME: Remove this check when this module is merged into master
@@ -424,20 +426,44 @@ def register_wagtail_localize2_report_menu_item():
 
 @hooks.register("register_log_actions")
 def wagtail_localize_log_actions(actions):
-    @actions.register_action("wagtail_localize.convert_to_alias")
-    class ConvertToAliasActionFormatter(LogFormatter):
-        label = _("Convert page to alias")
 
-        def format_message(self, log_entry):
+    if WAGTAIL_VERSION >= (2, 15):
+
+        @actions.register_action("wagtail_localize.convert_to_alias")
+        class ConvertToAliasActionFormatter(LogFormatter):
+            label = _("Convert page to alias")
+
+            def format_message(self, log_entry):
+                try:
+                    return _(
+                        "Converted page '%(title)s' to an alias of the translation source page '%(source_title)s'"
+                    ) % {
+                        "title": log_entry.data["page"]["title"],
+                        "source_title": log_entry.data["source"]["title"],
+                    }
+                except KeyError:
+                    return _(
+                        "Converted page to an alias of the translation source page"
+                    )
+
+    else:
+
+        def convert_to_alias_message(data):
             try:
                 return _(
                     "Converted page '%(title)s' to an alias of the translation source page '%(source_title)s'"
                 ) % {
-                    "title": log_entry.data["page"]["title"],
-                    "source_title": log_entry.data["source"]["title"],
+                    "title": data["page"]["title"],
+                    "source_title": data["source"]["title"],
                 }
             except KeyError:
                 return _("Converted page to an alias of the translation source page")
+
+        actions.register_action(
+            "wagtail_localize.convert_to_alias",
+            _("Convert page to alias"),
+            convert_to_alias_message,
+        )
 
 
 @hooks.register("register_icons")
