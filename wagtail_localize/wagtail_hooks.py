@@ -2,6 +2,7 @@ from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
+from django.shortcuts import redirect
 from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
@@ -29,6 +30,7 @@ from wagtail.snippets.widgets import SnippetListingButton
 from . import synctree  # noqa
 from .models import Translation, TranslationSource
 from .views import (
+    convert,
     edit_translation,
     report,
     snippets_api,
@@ -99,6 +101,11 @@ def register_admin_urls():
             "translate/<int:translation_id>/disable/",
             edit_translation.stop_translation,
             name="stop_translation",
+        ),
+        path(
+            "page/<int:page_id>/convert_to_alias/",
+            convert.convert_to_alias,
+            name="convert_to_alias",
         ),
         path(
             "reports/translations/",
@@ -225,17 +232,22 @@ def before_edit_page(request, page):
         return edit_translation.edit_translatable_alias_page(request, page)
 
     # Check if the user has clicked the "Start Synced translation" menu item
-    if request.method == "POST" and "localize-restart-translation" in request.POST:
-        try:
-            translation = Translation.objects.get(
-                source__object_id=page.translation_key,
-                target_locale_id=page.locale_id,
-                enabled=False,
+    if request.method == "POST":
+        if "localize-restart-translation" in request.POST:
+            try:
+                translation = Translation.objects.get(
+                    source__object_id=page.translation_key,
+                    target_locale_id=page.locale_id,
+                    enabled=False,
+                )
+            except Translation.DoesNotExist:
+                pass
+            else:
+                return edit_translation.restart_translation(request, translation, page)
+        elif "localize-convert-to-alias" in request.POST:
+            return redirect(
+                reverse("wagtail_localize:convert_to_alias", args=[page.id])
             )
-        except Translation.DoesNotExist:
-            pass
-        else:
-            return edit_translation.restart_translation(request, translation, page)
 
     # Overrides the edit page view if the page is the target of a translation
     try:
@@ -281,6 +293,43 @@ class RestartTranslationPageActionMenuItem(PageActionMenuItem):
 @hooks.register("register_page_action_menu_item")
 def register_restart_translation_page_action_menu_item():
     return RestartTranslationPageActionMenuItem(order=0)
+
+
+class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
+    label = gettext_lazy("Convert to alias page")
+    name = "localize-convert-to-alias"
+    icon_name = "undo"
+    classname = "action-secondary"
+
+    def _is_shown(self, context):
+        # Only show this menu item on the edit view where there was a previous translation record
+        if context["view"] != "edit":
+            return False
+        page = context["page"]
+
+        return (
+            page.alias_of_id is None
+            and Translation.objects.filter(
+                source__object_id=page.translation_key,
+                target_locale_id=page.locale_id,
+                enabled=False,
+            ).exists()
+        )
+
+    if WAGTAIL_VERSION >= (2, 15):
+
+        def is_shown(self, context):
+            return self._is_shown(context)
+
+    else:
+
+        def is_shown(self, request, context):
+            return self._is_shown(context)
+
+
+@hooks.register("register_page_action_menu_item")
+def register_convert_back_to_alias_page_action_menu_item():
+    return ConvertToAliasPageActionMenuItem(order=0)
 
 
 @hooks.register("before_edit_snippet")
