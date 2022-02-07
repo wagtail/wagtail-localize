@@ -30,6 +30,24 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
         </form>
     ];
 
+    if (links.convertToAliasUrl) {
+        actions.push(
+            <form method="GET" action={links.convertToAliasUrl}>
+                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken}/>
+                <input type="hidden" name="next" value={window.location.href}/>
+
+                <button
+                    type="submit"
+                    className="button action-secondary"
+                    aria-label={gettext('Convert to alias page')}
+                >
+                    <Icon name="undo"/>
+                    {gettext('Convert to alias page')}
+                </button>
+            </form>
+        )
+    }
+
     if (perms.canDelete) {
         actions.push(
             <a className="button action-secondary" href={links.deleteUrl}>

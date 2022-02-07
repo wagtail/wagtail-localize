@@ -20,7 +20,6 @@ def convert_to_alias(request, page_id):
         source_locale_id = Translation.objects.filter(
             source__object_id=page.translation_key,
             target_locale_id=page.locale_id,
-            enabled=False,
         ).values_list("source__locale_id", flat=True)[0]
     except (Translation.DoesNotExist, IndexError):
         raise Http404
