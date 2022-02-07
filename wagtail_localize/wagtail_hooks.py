@@ -299,7 +299,7 @@ def register_restart_translation_page_action_menu_item():
 class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
     label = gettext_lazy("Convert to alias page")
     name = "localize-convert-to-alias"
-    icon_name = "undo"
+    icon_name = "wagtail-localize-convert"
     classname = "action-secondary"
 
     def _is_shown(self, context):
@@ -434,3 +434,9 @@ def wagtail_localize_log_actions(actions):
                 }
             except KeyError:
                 return _("Converted page to an alias of the translation source page")
+
+
+@hooks.register("register_icons")
+def register_icons(icons):
+    # icon id "wagtail-localize-convert" (which translates to `.icon-wagtail-localize-convert`)
+    return icons + ["wagtail_localize/icons/convert.svg"]
