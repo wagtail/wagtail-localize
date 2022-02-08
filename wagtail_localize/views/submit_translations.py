@@ -168,7 +168,7 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
     def get_success_url(self):
         return get_valid_next_url_from_request(self.request)
 
-    def get_default_success_url(self):
+    def get_default_success_url(self, translated_object=None):
         pass
 
     def get_context_data(self, **kwargs):
@@ -222,7 +222,16 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
         # TODO: Button that links to page in translations report when we have it
         messages.success(self.request, self.get_success_message(locales))
 
-        return redirect(self.get_success_url() or self.get_default_success_url())
+        single_translated_object = None
+        if len(form.cleaned_data["locales"]) == 1:
+            single_translated_object = self.object.get_translation(
+                form.cleaned_data["locales"][0]
+            )
+
+        return redirect(
+            self.get_success_url()
+            or self.get_default_success_url(single_translated_object)
+        )
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.has_perms(["wagtail_localize.submit_translation"]):
@@ -250,12 +259,11 @@ class SubmitPageTranslationView(SubmitTranslationView):
 
         return page
 
-    def get_default_success_url(self):
-        translations = self.object.get_translations()
-        if len(translations) == 1:
+    def get_default_success_url(self, translated_page=None):
+        if translated_page:
             # If the editor chose a single locale to translate to, redirect to
             # the newly translated page's edit view.
-            return reverse("wagtailadmin_pages:edit", args=[translations[0].id])
+            return reverse("wagtailadmin_pages:edit", args=[translated_page.id])
 
         return reverse("wagtailadmin_explore", args=[self.get_object().get_parent().id])
 
@@ -281,9 +289,8 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
 
         return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
 
-    def get_default_success_url(self):
-        translations = self.object.get_translations()
-        if len(translations) == 1:
+    def get_default_success_url(self, translated_snippet=None):
+        if translated_snippet:
             # If the editor chose a single locale to translate to, redirect to
             # the newly translated snippet's edit view.
             return reverse(
@@ -291,7 +298,7 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
                 args=[
                     self.kwargs["app_label"],
                     self.kwargs["model_name"],
-                    translations[0].pk,
+                    translated_snippet.pk,
                 ],
             )
 
