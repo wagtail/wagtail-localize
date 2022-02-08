@@ -93,8 +93,9 @@ class TestSubmitPageTranslationWithComponents(TestCase, WagtailTestUtils):
             },
         )
 
+        translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
 
         self.assertEqual(CustomTranslationData.objects.count(), 1)

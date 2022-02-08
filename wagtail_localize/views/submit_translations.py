@@ -251,6 +251,12 @@ class SubmitPageTranslationView(SubmitTranslationView):
         return page
 
     def get_default_success_url(self):
+        translations = self.object.get_translations()
+        if len(translations) == 1:
+            # If the editor chose a single locale to translate to, redirect to
+            # the newly translated page's edit view.
+            return reverse("wagtailadmin_pages:edit", args=[translations[0].id])
+
         return reverse("wagtailadmin_explore", args=[self.get_object().get_parent().id])
 
     def get_success_message(self, locales):
@@ -276,6 +282,19 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
         return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
 
     def get_default_success_url(self):
+        translations = self.object.get_translations()
+        if len(translations) == 1:
+            # If the editor chose a single locale to translate to, redirect to
+            # the newly translated snippet's edit view.
+            return reverse(
+                "wagtailsnippets:edit",
+                args=[
+                    self.kwargs["app_label"],
+                    self.kwargs["model_name"],
+                    translations[0].pk,
+                ],
+            )
+
         return reverse(
             "wagtailsnippets:edit",
             args=[
