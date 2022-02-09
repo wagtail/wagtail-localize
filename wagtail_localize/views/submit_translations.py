@@ -210,8 +210,12 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
 
                 _walk(self.object)
 
+        single_translated_object = None
         if len(form.cleaned_data["locales"]) == 1:
             locales = form.cleaned_data["locales"][0].get_display_name()
+            single_translated_object = self.object.get_translation(
+                form.cleaned_data["locales"][0]
+            )
 
         else:
             # Note: always plural
@@ -221,12 +225,6 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
 
         # TODO: Button that links to page in translations report when we have it
         messages.success(self.request, self.get_success_message(locales))
-
-        single_translated_object = None
-        if len(form.cleaned_data["locales"]) == 1:
-            single_translated_object = self.object.get_translation(
-                form.cleaned_data["locales"][0]
-            )
 
         return redirect(
             self.get_success_url()
