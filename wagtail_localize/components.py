@@ -153,8 +153,9 @@ class TranslationComponentManager(BaseComponentManager):
     """
     The translation component manager handles all registered components for translation.
 
-    Classes registered as translation components should implement a `get_or_create_from_source_and_translation_data`
-    method which takes `translation_source`, `translations` and kwargs as parameters.
+    Classes registered as translation components should implement a
+    `get_or_create_from_source_and_translation_data` method which takes
+    `translation_source`, `translations` and kwargs as parameters.
     """
 
     @classmethod
