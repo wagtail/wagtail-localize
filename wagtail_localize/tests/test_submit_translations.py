@@ -78,7 +78,7 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
         self.assertContains(
             response,
             (
-                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
+                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
                 'aria-label="" class="u-link is-live ">'
                 "\n                    Translate this page\n                </a>"
             ),
@@ -624,7 +624,7 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         self.assertContains(
             response,
             (
-                f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"{extra}>Translate</a>'
+                f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/"{extra}>Translate</a>'
             ),
         )
 
