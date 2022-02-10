@@ -431,7 +431,7 @@ def wagtail_localize_log_actions(actions):
 
         @actions.register_action("wagtail_localize.convert_to_alias")
         class ConvertToAliasActionFormatter(LogFormatter):
-            label = _("Convert page to alias")
+            label = gettext_lazy("Convert page to alias")
 
             def format_message(self, log_entry):
                 try:
@@ -469,4 +469,4 @@ def wagtail_localize_log_actions(actions):
 @hooks.register("register_icons")
 def register_icons(icons):
     # icon id "wagtail-localize-convert" (which translates to `.icon-wagtail-localize-convert`)
-    return icons + ["wagtail_localize/icons/convert.svg"]
+    return icons + ["wagtail_localize/icons/wagtail-localize-convert.svg"]

@@ -8,7 +8,10 @@
 
     <div class="nice-padding">
         <p>
-            {% trans 'Are you sure you want to convert this page into an alias?' %}
+            {% blocktrans trimmed with source_page_title=source_page.title source_page_locale=source_page.locale.get_display_name %}
+            Are you sure you want to convert this page into an alias?
+            This will overwrite the content of the page with the content of '{{ source_page_title }}' ({{ source_page_locale }})
+            {% endblocktrans %}
         </p>
 
         <form action="{% url 'wagtail_localize:convert_to_alias' page.id %}" method="POST">

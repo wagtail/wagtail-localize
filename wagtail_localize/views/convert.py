@@ -37,6 +37,7 @@ def convert_to_alias(request, page_id):
             page.alias_of_id = source_page.id
             page.save(update_fields=["alias_of_id"], clean=False)
 
+            page_title = page.specific_deferred.get_admin_display_title()
             PageLogEntry.objects.log_action(
                 instance=page,
                 revision=page.get_latest_revision(),
@@ -45,20 +46,18 @@ def convert_to_alias(request, page_id):
                 data={
                     "page": {
                         "id": page.id,
-                        "title": page.get_admin_display_title(),
+                        "title": page_title,
                     },
                     "source": {
                         "id": source_page.id,
-                        "title": source_page.get_admin_display_title(),
+                        "title": source_page.specific_deferred.get_admin_display_title(),
                     },
                 },
             )
 
             messages.success(
                 request,
-                _("Page '{}' has been converted into an alias.").format(
-                    page.get_admin_display_title()
-                ),
+                _("Page '{}' has been converted into an alias.").format(page_title),
             )
 
             if next_url:
@@ -70,6 +69,7 @@ def convert_to_alias(request, page_id):
         "wagtail_localize/admin/confirm_convert_to_alias.html",
         {
             "page": page,
+            "source_page": source_page,
             "next": next_url,
         },
     )
