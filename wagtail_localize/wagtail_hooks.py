@@ -150,8 +150,6 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
 
         if has_locale_to_translate_to:
             url = reverse("wagtail_localize:submit_page_translation", args=[page.id])
-            if next_url is not None:
-                url += "?" + urlencode({"next": next_url})
 
             yield wagtailadmin_widgets.Button(
                 _("Translate this page"), url, priority=60
@@ -188,8 +186,6 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
                 "wagtail_localize:submit_snippet_translation",
                 args=[model._meta.app_label, model._meta.model_name, quote(snippet.pk)],
             )
-            if next_url is not None:
-                url += "?" + urlencode({"next": next_url})
 
             yield SnippetListingButton(
                 _("Translate"),
