@@ -161,6 +161,16 @@ class ConvertToAliasViewTest(ConvertToAliasTestData, TestCase):
         self.fr_page.refresh_from_db()
         self.assertEqual(self.fr_page.alias_of_id, self.page.id)
 
+    def test_convert_syncs_alias_with_source(self):
+        # update the source page
+        self.page.title = "Updated title"
+        self.page.save()
+        self.page.save_revision().publish()
+
+        self.client.post(self.convert_url)
+        self.fr_page.refresh_from_db()
+        self.assertEqual(self.fr_page.title, "Updated title")
+
     def test_convert_adds_entry_to_audit_log(self):
         self.assertFalse(
             PageLogEntry.objects.filter(
