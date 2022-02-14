@@ -79,9 +79,9 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
             response,
             (
                 f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
-                'aria-label="" class="u-link is-live ">'
-                "\n                    Translate this page\n                </a>"
+                'aria-label="" class="u-link is-live ">Translate this page</a>'
             ),
+            html=True,
         )
 
     def test_hides_if_page_already_translated(self):

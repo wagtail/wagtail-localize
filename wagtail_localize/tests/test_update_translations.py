@@ -82,9 +82,10 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
         self.assertContains(
             response,
             (
-                f'<a href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" aria-label="" class="u-link is-live ">\n'
-                "                    Sync translated pages\n                </a>"
+                f'<a href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
+                'aria-label="" class="u-link is-live ">Sync translated pages</a>'
             ),
+            html=True,
         )
 
     def test_hides_if_page_hasnt_got_translations(self):
