@@ -6,6 +6,7 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
@@ -149,8 +150,6 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
 
         if has_locale_to_translate_to:
             url = reverse("wagtail_localize:submit_page_translation", args=[page.id])
-            if next_url is not None:
-                url += "?" + urlencode({"next": next_url})
 
             yield wagtailadmin_widgets.Button(
                 _("Translate this page"), url, priority=60
@@ -187,8 +186,6 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
                 "wagtail_localize:submit_snippet_translation",
                 args=[model._meta.app_label, model._meta.model_name, quote(snippet.pk)],
             )
-            if next_url is not None:
-                url += "?" + urlencode({"next": next_url})
 
             yield SnippetListingButton(
                 _("Translate"),
@@ -255,7 +252,7 @@ class RestartTranslationPageActionMenuItem(PageActionMenuItem):
     icon_name = "undo"
     classname = "action-secondary"
 
-    def is_shown(self, request, context):
+    def _is_shown(self, context):
         # Only show this menu item on the edit view where there was a previous translation record
         if context["view"] != "edit":
             return False
@@ -265,6 +262,16 @@ class RestartTranslationPageActionMenuItem(PageActionMenuItem):
             target_locale_id=context["page"].locale_id,
             enabled=False,
         ).exists()
+
+    if WAGTAIL_VERSION >= (2, 15):
+
+        def is_shown(self, context):
+            return self._is_shown(context)
+
+    else:
+
+        def is_shown(self, request, context):
+            return self._is_shown(context)
 
 
 @hooks.register("register_page_action_menu_item")
@@ -311,7 +318,7 @@ if SNIPPET_RESTART_TRANSLATION_ENABLED:
         icon_name = "undo"
         classname = "action-secondary"
 
-        def is_shown(self, request, context):
+        def _is_shown(self, context):
             # Only show this menu item on the edit view where there was a previous translation record
             if context["view"] != "edit":
                 return False
@@ -325,6 +332,16 @@ if SNIPPET_RESTART_TRANSLATION_ENABLED:
                 enabled=False,
             ).exists()
 
+        if WAGTAIL_VERSION >= (2, 15):
+
+            def is_shown(self, context):
+                return self._is_shown(context)
+
+        else:
+
+            def is_shown(self, request, context):
+                return self._is_shown(context)
+
     @hooks.register("register_snippet_action_menu_item")
     def register_restart_translation_snippet_action_menu_item(model):
         return RestartTranslationSnippetActionMenuItem(order=0)
@@ -336,7 +353,7 @@ class TranslationsReportMenuItem(MenuItem):
 
 
 @hooks.register("register_reports_menu_item")
-def register_ab_testing_report_menu_item():
+def register_wagtail_localize2_report_menu_item():
     return TranslationsReportMenuItem(
         _("Translations"),
         reverse("wagtail_localize:translations_report"),

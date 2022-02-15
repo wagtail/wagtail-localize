@@ -3,6 +3,7 @@ import functools
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
 from wagtail.admin.edit_handlers import (
     ObjectList,
@@ -183,12 +184,23 @@ class DeleteView(generic.DeleteView):
         context["can_delete"] = self.can_delete(object)
         return context
 
-    def delete(self, request, *args, **kwargs):
-        if self.can_delete(self.get_object()):
-            return super().delete(request, *args, **kwargs)
-        else:
-            messages.error(request, self.cannot_delete_message)
-            return super().get(request)
+    if WAGTAIL_VERSION >= (2, 16):
+
+        def form_valid(self, form):
+            if self.can_delete(self.get_object()):
+                return super().form_valid(form)
+            else:
+                messages.error(self.request, self.cannot_delete_message)
+                return super().get(self.request)
+
+    else:
+
+        def delete(self, request, *args, **kwargs):
+            if self.can_delete(self.get_object()):
+                return super().delete(request, *args, **kwargs)
+            else:
+                messages.error(request, self.cannot_delete_message)
+                return super().get(request)
 
 
 class LocaleViewSet(ModelViewSet):

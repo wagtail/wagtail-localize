@@ -2,6 +2,7 @@
 publish = "site"
 ignore = "git diff --quiet HEAD^ HEAD {readme.md,mkdocs.yml,netlify.toml,docs/,*.py}"
 command = """
+pip install django~=3.2
 pip install -e.[testing,documentation]
 mkdocs build -d site
 """

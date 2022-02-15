@@ -2,6 +2,7 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from modelcluster.fields import ParentalKey
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page, TranslatableMixin
@@ -40,7 +41,7 @@ class StreamFieldSegmentExtractor:
         self.field = field
         self.include_overridables = include_overridables
 
-    def handle_block(self, block_type, block_value):
+    def handle_block(self, block_type, block_value, raw_value=None):
         # Need to check if the app is installed before importing EmbedBlock
         # See: https://github.com/wagtail/wagtail-localize/issues/309
         if apps.is_installed("wagtail.embeds"):
@@ -96,7 +97,7 @@ class StreamFieldSegmentExtractor:
             return self.handle_struct_block(block_value)
 
         elif isinstance(block_type, blocks.ListBlock):
-            return self.handle_list_block(block_value)
+            return self.handle_list_block(block_value, raw_value)
 
         elif isinstance(block_type, blocks.StreamBlock):
             return self.handle_stream_block(block_value)
@@ -132,17 +133,34 @@ class StreamFieldSegmentExtractor:
 
         return segments
 
-    def handle_list_block(self, list_block):
-        # TODO
-        return []
+    def handle_list_block(self, list_block, raw_value):
+        segments = []
+        if WAGTAIL_VERSION >= (2, 16):
+            # Wagtail 2.16 changes ListBlock values to be ListValue objects (i.e. {'value': '', 'id': ''})
+            # and will automatically convert from the simple list format used before. However that requires
+            # the block to be saved. bound_blocks will return ListValue objects, so we need to check that the
+            # stored value is the new format before extracting segments, othewise the block ids will continue
+            # to change.
+            has_block_format = list_block.list_block._item_is_in_block_format(
+                raw_value["value"][0]
+            )
+            if has_block_format:
+                for block in list_block.bound_blocks:
+                    segments.extend(
+                        segment.wrap(block.id)
+                        for segment in self.handle_block(block.block, block.value)
+                    )
+        return segments
 
     def handle_stream_block(self, stream_block):
         segments = []
 
-        for block in stream_block:
+        for index, block in enumerate(stream_block):
             segments.extend(
                 segment.wrap(block.id)
-                for segment in self.handle_block(block.block, block.value)
+                for segment in self.handle_block(
+                    block.block, block.value, raw_value=stream_block.raw_data[index]
+                )
             )
 
         return segments

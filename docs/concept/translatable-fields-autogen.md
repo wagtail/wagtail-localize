@@ -18,7 +18,7 @@ The following are excluded:
 - `ManyToManyField` and `ParentalKey`
 - Parent link fields, such as `page_ptr`
 - Inherited `MP_Node` fields named `path`, `depth`, and `numchild`
-- Inherited `Page` fields named `go_live_at`, `explire_at`, `first_published_at`, `content_type` and `owner`
+- Inherited `Page` fields named `go_live_at`, `expire_at`, `first_published_at`, `content_type` and `owner`
 
 Next, we look at text fields. All text fields (including `RichTextField` and `StreamField`) are set to translatable,
 except for the following which are set to synchronised:

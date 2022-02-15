@@ -19,7 +19,13 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers, status
-from rest_framework.decorators import api_view
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from wagtail.admin import messages
 from wagtail.admin.edit_handlers import (
@@ -984,6 +990,8 @@ def restart_translation(request, translation, instance):
 
 
 @api_view(["PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+@authentication_classes([SessionAuthentication])
 def edit_string_translation(request, translation_id, string_segment_id):
     translation = get_object_or_404(Translation, id=translation_id)
     string_segment = get_object_or_404(StringSegment, id=string_segment_id)
@@ -1041,6 +1049,8 @@ def edit_string_translation(request, translation_id, string_segment_id):
 
 
 @api_view(["PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+@authentication_classes([SessionAuthentication])
 def edit_override(request, translation_id, overridable_segment_id):
     translation = get_object_or_404(Translation, id=translation_id)
     overridable_segment = get_object_or_404(

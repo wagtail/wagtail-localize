@@ -65,7 +65,7 @@ Let's add a simple language switcher. Add the following snippet of code into the
 ```
 <!-- prettier-ignore-end -->
 
-This example was taken from the Wagtail docs, have a look [there](https://docs.wagtail.io/en/stable/advanced_topics/i18n.html#basic-example) for a full explanation of this example.
+This example was taken from the Wagtail docs, have a look [there](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#basic-example) for a full explanation of this example.
 
 Here's how it should look, the link should take you to the French version, then back again:
 

@@ -78,10 +78,10 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
         self.assertContains(
             response,
             (
-                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
-                'aria-label="" class="u-link is-live ">'
-                "\n                    Translate this page\n                </a>"
+                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
+                'aria-label="" class="u-link is-live ">Translate this page</a>'
             ),
+            html=True,
         )
 
     def test_hides_if_page_already_translated(self):
@@ -229,10 +229,6 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
-        )
-
         translation = Translation.objects.get()
         self.assertEqual(translation.source.locale, self.en_locale)
         self.assertEqual(translation.target_locale, self.fr_locale)
@@ -241,6 +237,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # The translated page should've been created and published
         translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertTrue(translated_page.live)
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+        )
 
     def test_post_submit_page_translation_submits_linked_snippets(self):
         self.en_blog_index.test_snippet = TestSnippet.objects.create(
@@ -256,10 +256,6 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
-        )
-
         page_translation = Translation.objects.get(
             source__specific_content_type=ContentType.objects.get_for_model(TestPage)
         )
@@ -270,6 +266,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # The translated page should've been created and published
         translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertTrue(translated_page.live)
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+        )
 
         snippet_translation = Translation.objects.get(
             source__specific_content_type=ContentType.objects.get_for_model(TestSnippet)
@@ -313,8 +313,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id], "include_subtree": "on"},
         )
 
+        translated_page = self.en_blog_index.get_translation(self.fr_locale)
+
         self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
 
         # Check multiple translations were created
@@ -329,10 +331,6 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
-        )
-
         # One translation should be created
         fr_translation = Translation.objects.get()
         self.assertEqual(fr_translation.source.locale, self.en_locale)
@@ -342,6 +340,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # The translated page should've been created and published
         translated_page = self.en_blog_post.get_translation(self.fr_locale)
         self.assertTrue(translated_page.live)
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+        )
 
         # The parent should've been created as an alias page
         translated_parent_page = self.en_blog_index.get_translation(self.fr_locale)
@@ -364,10 +366,6 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [es_locale.id]},
         )
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
-        )
-
         # One translation should be created
         fr_translation = Translation.objects.get()
         self.assertEqual(fr_translation.source.locale, self.en_locale)
@@ -377,6 +375,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # The translated page should've been created and published
         translated_page = self.en_blog_post.get_translation(es_locale)
         self.assertTrue(translated_page.live)
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+        )
 
         # The parent should've been created as an alias page
         translated_parent_page = self.en_blog_index.get_translation(es_locale)
@@ -443,10 +445,6 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
-        )
-
         # Check that the translation was reactivated
         # Note, .get() here tests that another translation record wasn't created
         translation = Translation.objects.get()
@@ -457,6 +455,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # The translated page should've been created and published
         translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertTrue(translated_page.live)
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+        )
 
     def test_post_submit_page_translation_doesnt_reactivate_deactivated_translation(
         self,
@@ -504,8 +506,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
+        translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
 
         translation = Translation.objects.get()
@@ -526,8 +529,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
+        translated_page = custom_page.get_translation(self.fr_locale)
         self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
 
         translation = Translation.objects.get()
@@ -551,8 +555,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
+        translated_page = custom_page.get_translation(self.fr_locale)
         self.assertRedirects(
-            response, reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
 
         translation = Translation.objects.get()
@@ -619,7 +624,7 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         self.assertContains(
             response,
             (
-                f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"{extra}>Translate</a>'
+                f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/"{extra}>Translate</a>'
             ),
         )
 
@@ -790,14 +795,6 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
             {"locales": [self.fr_locale.id]},
         )
 
-        self.assertRedirects(
-            response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
-            ),
-        )
-
         translation = Translation.objects.get()
         self.assertEqual(translation.source.locale, self.en_locale)
         self.assertEqual(translation.target_locale, self.fr_locale)
@@ -806,6 +803,14 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
         # The translated snippet should've been created
         translated_snippet = self.en_snippet.get_translation(self.fr_locale)
         self.assertEqual(translated_snippet.field, "Test snippet")
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtailsnippets:edit",
+                args=["wagtail_localize_test", "testsnippet", translated_snippet.id],
+            ),
+        )
 
     def test_post_submit_snippet_translation_into_multiple_locales(self):
         response = self.client.post(
