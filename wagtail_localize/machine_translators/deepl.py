@@ -27,9 +27,7 @@ class DeepLTranslator(BaseMachineTranslator):
     display_name = "DeepL"
 
     def translate(self, source_locale, target_locale, strings):
-        api_endpoint = "https://api.deepl.com/v2/translate"
-        if "API_ENDPOINT" in self.options:
-            api_endpoint = self.options["API_ENDPOINT"]
+        api_endpoint = self.options.get("API_ENDPOINT", "https://api.deepl.com/v2/translate")
         response = requests.post(
             api_endpoint,
             {
