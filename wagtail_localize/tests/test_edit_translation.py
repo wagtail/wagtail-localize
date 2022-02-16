@@ -3212,6 +3212,37 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
 
         assert_permission_denied(self, response)
 
+    @override_settings(
+        WAGTAILLOCALIZE_MACHINE_TRANSLATOR={
+            "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
+            "OPTIONS": {
+                "AUTH_KEY": "00000000-aaaa-bbbb-1111-cccccccccccc:fx",
+                "API_ENDPOINT": "https://api-free.deepl.com/v2/translate",
+            },
+        }
+    )
+    def test_deepl_machine_translate_page(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:machine_translate", args=[self.page_translation.id]
+            ),
+            {
+                "next": reverse("wagtailadmin_pages:edit", args=[self.fr_page.id]),
+            },
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+
+        # Check error message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, "error")
+        self.assertEqual(
+            messages[0].message,
+            "Translation failed: 403: [Forbidden] .\n\n\n\n\n",
+        )
+
 
 class TestEditAlias(WagtailTestUtils, TestCase):
     """

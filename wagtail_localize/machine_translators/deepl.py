@@ -1,13 +1,13 @@
-import requests
-
 from http import HTTPStatus
+
+import requests
 
 from wagtail_localize.strings import StringValue
 
 from .base import BaseMachineTranslator
 
-class ApiEndpointError(Exception):
 
+class ApiEndpointError(Exception):
     def __init__(self, code, reason, message="Unspecified Deepl API error ocurred"):
         self.code = code
         self.reason = reason
@@ -27,7 +27,9 @@ class DeepLTranslator(BaseMachineTranslator):
     display_name = "DeepL"
 
     def translate(self, source_locale, target_locale, strings):
-        api_endpoint = self.options.get("API_ENDPOINT", "https://api.deepl.com/v2/translate")
+        api_endpoint = self.options.get(
+            "API_ENDPOINT", "https://api.deepl.com/v2/translate"
+        )
         response = requests.post(
             api_endpoint,
             {
