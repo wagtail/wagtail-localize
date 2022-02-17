@@ -1,0 +1,24 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n wagtailadmin_tags %}
+{% block titletag %}{% blocktrans with title=page.get_admin_display_title %}Convert to alias {{ title }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+    {% trans "Convert to alias" as del_str %}
+    {% include "wagtailadmin/shared/header.html" with title=del_str subtitle=page.get_admin_display_title icon="doc-empty-inverse" %}
+
+    <div class="nice-padding">
+        <p>
+            {% blocktrans trimmed with source_page_title=source_page.title source_page_locale=source_page.locale.get_display_name %}
+            Are you sure you want to convert this page into an alias?
+            This will overwrite the content of the page with the content of '{{ source_page_title }}' ({{ source_page_locale }})
+            {% endblocktrans %}
+        </p>
+
+        <form action="{% url 'wagtail_localize:convert_to_alias' page.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <button type="submit" class="button serious">{% trans 'Yes, convert it' %}</button>
+            <a href="{% if next %}{{ next }}{% else %}{% url 'wagtailadmin_explore' page.get_parent.id %}{% endif %}" class="button button-secondary">{% trans "No, leave it as a page" %}</a>
+        </form>
+    </div>
+{% endblock %}

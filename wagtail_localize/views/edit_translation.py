@@ -59,6 +59,7 @@ from wagtail_localize.models import (
     StringSegment,
     StringTranslation,
     Translation,
+    TranslationSource,
 )
 from wagtail_localize.segments import StringSegmentValue
 
@@ -773,6 +774,25 @@ def edit_translation(request, translation, instance):
             ).format(model_name=capfirst(source_instance._meta.verbose_name)),
         )
 
+    if isinstance(instance, Page):
+        try:
+            # Check that there is a parent page.
+            add_convert_to_alias_url = (
+                Page.objects.filter(
+                    translation_key=instance.translation_key,
+                    locale_id=TranslationSource.objects.get(
+                        object_id=instance.translation_key,
+                        specific_content_type=instance.content_type_id,
+                    ).locale_id,
+                )
+                .exclude(pk=instance.pk)
+                .exists()
+            )
+        except (TranslationSource.DoesNotExist, IndexError):
+            add_convert_to_alias_url = False
+    else:
+        add_convert_to_alias_url = False
+
     return render(
         request,
         "wagtail_localize/admin/edit_translation.html",
@@ -873,6 +893,11 @@ def edit_translation(request, translation, instance):
                         "stopTranslationUrl": reverse(
                             "wagtail_localize:stop_translation", args=[translation.id]
                         ),
+                        "convertToAliasUrl": reverse(
+                            "wagtail_localize:convert_to_alias", args=[instance.id]
+                        )
+                        if add_convert_to_alias_url
+                        else None,
                     },
                     "previewModes": [
                         {

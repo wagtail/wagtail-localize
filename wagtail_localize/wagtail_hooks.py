@@ -2,6 +2,8 @@ from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
+from django.db.models import Q
+from django.shortcuts import redirect
 from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
@@ -11,8 +13,11 @@ from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
-from wagtail.core.models import Locale, TranslatableMixin
+from wagtail.core.models import Locale, Page, TranslatableMixin
 
+
+if WAGTAIL_VERSION >= (2, 15):
+    from wagtail.core.log_actions import LogFormatter
 
 # The `wagtail.snippets.action_menu` module is introduced in https://github.com/wagtail/wagtail/pull/6384
 # FIXME: Remove this check when this module is merged into master
@@ -29,6 +34,7 @@ from wagtail.snippets.widgets import SnippetListingButton
 from . import synctree  # noqa
 from .models import Translation, TranslationSource
 from .views import (
+    convert,
     edit_translation,
     report,
     snippets_api,
@@ -99,6 +105,11 @@ def register_admin_urls():
             "translate/<int:translation_id>/disable/",
             edit_translation.stop_translation,
             name="stop_translation",
+        ),
+        path(
+            "page/<int:page_id>/convert_to_alias/",
+            convert.convert_to_alias,
+            name="convert_to_alias",
         ),
         path(
             "reports/translations/",
@@ -221,17 +232,22 @@ def before_edit_page(request, page):
         return edit_translation.edit_translatable_alias_page(request, page)
 
     # Check if the user has clicked the "Start Synced translation" menu item
-    if request.method == "POST" and "localize-restart-translation" in request.POST:
-        try:
-            translation = Translation.objects.get(
-                source__object_id=page.translation_key,
-                target_locale_id=page.locale_id,
-                enabled=False,
+    if request.method == "POST":
+        if "localize-restart-translation" in request.POST:
+            try:
+                translation = Translation.objects.get(
+                    source__object_id=page.translation_key,
+                    target_locale_id=page.locale_id,
+                    enabled=False,
+                )
+            except Translation.DoesNotExist:
+                pass
+            else:
+                return edit_translation.restart_translation(request, translation, page)
+        elif "localize-convert-to-alias" in request.POST:
+            return redirect(
+                reverse("wagtail_localize:convert_to_alias", args=[page.id])
             )
-        except Translation.DoesNotExist:
-            pass
-        else:
-            return edit_translation.restart_translation(request, translation, page)
 
     # Overrides the edit page view if the page is the target of a translation
     try:
@@ -277,6 +293,48 @@ class RestartTranslationPageActionMenuItem(PageActionMenuItem):
 @hooks.register("register_page_action_menu_item")
 def register_restart_translation_page_action_menu_item():
     return RestartTranslationPageActionMenuItem(order=0)
+
+
+class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
+    label = gettext_lazy("Convert to alias page")
+    name = "localize-convert-to-alias"
+    icon_name = "wagtail-localize-convert"
+    classname = "action-secondary"
+
+    def _is_shown(self, context):
+        # Only show this menu item on the edit view where there was a previous translation record
+        if context["view"] != "edit":
+            return False
+        page = context["page"]
+        try:
+            return (
+                page.alias_of_id is None
+                and Page.objects.filter(
+                    ~Q(pk=page.pk),
+                    translation_key=page.translation_key,
+                    locale_id=TranslationSource.objects.get(
+                        object_id=page.translation_key,
+                        specific_content_type=page.content_type_id,
+                    ).locale_id,
+                ).exists()
+            )
+        except TranslationSource.DoesNotExist:
+            return False
+
+    if WAGTAIL_VERSION >= (2, 15):
+
+        def is_shown(self, context):
+            return self._is_shown(context)
+
+    else:
+
+        def is_shown(self, request, context):
+            return self._is_shown(context)
+
+
+@hooks.register("register_page_action_menu_item")
+def register_convert_back_to_alias_page_action_menu_item():
+    return ConvertToAliasPageActionMenuItem(order=0)
 
 
 @hooks.register("before_edit_snippet")
@@ -360,3 +418,51 @@ def register_wagtail_localize2_report_menu_item():
         icon_name="site",
         order=9000,
     )
+
+
+@hooks.register("register_log_actions")
+def wagtail_localize_log_actions(actions):
+
+    if WAGTAIL_VERSION >= (2, 15):
+
+        @actions.register_action("wagtail_localize.convert_to_alias")
+        class ConvertToAliasActionFormatter(LogFormatter):
+            label = gettext_lazy("Convert page to alias")
+
+            def format_message(self, log_entry):
+                try:
+                    return _(
+                        "Converted page '%(title)s' to an alias of the translation source page '%(source_title)s'"
+                    ) % {
+                        "title": log_entry.data["page"]["title"],
+                        "source_title": log_entry.data["source"]["title"],
+                    }
+                except KeyError:
+                    return _(
+                        "Converted page to an alias of the translation source page"
+                    )
+
+    else:
+
+        def convert_to_alias_message(data):
+            try:
+                return _(
+                    "Converted page '%(title)s' to an alias of the translation source page '%(source_title)s'"
+                ) % {
+                    "title": data["page"]["title"],
+                    "source_title": data["source"]["title"],
+                }
+            except KeyError:
+                return _("Converted page to an alias of the translation source page")
+
+        actions.register_action(
+            "wagtail_localize.convert_to_alias",
+            _("Convert page to alias"),
+            convert_to_alias_message,
+        )
+
+
+@hooks.register("register_icons")
+def register_icons(icons):
+    # icon id "wagtail-localize-convert" (which translates to `.icon-wagtail-localize-convert`)
+    return icons + ["wagtail_localize/icons/wagtail-localize-convert.svg"]
