@@ -5,13 +5,16 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
 "Last-Translator: Mirek Zvolský <zvolsky@seznam.cz>, 2021\n"
 "Language-Team: Czech (https://www.transifex.com/torchbox/teams/8009/cs/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cs\n"
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
 "<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+
+msgid "Disable"
+msgstr "Zakázat"
 
 msgid "Dummy translator"
 msgstr "Fiktivní překladač"
@@ -53,6 +56,9 @@ msgid ""
 msgstr ""
 "Řetězec nemůže mít žádné HTML značky s atributy (s výjimkou 'id' ve <a> "
 "značkách)"
+
+msgid "Enable"
+msgstr "Povolit"
 
 msgid "Translate this page"
 msgstr "Přeložit tuto stránku"

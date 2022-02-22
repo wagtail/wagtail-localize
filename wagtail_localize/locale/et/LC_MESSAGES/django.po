@@ -6,12 +6,18 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
 "Last-Translator: Erlend <debcf78e@opayq.com>, 2021\n"
 "Language-Team: Estonian (https://www.transifex.com/torchbox/teams/8009/et/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Disable"
+msgstr "Keela"
+
+msgid "Enable"
+msgstr "Luba"
 
 msgid "Status"
 msgstr "Staatus"

@@ -2,10 +2,11 @@
 # Translators:
 # Martin Sandström <martin@marteinn.se>, 2021
 # Thomas Kunambi <kunambi@gmail.com>, 2021
+# Philip Andersen <renegadevi@codeofmagi.net>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2021\n"
+"Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2021\n"
 "Language-Team: Swedish (https://www.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -130,6 +131,9 @@ msgstr "segment översatta"
 
 msgid "Server error"
 msgstr "Serverfel"
+
+msgid "Stop Synced translation"
+msgstr "Stoppa synkroniserad översättning"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

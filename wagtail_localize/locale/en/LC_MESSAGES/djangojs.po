@@ -6,7 +6,7 @@ msgstr ""
 msgid "[DELETED]"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
 msgid "Apply editor lock"
 msgstr ""
 
@@ -35,7 +35,7 @@ msgstr ""
 msgid "Change page"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:215
 #: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
 #: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
 msgid "Changed"
@@ -57,7 +57,12 @@ msgstr ""
 msgid "Choose an image"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:37
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:46
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:49
+msgid "Convert to alias page"
+msgstr ""
+
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:59
 msgid "Delete"
 msgstr ""
 
@@ -115,7 +120,7 @@ msgstr ""
 msgid "Live"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:58
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
 msgid "Lock"
 msgstr ""
 
@@ -128,7 +133,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:139
 msgid "Publish in "
 msgstr ""
 
@@ -140,11 +145,11 @@ msgstr ""
 msgid "Published on "
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:110
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:132
 msgid "Publishing..."
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:99
 msgid "Remove editor lock"
 msgstr ""
 
@@ -175,7 +180,7 @@ msgstr ""
 msgid "Stop Synced translation"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:232
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 
@@ -192,11 +197,11 @@ msgstr ""
 msgid "Translate with "
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:102
 msgid "Unlock"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:90
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:112
 msgid "Unpublish"
 msgstr ""
 

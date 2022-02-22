@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
 "Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2021\n"
 "Language-Team: Croatian (Croatia) (https://www.transifex.com/torchbox/"
 "teams/8009/hr_HR/)\n"
@@ -13,6 +13,12 @@ msgstr ""
 "Language: hr_HR\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+
+msgid "Disable"
+msgstr "Onemogući"
+
+msgid "Enable"
+msgstr "Omogući"
 
 msgid "Status"
 msgstr "Status"
