@@ -1,10 +1,10 @@
 #
 # Translators:
-# Istvan Farkas <istvan.farkas@gmail.com>, 2021
+# Istvan Farkas <istvan.farkas@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2021\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2022\n"
 "Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,6 +130,9 @@ msgstr "részek lefordítva"
 
 msgid "Server error"
 msgstr "Szerverhiba"
+
+msgid "Stop Synced translation"
+msgstr "Szinkronizált fordítás befejezése"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

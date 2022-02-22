@@ -2,17 +2,21 @@
 # Translators:
 # Johannes Spielmann <j@spielmannsolutions.com>, 2021
 # Tammo van Lessen <tvanlessen@gmail.com>, 2021
-# oliverengel <codeangel@posteo.de>, 2021
+# Ettore Atalan <atalanttore@googlemail.com>, 2021
+# oliverengel <codeangel@posteo.de>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: oliverengel <codeangel@posteo.de>, 2021\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
+"Last-Translator: oliverengel <codeangel@posteo.de>, 2022\n"
 "Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Disable"
+msgstr "Deaktivieren"
 
 msgid "Dummy translator"
 msgstr "Dummyübersetzer"
@@ -71,6 +75,9 @@ msgstr ""
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Unbekannte ID in einem <a> Tag: {} gefunden"
+
+msgid "Enable"
+msgstr "Aktivieren"
 
 #, python-format
 msgid ""
@@ -264,3 +271,6 @@ msgstr "Übersetzte Bruchstücke synchronisieren"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synchronisere Übersetzungen von %(title)s"
+
+msgid "Start Synced translation"
+msgstr "Synchronisierte Übersetzung starten"

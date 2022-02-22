@@ -1,10 +1,11 @@
 #
 # Translators:
 # Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021
+# saevarom <saevar@saevar.is>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021\n"
+"Last-Translator: saevarom <saevar@saevar.is>, 2022\n"
 "Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,6 +131,9 @@ msgstr "hlutar þýddir"
 
 msgid "Server error"
 msgstr "Villa á netþjóni"
+
+msgid "Stop Synced translation"
+msgstr "Stöðva samræmda þýðingu"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

@@ -2,10 +2,11 @@
 # Translators:
 # Luan Nguyen <lihavim@gmail.com>, 2021
 # Hồng Quân Nguyễn <ng.hong.quan@gmail.com>, 2021
+# Vu Pham, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: Hồng Quân Nguyễn <ng.hong.quan@gmail.com>, 2021\n"
+"Last-Translator: Vu Pham, 2021\n"
 "Language-Team: Vietnamese (https://www.transifex.com/torchbox/teams/8009/"
 "vi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,11 +16,20 @@ msgstr ""
 msgid "Delete"
 msgstr "Xoá"
 
+msgid "Draft"
+msgstr "Bản nháp"
+
 msgid "Edit"
 msgstr "Biên tập"
 
 msgid "Edit this %s"
 msgstr "Biên tập %s này"
+
+msgid "Lock"
+msgstr "Khóa"
+
+msgid "Published"
+msgstr "Đã xuất bản"
 
 msgid "Publishing..."
 msgstr "Đang xuất bản..."
@@ -29,6 +39,9 @@ msgstr "Lưu"
 
 msgid "Saving..."
 msgstr "Đang lưu..."
+
+msgid "Unlock"
+msgstr "Mở khóa"
 
 msgid "Unpublish"
 msgstr "Thu hồi xuất bản"

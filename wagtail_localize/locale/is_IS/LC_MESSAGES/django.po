@@ -1,18 +1,21 @@
 #
 # Translators:
-# saevarom <saevar@saevar.is>, 2021
 # Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021
+# saevarom <saevar@saevar.is>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
+"Last-Translator: saevarom <saevar@saevar.is>, 2022\n"
 "Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: is_IS\n"
 "Plural-Forms: nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);\n"
+
+msgid "Disable"
+msgstr "Afvirkja"
 
 msgid "Dummy translator"
 msgstr "Gervi þýðandi"
@@ -68,6 +71,9 @@ msgstr "Texti má ekki innihalda HTML tög með eigindum (nema 'id' í <a> tögu
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Óþekkt id fannst í <a> tagi: {}"
+
+msgid "Enable"
+msgstr "Virkja"
 
 #, python-format
 msgid ""
@@ -252,3 +258,6 @@ msgstr "Samræma þýdd snifsi"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Samræma þýðingar á '%(title)s'"
+
+msgid "Start Synced translation"
+msgstr "Hefja samræmda þýðingu"

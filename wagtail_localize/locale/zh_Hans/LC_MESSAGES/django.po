@@ -9,13 +9,16 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
 "Last-Translator: 汇民 王 <whuim@qq.com>, 2021\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Disable"
+msgstr "禁用"
 
 msgid "Dummy translator"
 msgstr "虚拟译者"
@@ -69,6 +72,9 @@ msgstr "字符串不能包含任何带有属性的 HTML 标签（除了<a>标签
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "在一个<a>标签中存在无法被识别的ID：{}"
+
+msgid "Enable"
+msgstr "启用"
 
 #, python-format
 msgid ""

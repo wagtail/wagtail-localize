@@ -5,13 +5,16 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
 "Last-Translator: Dan Braghis, 2021\n"
 "Language-Team: Romanian (https://www.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
 "Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
 "2:1));\n"
+
+msgid "Disable"
+msgstr "Dezactivează"
 
 msgid "Dummy translator"
 msgstr "Traducător fals"
@@ -70,6 +73,9 @@ msgstr ""
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Id nerecunoscut găsit întru-un tag <a>: {}"
+
+msgid "Enable"
+msgstr "Activează"
 
 #, python-format
 msgid ""

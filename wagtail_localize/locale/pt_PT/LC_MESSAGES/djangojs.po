@@ -1,12 +1,11 @@
 #
 # Translators:
-# Luís Tiago Favas <al62006@utad.eu>, 2020
-# Tiago Henriques <trinosauro@gmail.com>, 2021
-# Diogo Silva <diogo_silva30@hotmail.com>, 2021
+# Luís Tiago Favas <traducoes@favas.eu>, 2020
+# Tiago Henriques <trinosauro@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Diogo Silva <diogo_silva30@hotmail.com>, 2021\n"
+"Last-Translator: Tiago Henriques <trinosauro@gmail.com>, 2022\n"
 "Language-Team: Portuguese (Portugal) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,34 +13,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "[DELETED]"
-msgstr "[ELIMINADO]"
+msgstr "[APAGADO]"
 
 msgid "Apply editor lock"
-msgstr "Aplicar fecho de editor"
+msgstr "Aplicar bloqueio de editor"
 
 msgid "Breadcrumb"
-msgstr "Sugestão de navegação"
+msgstr "Percurso"
 
 msgid "Cancel"
 msgstr "Cancelar"
 
 msgid "Change %s"
-msgstr "Alterar %s"
+msgstr "Mudar %s"
 
 msgid "Change document"
-msgstr "Alterar documento"
+msgstr "Mudar documento"
 
 msgid "Change image"
-msgstr "Alterar imagem"
+msgstr "Mudar imagem"
 
 msgid "Change page"
-msgstr "Alterar página"
+msgstr "Mudar página"
 
 msgid "Changed"
-msgstr "Alterado"
+msgstr "Mudado"
 
 msgid "Choose a %s"
-msgstr "Escolha um %s"
+msgstr "Escolher um %s"
 
 msgid "Choose a document"
 msgstr "Escolher um documento"
@@ -59,64 +58,70 @@ msgid "Download PO file"
 msgstr "Descarregar ficheiro PO"
 
 msgid "Download PO file and input translations offline"
-msgstr "Descarregar ficheiro PO e introduzir traduções offline"
+msgstr "Descarregar ficheiro PO e introduzir traduções em offline"
 
 msgid "Draft"
 msgstr "Rascunho"
 
 msgid "Edit"
-msgstr "Editar"
+msgstr "Alterar"
 
 msgid "Edit this %s"
 msgstr "Alterar este %s"
 
 msgid "Edit this document"
-msgstr "Editar este documento"
+msgstr "Alterar este documento"
 
 msgid "Edit this image"
 msgstr "Alterar esta imagem"
 
 msgid "Edit this page"
-msgstr "Editar esta página"
+msgstr "Alterar esta página"
+
+msgid "Fetching %s information..."
+msgstr "A obter informação %s..."
 
 msgid "Fetching document information..."
-msgstr "A reunir informação do documento..."
+msgstr "A obter informação do documento..."
 
 msgid "Fetching image information..."
-msgstr "A reunir informação da imagem..."
+msgstr "A obter informação da imagem..."
 
 msgid "Fetching page information..."
-msgstr "A reunir informação da página..."
+msgstr "A obter informação da página..."
 
 msgid "Live"
 msgstr "Publicado"
 
 msgid "Lock"
-msgstr "Trancar"
+msgstr "Bloquear"
 
 msgid "Not translated"
 msgstr "Por traduzir"
 
 msgid "Preview"
-msgstr "Prever"
+msgstr "Visualizar"
 
 msgid "Publish in "
-msgstr "Publicado em"
+msgstr "Publicar em"
 
 msgid "Published"
 msgstr "Publicado"
 
 msgid "Published on "
-msgstr "Publicado no"
+msgstr "Publicado em"
 
 msgid "Publishing..."
 msgstr "A publicar..."
 
 msgid "Remove editor lock"
-msgstr "Remover fecho de editor"
+msgstr "Retirar bloqueio de editor"
+
+msgid "Revert to %s version"
+msgstr "Reverter à versão %s "
 
 msgid "Save"
-msgstr "Guardar"
+msgstr "Gravar"
 
 msgid "Saving..."
 msgstr "A gravar..."
@@ -127,26 +132,32 @@ msgstr "segmentos traduzidos"
 msgid "Server error"
 msgstr "Erro de servidor"
 
+msgid "Stop Synced translation"
+msgstr "Parar tradução Sincronizada"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr "Existem segmentos por gravar. Grave ou cancele-os antes de sair."
+
 msgid "Translate"
 msgstr "Traduzir"
 
 msgid "Translate all missing strings with "
-msgstr "Traduzir todas as frases/palavras em falta com"
+msgstr "Traduzir todos os segmentos de texto em falta com"
 
 msgid "Translate with "
 msgstr "Traduzir com"
 
 msgid "Unlock"
-msgstr "Destrancada"
+msgstr "Desbloquear"
 
 msgid "Unpublish"
-msgstr "Retirar de publicação"
+msgstr "Despublicar"
 
 msgid "Upload PO file"
 msgstr "Carregar ficheiro PO"
 
 msgid "Upload translated PO file to submit translations"
-msgstr "Carregado ficheiro PO traduzido para submeter traduções"
+msgstr "Carregar ficheiro PO traduzido para enviar traduções"
 
 msgid "Uses %s version"
 msgstr "Utiliza a versão %s"

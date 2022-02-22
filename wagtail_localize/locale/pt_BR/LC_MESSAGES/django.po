@@ -4,17 +4,21 @@
 # Claudemiro Alves Feitosa Neto <dimiro1@gmail.com>, 2021
 # Éder Brito <britoederr@gmail.com>, 2021
 # Iuri L. Machado, 2021
+# Luiz Boaretto <lboaretto@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Iuri L. Machado, 2021\n"
+"POT-Creation-Date: 2021-12-01 10:22+0000\n"
+"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2021\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pt_BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Disable"
+msgstr "Desativar"
 
 msgid "Dummy translator"
 msgstr "Tradutor fictício "
@@ -72,6 +76,9 @@ msgstr ""
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Id não reconhecido encontrado na tag <a>: {}"
+
+msgid "Enable"
+msgstr "Habilitar"
 
 #, python-format
 msgid ""
