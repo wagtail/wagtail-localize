@@ -383,6 +383,85 @@ class TestSegmentExtractionWithStreamField(TestCase):
         ).handle_stream_block(page.test_streamfield)
         self.assertEqual(segments, [])
 
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
+    def test_listblock_in_structblock(self):
+        block_id = uuid.uuid4()
+        item_one_id = "11111111-1111-1111-1111-111111111111"
+        item_two_id = "22222222-2222-2222-2222-222222222222"
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_listblock_in_structblock",
+            {
+                "title": "Nested",
+                "items": [
+                    {
+                        "type": "item",
+                        "value": "Test content",
+                        "id": item_one_id,
+                    },
+                    {
+                        "type": "item",
+                        "value": "Some more test content",
+                        "id": item_two_id,
+                    },
+                ],
+            },
+        )
+
+        segments = extract_segments(page)
+        expected_segments = [
+            StringSegmentValue(f"test_streamfield.{block_id}.title", "Nested"),
+            StringSegmentValue(
+                f"test_streamfield.{block_id}.items.{item_one_id}", "Test content"
+            ),
+            StringSegmentValue(
+                f"test_streamfield.{block_id}.items.{item_two_id}",
+                "Some more test content",
+            ),
+        ]
+
+        self.assertEqual(segments, expected_segments)
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
+    def test_listblock_in_nestedstreamblock(self):
+        block_id = uuid.uuid4()
+        nested_block_id = uuid.uuid4()
+        item_id = "11111111-1111-1111-1111-111111111111"
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_nestedstreamblock",
+            [
+                {
+                    "id": str(nested_block_id),
+                    "type": "block_l",
+                    "value": [
+                        {
+                            "type": "item",
+                            "value": "Test content",
+                            "id": item_id,
+                        }
+                    ],
+                },
+            ],
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(
+            segments,
+            [
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}.{nested_block_id}.{item_id}",
+                    "Test content",
+                )
+            ],
+        )
+
     def test_nestedstreamblock(self):
         block_id = uuid.uuid4()
         nested_block_id = uuid.uuid4()
