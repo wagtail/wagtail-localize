@@ -156,10 +156,13 @@ class StreamFieldSegmentExtractor:
         segments = []
 
         for index, block in enumerate(stream_block):
+            raw_data = (
+                stream_block.raw_data[index] if WAGTAIL_VERSION >= (2, 16) else None
+            )
             segments.extend(
                 segment.wrap(block.id)
                 for segment in self.handle_block(
-                    block.block, block.value, raw_value=stream_block.raw_data[index]
+                    block.block, block.value, raw_value=raw_data
                 )
             )
 
