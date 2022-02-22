@@ -33,7 +33,7 @@ def get_complete_version(version=None):
     check for correctness of the tuple provided.
     """
     if version is None:
-        from wagtail import VERSION as version
+        from wagtail_localize.version import VERSION as version
     else:
         assert len(version) == 5
         assert version[3] in ("dev", "alpha", "beta", "rc", "final")
