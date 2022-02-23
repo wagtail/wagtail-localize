@@ -33,11 +33,6 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     if (links.convertToAliasUrl) {
         actions.push(
             <form method="GET" action={links.convertToAliasUrl}>
-                <input
-                    type="hidden"
-                    name="csrfmiddlewaretoken"
-                    value={csrfToken}
-                />
                 <input type="hidden" name="next" value={window.location.href} />
 
                 <button
