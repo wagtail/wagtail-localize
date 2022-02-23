@@ -29,7 +29,7 @@ msgstr "Mīhini"
 
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
-msgstr "E Whakamāoritia mē te {Ingoa_utauta} ki runga {te rā}"
+msgstr "E Whakamāoritia mē te {tool_name} ki runga {date}"
 
 msgid "Status"
 msgstr "Tūnga"
