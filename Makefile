@@ -13,3 +13,6 @@ messages:
 
 fetch-translations:
 	./scripts/fetch-translations.sh
+
+compile-messages:
+	cd wagtail_localize && python ../testmanage.py compilemessages
