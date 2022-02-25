@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [Support for `ListBlock`s nested in `StructBlock`s](https://github.com/wagtail/wagtail-localize/pull/525)
+
+### Fixed
+
+- CSRF token in `convertToAliasAction` (@zerolab)
+- Missing updated compiled messages
+- Typos in installation instructions (@th3hamm0r) and templates tutorial (@Redjam)
+
 ## [1.1rc1] - 2022-02-22
 
 ### Added
@@ -15,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Support for ListBlock](https://github.com/wagtail/wagtail-localize/pull/510) (@zerolab)
   Note: this only works with Wagtail 2.16+ and blocks that been resaved with it.
 - [Ability to convert back to alias](https://github.com/wagtail/wagtail-localize/pull/515) (@zerolab)
+- [Sync source page privacy settings with translated page](https://github.com/wagtail/wagtail-localize/pull/496) (@zerolab)
 
 ### Fixed
 
