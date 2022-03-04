@@ -1,13 +1,13 @@
 #
 # Translators:
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
-# Marco Badan <marco.badan@gmail.com>, 2021
+# Marco Badan <marco.badan@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-01 10:22+0000\n"
-"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2022\n"
 "Language-Team: Italian (https://www.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
@@ -76,6 +76,9 @@ msgstr "Id non riconosciuto trovato in una tag <a>: {}"
 
 msgid "Enable"
 msgstr "Abilita"
+
+msgid "Yes, convert it"
+msgstr "Sì, convertilo"
 
 #, python-format
 msgid ""

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-01 10:22+0000\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
 "Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2022\n"
 "Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
@@ -77,6 +77,9 @@ msgstr "Érvénytelen id egy <a> tagben: {}"
 
 msgid "Enable"
 msgstr "Bekapcsol"
+
+msgid "Yes, convert it"
+msgstr "Igen, konvertálom"
 
 #, python-format
 msgid ""
@@ -234,7 +237,7 @@ msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
-"A(z) '{model_name}' {object} be lett küldve fordításra a következő "
+"A(z) '{object}' {model_name} be lett küldve fordításra a következő "
 "nyelveken: {locales}"
 
 msgid "Publish immediately"

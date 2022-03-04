@@ -1,10 +1,10 @@
 #
 # Translators:
-# Dan Braghis, 2021
+# Dan Braghis, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Dan Braghis, 2021\n"
+"Last-Translator: Dan Braghis, 2022\n"
 "Language-Team: Romanian (https://www.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
@@ -49,6 +49,9 @@ msgstr "Selectează o pagină"
 
 msgid "Choose an image"
 msgstr "Selectează o imagine"
+
+msgid "Convert to alias page"
+msgstr "Convertează în pagină alias"
 
 msgid "Delete"
 msgstr "Șterge"

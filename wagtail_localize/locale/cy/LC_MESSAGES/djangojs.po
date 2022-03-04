@@ -1,36 +1,133 @@
 #
 # Translators:
 # Adam Hughes <adamhughes31@gmail.com>, 2021
+# Philip Crisp, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Adam Hughes <adamhughes31@gmail.com>, 2021\n"
+"Last-Translator: Philip Crisp, 2022\n"
 "Language-Team: Welsh (https://www.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != "
 "11) ? 2 : 3;\n"
 
+msgid "[DELETED]"
+msgstr "[WEDI'I DILEU]"
+
 msgid "Apply editor lock"
 msgstr "Cymhwyso clo golygydd"
+
+msgid "Breadcrumb"
+msgstr "Briwsion Bara"
+
+msgid "Cancel"
+msgstr "Canslo"
+
+msgid "Change %s"
+msgstr "Newid %s"
+
+msgid "Change document"
+msgstr "Newid ddogfen"
+
+msgid "Change image"
+msgstr "Newid llun"
+
+msgid "Change page"
+msgstr "Newid tudalen"
+
+msgid "Changed"
+msgstr "Wedi'i newid"
+
+msgid "Choose a %s"
+msgstr "Dewisiwch %s"
+
+msgid "Choose a document"
+msgstr "Dewiswch ddogfen"
+
+msgid "Choose a page"
+msgstr "Dewisiwch tudalen"
 
 msgid "Choose an image"
 msgstr "Dewis delwedd"
 
+msgid "Convert to alias page"
+msgstr "Trosi i dudalen arallenw"
+
 msgid "Delete"
 msgstr "Dileu"
+
+msgid "Download PO file"
+msgstr "Lawrlwythwch ffeil PO"
+
+msgid "Download PO file and input translations offline"
+msgstr "Dadlwythwch ffeil PO a mewnbynnu cyfieithiadau all-lein"
+
+msgid "Draft"
+msgstr "Drafft"
 
 msgid "Edit"
 msgstr "Golygu"
 
+msgid "Edit this %s"
+msgstr "Golygu %s"
+
+msgid "Edit this document"
+msgstr "Golygu'r ddogfen hon"
+
+msgid "Edit this image"
+msgstr "Golygu'r llun hon"
+
+msgid "Edit this page"
+msgstr "Golygu tudalen hon"
+
+msgid "Fetching %s information..."
+msgstr "Wrthi'n nôl gwybodaeth %s..."
+
+msgid "Fetching document information..."
+msgstr "Wrthi'n nôl gwybodaeth dogfen..."
+
+msgid "Fetching image information..."
+msgstr "Wrthi'n nôl gwybodaeth llun..."
+
+msgid "Fetching page information..."
+msgstr "Wrthi'n nôl gwybodaeth tudalen..."
+
+msgid "Live"
+msgstr "Yn fyw"
+
 msgid "Lock"
 msgstr "Clo"
+
+msgid "Not translated"
+msgstr "Heb ei gyfieithu"
+
+msgid "Preview"
+msgstr "Rhagolwg"
+
+msgid "Publish in "
+msgstr "Cyhoeddi yn "
+
+msgid "Published"
+msgstr "Wedi cyhoeddi"
+
+msgid "Published on "
+msgstr "Cyhoeddwyd ar "
+
+msgid "Publishing..."
+msgstr "Wrthi'n cyhoeddi..."
+
+msgid "Remove editor lock"
+msgstr "Dileu clo'r golygydd"
 
 msgid "Save"
 msgstr "Cadw"
 
 msgid "Saving..."
 msgstr "Cadw..."
+
+msgid "Translate"
+msgstr "Cyfieithu"
 
 msgid "Unlock"
 msgstr "Datgloi"

@@ -4,13 +4,13 @@
 # Claudemiro Alves Feitosa Neto <dimiro1@gmail.com>, 2021
 # Éder Brito <britoederr@gmail.com>, 2021
 # Iuri L. Machado, 2021
-# Luiz Boaretto <lboaretto@gmail.com>, 2021
+# Luiz Boaretto <lboaretto@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-01 10:22+0000\n"
-"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2022\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -79,6 +79,9 @@ msgstr "Id não reconhecido encontrado na tag <a>: {}"
 
 msgid "Enable"
 msgstr "Habilitar"
+
+msgid "Yes, convert it"
+msgstr "Sim, converta"
 
 #, python-format
 msgid ""

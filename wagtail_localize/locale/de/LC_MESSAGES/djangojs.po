@@ -52,6 +52,9 @@ msgstr "Seite auswählen"
 msgid "Choose an image"
 msgstr "Bild auswählen"
 
+msgid "Convert to alias page"
+msgstr "In Alias umwandeln"
+
 msgid "Delete"
 msgstr "Löschen"
 

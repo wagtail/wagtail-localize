@@ -6,7 +6,7 @@ msgstr ""
 msgid "[DELETED]"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:77
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:72
 msgid "Apply editor lock"
 msgstr ""
 
@@ -57,12 +57,12 @@ msgstr ""
 msgid "Choose an image"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:46
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:49
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:41
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:44
 msgid "Convert to alias page"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:59
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:54
 msgid "Delete"
 msgstr ""
 
@@ -120,7 +120,7 @@ msgstr ""
 msgid "Live"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:80
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:75
 msgid "Lock"
 msgstr ""
 
@@ -133,7 +133,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:139
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:134
 msgid "Publish in "
 msgstr ""
 
@@ -145,11 +145,11 @@ msgstr ""
 msgid "Published on "
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:132
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:127
 msgid "Publishing..."
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:99
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:94
 msgid "Remove editor lock"
 msgstr ""
 
@@ -197,11 +197,11 @@ msgstr ""
 msgid "Translate with "
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:102
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:97
 msgid "Unlock"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:112
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:107
 msgid "Unpublish"
 msgstr ""
 

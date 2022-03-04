@@ -51,6 +51,9 @@ msgstr "Escolher uma página"
 msgid "Choose an image"
 msgstr "Escolher uma imagem"
 
+msgid "Convert to alias page"
+msgstr "Converter em página de atalho"
+
 msgid "Delete"
 msgstr "Apagar"
 
