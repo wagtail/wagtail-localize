@@ -42,6 +42,6 @@ def get_complete_version(version=None):
 
 
 # release must be one of alpha, beta, rc, or final
-VERSION = (1, 1, 0, "rc", 1)
+VERSION = (1, 1, 0, "rc", 2)
 
 __version__ = get_version(VERSION)

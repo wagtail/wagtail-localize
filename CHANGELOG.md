@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1rc2] - 2022-03-04
+
 ### Added
 
 - [Support for `ListBlock`s nested in `StructBlock`s](https://github.com/wagtail/wagtail-localize/pull/525)
@@ -72,7 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc2...HEAD
+[1.1rc2]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc1...v1.1rc2
 [1.1rc1]: https://github.com/wagtail/wagtail-localize/compare/v1.0.1...v1.1rc1
 [1.0.1]: https://github.com/wagtail/wagtail-localize/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wagtail/wagtail-localize/compare/v1.0rc4...v1.0.0
