@@ -1,9 +1,12 @@
+import json
+
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import (
@@ -102,6 +105,10 @@ def sync_alias(source_page, alias_page, revision=None, _content_json=None):
     if _content_json is None:
         _content_json = source_page.to_json()
 
+    if WAGTAIL_VERSION >= (2, 17):
+        # see https://github.com/wagtail/wagtail/pull/8024
+        _content_json = json.loads(_content_json)
+
     # FIXME: update when core adds better mechanism for the exclusions
     exclude_fields = [
         "id",
@@ -166,4 +173,7 @@ def sync_alias(source_page, alias_page, revision=None, _content_json=None):
         )
 
     # Update any aliases of that alias
-    alias_page.update_aliases(revision=revision, _content_json=_content_json)
+    if WAGTAIL_VERSION >= (2, 17):
+        alias_page.update_aliases(revision=revision, _content=_content_json)
+    else:
+        alias_page.update_aliases(revision=revision, _content_json=_content_json)
