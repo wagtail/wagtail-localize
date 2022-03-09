@@ -439,7 +439,7 @@ def construct_synced_page_tree_list(pages: List[Page], action: str):
 
     return page_list
 
-  
+
 @hooks.register("register_log_actions")
 def wagtail_localize_log_actions(actions):
 
