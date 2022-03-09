@@ -178,6 +178,7 @@ export interface EditorProps {
         unlockUrl: string;
         deleteUrl: string;
         stopTranslationUrl: string;
+        convertToAliasUrl: string;
     };
     previewModes: PreviewMode[];
     machineTranslator: {

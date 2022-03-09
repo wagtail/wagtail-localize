@@ -1,17 +1,53 @@
 #
 # Translators:
 # Adam Hughes <adamhughes31@gmail.com>, 2021
+# Philip Crisp, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Adam Hughes <adamhughes31@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: Philip Crisp, 2022\n"
 "Language-Team: Welsh (https://www.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != "
 "11) ? 2 : 3;\n"
 
+msgid "Submit"
+msgstr "Cyflwyno"
+
+msgid "Status"
+msgstr "Statws"
+
 msgid "Content"
 msgstr "Cynnwys"
+
+msgid "Select all"
+msgstr "Dewiswch bob un"
+
+msgid "Locales"
+msgstr "Locales"
+
+msgid "All child pages will be created."
+msgstr "Bydd holl dudalennau plentyn yn cael eu creu."
+
+msgid "Translate"
+msgstr "Cyfieithu"
+
+msgid "{} locales"
+msgstr "{} locales"
+
+msgid "Translate page"
+msgstr "Cyfieithu tudalen"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Cyfieithu {model_name}"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Cyfieithu '%(title)s'"
+
+msgid "Convert to alias page"
+msgstr "Trosi i dudalen arallenw"

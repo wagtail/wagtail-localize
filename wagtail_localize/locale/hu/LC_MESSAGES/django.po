@@ -1,18 +1,21 @@
 #
 # Translators:
 # Laszlo Molnar <lazlowmiller@gmail.com>, 2021
-# Istvan Farkas <istvan.farkas@gmail.com>, 2021
+# Istvan Farkas <istvan.farkas@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2022\n"
 "Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Disable"
+msgstr "Kikapcsol"
 
 msgid "Dummy translator"
 msgstr "Üres fordító"
@@ -71,6 +74,12 @@ msgstr ""
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Érvénytelen id egy <a> tagben: {}"
+
+msgid "Enable"
+msgstr "Bekapcsol"
+
+msgid "Yes, convert it"
+msgstr "Igen, konvertálom"
 
 #, python-format
 msgid ""
@@ -156,7 +165,7 @@ msgid ""
 "translation sync. If any new fields have been added recently, these may not "
 "be visible until the next translation sync."
 msgstr ""
-"A(z) '{model_name'} adatszerkezete megváltozott a legutóbbi fordítás "
+"A(z) '{model_name}' adatszerkezete megváltozott a legutóbbi fordítás "
 "szinkron óta. Ha új mezők lettek hozzáadva mostanában, akkor a következő "
 "fordítási szinkron műveletig ezek nem láthatók."
 
@@ -228,7 +237,7 @@ msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
-"A(z) '{page_title}' {model_name} be lett küldve fordításra a következő "
+"A(z) '{object}' {model_name} be lett küldve fordításra a következő "
 "nyelveken: {locales}"
 
 msgid "Publish immediately"
@@ -261,3 +270,6 @@ msgstr "Lefordított elemek szinkronizálása"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "'%(title)s' fordításainak szinkronizálása"
+
+msgid "Start Synced translation"
+msgstr "Szinkronizált fordítás elkezdése"

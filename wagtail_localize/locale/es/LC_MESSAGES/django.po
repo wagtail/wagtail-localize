@@ -2,18 +2,21 @@
 # Translators:
 # Joaquín T <joaquintita@gmail.com>, 2021
 # José Luis <alagunajs@gmail.com>, 2021
-# Amós Oviedo <amos.oviedo@gmail.com>, 2021
 # Kevin Gutiérrez, 2021
+# Amós Oviedo <amos.oviedo@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Kevin Gutiérrez, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2022\n"
 "Language-Team: Spanish (https://www.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Disable"
+msgstr "Deshabilitar"
 
 msgid "Dummy translator"
 msgstr "Traductor ficticio"
@@ -72,6 +75,12 @@ msgstr ""
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Id no reconocido en una etiqueta <a>: {}"
+
+msgid "Enable"
+msgstr "Habilitar"
+
+msgid "Yes, convert it"
+msgstr "Sí, convertirla"
 
 #, python-format
 msgid ""

@@ -1,20 +1,23 @@
 #
 # Translators:
 # Mateusz <undefined5102@gmail.com>, 2021
-# Miłosz Miśkiewicz, 2021
 # Łukasz Bołdys (Lukasz Boldys), 2021
+# Miłosz Miśkiewicz, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Łukasz Bołdys (Lukasz Boldys), 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: Miłosz Miśkiewicz, 2022\n"
 "Language-Team: Polish (https://www.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
 "%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
 "%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+
+msgid "Disable"
+msgstr "Wyłącz"
 
 msgid "Up to date"
 msgstr "Aktualny"
@@ -70,6 +73,12 @@ msgstr ""
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Nierozpoznane id znaleziono w znaczniku <a>: {}"
+
+msgid "Enable"
+msgstr "Włącz"
+
+msgid "Yes, convert it"
+msgstr "Tak, konwertuj"
 
 #, python-format
 msgid ""

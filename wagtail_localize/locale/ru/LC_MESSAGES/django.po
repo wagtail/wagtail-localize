@@ -1,21 +1,25 @@
 #
 # Translators:
-# sergeybe <sergeybe@gmail.com>, 2020
 # Sergey Mazanov <mvver@outlook.com>, 2021
 # Eugene <eugene.mechanism@gmail.com>, 2021
 # Влад <integration.into.society@gmail.com>, 2021
+# Alexey Trofimov <funkindy@gmail.com>, 2021
+# sergeybe <sergeybe@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Влад <integration.into.society@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: sergeybe <sergeybe@gmail.com>, 2022\n"
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
+
+msgid "Disable"
+msgstr "Отключить"
 
 msgid "Dummy translator"
 msgstr "Фиктивный переводчик"
@@ -73,6 +77,12 @@ msgstr ""
 
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Нераспознанный идентификатор найден в <a> тег(ах): {}"
+
+msgid "Enable"
+msgstr "Включить"
+
+msgid "Yes, convert it"
+msgstr "Да, конвертировать"
 
 #, python-format
 msgid ""

@@ -3,10 +3,11 @@
 # Moritz Pfeiffer <moritz@alp-phone.ch>, 2021
 # oliverengel <codeangel@posteo.de>, 2021
 # Krzysztof Jeziorny <github@jeziorny.net>, 2021
+# th3hamm0r <stefan@hammerworxx.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Krzysztof Jeziorny <github@jeziorny.net>, 2021\n"
+"Last-Translator: th3hamm0r <stefan@hammerworxx.com>, 2022\n"
 "Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -50,6 +51,9 @@ msgstr "Seite auswählen"
 
 msgid "Choose an image"
 msgstr "Bild auswählen"
+
+msgid "Convert to alias page"
+msgstr "In Alias umwandeln"
 
 msgid "Delete"
 msgstr "Löschen"
@@ -103,13 +107,13 @@ msgid "Preview"
 msgstr "Vorschau"
 
 msgid "Publish in "
-msgstr "Veröffentlichen in"
+msgstr "Veröffentlichen in "
 
 msgid "Published"
 msgstr "Veröffentlicht"
 
 msgid "Published on "
-msgstr "Veröffentlicht am"
+msgstr "Veröffentlicht am "
 
 msgid "Publishing..."
 msgstr "Veröffentlichen..."
@@ -144,10 +148,10 @@ msgid "Translate"
 msgstr "Übersetzen"
 
 msgid "Translate all missing strings with "
-msgstr "Übersetze alle fehlenden Zeichenketten mit"
+msgstr "Übersetze alle fehlenden Zeichenketten mit "
 
 msgid "Translate with "
-msgstr "Übersetzen mit"
+msgstr "Übersetzen mit "
 
 msgid "Unlock"
 msgstr "Entsperren"

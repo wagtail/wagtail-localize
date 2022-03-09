@@ -57,7 +57,7 @@ Let's add a simple language switcher. Add the following snippet of code into the
 {% if page %}
     {% for translation in page.get_translations.live %}
         {% get_language_info for translation.locale.language_code as lang %}
-        <a href="{% pageurl translation %}" rel="alternate" hreflang="{{ language_code }}">
+        <a href="{% pageurl translation %}" rel="alternate" hreflang="{{ lang.code }}">
             {{ lang.name_local }}
         </a>
     {% endfor %}

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
 "Last-Translator: Cihad GÜNDOĞDU <cihadgundogdu@gmail.com>, 2021\n"
 "Language-Team: Turkish (https://www.transifex.com/torchbox/teams/8009/tr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

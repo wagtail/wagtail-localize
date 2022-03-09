@@ -2,17 +2,22 @@
 # Translators:
 # Johannes Spielmann <j@spielmannsolutions.com>, 2021
 # Tammo van Lessen <tvanlessen@gmail.com>, 2021
-# oliverengel <codeangel@posteo.de>, 2021
+# Ettore Atalan <atalanttore@googlemail.com>, 2021
+# oliverengel <codeangel@posteo.de>, 2022
+# th3hamm0r <stefan@hammerworxx.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: oliverengel <codeangel@posteo.de>, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: th3hamm0r <stefan@hammerworxx.com>, 2022\n"
 "Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Disable"
+msgstr "Deaktivieren"
 
 msgid "Dummy translator"
 msgstr "Dummyübersetzer"
@@ -72,6 +77,32 @@ msgstr ""
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Unbekannte ID in einem <a> Tag: {} gefunden"
 
+msgid "Enable"
+msgstr "Aktivieren"
+
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "In Alias %(title)s umwandeln"
+
+msgid "Convert to alias"
+msgstr "In Alias umwandeln"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Sind Sie sicher, dass Sie diese Seite in ein Alias umwandeln wollen? Dies "
+"wird den Inhalt der Seite mit dem Inhalt von "
+"'%(source_page_title)s' (%(source_page_locale)s) überschreiben."
+
+msgid "Yes, convert it"
+msgstr "Ja, konvertieren"
+
+msgid "No, leave it as a page"
+msgstr "Nein, als eine Seite belassen"
+
 #, python-format
 msgid ""
 "This page hasn't been translated yet. It is mirroring the <a href="
@@ -128,6 +159,9 @@ msgid ""
 msgstr ""
 "Das letzte Datum der Synchronisation war der %(last_sync_date)s. Sie sind "
 "dabei das Folgende zu synchronisieren:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "Die Seite '{}' wurde in ein Alias umgewandelt."
 
 msgid "Content"
 msgstr "Inhalt"
@@ -264,3 +298,23 @@ msgstr "Übersetzte Bruchstücke synchronisieren"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synchronisere Übersetzungen von %(title)s"
+
+msgid "Start Synced translation"
+msgstr "Synchronisierte Übersetzung starten"
+
+msgid "Convert to alias page"
+msgstr "In Alias umwandeln"
+
+msgid "Convert page to alias"
+msgstr "Seite in Alias umwandeln"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Seite '%(title)s' in ein Alias der Ursprungsseite '%(source_title)s' "
+"umgewandelt"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Seite in ein Alias der Ursprungsseite umgewandelt"

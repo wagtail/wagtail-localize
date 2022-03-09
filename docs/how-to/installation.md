@@ -1,6 +1,6 @@
 # Installation guide
 
-Before you start, follow Wagtail's [configuration guide](https://docs.wagtail.or/en/stable/advanced_topics/i18n.html#configuration)
+Before you start, follow Wagtail's [configuration guide](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
 to enable internationalisation in Wagtail and Django.
 
 ## Install the Python package

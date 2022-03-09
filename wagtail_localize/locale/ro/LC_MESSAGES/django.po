@@ -1,17 +1,20 @@
 #
 # Translators:
-# Dan Braghis, 2021
+# Dan Braghis, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 13:15+0000\n"
-"Last-Translator: Dan Braghis, 2021\n"
+"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"Last-Translator: Dan Braghis, 2022\n"
 "Language-Team: Romanian (https://www.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
 "Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
 "2:1));\n"
+
+msgid "Disable"
+msgstr "Dezactivează"
 
 msgid "Dummy translator"
 msgstr "Traducător fals"
@@ -71,6 +74,32 @@ msgstr ""
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Id nerecunoscut găsit întru-un tag <a>: {}"
 
+msgid "Enable"
+msgstr "Activează"
+
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Convertează în alias %(title)s"
+
+msgid "Convert to alias"
+msgstr "Convertează în alias"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Sigur doriți să convertiți această pagină întru-un alias? Această acțiune va "
+"suprascrie conținutul paginii cu cel al "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
+msgid "Yes, convert it"
+msgstr "Da, convertează"
+
+msgid "No, leave it as a page"
+msgstr "Nu, păstrează ca pagină"
+
 #, python-format
 msgid ""
 "This page hasn't been translated yet. It is mirroring the <a href="
@@ -126,6 +155,9 @@ msgid ""
 msgstr ""
 "Ultima sincronizare a fost pe %(last_sync_date)s. Sunteți pe cale să "
 "sincronizați următoarele:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "Pagina '{}' a fost convertită în alias."
 
 msgid "Content"
 msgstr "Conținut"
@@ -257,3 +289,20 @@ msgstr "Sincronizează traducerile pentru '%(title)s'"
 
 msgid "Start Synced translation"
 msgstr "Începe traducere sincronizată"
+
+msgid "Convert to alias page"
+msgstr "Convertează în pagină alias"
+
+msgid "Convert page to alias"
+msgstr "Convertează pagina în pagină alias"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"A convertit pagina '%(title)s' într-un alias al paginii sursă "
+"'%(source_title)s' a traducerii"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "A convertit pagina într-un alias al paginii sursă a traducerii"
