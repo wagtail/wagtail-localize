@@ -1,5 +1,7 @@
+from typing import List
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
 from django.urls import include, path, reverse
@@ -11,7 +13,7 @@ from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
-from wagtail.core.models import Locale, TranslatableMixin
+from wagtail.core.models import Locale, Page, TranslatableMixin
 
 
 # The `wagtail.snippets.action_menu` module is introduced in https://github.com/wagtail/wagtail/pull/6384
@@ -360,3 +362,21 @@ def register_wagtail_localize2_report_menu_item():
         icon_name="site",
         order=9000,
     )
+
+
+@hooks.register("construct_synced_page_tree_list")
+def construct_synced_page_tree_list(pages: List[Page], action: str):
+    if not getattr(settings, "WAGTAILSIMPLETRANSLATION_SYNC_PAGE_TREE", False):
+        return
+
+    page_list = {}
+    if action == "unpublish":
+        for page in pages:
+            page_list[page] = Page.objects.translation_of(page, inclusive=False).filter(
+                alias_of__isnull=True
+            )
+    elif action in ["move", "delete"]:
+        for page in pages:
+            page_list[page] = Page.objects.translation_of(page, inclusive=False)
+
+    return page_list
