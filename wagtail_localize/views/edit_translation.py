@@ -272,19 +272,8 @@ def get_segment_location_info(
                 if WAGTAIL_VERSION >= (2, 17):
                     # @see https://github.com/wagtail/wagtail/pull/7684
                     # the target_models is set in the ModelFieldRegistry for ForeignKeys
-                    from wagtail.admin.forms.models import registry
 
-                    allowed_page_types = [
-                        "{app}.{model}".format(
-                            app=model._meta.app_label,
-                            model=model._meta.model_name,
-                        )
-                        for model in registry.foreign_key_lookup(field)[
-                            "widget"
-                        ].target_models
-                    ]
-
-                    # now check for explicit `page_types` kwarg in PageChooserPanel
+                    # Check for explicit `page_types` kwarg in PageChooserPanel
                     if field.name in edit_handler.widget_overrides() and hasattr(
                         edit_handler.widget_overrides()[field.name], "target_models"
                     ):
@@ -295,6 +284,18 @@ def get_segment_location_info(
                             )
                             for model in edit_handler.widget_overrides()[
                                 field.name
+                            ].target_models
+                        ]
+                    else:
+                        from wagtail.admin.forms.models import registry
+
+                        allowed_page_types = [
+                            "{app}.{model}".format(
+                                app=model._meta.app_label,
+                                model=model._meta.model_name,
+                            )
+                            for model in registry.foreign_key_lookup(field)[
+                                "widget"
                             ].target_models
                         ]
                 else:
