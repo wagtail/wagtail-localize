@@ -514,7 +514,11 @@ class TranslationSource(models.Model):
             raise SourceDeletedError
 
         if isinstance(instance, Page):
-            return instance.with_content_json(self.content_json)
+            content_json = self.content_json
+            if WAGTAIL_VERSION >= (2, 17):
+                # see https://github.com/wagtail/wagtail/pull/8024
+                content_json = json.loads(content_json)
+            return instance.with_content_json(content_json)
 
         elif isinstance(instance, ClusterableModel):
             new_instance = instance.__class__.from_json(self.content_json)

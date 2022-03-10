@@ -27,6 +27,7 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
 from wagtail.admin.edit_handlers import (
     BaseCompositeEditHandler,
@@ -268,15 +269,47 @@ def get_segment_location_info(
             if issubclass(field.related_model, Page):
                 edit_handler = tab_helper.get_field_edit_handler(field.name)
 
+                if WAGTAIL_VERSION >= (2, 17):
+                    # @see https://github.com/wagtail/wagtail/pull/7684
+                    # the target_models is set in the ModelFieldRegistry for ForeignKeys
+
+                    # Check for explicit `page_types` kwarg in PageChooserPanel
+                    if field.name in edit_handler.widget_overrides() and hasattr(
+                        edit_handler.widget_overrides()[field.name], "target_models"
+                    ):
+                        allowed_page_types = [
+                            "{app}.{model}".format(
+                                app=model._meta.app_label,
+                                model=model._meta.model_name,
+                            )
+                            for model in edit_handler.widget_overrides()[
+                                field.name
+                            ].target_models
+                        ]
+                    else:
+                        from wagtail.admin.forms.models import registry
+
+                        allowed_page_types = [
+                            "{app}.{model}".format(
+                                app=model._meta.app_label,
+                                model=model._meta.model_name,
+                            )
+                            for model in registry.foreign_key_lookup(field)[
+                                "widget"
+                            ].target_models
+                        ]
+                else:
+                    allowed_page_types = [
+                        "{app}.{model}".format(
+                            app=model._meta.app_label, model=model._meta.model_name
+                        )
+                        for model in edit_handler.target_models()
+                    ]
+
                 if isinstance(edit_handler, PageChooserPanel):
                     return {
                         "type": "page_chooser",
-                        "allowed_page_types": [
-                            "{app}.{model}".format(
-                                app=model._meta.app_label, model=model._meta.model_name
-                            )
-                            for model in edit_handler.target_models()
-                        ],
+                        "allowed_page_types": allowed_page_types,
                     }
 
                 else:
