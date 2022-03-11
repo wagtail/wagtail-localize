@@ -3,7 +3,7 @@ from django.urls import reverse
 from wagtail.core.models import Locale, Page, PageLogEntry
 from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_localize.models import LocaleSynchronization
+from wagtail_localize.models import LocaleSynchronization, Translation
 from wagtail_localize.test.models import TestPage
 from wagtail_localize.wagtail_hooks import ConvertToAliasPageActionMenuItem
 
@@ -194,4 +194,23 @@ class ConvertToAliasViewTest(ConvertToAliasTestData, TestCase):
         response = self.client.post(self.convert_url + "?next=https://example.com")
         self.assertRedirects(
             response, reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+
+    def test_convert_removes_translation_objects(self):
+        self.assertTrue(
+            Translation.objects.filter(
+                source__object_id=self.fr_page.translation_key,
+                source__specific_content_type=self.fr_page.content_type_id,
+                target_locale=self.fr_page.locale_id,
+            ).exists()
+        )
+
+        self.client.post(self.convert_url)
+
+        self.assertFalse(
+            Translation.objects.filter(
+                source__object_id=self.fr_page.translation_key,
+                source__specific_content_type=self.fr_page.content_type_id,
+                target_locale=self.fr_page.locale_id,
+            ).exists()
         )

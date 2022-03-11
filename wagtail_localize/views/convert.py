@@ -17,7 +17,7 @@ from wagtail.core.models import (
 )
 from wagtail.core.signals import page_published
 
-from wagtail_localize.models import TranslationSource
+from wagtail_localize.models import Translation, TranslationSource
 
 
 def convert_to_alias(request, page_id):
@@ -72,6 +72,17 @@ def convert_to_alias(request, page_id):
                     },
                 },
             )
+
+            # Now clean up the old translation.
+            # We are deleting rather than disabling old translations as we've just gone
+            # back to an alias page, which by definition doesn't hold its own content
+            try:
+                translation = Translation.objects.get(
+                    source=translation_source, target_locale=page_to_alias.locale_id
+                )
+                translation.delete()
+            except Translation.DoesNotExist:
+                pass
 
             messages.success(
                 request,
