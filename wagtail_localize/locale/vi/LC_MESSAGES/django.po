@@ -1,13 +1,13 @@
 #
 # Translators:
 # Luan Nguyen <lihavim@gmail.com>, 2021
-# Vu Pham, 2021
+# Vu Pham, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-22 22:32+0000\n"
-"Last-Translator: Vu Pham, 2021\n"
+"POT-Creation-Date: 2022-03-04 10:40+0000\n"
+"Last-Translator: Vu Pham, 2022\n"
 "Language-Team: Vietnamese (https://www.transifex.com/torchbox/teams/8009/"
 "vi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,3 +22,6 @@ msgstr "Trạng thái"
 
 msgid "Select all"
 msgstr "Chọn tất cả"
+
+msgid "Translate"
+msgstr "Dịch"

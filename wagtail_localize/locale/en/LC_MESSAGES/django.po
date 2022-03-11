@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-04 10:40+0000\n"
+"POT-Creation-Date: 2022-03-11 12:30+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -16,46 +16,46 @@ msgstr ""
 msgid "Dummy translator"
 msgstr ""
 
-#: models.py:1132
+#: models.py:1136
 msgid "Up to date"
 msgstr ""
 
-#: models.py:1134
+#: models.py:1138
 msgid "Waiting for translations"
 msgstr ""
 
-#: models.py:1576
+#: models.py:1580
 msgid "Manual"
 msgstr ""
 
-#: models.py:1577
+#: models.py:1581
 msgid "Machine"
 msgstr ""
 
-#: models.py:1702
+#: models.py:1706
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr ""
 
-#: models.py:1707
+#: models.py:1711
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr ""
 
-#: models.py:1712
+#: models.py:1716
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr ""
 
-#: models.py:2169
+#: models.py:2173
 msgid "This locale cannot be synced into itself."
 msgstr ""
 
-#: models.py:2174
+#: models.py:2178
 msgid "Synchronise content from another locale"
 msgstr ""
 
-#: models.py:2176
+#: models.py:2180
 msgid ""
 "Choose a locale to synchronise content from. Any existing and future content "
 "authored in the selected locale will be automatically copied to this one."
@@ -172,32 +172,32 @@ msgid ""
 "following:"
 msgstr ""
 
-#: views/convert.py:75
+#: views/convert.py:89
 msgid "Page '{}' has been converted into an alias."
 msgstr ""
 
-#: views/edit_translation.py:161
+#: views/edit_translation.py:162
 msgid "Content"
 msgstr ""
 
-#: views/edit_translation.py:494
+#: views/edit_translation.py:527
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
 "Please fix them or click publish again to ignore these translations for now."
 msgstr ""
 
-#: views/edit_translation.py:522
+#: views/edit_translation.py:555
 #, python-brace-format
 msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 
-#: views/edit_translation.py:532
+#: views/edit_translation.py:565
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr ""
 
-#: views/edit_translation.py:772
+#: views/edit_translation.py:805
 #, python-brace-format
 msgid ""
 "The data model for '{model_name}' has been changed since the last "
@@ -205,31 +205,31 @@ msgid ""
 "be visible until the next translation sync."
 msgstr ""
 
-#: views/edit_translation.py:993
+#: views/edit_translation.py:1026
 msgid "Translation has been stopped."
 msgstr ""
 
-#: views/edit_translation.py:1004
+#: views/edit_translation.py:1037
 msgid "Translation has been restarted."
 msgstr ""
 
-#: views/edit_translation.py:1169
+#: views/edit_translation.py:1202
 msgid "Please upload a valid PO file."
 msgstr ""
 
-#: views/edit_translation.py:1178
+#: views/edit_translation.py:1211
 msgid "Cannot import PO file that was created for a different translation."
 msgstr ""
 
-#: views/edit_translation.py:1186
+#: views/edit_translation.py:1219
 msgid "Successfully imported translations from PO File."
 msgstr ""
 
-#: views/edit_translation.py:1261
+#: views/edit_translation.py:1294
 msgid "Successfully translated with {}."
 msgstr ""
 
-#: views/edit_translation.py:1265
+#: views/edit_translation.py:1298
 msgid "There isn't anything left to translate."
 msgstr ""
 
