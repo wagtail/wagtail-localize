@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1] - 2022-03-11
+
+### Added
+
+- [Delete the related Translation object when converting a page back to alias](https://github.com/wagtail/wagtail-localize/pull/532) @zerolab
+  This is the follow up to [Ability to convert back to alias](https://github.com/wagtail/wagtail-localize/pull/515)
+
+### Fixed
+
+- [Various failures against the latest Wagtail `main` branch](https://github.com/wagtail/wagtail-localize/pull/536) @zerolab
+
 ## [1.1rc2] - 2022-03-04
 
 ### Added
@@ -74,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc2...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.1...HEAD
+[1.1]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc2...v1.1
 [1.1rc2]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc1...v1.1rc2
 [1.1rc1]: https://github.com/wagtail/wagtail-localize/compare/v1.0.1...v1.1rc1
 [1.0.1]: https://github.com/wagtail/wagtail-localize/compare/v1.0.0...v1.0.1
