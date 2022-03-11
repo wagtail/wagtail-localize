@@ -5,12 +5,13 @@
 # Ettore Atalan <atalanttore@googlemail.com>, 2021
 # oliverengel <codeangel@posteo.de>, 2022
 # th3hamm0r <stefan@hammerworxx.com>, 2022
+# jnns, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-22 22:32+0000\n"
-"Last-Translator: th3hamm0r <stefan@hammerworxx.com>, 2022\n"
+"POT-Creation-Date: 2022-03-04 10:40+0000\n"
+"Last-Translator: jnns, 2022\n"
 "Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -293,7 +294,7 @@ msgid "Translate '%(title)s'"
 msgstr "’%(title)s' übersetzen"
 
 msgid "Sync translated snippets"
-msgstr "Übersetzte Bruchstücke synchronisieren"
+msgstr "Synchronisiere übersetzte Schnipsel"
 
 #, python-format
 msgid "Sync translations of '%(title)s'"

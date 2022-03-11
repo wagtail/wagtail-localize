@@ -120,17 +120,48 @@ msgstr "Wrthi'n cyhoeddi..."
 msgid "Remove editor lock"
 msgstr "Dileu clo'r golygydd"
 
+msgid "Revert to %s version"
+msgstr "Dychwelyd i fersiwn %s"
+
 msgid "Save"
 msgstr "Cadw"
 
 msgid "Saving..."
 msgstr "Cadw..."
 
+msgid "segments translated"
+msgstr "segmentau wedi'u cyfieithu"
+
+msgid "Server error"
+msgstr "Gwall gweinydd"
+
+msgid "Stop Synced translation"
+msgstr "Stopio cyfieithiad wedi'i syncio"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Mae yna segmentau heb eu cadw. Cofiwch eu cadw neu eu canslo cyn gadael."
+
 msgid "Translate"
 msgstr "Cyfieithu"
+
+msgid "Translate all missing strings with "
+msgstr "Cyfieithwch bob llinyn coll gyda "
+
+msgid "Translate with "
+msgstr "Gyfieithu efo"
 
 msgid "Unlock"
 msgstr "Datgloi"
 
 msgid "Unpublish"
 msgstr "Anghyhoedd"
+
+msgid "Upload PO file"
+msgstr "Llwythwch ffeil PO"
+
+msgid "Upload translated PO file to submit translations"
+msgstr "Uwchlwythwch ffeil PO wedi'i chyfieithu i gyflwyno cyfieithiadau"
+
+msgid "Uses %s version"
+msgstr "Yn defnyddio fersiwn %s"

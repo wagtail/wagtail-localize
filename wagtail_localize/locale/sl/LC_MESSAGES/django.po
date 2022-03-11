@@ -1,12 +1,13 @@
 #
 # Translators:
 # Mitja Pagon <mitja.pagon@inueni.com>, 2021
+# Andrej, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-22 22:32+0000\n"
-"Last-Translator: Mitja Pagon <mitja.pagon@inueni.com>, 2021\n"
+"POT-Creation-Date: 2022-03-04 10:40+0000\n"
+"Last-Translator: Andrej, 2022\n"
 "Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,8 +15,50 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
 "%100==4 ? 2 : 3);\n"
 
+msgid "Disable"
+msgstr "Onemogoči"
+
+msgid "Enable"
+msgstr "Omogoči"
+
+msgid "Yes, convert it"
+msgstr "Da, pretvori ga"
+
+msgid "Translate this page"
+msgstr "Prevedi to stran"
+
+msgid "Submit"
+msgstr "Pošlji"
+
+msgid "Go back"
+msgstr "Pojdi nazaj"
+
+msgid "Source"
+msgstr "Vir"
+
 msgid "Status"
 msgstr "Status"
 
+msgid "No translations found."
+msgstr "Prevodi niso bili najdeni"
+
 msgid "Content"
 msgstr "Vsebina"
+
+msgid "Translations"
+msgstr "Prevodi"
+
+msgid "Select all"
+msgstr "Izberi vse"
+
+msgid "Locales"
+msgstr "Območja"
+
+msgid "Translate"
+msgstr "Prevedi"
+
+msgid "Translate page"
+msgstr "Prevedi stran"
+
+msgid "Sync translated pages"
+msgstr "Sinhroniziraj prevedene strani"

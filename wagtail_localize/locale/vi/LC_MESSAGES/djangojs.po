@@ -1,17 +1,50 @@
 #
 # Translators:
-# Luan Nguyen <lihavim@gmail.com>, 2021
 # Hồng Quân Nguyễn <ng.hong.quan@gmail.com>, 2021
-# Vu Pham, 2021
+# Luan Nguyen <lihavim@gmail.com>, 2021
+# Vu Pham, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Vu Pham, 2021\n"
+"Last-Translator: Vu Pham, 2022\n"
 "Language-Team: Vietnamese (https://www.transifex.com/torchbox/teams/8009/"
 "vi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: vi\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "[DELETED]"
+msgstr "[ĐÃ XÓA]"
+
+msgid "Cancel"
+msgstr "Hủy bỏ"
+
+msgid "Change %s"
+msgstr "Thay đổi %s"
+
+msgid "Change document"
+msgstr "Thay đổi văn bản"
+
+msgid "Change image"
+msgstr "Thay đổi hình ảnh"
+
+msgid "Change page"
+msgstr "Thay đổi trang"
+
+msgid "Changed"
+msgstr "Đã thay đổi"
+
+msgid "Choose a %s"
+msgstr "Chọn một %s"
+
+msgid "Choose a document"
+msgstr "Chọn một văn bản"
+
+msgid "Choose a page"
+msgstr "Chọn một trang"
+
+msgid "Choose an image"
+msgstr "Chọn một hình ảnh"
 
 msgid "Delete"
 msgstr "Xoá"
@@ -25,11 +58,20 @@ msgstr "Biên tập"
 msgid "Edit this %s"
 msgstr "Biên tập %s này"
 
+msgid "Edit this document"
+msgstr "Biên tập văn bản này"
+
 msgid "Lock"
 msgstr "Khóa"
 
+msgid "Preview"
+msgstr "Xem trước"
+
 msgid "Published"
 msgstr "Đã xuất bản"
+
+msgid "Published on "
+msgstr "Xuất bản vào"
 
 msgid "Publishing..."
 msgstr "Đang xuất bản..."
@@ -39,6 +81,12 @@ msgstr "Lưu"
 
 msgid "Saving..."
 msgstr "Đang lưu..."
+
+msgid "Translate"
+msgstr "Dịch"
+
+msgid "Translate with "
+msgstr "Dịch với"
 
 msgid "Unlock"
 msgstr "Mở khóa"

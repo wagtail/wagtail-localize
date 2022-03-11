@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-22 22:32+0000\n"
+"POT-Creation-Date: 2022-03-04 10:40+0000\n"
 "Last-Translator: Philip Crisp, 2022\n"
 "Language-Team: Welsh (https://www.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,14 +14,211 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != "
 "11) ? 2 : 3;\n"
 
+msgid "Disable"
+msgstr "Analluogi"
+
+msgid "Dummy translator"
+msgstr "Cyfieithydd ffug"
+
+msgid "Up to date"
+msgstr "Yn gyfoes"
+
+msgid "Waiting for translations"
+msgstr "Aros am gyfieithiadau"
+
+msgid "Manual"
+msgstr "Wrth llaw"
+
+msgid "Machine"
+msgstr "Peiriant"
+
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Cyfieithwyd gyda {tool_name} ar {date}"
+
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Wedi'i gyfieithu â llaw ar {date}"
+
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "Cyfieithwyd peiriant ar {date}"
+
+msgid "This locale cannot be synced into itself."
+msgstr "Ni all y locale hwn gael ei gysoni ag ef ei hun."
+
+msgid "Synchronise content from another locale"
+msgstr "Cydamseru cynnwys o locale arall"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Dewiswch locale i gysoni cynnwys ohono. Bydd unrhyw gynnwys presennol ac yn "
+"y dyfodol a ysgrifennwyd yn y locale a ddewiswyd yn cael ei gopïo'n "
+"awtomatig i'r un hwn."
+
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"Ni chaniateir tag <{}>. Dim ond tagiau mewnlin HTML safonol y gall llinynnau "
+"eu cynnwys (er engraifft <b>, <a>)"
+
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"Ni all llinynnau gael unrhyw dagiau HTML gyda phriodoleddau (ac eithrio 'id' "
+"yn <a> tagiau)"
+
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "Id anadnabyddus a geir mewn <a> tag: {}"
+
+msgid "Enable"
+msgstr "Galluogi"
+
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Trosi i allenw %(title)s"
+
+msgid "Convert to alias"
+msgstr "Trosi i allenw"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Ydych chi'n siŵr eich bod am drosi'r dudalen hon yn alias? Bydd hyn yn "
+"trosysgrifo cynnwys y dudalen gyda chynnwys "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
+msgid "Yes, convert it"
+msgstr "Ia, ei drosi"
+
+msgid "No, leave it as a page"
+msgstr "Na, cadw o fel tudalen"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s page</"
+"a>."
+msgstr ""
+"Nid yw'r dudalen hon wedi'i chyfieithu eto. Mae'n adlewyrchu'r  <a href="
+"\"%(edit_original_page_url)s\" target=\"_blank\">dudalen %(original_locale)s."
+"</a>."
+
+msgid "Translate this page"
+msgstr "Gyfieithu'r tudalen hon"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Gyfieithiad %(instance)s i %(locale)s"
+
 msgid "Submit"
 msgstr "Cyflwyno"
+
+msgid "Go back"
+msgstr "Mynd yn ôl"
+
+msgid "Content type"
+msgstr "Math o gynnwys"
+
+msgid "Source"
+msgstr "Ffynhonnell"
+
+msgid "Target"
+msgstr "Targed"
 
 msgid "Status"
 msgstr "Statws"
 
+msgid "No translations found."
+msgstr "Heb ganfod cyfieithiadau."
+
+msgid "Why would I sync my page?"
+msgstr "Pam fyddwn i'n cysoni fy nhudalen?"
+
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
+msgstr ""
+"Ni chaiff newidiadau eu cymhwyso'n awtomatig rhwng tudalennau wedi'u "
+"cyfieithu. Bydd cysoni yn ychwanegu cynnwys newydd i'w gyfieithu ac yn dileu "
+"cynnwys sydd wedi'i ddileu."
+
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"Y dyddiad cysoni diwethaf oedd %(last_sync_date)s. Rydych ar fin cysoni'r "
+"canlynol:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "Mae tudalen '{}' wedi'i thrawsnewid i allenw."
+
 msgid "Content"
 msgstr "Cynnwys"
+
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Canfuwyd gwallau dilysu newydd wrth gyhoeddi '{object}' yn {locale}. "
+"Trwsiwch nhw neu cliciwch cyhoeddi eto i anwybyddu'r cyfieithiadau hyn am y "
+"tro."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"Wedi cyhoeddi '{object}' yn {locale} gyda chyfieithiadau ar goll - gweler "
+"isod."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Wedi cyhoeddi '{object}' yn {locale}."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Mae'r model data ar gyfer '{model_name}' wedi'i newid ers y cysoniad "
+"cyfieithu diwethaf. Os ychwanegwyd unrhyw feysydd newydd yn ddiweddar, "
+"efallai na fydd y rhain yn weladwy tan y cysoniad cyfieithu nesaf."
+
+msgid "Translation has been stopped."
+msgstr "Mae cyfieithu wedi'i atal."
+
+msgid "Translation has been restarted."
+msgstr "Cyfieithu wedi ei ailgychwyn."
+
+msgid "Please upload a valid PO file."
+msgstr "Llwythwch ffeil PO ddilys i fyny."
+
+msgid "Cannot import PO file that was created for a different translation."
+msgstr "Methu mewnforio ffeil PO a grëwyd ar gyfer cyfieithiad gwahanol."
+
+msgid "Successfully imported translations from PO File."
+msgstr "Cyfieithiadau wedi'u mewngludo'n llwyddiannus o Ffeil PO."
+
+msgid "Successfully translated with {}."
+msgstr "Cyfieithwyd yn llwyddiannus gyda {}."
+
+msgid "There isn't anything left to translate."
+msgstr "Nid oes unrhyw beth ar ôl i'w gyfieithu."
+
+msgid "Source title"
+msgstr "Teitl ffynhonnell"
+
+msgid "Translations"
+msgstr "Cyfieithiadau"
 
 msgid "Select all"
 msgstr "Dewiswch bob un"
@@ -31,6 +228,13 @@ msgstr "Locales"
 
 msgid "All child pages will be created."
 msgstr "Bydd holl dudalennau plentyn yn cael eu creu."
+
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Cynnwys is-goeden ({} tudalen)"
+msgstr[1] "Cynnwys is-goeden ({} tudalen)"
+msgstr[2] "Cynnwys is-goeden ({} tudalen)"
+msgstr[3] "Cynnwys is-goeden ({} tudalen)"
 
 msgid "Translate"
 msgstr "Cyfieithu"
@@ -42,12 +246,72 @@ msgid "Translate page"
 msgstr "Cyfieithu tudalen"
 
 #, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Cyflwynwyd y dudalen '{page_title}' yn llwyddiannus i'w chyfieithu i "
+"{locales}"
+
+#, python-brace-format
 msgid "Translate {model_name}"
 msgstr "Cyfieithu {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Cafodd y {model_name} '{object}' ei gyflwyno'n llwyddiannus i'w gyfieithu i "
+"{locales}"
+
+msgid "Publish immediately"
+msgstr "Cyhoeddi ar unwaith"
+
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Bydd hyn yn cymhwyso'r diweddariadau ac yn cyhoeddi ar unwaith, cyn i unrhyw "
+"gyfieithiadau newydd ddigwydd."
+
+msgid "Update existing translations"
+msgstr "Diweddaru cyfieithiadau presennol"
+
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "Cyfieithiadau wedi'u diweddaru'n llwyddiannus ar gyfer '{object}'"
+
+msgid "Sync translated pages"
+msgstr "Cysoni tudalennau wedi'u cyfieithu"
 
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "Cyfieithu '%(title)s'"
 
+msgid "Sync translated snippets"
+msgstr "Cysoni pytiau wedi'u cyfieithu"
+
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Cysoni cyfieithiadau o '%(title)s'"
+
+msgid "Start Synced translation"
+msgstr "Dechrau cyfieithiad cysoni"
+
 msgid "Convert to alias page"
 msgstr "Trosi i dudalen arallenw"
+
+msgid "Convert page to alias"
+msgstr "Trosi tudalen i allenw"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Wedi trosi tudalen '%(title)s' i allenw o'r dudalen ffynhonnell cyfieithu "
+"'%(source_title)s'"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Tudalen wedi'i throsi i alias o'r dudalen ffynhonnell cyfieithu"
