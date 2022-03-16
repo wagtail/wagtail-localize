@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from wagtail.core import hooks
 from wagtail.core.models import Locale, Page
 from wagtail.tests.utils import WagtailTestUtils
@@ -38,7 +38,6 @@ class TestConstructSyncedPageTreeListHook(WagtailTestUtils, TestCase):
             defined_hooks = hooks.get_hooks("construct_synced_page_tree_list")
             self.assertEqual(len(defined_hooks), 2)
 
-    @override_settings(WAGTAILSIMPLETRANSLATION_SYNC_PAGE_TREE=True)
     def test_page_tree_sync_on(self):
         with hooks.register_temporarily(
             "construct_synced_page_tree_list", self.unpublish_hook
@@ -49,7 +48,6 @@ class TestConstructSyncedPageTreeListHook(WagtailTestUtils, TestCase):
                     assert isinstance(response, dict)
                     assert len(response.items()) == 1
 
-    @override_settings(WAGTAILSIMPLETRANSLATION_SYNC_PAGE_TREE=False)
     def test_page_tree_sync_off(self):
         with hooks.register_temporarily(
             "construct_synced_page_tree_list", self.unpublish_hook
@@ -58,7 +56,6 @@ class TestConstructSyncedPageTreeListHook(WagtailTestUtils, TestCase):
                 response = fn([self.en_homepage], "unpublish")
                 assert response is None
 
-    @override_settings(WAGTAILSIMPLETRANSLATION_SYNC_PAGE_TREE=True)
     def test_missing_hook_action(self):
         with hooks.register_temporarily(
             "construct_synced_page_tree_list", self.missing_hook_action

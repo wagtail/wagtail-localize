@@ -1,7 +1,6 @@
 from typing import List
 from urllib.parse import urlencode
 
-from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
 from django.db.models import Q
@@ -424,9 +423,6 @@ def register_wagtail_localize2_report_menu_item():
 
 @hooks.register("construct_synced_page_tree_list")
 def construct_synced_page_tree_list(pages: List[Page], action: str):
-    if not getattr(settings, "WAGTAILSIMPLETRANSLATION_SYNC_PAGE_TREE", False):
-        return
-
     page_list = {}
     if action == "unpublish":
         for page in pages:
