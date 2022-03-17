@@ -2009,7 +2009,7 @@ class StringSegment(BaseSegment):
             context=context,
             order=value.order,
             string=string,
-            attrs=json.dumps(value.attrs),
+            attrs=json.dumps(value.attrs, cls=DjangoJSONEncoder),
         )
 
         return segment

@@ -20,7 +20,12 @@ from wagtail_localize.models import (
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.test.models import (
+    TestPage,
+    TestSnippet,
+    TestUUIDModel,
+    TestUUIDSnippet,
+)
 
 
 def create_test_page(**kwargs):
@@ -680,6 +685,24 @@ class TestSaveTarget(TestCase):
 
         with self.assertRaises(CannotSaveDraftError):
             translation.save_target(publish=False)
+
+    def test_uuid_snippet_save_target(self):
+        foreign_key_target = TestUUIDModel.objects.create(charfield="Some Test")
+        snippet = TestUUIDSnippet.objects.create(field=foreign_key_target)
+
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        field_context = TranslationContext.objects.get(path="field")
+        self.assertIsNotNone(field_context)
+
+        translation.save_target()
+
+        translated_snippet = snippet.get_translation(self.fr_locale)
+        self.assertEqual(translated_snippet.field.charfield, "Some Test")
 
 
 class TestDeleteSourceDisablesTranslation(TestCase):
