@@ -1979,7 +1979,7 @@ class StringSegment(BaseSegment):
             context=context,
             order=value.order,
             string=string,
-            attrs=json.dumps(value.attrs),
+            attrs=json.dumps(value.attrs, cls=DjangoJSONEncoder),
         )
 
         return segment
@@ -2135,7 +2135,7 @@ class OverridableSegment(BaseSegment):
             source=source,
             context=context,
             order=value.order,
-            data_json=json.dumps(value.data),
+            data_json=json.dumps(value.data, cls=DjangoJSONEncoder),
         )
 
         return segment
