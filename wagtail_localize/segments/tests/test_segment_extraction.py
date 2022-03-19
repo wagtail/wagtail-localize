@@ -462,6 +462,17 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
+    def test_list_block_empty_should_not_raise_error(self):
+        page = make_test_page_with_streamfield_block(uuid.uuid4(), "test_listblock", [])
+        segments = StreamFieldSegmentExtractor(
+            page.test_streamfield
+        ).handle_stream_block(page.test_streamfield)
+        self.assertEqual(segments, [])
+
     def test_nestedstreamblock(self):
         block_id = uuid.uuid4()
         nested_block_id = uuid.uuid4()
