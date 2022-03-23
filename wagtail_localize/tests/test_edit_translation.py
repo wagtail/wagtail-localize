@@ -684,6 +684,104 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
         )
 
+    def test_choosers_in_stream_blocks(self):
+        home_page_with_specific_type = self.home_page.add_child(
+            instance=TestHomePage(title="Test home page", slug="test-home-page")
+        )
+        self.page.test_page = self.home_page
+        self.page.test_page_specific_type = home_page_with_specific_type
+
+        chooser_struct_block_id = uuid.uuid4()
+        nested_chooser_struct_block_id = uuid.uuid4()
+        streamblock_id = uuid.uuid4()
+        nested_streamblock_chooser_block_id = uuid.uuid4()
+        nested_streamblock_chooser_struct_block_id = uuid.uuid4()
+
+        STREAM_DATA = [
+            {
+                "id": chooser_struct_block_id,
+                "type": "test_chooserstructblock",
+                "value": {"page": self.home_page.id},
+            },
+            {
+                "id": nested_chooser_struct_block_id,
+                "type": "test_nestedchooserstructblock",
+                "value": {"nested_page": {"page": self.home_page.id}},
+            },
+            {
+                "id": streamblock_id,
+                "type": "test_nestedstreamblock",
+                "value": [
+                    {
+                        "id": str(nested_streamblock_chooser_block_id),
+                        "type": "chooser",
+                        "value": self.home_page.id,
+                    },
+                    {
+                        "id": str(nested_streamblock_chooser_struct_block_id),
+                        "type": "chooser_in_struct",
+                        "value": {"page": self.home_page.id},
+                    },
+                ],
+            },
+        ]
+
+        self.page.test_streamfield = StreamValue(
+            TestPage.test_streamfield.field.stream_block,
+            STREAM_DATA,
+            is_lazy=True,
+        )
+        self.page.save()
+
+        # Update source
+        TranslationSource.update_or_create_from_instance(self.page)
+
+        response = self.client.get(
+            reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "wagtail_localize/admin/edit_translation.html"
+        )
+
+        # Check props
+        props = json.loads(response.context["props"])
+
+        segments_by_content_path = {
+            segment["contentPath"]: segment
+            for segment in props["segments"]
+            if segment["contentPath"].startswith("test_streamfield")
+        }
+
+        chooser_path = f"test_streamfield.{chooser_struct_block_id}.page"
+        self.assertEqual(
+            segments_by_content_path[chooser_path]["location"]["widget"],
+            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+        )
+        nested_chooser_path = (
+            f"test_streamfield.{nested_chooser_struct_block_id}.nested_page.page"
+        )
+        self.assertEqual(
+            segments_by_content_path[nested_chooser_path]["location"]["widget"],
+            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+        )
+
+        chooser_in_streamblock_path = (
+            f"test_streamfield.{streamblock_id}.{nested_streamblock_chooser_block_id}"
+        )
+        self.assertEqual(
+            segments_by_content_path[chooser_in_streamblock_path]["location"]["widget"],
+            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+        )
+
+        chooser_in_structblock_in_streamblock_path = f"test_streamfield.{streamblock_id}.{nested_streamblock_chooser_struct_block_id}.page"
+        self.assertEqual(
+            segments_by_content_path[chooser_in_structblock_in_streamblock_path][
+                "location"
+            ]["widget"],
+            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+        )
+
     def test_manually_translated_related_object(self):
         # Related objects don't have to be translated by Wagtail localize so test with the snippet's translation record deleted
         self.snippet_translation.delete()
