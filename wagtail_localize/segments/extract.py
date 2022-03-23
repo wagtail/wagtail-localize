@@ -265,7 +265,7 @@ def extract_segments(instance):
                 elif extract_overridables:
                     segments.append(OverridableSegmentValue(field.name, value))
 
-        elif isinstance(field, (models.ForeignKey)):
+        elif isinstance(field, models.ForeignKey):
             if is_translatable:
                 if not issubclass(field.related_model, TranslatableMixin):
                     raise ImproperlyConfigured(
@@ -296,7 +296,7 @@ def extract_segments(instance):
                         OverridableSegmentValue(field.name, related_instance.pk)
                     )
         elif (
-            isinstance(field, (models.ManyToOneRel))
+            isinstance(field, models.ManyToOneRel)
             and isinstance(field.remote_field, ParentalKey)
             and issubclass(field.related_model, TranslatableMixin)
         ):

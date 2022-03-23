@@ -400,7 +400,7 @@ def get_segment_location_info(
                 "type": "text",
             }
         elif (
-            isinstance(block, blocks.StructBlock)
+            isinstance(block, (blocks.StructBlock, blocks.StreamBlock))
             and content_components
             and isinstance(content_components, list)
         ):
@@ -414,11 +414,17 @@ def get_segment_location_info(
     if isinstance(field, StreamField):
         block_type_name = field_path_components[1]
         block_type = field.stream_block.child_blocks[block_type_name]
+        content_components = content_path_components[2:]
 
         if isinstance(block_type, blocks.StructBlock):
             block_field_name = field_path_components[2]
             block_field = block_type.child_blocks[block_field_name].label
-
+        elif isinstance(block_type, blocks.StreamBlock):
+            block_field_name = field_path_components[2]
+            block_field = block_type.child_blocks[block_field_name].label
+            # use the field path components instead of content path as we're drilling down
+            # a set of nested blocks
+            content_components = field_path_components[2:]
         else:
             block_field = None
 
@@ -429,7 +435,7 @@ def get_segment_location_info(
             "blockId": content_path_components[1],
             "fieldHelpText": "",
             "subField": block_field,
-            "widget": widget_from_block(block_type, content_path_components[2:])
+            "widget": widget_from_block(block_type, content_components)
             if widget
             else None,
         }

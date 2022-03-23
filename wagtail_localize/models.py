@@ -1511,7 +1511,7 @@ class TranslationContext(models.Model):
                         ]
 
                         if isinstance(block_def, blocks.StructBlock):
-                            return [block.block_type, path_components[1]]
+                            return [block.block_type] + path_components[1:]
 
                         elif isinstance(block_def, blocks.StreamBlock):
                             return [
