@@ -696,6 +696,8 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         streamblock_id = uuid.uuid4()
         nested_streamblock_chooser_block_id = uuid.uuid4()
         nested_streamblock_chooser_struct_block_id = uuid.uuid4()
+        nested_streamblock_list_block_id = uuid.uuid4()
+        list_item_id = "11111111-1111-1111-1111-111111111111"
 
         STREAM_DATA = [
             {
@@ -721,6 +723,17 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                         "id": str(nested_streamblock_chooser_struct_block_id),
                         "type": "chooser_in_struct",
                         "value": {"page": self.home_page.id},
+                    },
+                    {
+                        "id": str(nested_streamblock_list_block_id),
+                        "type": "chooser_in_list",
+                        "value": [
+                            {
+                                "type": "item",
+                                "value": self.home_page.id,
+                                "id": list_item_id,
+                            }
+                        ],
                     },
                 ],
             },
@@ -775,6 +788,87 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
         chooser_in_structblock_in_streamblock_path = f"test_streamfield.{streamblock_id}.{nested_streamblock_chooser_struct_block_id}.page"
+        self.assertEqual(
+            segments_by_content_path[chooser_in_structblock_in_streamblock_path][
+                "location"
+            ]["widget"],
+            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+        )
+
+        chooser_in_listblock_in_streamblock_path = f"test_streamfield.{streamblock_id}.{nested_streamblock_list_block_id}.{list_item_id}"
+        self.assertEqual(
+            segments_by_content_path[chooser_in_listblock_in_streamblock_path][
+                "location"
+            ]["widget"],
+            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+        )
+
+    def test_choosers_in_stream_block_in_structblock(self):
+        home_page_with_specific_type = self.home_page.add_child(
+            instance=TestHomePage(title="Test home page", slug="test-home-page")
+        )
+        self.page.test_page = self.home_page
+        self.page.test_page_specific_type = home_page_with_specific_type
+
+        struct_block_id = uuid.uuid4()
+        nested_streamblock_chooser_block_id = uuid.uuid4()
+        nested_streamblock_chooser_struct_block_id = uuid.uuid4()
+
+        STREAM_DATA = [
+            {
+                "id": str(struct_block_id),
+                "type": "test_streamblock_in_structblock",
+                "value": {
+                    "nested_stream": [
+                        {
+                            "id": str(nested_streamblock_chooser_block_id),
+                            "type": "page",
+                            "value": self.home_page.id,
+                        },
+                        {
+                            "id": str(nested_streamblock_chooser_struct_block_id),
+                            "type": "checklist",
+                            "value": {"page": self.home_page.id},
+                        },
+                    ]
+                },
+            },
+        ]
+
+        self.page.test_streamfield = StreamValue(
+            TestPage.test_streamfield.field.stream_block,
+            STREAM_DATA,
+            is_lazy=True,
+        )
+        self.page.save()
+
+        # Update source
+        TranslationSource.update_or_create_from_instance(self.page)
+
+        response = self.client.get(
+            reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "wagtail_localize/admin/edit_translation.html"
+        )
+
+        # Check props
+        props = json.loads(response.context["props"])
+
+        segments_by_content_path = {
+            segment["contentPath"]: segment
+            for segment in props["segments"]
+            if segment["contentPath"].startswith("test_streamfield")
+        }
+
+        chooser_in_streamblock_path = f"test_streamfield.{struct_block_id}.nested_stream.{nested_streamblock_chooser_block_id}"
+        self.assertEqual(
+            segments_by_content_path[chooser_in_streamblock_path]["location"]["widget"],
+            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+        )
+
+        chooser_in_structblock_in_streamblock_path = f"test_streamfield.{struct_block_id}.nested_stream.{nested_streamblock_chooser_struct_block_id}.page"
         self.assertEqual(
             segments_by_content_path[chooser_in_structblock_in_streamblock_path][
                 "location"

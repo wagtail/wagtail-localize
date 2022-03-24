@@ -62,6 +62,11 @@ from .segments.ingest import ingest_segments
 from .strings import StringValue, validate_translation_links
 
 
+if WAGTAIL_VERSION >= (2, 16):
+    # Only use in a 2.16+ context
+    from wagtail.core.blocks.list_block import ListValue
+
+
 def pk(obj):
     """
     A helper that gets the primary key of a model instance if one is passed in.
@@ -1500,39 +1505,61 @@ class TranslationContext(models.Model):
 
                 if isinstance(field, StreamField):
 
-                    def get_field_path_from_stream_block(stream_value, path_components):
-                        stream_blocks_by_id = {
-                            block.id: block for block in stream_value
-                        }
+                    def get_field_path_from_streamfield_block(value, path_components):
+                        if isinstance(value, blocks.StructValue):
+                            blocks_by_id = dict(value)
+                        else:
+                            if WAGTAIL_VERSION >= (2, 16) and isinstance(
+                                value, ListValue
+                            ):
+                                blocks_by_id = {
+                                    block.id: block for block in value.bound_blocks
+                                }
+                            else:
+                                blocks_by_id = {block.id: block for block in value}
                         block_id = path_components[0]
-                        block = stream_blocks_by_id[block_id]
-                        block_def = stream_value.stream_block.child_blocks[
-                            block.block_type
-                        ]
+                        block = blocks_by_id[block_id]
+
+                        if isinstance(value, blocks.StructValue):
+                            block_type = block_id
+                            block_def = value.block.child_blocks[block_type]
+                            block_value = block
+                        else:
+                            if WAGTAIL_VERSION >= (2, 16) and isinstance(
+                                value, ListValue
+                            ):
+                                block_type = "item"
+                                block_def = value.list_block.child_block
+                            else:
+                                block_type = block.block_type
+                                block_def = value.stream_block.child_blocks[block_type]
+                            block_value = block.value
 
                         if isinstance(block_def, blocks.StructBlock):
-                            return [block.block_type] + path_components[1:]
+                            return [block_type] + get_field_path_from_streamfield_block(
+                                block_value, path_components[1:]
+                            )
 
                         elif isinstance(block_def, blocks.StreamBlock):
-                            return [
-                                block.block_type
-                            ] + get_field_path_from_stream_block(
-                                block.value, path_components[1:]
+                            return [block_type] + get_field_path_from_streamfield_block(
+                                block_value, path_components[1:]
                             )
                         elif isinstance(
                             block_def, blocks.ListBlock
                         ) and WAGTAIL_VERSION >= (2, 16):
-                            return [block.block_type, path_components[1]]
+                            return [block_type] + get_field_path_from_streamfield_block(
+                                block_value, path_components[1:]
+                            )
 
                         else:
-                            return [block.block_type]
+                            return [block_type]
 
-                    return [field_name] + get_field_path_from_stream_block(
+                    return [field_name] + get_field_path_from_streamfield_block(
                         field.value_from_object(instance), path_components[1:]
                     )
 
                 elif (
-                    isinstance(field, (models.ManyToOneRel))
+                    isinstance(field, models.ManyToOneRel)
                     and isinstance(field.remote_field, ParentalKey)
                     and issubclass(field.related_model, TranslatableMixin)
                 ):
