@@ -408,25 +408,22 @@ def get_segment_location_info(
             return widget_from_block(
                 block.child_blocks.get(block_field_name), content_components
             )
+        elif isinstance(block, blocks.ListBlock):
+            return widget_from_block(block.child_block, content_components[1:])
 
         return {"type": "unknown"}
 
     if isinstance(field, StreamField):
         block_type_name = field_path_components[1]
         block_type = field.stream_block.child_blocks[block_type_name]
-        content_components = content_path_components[2:]
 
-        if isinstance(block_type, blocks.StructBlock):
+        if isinstance(block_type, (blocks.StructBlock, blocks.StreamBlock)):
             block_field_name = field_path_components[2]
             block_field = block_type.child_blocks[block_field_name].label
-        elif isinstance(block_type, blocks.StreamBlock):
-            block_field_name = field_path_components[2]
-            block_field = block_type.child_blocks[block_field_name].label
-            # use the field path components instead of content path as we're drilling down
-            # a set of nested blocks
             content_components = field_path_components[2:]
         else:
             block_field = None
+            content_components = None
 
         return {
             "tab": tab,
@@ -441,7 +438,7 @@ def get_segment_location_info(
         }
 
     elif (
-        isinstance(field, (models.ManyToOneRel))
+        isinstance(field, models.ManyToOneRel)
         and isinstance(field.remote_field, ParentalKey)
         and issubclass(field.related_model, TranslatableMixin)
     ):
