@@ -2,11 +2,11 @@
 # Translators:
 # Martin Sandström <martin@marteinn.se>, 2021
 # Thomas Kunambi <kunambi@gmail.com>, 2021
-# Philip Andersen <renegadevi@codeofmagi.net>, 2021
+# Philip Andersen <renegadevi@codeofmagi.net>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2021\n"
+"Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2022\n"
 "Language-Team: Swedish (https://www.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -50,6 +50,9 @@ msgstr "Välj en sida"
 
 msgid "Choose an image"
 msgstr "Välj en bild"
+
+msgid "Convert to alias page"
+msgstr "Konvertera till alias"
 
 msgid "Delete"
 msgstr "Radera"

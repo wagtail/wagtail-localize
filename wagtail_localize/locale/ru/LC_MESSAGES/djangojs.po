@@ -2,11 +2,11 @@
 # Translators:
 # Sergey Mazanov <mvver@outlook.com>, 2021
 # Mikalai Radchuk <radchuk.m@gmail.com>, 2021
-# Влад <integration.into.society@gmail.com>, 2021
+# Vladislav <integration.into.society@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Влад <integration.into.society@gmail.com>, 2021\n"
+"Last-Translator: Vladislav <integration.into.society@gmail.com>, 2022\n"
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -52,6 +52,9 @@ msgstr "Выберите страницу"
 
 msgid "Choose an image"
 msgstr "Выберите изображение"
+
+msgid "Convert to alias page"
+msgstr "Преобразовать в псевдоним страницы"
 
 msgid "Delete"
 msgstr "Удалить"
@@ -133,6 +136,9 @@ msgstr "Переведенные сегменты"
 
 msgid "Server error"
 msgstr "Ошибка сервера"
+
+msgid "Stop Synced translation"
+msgstr "Остановить синхронизацию перевода"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

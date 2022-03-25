@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-04 10:40+0000\n"
+"POT-Creation-Date: 2022-03-11 12:30+0000\n"
 "Last-Translator: Andrej, 2022\n"
 "Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
@@ -17,6 +17,9 @@ msgstr ""
 
 msgid "Disable"
 msgstr "Onemogoči"
+
+msgid "Manual"
+msgstr "Navodila"
 
 msgid "Enable"
 msgstr "Omogoči"
@@ -32,6 +35,9 @@ msgstr "Pošlji"
 
 msgid "Go back"
 msgstr "Pojdi nazaj"
+
+msgid "Content type"
+msgstr "Vrsta vsebine"
 
 msgid "Source"
 msgstr "Vir"

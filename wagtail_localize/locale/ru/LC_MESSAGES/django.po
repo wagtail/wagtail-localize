@@ -2,15 +2,15 @@
 # Translators:
 # Sergey Mazanov <mvver@outlook.com>, 2021
 # Eugene <eugene.mechanism@gmail.com>, 2021
-# Влад <integration.into.society@gmail.com>, 2021
 # Alexey Trofimov <funkindy@gmail.com>, 2021
 # sergeybe <sergeybe@gmail.com>, 2022
+# Vladislav <integration.into.society@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-04 10:40+0000\n"
-"Last-Translator: sergeybe <sergeybe@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-03-11 12:30+0000\n"
+"Last-Translator: Vladislav <integration.into.society@gmail.com>, 2022\n"
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -81,8 +81,28 @@ msgstr "Нераспознанный идентификатор найден в 
 msgid "Enable"
 msgstr "Включить"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Преобразовать в псевдоним %(title)s"
+
+msgid "Convert to alias"
+msgstr "Преобразовать в псевдоним"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Вы уверены, что хотите преобразовать эту страницу в псевдоним? Это "
+"перезапишет содержимое страницы '%(source_page_title)s'  содержимым "
+"(%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Да, конвертировать"
+
+msgid "No, leave it as a page"
+msgstr "Нет, оставить как страницу"
 
 #, python-format
 msgid ""
@@ -269,3 +289,12 @@ msgstr "Синхронизировать переведенные сниппет
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Синхронизировать переводы '%(title)s'"
+
+msgid "Start Synced translation"
+msgstr "Начать синхронизированный перевод"
+
+msgid "Convert to alias page"
+msgstr "Преобразовать в псевдоним страницы"
+
+msgid "Convert page to alias"
+msgstr "Преобразовать страницу в псевдоним"

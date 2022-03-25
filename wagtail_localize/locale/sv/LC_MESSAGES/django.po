@@ -1,14 +1,14 @@
 #
 # Translators:
 # Thomas Kunambi <kunambi@gmail.com>, 2021
-# Philip Andersen <renegadevi@codeofmagi.net>, 2021
 # Martin Sandström <martin@marteinn.se>, 2022
+# Philip Andersen <renegadevi@codeofmagi.net>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-04 10:40+0000\n"
-"Last-Translator: Martin Sandström <martin@marteinn.se>, 2022\n"
+"POT-Creation-Date: 2022-03-11 12:30+0000\n"
+"Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2022\n"
 "Language-Team: Swedish (https://www.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -77,8 +77,28 @@ msgstr "Okänt id hittat i en <a> tagg: {}"
 msgid "Enable"
 msgstr "Aktivera"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Konvertera till alias %(title)s"
+
+msgid "Convert to alias"
+msgstr "Konvertera till alias"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Är du säker på att du vill konvertera den här sidan till ett alias? Detta "
+"kommer att skriva över innehållet på sidan med innehållet i "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Ja, konvertera"
+
+msgid "No, leave it as a page"
+msgstr "Nej, lämna den som en sida"
 
 #, python-format
 msgid ""
@@ -136,6 +156,9 @@ msgid ""
 msgstr ""
 "Senaste synkroniseringsdatum var %(last_sync_date)s. Du kommer att "
 "synkronisera följande:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "Sidan '{}' har blivit konverterad till ett alias."
 
 msgid "Content"
 msgstr "Innehåll"
@@ -269,3 +292,20 @@ msgstr "Synkronisera översättningar av '%(title)s'"
 
 msgid "Start Synced translation"
 msgstr "Starta synkroniserad översättning"
+
+msgid "Convert to alias page"
+msgstr "Konvertera till en alias-sida"
+
+msgid "Convert page to alias"
+msgstr "Konvertera sida alias"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Konverterade sidan '%(title)s' till ett alias med av översättningskällsidan "
+"'%(source_title)s'"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Konverterade sidan till ett alias av översättningskällsidan"

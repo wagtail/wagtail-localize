@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-04 10:40+0000\n"
+"POT-Creation-Date: 2022-03-11 12:30+0000\n"
 "Last-Translator: 67feb0cba3962a6c9f09eb0e43697461_528661a "
 "<cbde1c637170da616adcdde6daca673c_96059>, 2021\n"
 "Language-Team: Basque (https://www.transifex.com/torchbox/teams/8009/eu/)\n"
