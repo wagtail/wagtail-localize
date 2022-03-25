@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2022-03-25
+
+### Fixed
+
+- [Fix `ListBlock` segment extraction for empty lists](https://github.com/wagtail/wagtail-localize/pull/545) @mb03
+- [Fix chooser handling in nested `StreamBlock`s](https://github.com/wagtail/wagtail-localize/pull/546) @zerolab, @kaedroho
+  This is a follow up to [Allow overriding chooser blocks defined in `StructBlock`s](https://github.com/wagtail/wagtail-localize/pull/480)
+
 ## [1.1] - 2022-03-11
 
 ### Added
@@ -85,7 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/wagtail/wagtail-localize/compare/v1.1...v1.1.1
 [1.1]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc2...v1.1
 [1.1rc2]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc1...v1.1rc2
 [1.1rc1]: https://github.com/wagtail/wagtail-localize/compare/v1.0.1...v1.1rc1
