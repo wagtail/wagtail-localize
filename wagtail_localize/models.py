@@ -64,7 +64,10 @@ from .strings import StringValue, validate_translation_links
 
 if WAGTAIL_VERSION >= (2, 16):
     # Only use in a 2.16+ context
-    from wagtail.core.blocks.list_block import ListValue
+    try:
+        from wagtail.blocks.list_block import ListValue
+    except ImportError:
+        from wagtail.core.blocks.list_block import ListValue
 
 
 def pk(obj):
