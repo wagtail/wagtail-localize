@@ -61,6 +61,7 @@ from .segments import (
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue, validate_translation_links
+from .tasks import background
 
 
 if WAGTAIL_VERSION >= (2, 16):
@@ -2245,7 +2246,11 @@ class LocaleSynchronization(models.Model):
     def sync_trees(self, *, page_index=None):
         from .synctree import synchronize_tree
 
-        synchronize_tree(self.sync_from, self.locale, page_index=page_index)
+        background.enqueue(
+            synchronize_tree,
+            args=[self.sync_from, self.locale],
+            kwargs={"page_index": page_index},
+        )
 
 
 @receiver(post_save, sender=LocaleSynchronization)

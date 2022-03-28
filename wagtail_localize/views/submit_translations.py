@@ -16,6 +16,7 @@ from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
 from wagtail_localize.components import TranslationComponentManager
 from wagtail_localize.operations import translate_object, translate_page_subtree
+from wagtail_localize.tasks import background
 
 
 class SubmitTranslationForm(forms.Form):
@@ -130,11 +131,17 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
 
         # Now add the sub tree (if the obj is a page)
         if isinstance(self.object, Page) and form.cleaned_data["include_subtree"]:
-            translate_page_subtree(
-                self.object,
-                form.cleaned_data["locales"],
-                self.components,
-                self.request.user,
+            # Translating a subtree may be a heavy task, so enqueue it into the background
+            # (note, we always want to translate the root here so that we have something to redirect to)
+            background.enqueue(
+                translate_page_subtree,
+                [
+                    self.object,
+                    form.cleaned_data["locales"],
+                    self.components,
+                    self.request.user,
+                ],
+                {},
             )
 
         single_translated_object = None
