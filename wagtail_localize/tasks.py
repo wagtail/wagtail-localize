@@ -18,6 +18,16 @@ class ImmediateBackend(BaseJobBackend):
         func(*args, **kwargs)
 
 
+class DjangoRQJobBackend(BaseJobBackend):
+    def __init__(self, options):
+        import django_rq
+
+        self.queue = django_rq.get_queue(options.get("QUEUE", "default"))
+
+    def enqueue(self, func, args, kwargs):
+        self.queue.enqueue(func, *args, **kwargs)
+
+
 def get_backend():
     config = getattr(
         settings,
