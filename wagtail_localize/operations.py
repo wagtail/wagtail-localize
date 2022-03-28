@@ -91,12 +91,17 @@ def translate_object(instance, locales, components=None, user=None):
 
 
 @transaction.atomic
-def translate_page_subtree(page, locales, components, user):
+def translate_page_subtree(page_id, locales, components, user):
     """
     Translates the given page's subtree into the given locales.
 
-    Note that the page itself must already be translated
+    Note that the page itself must already be translated.
+
+    Note: Page must be passed by ID since this function may be called with an async worker and pages can't be reliably pickled.
+          See: https://github.com/wagtail/wagtail/pull/5998
     """
+    page = Page.objects.get(id=page_id)
+
     translator = TranslationCreator(user, locales)
 
     def _walk(current_page):

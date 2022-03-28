@@ -136,7 +136,7 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
             background.enqueue(
                 translate_page_subtree,
                 [
-                    self.object,
+                    self.object.id,
                     form.cleaned_data["locales"],
                     self.components,
                     self.request.user,
