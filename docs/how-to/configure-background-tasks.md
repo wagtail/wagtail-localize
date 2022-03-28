@@ -14,7 +14,7 @@ Wagtail Localize has built-in support for Django RQ. So if you already have Djan
 
 ```python
 WAGTAILLOCALIZE_JOBS = {
-    "BACKEND": "bakerydemo.queue.DjangoRQJobBackend",
+    "BACKEND": "wagtail_localize.tasks.DjangoRQJobBackend",
     "OPTIONS": {"QUEUE": "default"},
 }
 ```
@@ -26,14 +26,19 @@ The `OPTIONS` => `QUEUE` key configures the Django RQ queue to push tasks to.
 To configure any other queueing system, create a subclass of `wagtail_localize.tasks.BaseJobBackend` somewhere in your project and override the `__init__` and `enqueue` methods:
 
 ```python
+from wagtail_localize.tasks import BaseJobBacked
+
+
 class MyJobBackend(BaseJobBackend):
     def __init__(self, options):
         # Any set up code goes here. Note that the 'options' parameter contains the value of WAGTAILLOCALIZE_JOBS["OPTIONS"]
+        pass
 
     def enqueue(self, func, args, kwargs):
         # func is a function object to call
         # args is a list of positional arguments to pass into the function when it's called
-        # kwargs is is a list of keyword arguments to pass into the function when it's called
+        # kwargs is is a dict of keyword arguments to pass into the function when it's called
+        pass
 ```
 
 When you've implemented that class, hook it in to Wagtail Localize using the `WAGTAILLOCALIZE_JOBS` setting:

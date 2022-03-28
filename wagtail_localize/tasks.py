@@ -1,20 +1,25 @@
 # This file contains a very lightweight implementation of RFC 72: Background workers (https://github.com/wagtail/rfcs/pull/72)
 # This is only to be used by Wagtail Localize and will be replaced with the full Wagtail implementation later
 
+from typing import Any, Callable, ParamSpec
+
 from django.conf import settings
 from django.utils.module_loading import import_string
+
+
+P = ParamSpec("P")
 
 
 class BaseJobBackend:
     def __init__(self, options):
         pass
 
-    def enqueue(self, func, args, kwargs):
+    def enqueue(self, func: Callable[P, Any], args: P.args, kwargs: P.kwargs):
         raise NotImplementedError()
 
 
 class ImmediateBackend(BaseJobBackend):
-    def enqueue(self, func, args, kwargs):
+    def enqueue(self, func: Callable[P, Any], args: P.args, kwargs: P.kwargs):
         func(*args, **kwargs)
 
 
@@ -24,7 +29,7 @@ class DjangoRQJobBackend(BaseJobBackend):
 
         self.queue = django_rq.get_queue(options.get("QUEUE", "default"))
 
-    def enqueue(self, func, args, kwargs):
+    def enqueue(self, func: Callable[P, Any], args: P.args, kwargs: P.kwargs):
         self.queue.enqueue(func, *args, **kwargs)
 
 
@@ -38,4 +43,4 @@ def get_backend():
     return backend_class(config.get("OPTIONS", {}))
 
 
-background = get_backend()
+background: BaseJobBackend = get_backend()
