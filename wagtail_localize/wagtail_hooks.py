@@ -64,7 +64,7 @@ def register_admin_urls():
         path(
             "submit/modeladmin/<slug:app_label>/<slug:model_name>/<str:pk>/",
             submit_translations.SubmitModelAdminTranslationView.as_view(),
-            name='submit_modeladmin_translation',
+            name="submit_modeladmin_translation",
         ),
         path(
             "update/<int:translation_source_id>/",

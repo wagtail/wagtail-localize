@@ -89,9 +89,9 @@ def get_translation_buttons(obj, user, next_url=None, classname=""):
         # If there's at least one locale that we haven't translated into yet, show "Translate" button
         if isinstance(obj, Page):
             has_locale_to_translate_to = Locale.objects.exclude(
-                id__in=obj.get_translations(inclusive=True).exclude(
-                    alias_of__isnull=False
-                ).values_list("locale_id", flat=True)
+                id__in=obj.get_translations(inclusive=True)
+                .exclude(alias_of__isnull=False)
+                .values_list("locale_id", flat=True)
             ).exists()
         else:
             has_locale_to_translate_to = Locale.objects.exclude(

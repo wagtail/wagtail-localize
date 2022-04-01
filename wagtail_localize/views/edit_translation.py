@@ -785,7 +785,6 @@ def edit_translation(request, translation, instance):
                 ),
             }
 
-
     def get_dest_object_info(segment):
         instance = segment.object.get_instance_or_none(translation.target_locale)
         if not instance:
@@ -959,7 +958,8 @@ def edit_translation(request, translation, instance):
                                         quote(translated_instance.id),
                                     ],
                                 )
-                                if translated_instance._meta.model in get_snippet_models()
+                                if translated_instance._meta.model
+                                in get_snippet_models()
                                 else reverse(
                                     "{app_label}_{model_name}_modeladmin_edit".format(
                                         app_label=translated_instance._meta.app_label,

@@ -32,6 +32,7 @@ __all__ = [
     "TranslatableModelAdmin",
 ]
 
+
 class TranslatableModelAdmin(ModelAdmin):
     index_view_class = TranslatableIndexView
     create_view_class = TranslatableCreateView

@@ -129,7 +129,7 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
             reverse(
                 "wagtail_localize_test_testmodel_modeladmin_edit",
                 args=[self.fr_modeladmin.pk],
-            )
+            ),
         )
         self.modeladmin_translation.refresh_from_db()
         self.assertTrue(self.modeladmin_translation.enabled)
@@ -145,7 +145,7 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
             response,
             "Translation of TestModel object ({}) into French".format(
                 self.en_modeladmin.pk
-            )
+            ),
         )
 
 
@@ -210,7 +210,8 @@ class TestModelAdminAdmin(TestCase, WagtailTestUtils):
     def test_get_templates(self):
         def result(action):
             return [
-                "modeladmin/wagtail_localize_test/testmodel/translatable_%s.html" % action,
+                "modeladmin/wagtail_localize_test/testmodel/translatable_%s.html"
+                % action,
                 "modeladmin/wagtail_localize_test/translatable_%s.html" % action,
                 "modeladmin/translatable_%s.html" % action,
                 "wagtail_localize/modeladmin/translatable_%s.html" % action,
@@ -224,6 +225,7 @@ class TestModelAdminAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(
             self.model_admin.get_templates("choose_parent"), result("choose_parent")
         )
+
 
 class TestModelAdminHelpers(TestCase, WagtailTestUtils):
     def setUp(self):
@@ -252,9 +254,10 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
         root_page.refresh_from_db()
 
         self.en_modeladmin_page = root_page.add_child(instance=TestPage(title="Test"))
-        self.modeladmin_page_source, created = TranslationSource.get_or_create_from_instance(
-            self.en_modeladmin_page
-        )
+        (
+            self.modeladmin_page_source,
+            created,
+        ) = TranslationSource.get_or_create_from_instance(self.en_modeladmin_page)
         self.modeladmin_page_translation = Translation.objects.create(
             source=self.modeladmin_page_source, target_locale=self.fr_locale
         )
@@ -317,7 +320,7 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
                 "label": "Translate",
                 "classname": "button-class",
                 "title": "Translate",
-            }
+            },
         )
         self.assertEqual(
             next(btns),
@@ -325,11 +328,13 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
                 "url": reverse(
                     "wagtail_localize:update_translations",
                     args=[self.modeladmin_source.pk],
-                ) + "?" + urlencode({"next": "/next/url/"}),
+                )
+                + "?"
+                + urlencode({"next": "/next/url/"}),
                 "label": "Sync translated test models",
                 "classname": "button-class",
                 "title": "Sync translated test models",
-            }
+            },
         )
 
         with self.assertRaises(StopIteration):
@@ -351,7 +356,7 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
                 "label": "Translate",
                 "classname": "",
                 "title": "Translate",
-            }
+            },
         )
         self.assertEqual(
             next(btns),
@@ -363,7 +368,7 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
                 "label": "Sync translated test pages",
                 "classname": "",
                 "title": "Sync translated test pages",
-            }
+            },
         )
 
         with self.assertRaises(StopIteration):
@@ -385,7 +390,7 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
                 "label": "Sync translated test models",
                 "classname": "",
                 "title": "Sync translated test models",
-            }
+            },
         )
 
         with self.assertRaises(StopIteration):
