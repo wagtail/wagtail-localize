@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from django import forms
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.utils import unquote
@@ -8,7 +9,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, ngettext
 from django.views.generic import TemplateView
@@ -308,6 +309,41 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
                 self.kwargs["pk"],
             ],
         )
+
+    def get_success_message(self, locales):
+        return _(
+            "The {model_name} '{object}' was successfully submitted for translation into {locales}"
+        ).format(
+            model_name=self.object._meta.verbose_name,
+            object=str(self.object),
+            locales=locales,
+        )
+
+
+class SubmitModelAdminTranslationView(SubmitTranslationView):
+    def get_title(self):
+        return _("Translate {model_name}").format(
+            model_name=self.object._meta.verbose_name
+        )
+
+    def get_object(self):
+        try:
+            model = apps.get_model(self.kwargs["app_label"], self.kwargs["model_name"])
+        except LookupError:
+            raise Http404
+        if not issubclass(model, TranslatableMixin):
+            raise Http404
+        return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
+
+    def get_default_success_url(self, translated_object=None):
+        pk = translated_object.pk if translated_object else self.kwargs["pk"]
+        try:
+            return reverse(
+                "{app_label}_{model_name}_modeladmin_edit".format(**self.kwargs),
+                args=[pk],
+            )
+        except NoReverseMatch:
+            raise Http404
 
     def get_success_message(self, locales):
         return _(
