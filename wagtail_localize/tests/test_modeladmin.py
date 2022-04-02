@@ -148,6 +148,36 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
             ),
         )
 
+    def test_inspect_view(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_test_testmodel_modeladmin_inspect",
+                args=[self.en_modeladmin.pk],
+            )
+        )
+        self.assertContains(
+            response,
+            '<a href="/admin/wagtail_localize_test/testmodel/inspect/{}/?locale=fr"'.format(
+                self.fr_modeladmin.pk
+            ),
+        )
+        self.assertContains(response, "Translate")
+        self.assertContains(response, "Sync translated test models")
+
+        # Create DE translation and check "Translate" button not showing
+        Translation.objects.create(
+            source=self.modeladmin_source, target_locale=self.de_locale
+        ).save_target(publish=True)
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_test_testmodel_modeladmin_inspect",
+                args=[self.fr_modeladmin.pk],
+            )
+        )
+        self.assertNotContains(response, "Translate")
+        self.assertNotContains(response, "Sync translated test models")
+
 
 class TestModelAdminAdmin(TestCase, WagtailTestUtils):
     def setUp(self):

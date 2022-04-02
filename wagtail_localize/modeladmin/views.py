@@ -48,12 +48,9 @@ class TranslatableViewMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["locale"] = self.locale
-        context["translations"] = self.get_translations_context_data()
+        context["translations"] = []
         context["wagtail_version"] = get_main_version()
         return context
-
-    def get_translations_context_data(self):
-        return []
 
 
 class TranslatableIndexView(TranslatableViewMixin, IndexView):
@@ -62,14 +59,16 @@ class TranslatableIndexView(TranslatableViewMixin, IndexView):
         filters[2]["locale"] = self.locale.id
         return filters
 
-    def get_translations_context_data(self):
-        return [
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["translations"] = [
             {
                 "locale": locale,
                 "url": self.index_url + "?locale=" + locale.language_code,
             }
             for locale in Locale.objects.exclude(id=self.locale.id)
         ]
+        return context
 
 
 class TranslatableCreateView(TranslatableViewMixin, CreateView):
@@ -81,14 +80,16 @@ class TranslatableCreateView(TranslatableViewMixin, CreateView):
     def get_success_url(self):
         return self.index_url + "?locale=" + self.locale.language_code
 
-    def get_translations_context_data(self):
-        return [
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["translations"] = [
             {
                 "locale": locale,
                 "url": self.create_url + "?locale=" + locale.language_code,
             }
             for locale in Locale.objects.exclude(id=self.locale.id)
         ]
+        return context
 
 
 class TranslatableEditView(TranslatableViewMixin, EditView):
@@ -124,10 +125,7 @@ class TranslatableEditView(TranslatableViewMixin, EditView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["translation"] = self.translation
-        return context
-
-    def get_translations_context_data(self):
-        return [
+        context["translations"] = [
             {
                 "locale": translation.locale,
                 "url": self.url_helper.get_action_url("edit", translation.pk)
@@ -136,11 +134,13 @@ class TranslatableEditView(TranslatableViewMixin, EditView):
             }
             for translation in self.instance.get_translations().select_related("locale")
         ]
+        return context
 
 
 class TranslatableInspectView(TranslatableViewMixin, InspectView):
-    def get_translations_context_data(self):
-        return [
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["translations"] = [
             {
                 "locale": translation.locale,
                 "url": self.url_helper.get_action_url("inspect", translation.pk)
@@ -149,6 +149,7 @@ class TranslatableInspectView(TranslatableViewMixin, InspectView):
             }
             for translation in self.instance.get_translations().select_related("locale")
         ]
+        return context
 
 
 class TranslatableDeleteView(TranslatableViewMixin, DeleteView):
