@@ -100,7 +100,7 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
         )
         self.assertContains(
             response,
-            '<a href="/admin/wagtail_localize_test/testmodel/edit/{}/"'.format(
+            '<a href="/admin/wagtail_localize_test/testmodel/edit/{}/?locale=fr"'.format(
                 self.fr_modeladmin.pk
             ),
         )
@@ -163,44 +163,15 @@ class TestModelAdminAdmin(TestCase, WagtailTestUtils):
                 {"model": NonTranslatableModel},
             )()
 
-    def test_helper_getters(self):
-        # Test model admin helpers
-        self.assertEqual(
-            self.model_admin.get_permission_helper_class(),
-            helpers.TranslatablePermissionHelper,
-        )
-        self.assertEqual(
-            self.model_admin.get_url_helper_class(),
-            helpers.TranslatableAdminURLHelper,
-        )
+    def test_button_helper_getter(self):
         self.assertEqual(
             self.model_admin.get_button_helper_class(),
             helpers.TranslatableButtonHelper,
         )
-        # Test overriden model admin helpers
-        self.model_admin.permission_helper_class = helpers.PermissionHelper
-        self.model_admin.url_helper_class = helpers.AdminURLHelper
         self.model_admin.button_helper_class = helpers.ButtonHelper
-        self.assertEqual(
-            self.model_admin.get_permission_helper_class(),
-            helpers.PermissionHelper,
-        )
-        self.assertEqual(
-            self.model_admin.get_url_helper_class(),
-            helpers.AdminURLHelper,
-        )
         self.assertEqual(
             self.model_admin.get_button_helper_class(),
             helpers.ButtonHelper,
-        )
-        # Test page admin helpers
-        self.assertEqual(
-            self.page_admin.get_permission_helper_class(),
-            helpers.TranslatablePagePermissionHelper,
-        )
-        self.assertEqual(
-            self.page_admin.get_url_helper_class(),
-            helpers.TranslatablePageAdminURLHelper,
         )
         self.assertEqual(
             self.page_admin.get_button_helper_class(),
@@ -210,10 +181,10 @@ class TestModelAdminAdmin(TestCase, WagtailTestUtils):
     def test_get_templates(self):
         def result(action):
             return [
-                "modeladmin/wagtail_localize_test/testmodel/translatable_%s.html"
+                "wagtail_localize/modeladmin/wagtail_localize_test/testmodel/translatable_%s.html"
                 % action,
-                "modeladmin/wagtail_localize_test/translatable_%s.html" % action,
-                "modeladmin/translatable_%s.html" % action,
+                "wagtail_localize/modeladmin/wagtail_localize_test/translatable_%s.html"
+                % action,
                 "wagtail_localize/modeladmin/translatable_%s.html" % action,
             ]
 
@@ -262,25 +233,6 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
             source=self.modeladmin_page_source, target_locale=self.fr_locale
         )
         self.modeladmin_page_translation.save_target(publish=True)
-
-    def test_permission_helper(self):
-        helper = self.page_admin.get_permission_helper_class()(TestPage)
-        pages = helper.get_valid_parent_pages(self.user)
-        self.assertEqual(len(pages), 3)
-        helper.locale = self.en_locale
-        pages = helper.get_valid_parent_pages(self.user)
-        self.assertEqual(len(pages), 2)
-
-    def test_url_helper(self):
-        helper = self.model_admin.get_url_helper_class()(TestModel)
-        self.assertNotIn("?locale=en", helper.get_action_url("create"))
-        helper.locale = self.en_locale
-        self.assertIn("?locale=en", helper.get_action_url("create"))
-        self.assertIn("?locale=en", helper.get_action_url("index"))
-        self.assertNotIn(
-            "?locale=en",
-            helper.get_action_url("edit", instance_pk=self.en_modeladmin.pk),
-        )
 
     def test_button_helper(self):
         request = self.factory.get(

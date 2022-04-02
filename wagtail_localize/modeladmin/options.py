@@ -6,14 +6,7 @@ from wagtail.contrib.modeladmin.options import (
 )
 from wagtail.core.models import TranslatableMixin
 
-from .helpers import (
-    TranslatableAdminURLHelper,
-    TranslatableButtonHelper,
-    TranslatablePageAdminURLHelper,
-    TranslatablePageButtonHelper,
-    TranslatablePagePermissionHelper,
-    TranslatablePermissionHelper,
-)
+from .helpers import TranslatableButtonHelper, TranslatablePageButtonHelper
 from .views import (
     TranslatableChooseParentView,
     TranslatableCreateView,
@@ -51,20 +44,6 @@ class TranslatableModelAdmin(ModelAdmin):
                 f"must subclass the `{TranslatableMixin}` class."
             )
 
-    def get_permission_helper_class(self):
-        if self.permission_helper_class:
-            return self.permission_helper_class
-        if self.is_pagemodel:
-            return TranslatablePagePermissionHelper
-        return TranslatablePermissionHelper
-
-    def get_url_helper_class(self):
-        if self.url_helper_class:
-            return self.url_helper_class
-        if self.is_pagemodel:
-            return TranslatablePageAdminURLHelper
-        return TranslatableAdminURLHelper
-
     def get_button_helper_class(self):
         if self.button_helper_class:
             return self.button_helper_class
@@ -76,8 +55,8 @@ class TranslatableModelAdmin(ModelAdmin):
         app_label = self.opts.app_label.lower()
         model_name = self.opts.model_name.lower()
         return [
-            "modeladmin/%s/%s/translatable_%s.html" % (app_label, model_name, action),
-            "modeladmin/%s/translatable_%s.html" % (app_label, action),
-            "modeladmin/translatable_%s.html" % (action,),
+            "wagtail_localize/modeladmin/%s/%s/translatable_%s.html"
+            % (app_label, model_name, action),
+            "wagtail_localize/modeladmin/%s/translatable_%s.html" % (app_label, action),
             "wagtail_localize/modeladmin/translatable_%s.html" % (action,),
         ]

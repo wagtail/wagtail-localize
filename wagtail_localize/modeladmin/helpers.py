@@ -3,60 +3,11 @@ from urllib.parse import urlencode
 from django.contrib.admin.utils import quote
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from wagtail.contrib.modeladmin.helpers import (
-    AdminURLHelper,
-    ButtonHelper,
-    PageAdminURLHelper,
-    PageButtonHelper,
-    PagePermissionHelper,
-    PermissionHelper,
-)
+from wagtail.contrib.modeladmin.helpers import ButtonHelper, PageButtonHelper
 from wagtail.contrib.modeladmin.views import InspectView
 from wagtail.core.models import Locale, Page, TranslatableMixin
 
 from wagtail_localize.models import TranslationSource
-
-
-class TranslatablePermissionHelper(PermissionHelper):
-    def __init__(self, model, inspect_view_enabled=False):
-        super().__init__(model, inspect_view_enabled)
-        self.locale = None
-
-
-class TranslatablePagePermissionHelper(
-    TranslatablePermissionHelper,
-    PagePermissionHelper,
-):
-    def get_valid_parent_pages(self, user):
-        parents = super().get_valid_parent_pages(user)
-        if self.locale:
-            parents = parents.filter(locale_id=self.locale.id)
-        return parents
-
-
-class TranslatableAdminURLHelper(AdminURLHelper):
-    def __init__(self, model):
-        super().__init__(model)
-        self.locale = None
-
-    def get_action_url(self, action, *args, **kwargs):
-        locale = kwargs.pop("locale", self.locale)
-        url = super().get_action_url(action, *args, **kwargs)
-        if locale and action in ("create", "choose_parent", "index"):
-            url += f"?locale={locale.language_code}"
-        return url
-
-    @property
-    def index_url(self):
-        return self.get_action_url("index")
-
-    @property
-    def create_url(self):
-        return self.get_action_url("create")
-
-
-class TranslatablePageAdminURLHelper(TranslatableAdminURLHelper, PageAdminURLHelper):
-    pass
 
 
 class TranslatableButtonHelper(ButtonHelper):

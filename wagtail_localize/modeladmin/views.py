@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
@@ -21,12 +21,8 @@ from wagtail_localize.views import edit_translation
 
 if WAGTAIL_VERSION >= (2, 15):
     from wagtail.contrib.modeladmin.views import HistoryView
-    from wagtail.core.log_actions import log
 else:
     HistoryView = object
-
-    def log(instance, action):
-        pass
 
 
 class TranslatableViewMixin:
@@ -41,21 +37,13 @@ class TranslatableViewMixin:
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.locale = self.get_locale(request)
-        self.model_admin.locale = self.locale
-        self.model_admin.url_helper.locale = self.locale
-        self.model_admin.permission_helper.locale = self.locale
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_locale(self, request):
-        instance = getattr(self, "instance", None)
-        if instance:
-            locale = getattr(instance, "locale", None)
-        elif "locale" in request.GET:
-            locale = Locale.objects.filter(language_code=request.GET["locale"]).first()
+        if getattr(self, "instance", None):
+            self.locale = self.instance.locale
+        if "locale" in request.GET:
+            self.locale = get_object_or_404(Locale, language_code=request.GET["locale"])
         else:
-            locale = None
-        return locale or Locale.get_active()
+            self.locale = Locale.get_active()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -76,29 +64,30 @@ class TranslatableIndexView(TranslatableViewMixin, IndexView):
 
     def get_translations_context_data(self):
         return [
-            {"locale": x, "url": self.url_helper.get_action_url("index", locale=x)}
-            for x in Locale.objects.exclude(id=self.locale.id)
+            {
+                "locale": locale,
+                "url": self.index_url + "?locale=" + locale.language_code,
+            }
+            for locale in Locale.objects.exclude(id=self.locale.id)
         ]
 
 
 class TranslatableCreateView(TranslatableViewMixin, CreateView):
-    def form_valid(self, form):
-        # Attach locale to the created object
-        instance = form.save(commit=False)
-        instance.locale = self.locale
-        instance.save()
-        messages.success(
-            self.request,
-            self.get_success_message(instance),
-            buttons=self.get_success_message_buttons(instance),
-        )
-        log(instance=instance, action="wagtail.create")
-        return redirect(self.get_success_url())
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"].locale = self.locale
+        return kwargs
+
+    def get_success_url(self):
+        return self.index_url + "?locale=" + self.locale.language_code
 
     def get_translations_context_data(self):
         return [
-            {"locale": x, "url": self.url_helper.get_action_url("create", locale=x)}
-            for x in Locale.objects.exclude(id=self.locale.id)
+            {
+                "locale": locale,
+                "url": self.create_url + "?locale=" + locale.language_code,
+            }
+            for locale in Locale.objects.exclude(id=self.locale.id)
         ]
 
 
@@ -139,13 +128,27 @@ class TranslatableEditView(TranslatableViewMixin, EditView):
 
     def get_translations_context_data(self):
         return [
-            {"locale": x.locale, "url": self.url_helper.get_action_url("edit", x.pk)}
-            for x in self.instance.get_translations().select_related("locale")
+            {
+                "locale": translation.locale,
+                "url": self.url_helper.get_action_url("edit", translation.pk)
+                + "?locale="
+                + translation.locale.language_code,
+            }
+            for translation in self.instance.get_translations().select_related("locale")
         ]
 
 
 class TranslatableInspectView(TranslatableViewMixin, InspectView):
-    pass
+    def get_translations_context_data(self):
+        return [
+            {
+                "locale": translation.locale,
+                "url": self.url_helper.get_action_url("inspect", translation.pk)
+                + "?locale="
+                + translation.locale.language_code,
+            }
+            for translation in self.instance.get_translations().select_related("locale")
+        ]
 
 
 class TranslatableDeleteView(TranslatableViewMixin, DeleteView):
