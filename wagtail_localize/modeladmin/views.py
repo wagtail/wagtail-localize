@@ -27,6 +27,7 @@ else:
 
 class TranslatableViewMixin:
     def __init__(self, *args, **kwargs):
+        self.locale = None
         super().__init__(*args, **kwargs)
 
         if not issubclass(self.model, TranslatableMixin):
@@ -41,7 +42,7 @@ class TranslatableViewMixin:
             self.locale = self.instance.locale
         if "locale" in request.GET:
             self.locale = get_object_or_404(Locale, language_code=request.GET["locale"])
-        else:
+        if not self.locale:
             self.locale = Locale.get_active()
         return super().dispatch(request, *args, **kwargs)
 
