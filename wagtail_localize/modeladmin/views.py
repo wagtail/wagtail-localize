@@ -1,9 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.admin import messages
 from wagtail.contrib.modeladmin.views import (
     ChooseParentView,
     CreateView,
