@@ -474,7 +474,6 @@ if WAGTAIL_VERSION >= (4, 0):
 
     @hooks.register("construct_translated_pages_to_cascade_actions")
     def construct_synced_page_tree_list(pages: List[Page], action: str):
-
         locale_sync_map = {}
         for page in pages:
             # TODO: what about locale C follows B which follows A, when we come in from A?

@@ -1,12 +1,21 @@
+import unittest
+
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core.models import Locale, Page
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import LocaleSynchronization
 from wagtail_localize.synctree import PageIndex
 from wagtail_localize.test.models import TestHomePage, TestPage
+
+
+try:
+    from wagtail import hooks
+except ImportError:
+    from wagtail.core import hooks
 
 
 class TestPageIndex(TestCase):
@@ -93,7 +102,7 @@ class TestPageIndex(TestCase):
         self.assertEqual(canadaonlypage_entry.aliased_locales, [])
 
 
-class TestSignalsAndHooks(TestCase, WagtailTestUtils):
+class SyncTreeTestsSetupBase(TestCase):
     def setUp(self):
         self.en_locale = Locale.objects.get(language_code="en")
         self.fr_locale = Locale.objects.create(language_code="fr")
@@ -125,6 +134,11 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
                 locale=self.fr_ca_locale,
             )
         )
+
+
+class TestSignalsAndHooks(SyncTreeTestsSetupBase, WagtailTestUtils):
+    def setUp(self):
+        super().setUp()
 
         LocaleSynchronization.objects.create(
             locale=self.fr_locale,
@@ -263,3 +277,66 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         self.assertTrue(new_en_homepage.has_translation(self.fr_locale))
         self.assertTrue(new_en_homepage.has_translation(self.fr_ca_locale))
         self.assertTrue(new_en_homepage.has_translation(self.es_locale))
+
+
+@unittest.skipUnless(
+    WAGTAIL_VERSION >= (4, 0),
+    "construct_translated_pages_to_cascade_actions was added starting with Wagtail 3.0",
+)
+class TestConstructSyncedPageTreeListHook(SyncTreeTestsSetupBase):
+    def _get_hook_function(self):
+        the_hooks = hooks.get_hooks("construct_translated_pages_to_cascade_actions")
+        return the_hooks[0]
+
+    def setup_locale_synchronisation(self, locale, sync_from_locale):
+        LocaleSynchronization.objects.create(
+            locale=locale,
+            sync_from=sync_from_locale,
+        )
+
+    def test_hook(self):
+        the_hooks = hooks.get_hooks("construct_translated_pages_to_cascade_actions")
+        self.assertEqual(len(the_hooks), 1)
+
+    def test_hook_returns_nothing_without_locale_synchronisation(self):
+        hook = self._get_hook_function()
+        for action in ["unpublish", "delete", "move"]:
+            with self.subTest(
+                f"Calling construct_translated_pages_to_cascade_actions with {action}"
+            ):
+                results = hook([self.en_aboutpage], action)
+                self.assertDictEqual(results, {})
+
+    def test_hook_returns_relevant_pages_from_synced_locale_on_unpublish_action(self):
+        self.setup_locale_synchronisation(self.fr_locale, self.en_locale)
+        hook = self._get_hook_function()
+        results = hook([self.en_aboutpage], "unpublish")
+        self.assertIsNotNone(results.get(self.en_aboutpage))
+        self.assertQuerysetEqual(
+            results[self.en_aboutpage], Page.objects.filter(pk=self.fr_aboutpage.pk)
+        )
+
+        # unpublish should not include alias pages as they follow the parent
+        self.fr_aboutpage.alias_of = self.en_aboutpage
+        self.fr_aboutpage.save()
+        results = hook([self.en_aboutpage], "unpublish")
+        self.assertIsNotNone(results.get(self.en_aboutpage))
+        self.assertQuerysetEqual(results[self.en_aboutpage], Page.objects.none())
+
+    def test_hook_returns_relevant_pages_from_synced_locale_on_move_action(self):
+        self.setup_locale_synchronisation(self.fr_locale, self.en_locale)
+        hook = self._get_hook_function()
+        results = hook([self.en_aboutpage], "move")
+        self.assertIsNotNone(results.get(self.en_aboutpage))
+        self.assertQuerysetEqual(
+            results[self.en_aboutpage], Page.objects.filter(pk=self.fr_aboutpage.pk)
+        )
+
+    def test_hook_returns_relevant_pages_from_synced_locale_on_delete_action(self):
+        self.setup_locale_synchronisation(self.fr_locale, self.en_locale)
+        hook = self._get_hook_function()
+        results = hook([self.en_aboutpage], "move")
+        self.assertIsNotNone(results.get(self.en_aboutpage))
+        self.assertQuerysetEqual(
+            results[self.en_aboutpage], Page.objects.filter(pk=self.fr_aboutpage.pk)
+        )
