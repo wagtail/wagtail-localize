@@ -8,10 +8,9 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("wagtailcore", "0062_comment_models_and_pagesubscription"),
         (
             "wagtail_localize_test",
-            "0020_alter_testgeneratetranslatablefieldspage_test_streamfield_and_more",
+            "0021_alter_testgeneratetranslatablefieldspage_test_streamfield_and_more",
         ),
     ]
 
