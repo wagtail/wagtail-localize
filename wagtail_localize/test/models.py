@@ -52,7 +52,6 @@ class TestUUIDModel(models.Model):
 
 @register_snippet
 class TestUUIDSnippet(TranslatableMixin, models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     field = models.ForeignKey(TestUUIDModel, on_delete=models.CASCADE)
 
     translatable_fields = [SynchronizedField("field")]
