@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey
@@ -41,6 +43,18 @@ class TestSnippet(TranslatableMixin, models.Model):
         TranslatableField("field"),
         TranslatableField("small_charfield"),
     ]
+
+
+class TestUUIDModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    charfield = models.CharField(max_length=10, blank=True)
+
+
+@register_snippet
+class TestUUIDSnippet(TranslatableMixin, models.Model):
+    field = models.ForeignKey(TestUUIDModel, on_delete=models.CASCADE)
+
+    translatable_fields = [SynchronizedField("field")]
 
 
 @register_snippet
