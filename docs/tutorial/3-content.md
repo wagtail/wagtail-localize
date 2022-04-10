@@ -34,7 +34,7 @@ Now, open `blog/models.py` and copy and paste the following code into it:
 
 ```python
 from django.db import models
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
@@ -42,6 +42,11 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
+
+if WAGTAIL_VERSION >= (3, 0):
+    from wagtail.admin.panels import FieldPanel
+else:
+    from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 
 
 class ImageBlock(blocks.StructBlock):
@@ -79,7 +84,7 @@ class BlogPostPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("publication_date"),
         ImageChooserPanel("image"),
-        StreamFieldPanel("body"),
+        FieldPanel("body") if WAGTAIL_VERSION >= (3, 0) else StreamFieldPanel("body"),
         SnippetChooserPanel("category"),
     ]
 
