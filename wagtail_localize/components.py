@@ -3,12 +3,20 @@ import inspect
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import (
-    ObjectList,
-    extract_panel_definitions_from_model_class,
-)
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.forms import WagtailAdminModelForm
 
+
+try:
+    from wagtail.admin.panels import (
+        ObjectList,
+        extract_panel_definitions_from_model_class,
+    )
+except ImportError:
+    from wagtail.admin.edit_handlers import (
+        ObjectList,
+        extract_panel_definitions_from_model_class,
+    )
 
 TRANSLATION_COMPONENTS = []
 
@@ -74,9 +82,14 @@ class BaseComponentManager:
             component_instance = cls.get_component_instance(
                 component_model, source_object_instance=source_object_instance
             )
-            edit_handler = cls.get_component_edit_handler(component_model).bind_to(
-                model=component_model, instance=component_instance, request=request
-            )
+            edit_handler = cls.get_component_edit_handler(component_model)
+
+            if WAGTAIL_VERSION >= (3, 0):
+                edit_handler = edit_handler.bind_to_model(component_model)
+            else:
+                edit_handler = edit_handler.bind_to(
+                    model=component_model, instance=component_instance, request=request
+                )
             form_class = edit_handler.get_form_class()
 
             # Add an 'enabled' field to the form if it isn't required
