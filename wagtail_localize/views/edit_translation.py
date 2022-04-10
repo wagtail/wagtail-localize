@@ -29,13 +29,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
-from wagtail.admin.edit_handlers import (
-    BaseCompositeEditHandler,
-    FieldPanel,
-    ObjectList,
-    PageChooserPanel,
-    TabbedInterface,
-)
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -63,6 +56,21 @@ from wagtail_localize.models import (
     TranslationSource,
 )
 from wagtail_localize.segments import StringSegmentValue
+
+
+if WAGTAIL_VERSION >= (3, 0):
+    # TODO: tidy this up once we drop support for Wagtail < 3.0
+    from wagtail.admin.panels import FieldPanel, ObjectList, PageChooserPanel
+    from wagtail.admin.panels import PanelGroup as BaseCompositeEditHandler
+    from wagtail.admin.panels import TabbedInterface
+else:
+    from wagtail.admin.edit_handlers import (
+        BaseCompositeEditHandler,
+        FieldPanel,
+        ObjectList,
+        PageChooserPanel,
+        TabbedInterface,
+    )
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -175,13 +183,29 @@ class TabHelper:
 
     @cached_property
     def field_tab_mapping(self):
-        if isinstance(self.edit_handler, TabbedInterface):
+        if WAGTAIL_VERSION >= (3, 0):
+            # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
+            # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
+            # only interested in "tabbing"
+            is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
+        else:
+            is_tabbed = isinstance(self.edit_handler, TabbedInterface)
+
+        if is_tabbed:
             field_tabs = {}
             for tab in self.edit_handler.children:
-                for tab_field in tab.required_fields():
+                if WAGTAIL_VERSION >= (3, 0):
+                    form_options = tab.get_form_options()
+                    required_fields = form_options.get("fields", [])
+                    required_formsets = form_options.get("formsets", {}).keys()
+                else:
+                    required_fields = tab.required_fields()
+                    required_formsets = tab.required_formsets().keys()
+
+                for tab_field in required_fields:
                     field_tabs[tab_field] = tab.heading
 
-                for tab_formset in tab.required_formsets().keys():
+                for tab_formset in required_formsets:
                     field_tabs[tab_formset] = tab.heading
 
             return field_tabs
@@ -196,11 +220,26 @@ class TabHelper:
 
     @cached_property
     def field_ordering_mapping(self):
-        if isinstance(self.edit_handler, TabbedInterface):
+        if WAGTAIL_VERSION >= (3, 0):
+            # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
+            # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
+            # only interested in "tabbing"
+            is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
+        else:
+            is_tabbed = isinstance(self.edit_handler, TabbedInterface)
+
+        if is_tabbed:
             field_orderings = {}
             order = 0
             for tab in self.edit_handler.children:
-                for tab_field in tab.required_fields():
+                if WAGTAIL_VERSION >= (3, 0):
+                    form_options = tab.get_form_options()
+                    required_fields = form_options.get("fields", [])
+                    required_formsets = form_options.get("formsets", {})
+                else:
+                    required_fields = tab.required_fields()
+                    required_formsets = tab.required_formsets().keys()
+                for tab_field in required_fields:
                     # TODO(someday): Orderings of fields within inline panels.
                     # (currently, they will all be assigned the same order value,
                     # so they will end up being order by how they are defined on
@@ -209,7 +248,7 @@ class TabHelper:
                     field_orderings[tab_field] = order
                     order += 1
 
-                for tab_formset in tab.required_formsets().keys():
+                for tab_formset in required_formsets:
                     field_orderings[tab_formset] = order
                     order += 1
 
@@ -273,18 +312,22 @@ def get_segment_location_info(
                     # @see https://github.com/wagtail/wagtail/pull/7684
                     # the target_models is set in the ModelFieldRegistry for ForeignKeys
 
+                    if WAGTAIL_VERSION >= (3, 0):
+                        widget_overrides = edit_handler.get_form_options().get(
+                            "widgets", {}
+                        )
+                    else:
+                        widget_overrides = edit_handler.widget_overrides()
                     # Check for explicit `page_types` kwarg in PageChooserPanel
-                    if field.name in edit_handler.widget_overrides() and hasattr(
-                        edit_handler.widget_overrides()[field.name], "target_models"
+                    if field.name in widget_overrides and hasattr(
+                        widget_overrides[field.name], "target_models"
                     ):
                         allowed_page_types = [
                             "{app}.{model}".format(
                                 app=model._meta.app_label,
                                 model=model._meta.model_name,
                             )
-                            for model in edit_handler.widget_overrides()[
-                                field.name
-                            ].target_models
+                            for model in widget_overrides[field.name].target_models
                         ]
                     else:
                         from wagtail.admin.forms.models import registry
