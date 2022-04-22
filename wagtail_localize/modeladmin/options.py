@@ -1,9 +1,6 @@
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from wagtail.contrib.modeladmin.options import (
-    ModelAdmin,
-    ModelAdminGroup,
-    modeladmin_register,
-)
+from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.core.models import TranslatableMixin
 
 from .helpers import TranslatableButtonHelper, TranslatablePageButtonHelper
@@ -18,14 +15,6 @@ from .views import (
 )
 
 
-__all__ = [
-    "ModelAdmin",
-    "ModelAdminGroup",
-    "modeladmin_register",
-    "TranslatableModelAdmin",
-]
-
-
 class TranslatableModelAdmin(ModelAdmin):
     index_view_class = TranslatableIndexView
     create_view_class = TranslatableCreateView
@@ -37,6 +26,12 @@ class TranslatableModelAdmin(ModelAdmin):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        if "wagtail_localize.modeladmin" not in settings.INSTALLED_APPS:
+            raise ImproperlyConfigured(
+                'To use the TranslatableModelAdmin class "wagtail_localize.modeladmin" '
+                "must be added to your INSTALLED_APPS setting."
+            )
 
         if not issubclass(self.model, TranslatableMixin):
             raise ImproperlyConfigured(

@@ -5,12 +5,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from wagtail.core.models import Locale, Page
 from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_localize.modeladmin import ModelAdmin, TranslatableModelAdmin, helpers
+from wagtail_localize.modeladmin import helpers
+from wagtail_localize.modeladmin.options import ModelAdmin, TranslatableModelAdmin
 from wagtail_localize.modeladmin.views import (
     TranslatableIndexView,
     TranslatableInspectView,
@@ -18,6 +19,7 @@ from wagtail_localize.modeladmin.views import (
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.test.models import NonTranslatableModel, TestModel, TestPage
 from wagtail_localize.test.wagtail_hooks import TestModelAdmin, TestPageAdmin
+from wagtail_localize.tests.utils import assert_permission_denied
 
 
 def strip_user_perms():
@@ -292,7 +294,7 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
             next(btns),
             {
                 "url": reverse(
-                    "wagtail_localize:submit_modeladmin_translation",
+                    "wagtail_localize_modeladmin:submit_translation",
                     args=[
                         self.en_modeladmin._meta.app_label,
                         self.en_modeladmin._meta.model_name,
@@ -328,7 +330,7 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
             next(btns),
             {
                 "url": reverse(
-                    "wagtail_localize:submit_modeladmin_translation",
+                    "wagtail_localize_modeladmin:submit_translation",
                     args=[
                         self.en_modeladmin_page._meta.app_label,
                         self.en_modeladmin_page._meta.model_name,
@@ -386,3 +388,380 @@ class TestModelAdminHelpers(TestCase, WagtailTestUtils):
 
         with self.assertRaises(StopIteration):
             next(btns)
+
+
+@override_settings(
+    LANGUAGES=[
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
+    ],
+    WAGTAIL_CONTENT_LANGUAGES=[
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
+    ],
+)
+class TestTranslateModelAdminListingButton(TestCase, WagtailTestUtils):
+    def setUp(self):
+        self.login()
+
+        self.en_locale = Locale.objects.get()
+        self.fr_locale = Locale.objects.create(language_code="fr")
+        self.de_locale = Locale.objects.create(language_code="de")
+
+        self.en_modeladmin = TestModel.objects.create(
+            title="Test modeladmin", test_textfield="Test modeladmin"
+        )
+        self.fr_modeladmin = self.en_modeladmin.copy_for_translation(self.fr_locale)
+        self.fr_modeladmin.save()
+
+        self.not_translatable_modeladmin = NonTranslatableModel.objects.create()
+
+    def test(self):
+        response = self.client.get(
+            reverse("wagtail_localize_test_testmodel_modeladmin_index")
+        )
+        self.assertContains(
+            response,
+            (
+                f'href="/admin/localize/modeladmin/submit/wagtail_localize_test/testmodel/{self.en_modeladmin.id}/" '
+                f'class="button button-secondary button-small" title="Translate">Translate</a>'
+            ),
+        )
+
+    def test_hides_if_modeladmin_already_translated(self):
+        de_modeladmin = self.en_modeladmin.copy_for_translation(self.de_locale)
+        de_modeladmin.save()
+
+        response = self.client.get(
+            reverse("wagtail_localize_test_testmodel_modeladmin_index")
+        )
+
+        self.assertNotContains(response, "Translate")
+
+    def test_hides_if_modeladmin_isnt_translatable(self):
+        de_modeladmin = self.en_modeladmin.copy_for_translation(self.de_locale)
+        de_modeladmin.save()
+
+        response = self.client.get(
+            reverse("wagtail_localize_test_testmodel_modeladmin_index")
+        )
+
+        self.assertNotContains(response, "Translate")
+
+    def test_hides_if_user_doesnt_have_permission(self):
+        strip_user_perms()
+
+        response = self.client.get(
+            reverse("wagtail_localize_test_testmodel_modeladmin_index")
+        )
+
+        self.assertNotContains(response, "Translate")
+
+
+@override_settings(
+    LANGUAGES=[
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
+    ],
+    WAGTAIL_CONTENT_LANGUAGES=[
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
+    ],
+)
+class TestSubmitModelAdminTranslation(TestCase, WagtailTestUtils):
+    def setUp(self):
+        self.login()
+
+        self.en_locale = Locale.objects.get()
+        self.fr_locale = Locale.objects.create(language_code="fr")
+        self.de_locale = Locale.objects.create(language_code="de")
+
+        self.en_modeladmin = TestModel.objects.create(
+            title="Test modeladmin", test_textfield="Test modeladmin"
+        )
+
+        self.not_translatable_modeladmin = NonTranslatableModel.objects.create()
+
+    def test_get_submit_modeladmin_translation(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertListEqual(
+            list(response.context["form"]["locales"].field.queryset),
+            [self.de_locale, self.fr_locale],
+        )
+
+        # More than one locale so show "Select all"
+        self.assertFalse(response.context["form"]["select_all"].field.widget.is_hidden)
+
+        # ModelAdmin can't have children so hide include_subtree
+        self.assertTrue(
+            response.context["form"]["include_subtree"].field.widget.is_hidden
+        )
+
+    def test_get_submit_modeladmin_translation_when_not_modeladmin(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtailcore", "page", 1],
+            ),
+            # Need to follow as Django will initiall redirect to /en/admin/
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_submit_modeladmin_translation_when_invalid_model(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtailcore", "foo", 1],
+            ),
+            # Need to follow as Django will initiall redirect to /en/admin/
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_submit_modeladmin_translation_when_not_translatable(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=[
+                    "wagtail_localize_test",
+                    "nontranslatablemodel",
+                    self.not_translatable_modeladmin.id,
+                ],
+            ),
+            # Need to follow as Django will initiall redirect to /en/admin/
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_submit_modeladmin_translation_without_permissions(self):
+        strip_user_perms()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_get_submit_modeladmin_translation_when_already_translated(self):
+        # Locales that have been translated into shouldn't be included
+        translation = self.en_modeladmin.copy_for_translation(self.de_locale)
+        translation.save()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertListEqual(
+            list(response.context["form"]["locales"].field.queryset), [self.fr_locale]
+        )
+
+        # Since there is only one locale, the "Select All" checkbox should be hidden
+        self.assertTrue(response.context["form"]["select_all"].field.widget.is_hidden)
+
+    def test_post_submit_modeladmin_translation(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        translation = Translation.objects.get()
+        self.assertEqual(translation.source.locale, self.en_locale)
+        self.assertEqual(translation.target_locale, self.fr_locale)
+        self.assertTrue(translation.created_at)
+
+        # The translated modeladmin should've been created
+        translated_modeladmin = self.en_modeladmin.get_translation(self.fr_locale)
+        self.assertEqual(translated_modeladmin.test_textfield, "Test modeladmin")
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_test_testmodel_modeladmin_edit",
+                args=[translated_modeladmin.id],
+            ),
+        )
+
+    def test_post_submit_modeladmin_translation_into_multiple_locales(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            ),
+            {"locales": [self.fr_locale.id, self.de_locale.id]},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "wagtail_localize_test_testmodel_modeladmin_edit",
+                args=[self.en_modeladmin.id],
+            ),
+        )
+
+        # Check French translation
+        fr_translation = Translation.objects.get(target_locale=self.fr_locale)
+        self.assertEqual(fr_translation.source.locale, self.en_locale)
+        self.assertTrue(fr_translation.created_at)
+
+        # Check German translation
+        de_translation = Translation.objects.get(target_locale=self.de_locale)
+        self.assertEqual(de_translation.source.locale, self.en_locale)
+        self.assertTrue(de_translation.created_at)
+
+    def test_post_submit_modeladmin_translation_with_missing_locale(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            ),
+            {"locales": []},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Translation.objects.exists())
+        self.assertFormError(response, "form", "locales", ["This field is required."])
+
+    def test_post_submit_modeladmin_translation_without_permissions(self):
+        strip_user_perms()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        assert_permission_denied(self, response)
+
+
+@override_settings(
+    LANGUAGES=[
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
+    ],
+    WAGTAIL_CONTENT_LANGUAGES=[
+        ("en", "English"),
+        ("fr", "French"),
+        ("de", "German"),
+        ("es", "Spanish"),
+    ],
+)
+class TestUpdateModelAdminTranslations(TestCase, WagtailTestUtils):
+    def setUp(self):
+        self.login()
+
+        self.en_locale = Locale.objects.get()
+        self.fr_locale = Locale.objects.create(language_code="fr")
+        self.de_locale = Locale.objects.create(language_code="de")
+
+        # Create modeladmin object and FR translation
+        self.en_modeladmin = TestModel.objects.create(
+            title="Test modeladmin", test_textfield="Test modeladmin"
+        )
+        self.modeladmin_source, created = TranslationSource.get_or_create_from_instance(
+            self.en_modeladmin
+        )
+        self.modeladmin_translation = Translation.objects.create(
+            source=self.modeladmin_source, target_locale=self.fr_locale
+        )
+        self.modeladmin_translation.save_target(publish=True)
+        self.fr_modeladmin = self.en_modeladmin.get_translation(self.fr_locale)
+
+    def test_get_update_modeladmin_translation(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.modeladmin_source.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(
+            response.context["translations"],
+            [
+                {
+                    "title": str(self.fr_modeladmin),
+                    "locale": self.fr_locale,
+                    "edit_url": reverse(
+                        "wagtail_localize_test_testmodel_modeladmin_edit",
+                        args=[self.fr_modeladmin.id],
+                    ),
+                }
+            ],
+        )
+
+    def test_post_update_modeladmin_translation(self):
+        self.en_modeladmin.test_textfield = "Edited modeladmin"
+        self.en_modeladmin.save()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.modeladmin_source.id],
+            )
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("wagtail_localize_test_testmodel_modeladmin_index"),
+        )
+
+        # The FR version shouldn't be updated yet
+        self.fr_modeladmin.refresh_from_db()
+        self.assertEqual(self.fr_modeladmin.test_textfield, "Test modeladmin")
+
+    def test_post_update_modeladmin_translation_with_publish_translations(self):
+        self.en_modeladmin.test_textfield = "Edited modeladmin"
+        self.en_modeladmin.save()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.modeladmin_source.id],
+            ),
+            {"publish_translations": "on"},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("wagtail_localize_test_testmodel_modeladmin_index"),
+        )
+
+        # The FR version should be updated
+        self.fr_modeladmin.refresh_from_db()
+        self.assertEqual(self.fr_modeladmin.test_textfield, "Edited modeladmin")

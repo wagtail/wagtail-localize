@@ -11,7 +11,7 @@ from wagtail.core.models import Locale, Page, PageViewRestriction
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_localize.models import StringSegment, Translation, TranslationSource
-from wagtail_localize.test.models import NonTranslatableSnippet, TestModel, TestSnippet
+from wagtail_localize.test.models import NonTranslatableSnippet, TestSnippet
 
 from .utils import assert_permission_denied, make_test_page
 
@@ -235,19 +235,6 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.snippet_translation.save_target(publish=True)
         self.fr_snippet = self.en_snippet.get_translation(self.fr_locale)
 
-        # Create modeladmin object and FR translation
-        self.en_modeladmin = TestModel.objects.create(
-            title="Test modeladmin", test_textfield="Test modeladmin"
-        )
-        self.modeladmin_source, created = TranslationSource.get_or_create_from_instance(
-            self.en_modeladmin
-        )
-        self.modeladmin_translation = Translation.objects.create(
-            source=self.modeladmin_source, target_locale=self.fr_locale
-        )
-        self.modeladmin_translation.save_target(publish=True)
-        self.fr_modeladmin = self.en_modeladmin.get_translation(self.fr_locale)
-
     def test_get_update_page_translation(self):
         response = self.client.get(
             reverse(
@@ -294,30 +281,6 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
                             "testsnippet",
                             self.fr_snippet.id,
                         ],
-                    ),
-                }
-            ],
-        )
-
-    def test_get_update_modeladmin_translation(self):
-        response = self.client.get(
-            reverse(
-                "wagtail_localize:update_translations",
-                args=[self.modeladmin_source.id],
-            )
-        )
-
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(
-            response.context["translations"],
-            [
-                {
-                    "title": str(self.fr_modeladmin),
-                    "locale": self.fr_locale,
-                    "edit_url": reverse(
-                        "wagtail_localize_test_testmodel_modeladmin_edit",
-                        args=[self.fr_modeladmin.id],
                     ),
                 }
             ],
@@ -463,47 +426,6 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         # The FR version should be updated
         self.fr_snippet.refresh_from_db()
         self.assertEqual(self.fr_snippet.field, "Edited snippet")
-
-    def test_post_update_modeladmin_translation(self):
-        self.en_modeladmin.test_textfield = "Edited modeladmin"
-        self.en_modeladmin.save()
-
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:update_translations",
-                args=[self.modeladmin_source.id],
-            )
-        )
-
-        self.assertRedirects(
-            response,
-            reverse("wagtail_localize_test_testmodel_modeladmin_index"),
-        )
-
-        # The FR version shouldn't be updated yet
-        self.fr_modeladmin.refresh_from_db()
-        self.assertEqual(self.fr_modeladmin.test_textfield, "Test modeladmin")
-
-    def test_post_update_modeladmin_translation_with_publish_translations(self):
-        self.en_modeladmin.test_textfield = "Edited modeladmin"
-        self.en_modeladmin.save()
-
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:update_translations",
-                args=[self.modeladmin_source.id],
-            ),
-            {"publish_translations": "on"},
-        )
-
-        self.assertRedirects(
-            response,
-            reverse("wagtail_localize_test_testmodel_modeladmin_index"),
-        )
-
-        # The FR version should be updated
-        self.fr_modeladmin.refresh_from_db()
-        self.assertEqual(self.fr_modeladmin.test_textfield, "Edited modeladmin")
 
     def test_post_with_disabled_translation(self):
         self.page_translation.enabled = False

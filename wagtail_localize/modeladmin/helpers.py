@@ -53,7 +53,7 @@ def get_translation_buttons(obj, user, next_url=None, classname=""):
 
         if has_locale_to_translate_to:
             url = reverse(
-                "wagtail_localize:submit_modeladmin_translation",
+                "wagtail_localize_modeladmin:submit_translation",
                 args=[model._meta.app_label, model._meta.model_name, quote(obj.pk)],
             )
             yield {
@@ -72,7 +72,9 @@ def get_translation_buttons(obj, user, next_url=None, classname=""):
 
             yield {
                 "url": url,
-                "label": _("Sync translated %s") % obj._meta.verbose_name_plural,
+                "label": _("Sync translated %(model_name)s")
+                % {"model_name": obj._meta.verbose_name_plural},
                 "classname": classname,
-                "title": _("Sync translated %s") % obj._meta.verbose_name_plural,
+                "title": _("Sync translated %(model_name)s")
+                % {"model_name": obj._meta.verbose_name_plural},
             }

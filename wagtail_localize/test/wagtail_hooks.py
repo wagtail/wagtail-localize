@@ -1,9 +1,10 @@
-from wagtail_localize.modeladmin import (
+from wagtail.contrib.modeladmin.options import (
     ModelAdmin,
     ModelAdminGroup,
-    TranslatableModelAdmin,
     modeladmin_register,
 )
+
+from wagtail_localize.modeladmin.options import TranslatableModelAdmin
 
 from .models import NonTranslatableModel, TestModel, TestPage
 

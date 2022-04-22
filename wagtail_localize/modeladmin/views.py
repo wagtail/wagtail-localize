@@ -1,7 +1,13 @@
+from django.apps import apps
+from django.conf import settings
+from django.contrib.admin.utils import unquote
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
+from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.urls import NoReverseMatch, reverse
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.contrib.modeladmin.views import (
     ChooseParentView,
@@ -16,6 +22,7 @@ from wagtail.utils.version import get_main_version
 
 from wagtail_localize.models import Translation
 from wagtail_localize.views import edit_translation
+from wagtail_localize.views.submit_translations import SubmitTranslationView
 
 
 if WAGTAIL_VERSION >= (2, 15):
@@ -28,6 +35,12 @@ class TranslatableViewMixin:
     def __init__(self, *args, **kwargs):
         self.locale = None
         super().__init__(*args, **kwargs)
+
+        if "wagtail_localize.modeladmin" not in settings.INSTALLED_APPS:
+            raise ImproperlyConfigured(
+                'To use the TranslatableView class "wagtail_localize.modeladmin" '
+                "must be added to your INSTALLED_APPS setting."
+            )
 
         if not issubclass(self.model, TranslatableMixin):
             raise ImproperlyConfigured(
@@ -56,6 +69,8 @@ class TranslatableViewMixin:
 class TranslatableIndexView(TranslatableViewMixin, IndexView):
     def get_filters(self, request):
         filters = super().get_filters(request)
+        # Update the 'lookup_params' part of the filters tuple to filter objects
+        # using the currently active locale
         filters[2]["locale"] = self.locale.id
         return filters
 
@@ -96,6 +111,7 @@ class TranslatableEditView(TranslatableViewMixin, EditView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Attempt to find the translation for the edited instance or set to None
         self.translation = Translation.objects.filter(
             source__object_id=self.instance.translation_key,
             target_locale_id=self.instance.locale_id,
@@ -162,3 +178,38 @@ class TranslatableHistoryView(TranslatableViewMixin, HistoryView):
 
 class TranslatableChooseParentView(TranslatableViewMixin, ChooseParentView):
     pass
+
+
+class SubmitModelAdminTranslationView(SubmitTranslationView):
+    def get_title(self):
+        return _("Translate {model_name}").format(
+            model_name=self.object._meta.verbose_name
+        )
+
+    def get_object(self):
+        try:
+            model = apps.get_model(self.kwargs["app_label"], self.kwargs["model_name"])
+        except LookupError:
+            raise Http404
+        if not issubclass(model, TranslatableMixin):
+            raise Http404
+        return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
+
+    def get_default_success_url(self, translated_object=None):
+        pk = translated_object.pk if translated_object else self.kwargs["pk"]
+        try:
+            return reverse(
+                "{app_label}_{model_name}_modeladmin_edit".format(**self.kwargs),
+                args=[pk],
+            )
+        except NoReverseMatch:
+            raise Http404
+
+    def get_success_message(self, locales):
+        return _(
+            "The {model_name} '{object}' was successfully submitted for translation into {locales}"
+        ).format(
+            model_name=self.object._meta.verbose_name,
+            object=str(self.object),
+            locales=locales,
+        )

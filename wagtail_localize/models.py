@@ -127,7 +127,7 @@ def get_edit_url(instance):
             ],
         )
 
-    else:
+    elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return reverse(
             "{app_label}_{model_name}_modeladmin_edit".format(
                 app_label=instance._meta.app_label,
