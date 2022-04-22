@@ -1105,7 +1105,7 @@ def restart_translation(request, translation, instance):
             instance._meta.model_name,
             quote(instance.pk),
         )
-    else:
+    elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return redirect(
             "{app_label}_{model_name}_modeladmin_edit".format(
                 app_label=instance._meta.app_label,
