@@ -55,7 +55,6 @@ from wagtail_localize.models import (
     StringTranslation,
     Translation,
     TranslationSource,
-    get_edit_url,
 )
 from wagtail_localize.segments import StringSegmentValue
 
@@ -729,6 +728,29 @@ def edit_translation(request, translation, instance):
                 "order": segment.order,
             }
         )
+
+    def get_edit_url(instance):
+        if isinstance(instance, Page):
+            return reverse("wagtailadmin_pages:edit", args=[instance.id])
+
+        elif instance._meta.model in get_snippet_models():
+            return reverse(
+                "wagtailsnippets:edit",
+                args=[
+                    instance._meta.app_label,
+                    instance._meta.model_name,
+                    quote(instance.pk),
+                ],
+            )
+
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+            return reverse(
+                "{app_label}_{model_name}_modeladmin_edit".format(
+                    app_label=instance._meta.app_label,
+                    model_name=instance._meta.model_name,
+                ),
+                args=[quote(instance.pk)],
+            )
 
     def get_submit_translation_url(instance):
         if isinstance(instance, Page):

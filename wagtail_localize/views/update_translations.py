@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.utils import quote
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -61,6 +62,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
         if isinstance(instance, Page):
             return reverse("wagtailadmin_explore", args=[instance.get_parent().id])
+
         elif instance._meta.model in get_snippet_models():
             return reverse(
                 "wagtailsnippets:edit",
@@ -70,7 +72,8 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                     quote(instance.pk),
                 ],
             )
-        else:
+
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
                 "{app_label}_{model_name}_modeladmin_index".format(
                     app_label=instance._meta.app_label,
@@ -81,6 +84,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
     def get_edit_url(self, instance):
         if isinstance(instance, Page):
             return reverse("wagtailadmin_pages:edit", args=[instance.id])
+
         elif instance._meta.model in get_snippet_models():
             return reverse(
                 "wagtailsnippets:edit",
@@ -90,7 +94,8 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                     quote(instance.pk),
                 ],
             )
-        else:
+
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
                 "{app_label}_{model_name}_modeladmin_edit".format(
                     app_label=instance._meta.app_label,
