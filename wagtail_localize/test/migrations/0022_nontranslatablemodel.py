@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     dependencies = [
         (
             "wagtail_localize_test",
-            "0021_alter_testgeneratetranslatablefieldspage_test_streamfield_and_more",
+            "0021_testuuidmodel_testuuidsnippet",
         ),
     ]
 
