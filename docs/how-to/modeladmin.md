@@ -8,7 +8,7 @@ Add `wagtail_localize.modeladmin` to your `INSTALLED_APPS`:
 
 ```python
 INSTALLED_APPS = [
-    ...
+    # ...
     "wagtail_localize.modeladmin",
 ]
 ```
