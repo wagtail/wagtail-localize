@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
@@ -178,6 +179,9 @@ class TestCustomField(models.TextField):
         return [StringSegmentValue("foo", "{} and some extra".format(value))]
 
 
+SF_KWARGS = {"use_json_field": True} if WAGTAIL_VERSION >= (4, 0) else {}
+
+
 class TestPage(Page):
     test_charfield = models.CharField(
         gettext_lazy("char field"), max_length=255, blank=True, null=True, default=""
@@ -188,7 +192,7 @@ class TestPage(Page):
     test_urlfield = models.URLField(blank=True)
 
     test_richtextfield = RichTextField(blank=True)
-    test_streamfield = StreamField(TestStreamBlock, blank=True)
+    test_streamfield = StreamField(TestStreamBlock, blank=True, **SF_KWARGS)
 
     test_snippet = models.ForeignKey(
         TestSnippet, null=True, blank=True, on_delete=models.SET_NULL
@@ -204,7 +208,9 @@ class TestPage(Page):
     test_synchronized_urlfield = models.URLField(blank=True)
 
     test_synchronized_richtextfield = RichTextField(blank=True)
-    test_synchronized_streamfield = StreamField(TestStreamBlock, blank=True)
+    test_synchronized_streamfield = StreamField(
+        TestStreamBlock, blank=True, **SF_KWARGS
+    )
 
     test_synchronized_image = models.ForeignKey(
         "wagtailimages.Image",
@@ -280,7 +286,9 @@ class TestPage(Page):
         FieldPanel("test_slugfield"),
         FieldPanel("test_urlfield"),
         FieldPanel("test_richtextfield"),
-        StreamFieldPanel("test_streamfield"),
+        FieldPanel("test_streamfield")
+        if WAGTAIL_VERSION >= (3, 0)
+        else StreamFieldPanel("test_streamfield"),
         FieldPanel("test_snippet"),
         InlinePanel("test_childobjects"),
         FieldPanel("test_customfield"),
@@ -290,7 +298,9 @@ class TestPage(Page):
         FieldPanel("test_synchronized_slugfield"),
         FieldPanel("test_synchronized_urlfield"),
         FieldPanel("test_synchronized_richtextfield"),
-        StreamFieldPanel("test_synchronized_streamfield"),
+        FieldPanel("test_synchronized_streamfield")
+        if WAGTAIL_VERSION >= (3, 0)
+        else StreamFieldPanel("test_synchronized_streamfield"),
         FieldPanel("test_synchronized_image"),
         FieldPanel("test_synchronized_document"),
         FieldPanel("test_synchronized_snippet"),
@@ -384,7 +394,7 @@ class TestGenerateTranslatableFieldsPage(Page):
     test_urlfield = models.URLField(blank=True)
 
     test_richtextfield = RichTextField(blank=True)
-    test_streamfield = StreamField(TestStreamBlock, blank=True)
+    test_streamfield = StreamField(TestStreamBlock, blank=True, **SF_KWARGS)
 
     test_snippet = models.ForeignKey(
         TestSnippet, null=True, blank=True, on_delete=models.SET_NULL
