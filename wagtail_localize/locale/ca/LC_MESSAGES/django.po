@@ -1,20 +1,35 @@
 #
 # Translators:
-# Roger Pons <rogerpons@gmail.com>, 2021
 # Antoni Aloy <aaloy@apsl.net>, 2021
+# Roger Pons <rogerpons@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 12:30+0000\n"
-"Last-Translator: Antoni Aloy <aaloy@apsl.net>, 2021\n"
+"POT-Creation-Date: 2022-03-25 11:21+0000\n"
+"Last-Translator: Roger Pons <rogerpons@gmail.com>, 2022\n"
 "Language-Team: Catalan (https://www.transifex.com/torchbox/teams/8009/ca/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Disable"
+msgstr "Desactivar"
+
+msgid "Enable"
+msgstr "Habilitar"
+
+msgid "Yes, convert it"
+msgstr "Sí, convertir"
+
+msgid "Go back"
+msgstr "Anar enrere"
 
 msgid "Status"
 msgstr "Estat"
 
 msgid "Content"
 msgstr "Contingut"
+
+msgid "Select all"
+msgstr "Seleccionar tot"

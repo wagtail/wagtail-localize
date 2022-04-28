@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 12:30+0000\n"
+"POT-Creation-Date: 2022-03-25 11:21+0000\n"
 "Last-Translator: Erlend <debcf78e@opayq.com>, 2021\n"
 "Language-Team: Estonian (https://www.transifex.com/torchbox/teams/8009/et/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 12:30+0000\n"
+"POT-Creation-Date: 2022-03-25 11:21+0000\n"
 "Last-Translator: Andrej, 2022\n"
 "Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
@@ -18,8 +18,28 @@ msgstr ""
 msgid "Disable"
 msgstr "Onemogoči"
 
+msgid "Up to date"
+msgstr "Ažurno"
+
+msgid "Waiting for translations"
+msgstr "Čakam na prevode"
+
 msgid "Manual"
 msgstr "Navodila"
+
+msgid "Machine"
+msgstr "Stroj"
+
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "Prevedeno z {tool_name} dne {date}"
+
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "Ročno prevedeno dne {date}"
+
+msgid "Synchronise content from another locale"
+msgstr "Sinhronizirajte vsebino iz drugega jezika"
 
 msgid "Enable"
 msgstr "Omogoči"
@@ -27,8 +47,15 @@ msgstr "Omogoči"
 msgid "Yes, convert it"
 msgstr "Da, pretvori ga"
 
+msgid "No, leave it as a page"
+msgstr "Ne, pustite to kot stran"
+
 msgid "Translate this page"
 msgstr "Prevedi to stran"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Prevod od %(instance)s v%(locale)s"
 
 msgid "Submit"
 msgstr "Pošlji"
@@ -42,14 +69,32 @@ msgstr "Vrsta vsebine"
 msgid "Source"
 msgstr "Vir"
 
+msgid "Target"
+msgstr "Tarča"
+
 msgid "Status"
 msgstr "Status"
 
 msgid "No translations found."
 msgstr "Prevodi niso bili najdeni"
 
+msgid "Why would I sync my page?"
+msgstr "Zakaj bi sinhroniziral svojo stran?"
+
 msgid "Content"
 msgstr "Vsebina"
+
+msgid "Translation has been stopped."
+msgstr "Prevajanje je bilo ustavljeno."
+
+msgid "Translation has been restarted."
+msgstr "Prevajanje je bilo znova zagnano."
+
+msgid "Please upload a valid PO file."
+msgstr "Naložite veljavno PO datoteko."
+
+msgid "Source title"
+msgstr "Naslov izvirnika"
 
 msgid "Translations"
 msgstr "Prevodi"
@@ -60,11 +105,20 @@ msgstr "Izberi vse"
 msgid "Locales"
 msgstr "Območja"
 
+msgid "All child pages will be created."
+msgstr "Vse podrejene strani bodo ustvarjene."
+
 msgid "Translate"
 msgstr "Prevedi"
 
 msgid "Translate page"
 msgstr "Prevedi stran"
 
+msgid "Publish immediately"
+msgstr "Objavi takoj"
+
 msgid "Sync translated pages"
 msgstr "Sinhroniziraj prevedene strani"
+
+msgid "Start Synced translation"
+msgstr "Začnite sinhronizirani prevod"

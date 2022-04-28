@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 12:30+0000\n"
+"POT-Creation-Date: 2022-03-25 11:21+0000\n"
 "Last-Translator: Sutrisno Efendi <kangfend@gmail.com>, 2021\n"
 "Language-Team: Indonesian (Indonesia) (https://www.transifex.com/torchbox/"
 "teams/8009/id_ID/)\n"

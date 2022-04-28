@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 12:30+0000\n"
+"POT-Creation-Date: 2022-03-25 11:21+0000\n"
 "Last-Translator: ongchi <ihcgno@icloud.com>, 2022\n"
 "Language-Team: Chinese Traditional (https://www.transifex.com/torchbox/"
 "teams/8009/zh-Hant/)\n"

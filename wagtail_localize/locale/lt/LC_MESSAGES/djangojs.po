@@ -1,11 +1,11 @@
 #
 # Translators:
-# Naglis Jonaitis, 2021
 # Matas Dailyda <matas@dailyda.com>, 2021
+# Naglis Jonaitis, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Matas Dailyda <matas@dailyda.com>, 2021\n"
+"Last-Translator: Naglis Jonaitis, 2022\n"
 "Language-Team: Lithuanian (https://www.transifex.com/torchbox/teams/8009/"
 "lt/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -96,7 +96,7 @@ msgid "Preview"
 msgstr "Peržiūrėti"
 
 msgid "Publish in "
-msgstr "Publikuoti"
+msgstr "Publikuoti "
 
 msgid "Published"
 msgstr "Publikuotas"

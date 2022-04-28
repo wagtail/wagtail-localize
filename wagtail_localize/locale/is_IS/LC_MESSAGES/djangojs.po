@@ -1,11 +1,11 @@
 #
 # Translators:
-# Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2021
 # saevarom <saevar@saevar.is>, 2022
+# Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: saevarom <saevar@saevar.is>, 2022\n"
+"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2022\n"
 "Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,6 +50,9 @@ msgstr "Veldu síðu"
 
 msgid "Choose an image"
 msgstr "Veldu mynd"
+
+msgid "Convert to alias page"
+msgstr "Breyta í spegilsíðu"
 
 msgid "Delete"
 msgstr "Eyða"

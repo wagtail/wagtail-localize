@@ -1,12 +1,12 @@
 #
 # Translators:
 # José Luis <alagunajs@gmail.com>, 2021
-# Amós Oviedo <amos.oviedo@gmail.com>, 2021
 # Kevin Gutiérrez, 2021
+# Amós Oviedo <amos.oviedo@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Kevin Gutiérrez, 2021\n"
+"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2022\n"
 "Language-Team: Spanish (https://www.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -50,6 +50,9 @@ msgstr "Seleccionar una página"
 
 msgid "Choose an image"
 msgstr "Seleccionar una imagen"
+
+msgid "Convert to alias page"
+msgstr "Convertir a alias de página"
 
 msgid "Delete"
 msgstr "Eliminar"

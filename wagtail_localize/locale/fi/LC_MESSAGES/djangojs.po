@@ -2,11 +2,11 @@
 # Translators:
 # Valter Maasalo <vmaasalo@gmail.com>, 2021
 # Aarni Koskela, 2021
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2021
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2021\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2022\n"
 "Language-Team: Finnish (https://www.transifex.com/torchbox/teams/8009/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fi\n"
@@ -50,6 +50,9 @@ msgstr "Valitse sivu"
 
 msgid "Choose an image"
 msgstr "Valitse kuva"
+
+msgid "Convert to alias page"
+msgstr "Muunna aliassivuksi"
 
 msgid "Delete"
 msgstr "Poista"
