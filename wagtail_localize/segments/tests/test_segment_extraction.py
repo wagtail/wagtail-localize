@@ -429,6 +429,47 @@ class TestSegmentExtractionWithStreamField(TestCase):
         WAGTAIL_VERSION >= (2, 16),
         "ListBlocks are supported starting with Wagtail 2.16",
     )
+    def test_listblock_in_listblock(self):
+        block_id = uuid.uuid4()
+        item_one_id = "11111111-1111-1111-1111-111111111111"
+        item_two_id = "22222222-2222-2222-2222-222222222222"
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_listblock_in_structblock",
+            {
+                "title": "Nested",
+                "links_list": [
+                    {
+                        "id": item_one_id,
+                        "type": "item",
+                        "value": {
+                            "heading": "the heading",
+                            "pages": [{"type": "item", "value": 1, "id": item_two_id}],
+                        },
+                    }
+                ],
+            },
+        )
+
+        segments = extract_segments(page)
+        expected_segments = [
+            StringSegmentValue(f"test_streamfield.{block_id}.title", "Nested"),
+            StringSegmentValue(
+                f"test_streamfield.{block_id}.links_list.{item_one_id}.heading",
+                "the heading",
+            ),
+            OverridableSegmentValue(
+                f"test_streamfield.{block_id}.links_list.{item_one_id}.pages.{item_two_id}",
+                1,
+            ),
+        ]
+
+        self.assertEqual(segments, expected_segments)
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
     def test_listblock_in_nestedstreamblock(self):
         block_id = uuid.uuid4()
         nested_block_id = uuid.uuid4()

@@ -120,9 +120,15 @@ class CustomBlockWithoutExtractMethod(blocks.Block):
         default = None
 
 
+class LinksList(blocks.StructBlock):
+    heading = blocks.CharBlock(label="List Heading", blank=True, required=False)
+    pages = blocks.ListBlock(blocks.PageChooserBlock())
+
+
 class ListStructBlock(blocks.StructBlock):
     title = blocks.CharBlock(required=False)
     items = blocks.ListBlock(blocks.CharBlock)
+    links_list = blocks.ListBlock(LinksList())
 
 
 if telepath:

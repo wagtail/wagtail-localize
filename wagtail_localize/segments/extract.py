@@ -162,10 +162,23 @@ class StreamFieldSegmentExtractor:
                     raw_value[0]
                 )
             if has_block_format:
-                for block in list_block.bound_blocks:
+                for index, block in enumerate(list_block.bound_blocks):
+                    # pass on the relevant sub-block raw value, should it be a ListBlock
+                    try:
+                        if isinstance(raw_value, list):
+                            block_raw_value = raw_value[index]
+                        elif isinstance(raw_value, dict):
+                            block_raw_value = raw_value["value"][index]
+                        else:
+                            block_raw_value = None
+                    except (IndexError, KeyError):
+                        block_raw_value = None
+
                     segments.extend(
                         segment.wrap(block.id)
-                        for segment in self.handle_block(block.block, block.value)
+                        for segment in self.handle_block(
+                            block.block, block.value, raw_value=block_raw_value
+                        )
                     )
         return segments
 
