@@ -371,6 +371,7 @@ const SegmentList = styled.ul`
     list-style-type: none;
     padding-left: 50px;
     padding-right: 50px;
+    max-width: 1200px;
 `;
 
 interface EditorStringSegmentProps {
