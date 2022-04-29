@@ -1,6 +1,47 @@
 import React, { FunctionComponent } from 'react';
 import Icon from '../Icon';
 import gettext from 'gettext';
+import styled from 'styled-components';
+
+const StyledHeader = styled.header`
+    padding-inline-end: 20px;
+    padding-inline-start: 20px;
+    background-color: var(--color-primary);
+    color: #fff;
+
+    @media screen and (min-width: 50em) {
+        padding-inline-end: 50px;
+        padding-inline-start: 50px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+`;
+
+const StyledHeaderTitle = styled.h1`
+    color: #fff;
+    font-weight: 700;
+`;
+
+const StyledButtonLink = styled.a`
+    &.button--live {
+        background-color: #fff;
+        color: var(--color-primary);
+        border-radius: 2px;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 2.3em;
+        padding: 0 0.75em;
+
+        .icon {
+            width: 1.25em;
+            height: 1.25em;
+            vertical-align: text-top;
+            margin-right: 0.25em;
+        }
+    }
+`;
 
 interface HeaderButtonActionProps {
     label: string;
@@ -56,7 +97,7 @@ export const HeaderLinkAction: FunctionComponent<HeaderLinkActionProps> = ({
     }
 
     return (
-        <a
+        <StyledButtonLink
             href={href}
             target="_blank"
             rel="noopener noreferrer"
@@ -64,7 +105,7 @@ export const HeaderLinkAction: FunctionComponent<HeaderLinkActionProps> = ({
             title={title}
         >
             {icon && <Icon name={icon} />} {label}
-        </a>
+        </StyledButtonLink>
     );
 };
 
@@ -254,22 +295,22 @@ const Header: FunctionComponent<HeaderProps> = ({
     }
 
     return (
-        <header className={classNames.join(' ')}>
+        <StyledHeader className={classNames.join(' ')}>
             {breadcrumbRendered}
             <div className={rowClassNames.join(' ')}>
-                <h1
-                    className="left col header-title"
+                <StyledHeaderTitle
+                    className="left col"
                     style={{ textTransform: 'none' }}
                 >
                     {' '}
                     {/* TODO: Move style */}
                     {icon && <Icon name={icon} />}
                     {title} {subtitleWrapped}
-                </h1>
+                </StyledHeaderTitle>
                 <div className="right">{actions}</div>
             </div>
             <ul className="row header-meta">{meta}</ul>
-        </header>
+        </StyledHeader>
     );
 };
 
