@@ -44,7 +44,6 @@ from wagtail.images.models import AbstractImage
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
-from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
 from wagtail_localize.compat import DATE_FORMAT
 from wagtail_localize.machine_translators import get_machine_translator
@@ -58,6 +57,13 @@ from wagtail_localize.models import (
 )
 from wagtail_localize.segments import StringSegmentValue
 
+
+if WAGTAIL_VERSION >= (4, 0):
+    from wagtail.snippets.views.snippets import (
+        get_snippet_panel as get_snippet_edit_handler,
+    )
+else:
+    from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
 if WAGTAIL_VERSION >= (3, 0):
     # TODO: tidy this up once we drop support for Wagtail < 3.0
