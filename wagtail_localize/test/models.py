@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.utils.translation import gettext_lazy
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail import blocks, telepath
 from wagtail.admin.panels import (
@@ -73,6 +73,16 @@ class TestUUIDModel(models.Model):
 @register_snippet
 class TestUUIDSnippet(TranslatableMixin, models.Model):
     field = models.ForeignKey(TestUUIDModel, on_delete=models.CASCADE)
+
+    translatable_fields = [SynchronizedField("field")]
+
+
+@register_snippet
+class TestParentalSnippet(TranslatableMixin, ClusterableModel):
+    field = ParentalManyToManyField(
+        TestUUIDModel,
+        blank=True,
+    )
 
     translatable_fields = [SynchronizedField("field")]
 

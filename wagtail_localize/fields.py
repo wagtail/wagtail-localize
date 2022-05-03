@@ -1,5 +1,5 @@
 from django.db import models
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel, get_all_child_relations
 from treebeard.mp_tree import MP_Node
 from wagtail.fields import RichTextField, StreamField
@@ -284,6 +284,13 @@ def copy_synchronised_fields(source, target):
 
                 else:
                     source.copy_child_relation(field.name, target)
+
+            elif isinstance(field, ParentalManyToManyField):
+                parental_field = getattr(source, field.name)
+                if hasattr(parental_field, "all"):
+                    values = parental_field.all()
+                    if values:
+                        setattr(target, field.attname, values)
 
             else:
                 # For all other fields, just set the attribute
