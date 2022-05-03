@@ -47,6 +47,7 @@ from wagtail.core.models import (
     get_translatable_models,
 )
 from wagtail.core.utils import find_available_slug
+from wagtail.snippets.models import get_snippet_models
 
 from .compat import DATE_FORMAT
 from .fields import copy_synchronised_fields
@@ -116,7 +117,7 @@ def get_edit_url(instance):
     if isinstance(instance, Page):
         return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
-    else:
+    elif instance._meta.model in get_snippet_models():
         return reverse(
             "wagtailsnippets:edit",
             args=[
@@ -124,6 +125,15 @@ def get_edit_url(instance):
                 instance._meta.model_name,
                 quote(instance.id),
             ],
+        )
+
+    elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+        return reverse(
+            "{app_label}_{model_name}_modeladmin_edit".format(
+                app_label=instance._meta.app_label,
+                model_name=instance._meta.model_name,
+            ),
+            args=[quote(instance.pk)],
         )
 
 

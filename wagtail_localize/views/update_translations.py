@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.utils import quote
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -11,6 +12,7 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Page
+from wagtail.snippets.models import get_snippet_models
 
 from wagtail_localize.models import TranslationSource
 from wagtail_localize.views.submit_translations import TranslationComponentManager
@@ -60,7 +62,8 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
         if isinstance(instance, Page):
             return reverse("wagtailadmin_explore", args=[instance.get_parent().id])
-        else:
+
+        elif instance._meta.model in get_snippet_models():
             return reverse(
                 "wagtailsnippets:edit",
                 args=[
@@ -70,10 +73,19 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                 ],
             )
 
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+            return reverse(
+                "{app_label}_{model_name}_modeladmin_index".format(
+                    app_label=instance._meta.app_label,
+                    model_name=instance._meta.model_name,
+                )
+            )
+
     def get_edit_url(self, instance):
         if isinstance(instance, Page):
             return reverse("wagtailadmin_pages:edit", args=[instance.id])
-        else:
+
+        elif instance._meta.model in get_snippet_models():
             return reverse(
                 "wagtailsnippets:edit",
                 args=[
@@ -81,6 +93,15 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                     instance._meta.model_name,
                     quote(instance.pk),
                 ],
+            )
+
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+            return reverse(
+                "{app_label}_{model_name}_modeladmin_edit".format(
+                    app_label=instance._meta.app_label,
+                    model_name=instance._meta.model_name,
+                ),
+                args=[quote(instance.pk)],
             )
 
     def get_context_data(self, **kwargs):

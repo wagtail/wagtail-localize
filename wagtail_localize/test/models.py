@@ -336,6 +336,10 @@ class TestModel(TranslatableMixin):
     ]
 
 
+class NonTranslatableModel(models.Model):
+    title = models.CharField(max_length=255, blank=True)
+
+
 class InheritedTestModel(TestModel):
     class Meta:
         unique_together = None

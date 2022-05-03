@@ -1,0 +1,7 @@
+{% extends "modeladmin/create.html" %}
+
+{% block header %}
+  {% include "wagtailadmin/shared/header_with_locale_selector.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon tabbed=1 merged=1 %}
+{% endblock %}
+
+{% block form_action %}{{ view.create_url }}?locale={{ locale.language_code }}{% endblock %}

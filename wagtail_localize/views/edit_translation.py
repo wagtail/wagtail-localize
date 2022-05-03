@@ -5,6 +5,7 @@ from collections import defaultdict
 
 import polib
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -728,6 +729,55 @@ def edit_translation(request, translation, instance):
             }
         )
 
+    def get_edit_url(instance):
+        if isinstance(instance, Page):
+            return reverse("wagtailadmin_pages:edit", args=[instance.id])
+
+        elif instance._meta.model in get_snippet_models():
+            return reverse(
+                "wagtailsnippets:edit",
+                args=[
+                    instance._meta.app_label,
+                    instance._meta.model_name,
+                    quote(instance.pk),
+                ],
+            )
+
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+            return reverse(
+                "{app_label}_{model_name}_modeladmin_edit".format(
+                    app_label=instance._meta.app_label,
+                    model_name=instance._meta.model_name,
+                ),
+                args=[quote(instance.pk)],
+            )
+
+    def get_submit_translation_url(instance):
+        if isinstance(instance, Page):
+            return reverse(
+                "wagtail_localize:submit_page_translation", args=[instance.id]
+            )
+
+        elif instance._meta.model in get_snippet_models():
+            return reverse(
+                "wagtail_localize:submit_snippet_translation",
+                args=[
+                    instance._meta.app_label,
+                    instance._meta.model_name,
+                    quote(instance.id),
+                ],
+            )
+
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+            return reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=[
+                    instance._meta.app_label,
+                    instance._meta.model_name,
+                    quote(instance.id),
+                ],
+            )
+
     def get_source_object_info(segment):
         instance = segment.get_source_instance()
 
@@ -736,32 +786,15 @@ def edit_translation(request, translation, instance):
                 "title": str(instance),
                 "isLive": instance.live,
                 "liveUrl": instance.full_url,
-                "editUrl": reverse("wagtailadmin_pages:edit", args=[instance.id]),
-                "createTranslationRequestUrl": reverse(
-                    "wagtail_localize:submit_page_translation", args=[instance.id]
-                ),
+                "editUrl": get_edit_url(instance),
+                "createTranslationRequestUrl": get_submit_translation_url(instance),
             }
-
         else:
             return {
                 "title": str(instance),
                 "isLive": True,
-                "editUrl": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        instance._meta.app_label,
-                        instance._meta.model_name,
-                        quote(instance.id),
-                    ],
-                ),
-                "createTranslationRequestUrl": reverse(
-                    "wagtail_localize:submit_snippet_translation",
-                    args=[
-                        instance._meta.app_label,
-                        instance._meta.model_name,
-                        quote(instance.id),
-                    ],
-                ),
+                "editUrl": get_edit_url(instance),
+                "createTranslationRequestUrl": get_submit_translation_url(instance),
             }
 
     def get_dest_object_info(segment):
@@ -774,21 +807,13 @@ def edit_translation(request, translation, instance):
                 "title": str(instance),
                 "isLive": instance.live,
                 "liveUrl": instance.full_url,
-                "editUrl": reverse("wagtailadmin_pages:edit", args=[instance.id]),
+                "editUrl": get_edit_url(instance),
             }
-
         else:
             return {
                 "title": str(instance),
                 "isLive": True,
-                "editUrl": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        instance._meta.app_label,
-                        instance._meta.model_name,
-                        quote(instance.id),
-                    ],
-                ),
+                "editUrl": get_edit_url(instance),
             }
 
     def get_translation_progress(segment, locale):
@@ -911,18 +936,7 @@ def edit_translation(request, translation, instance):
                                 "code": translated_instance.locale.language_code,
                                 "displayName": translated_instance.locale.get_display_name(),
                             },
-                            "editUrl": reverse(
-                                "wagtailadmin_pages:edit", args=[translated_instance.id]
-                            )
-                            if isinstance(translated_instance, Page)
-                            else reverse(
-                                "wagtailsnippets:edit",
-                                args=[
-                                    translated_instance._meta.app_label,
-                                    translated_instance._meta.model_name,
-                                    quote(translated_instance.id),
-                                ],
-                            ),
+                            "editUrl": get_edit_url(translated_instance),
                         }
                         for translated_instance in instance.get_translations().select_related(
                             "locale"
@@ -1084,12 +1098,20 @@ def restart_translation(request, translation, instance):
 
     if isinstance(instance, Page):
         return redirect("wagtailadmin_pages:edit", instance.id)
-    else:
+    elif instance._meta.model in get_snippet_models():
         return redirect(
             "wagtailsnippets:edit",
             instance._meta.app_label,
             instance._meta.model_name,
             quote(instance.pk),
+        )
+    elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+        return redirect(
+            "{app_label}_{model_name}_modeladmin_edit".format(
+                app_label=instance._meta.app_label,
+                model_name=instance._meta.model_name,
+            ),
+            instance_pk=quote(instance.pk),
         )
 
 
