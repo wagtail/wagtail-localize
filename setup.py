@@ -44,7 +44,12 @@ setup(
         "Framework :: Wagtail",
         "Framework :: Wagtail :: 2",
     ],
-    install_requires=["Django>=2.2,<4.1", "Wagtail>=2.11,<2.17", "polib>=1.1,<2.0"],
+    install_requires=[
+        "Django>=2.2,<4.1",
+        "Wagtail>=2.11,<2.17",
+        "polib>=1.1,<2.0",
+        "typing_extensions>=4.0",
+    ],
     extras_require={
         "testing": ["dj-database-url==0.5.0", "freezegun==1.1.0"],
         "documentation": [
