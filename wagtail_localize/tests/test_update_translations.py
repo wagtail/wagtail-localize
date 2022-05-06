@@ -10,10 +10,15 @@ from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core.models import Locale, Page, PageViewRestriction
 from wagtail.tests.utils import WagtailTestUtils
 
+from wagtail_localize.compat import get_snippet_edit_url
 from wagtail_localize.models import StringSegment, Translation, TranslationSource
 from wagtail_localize.test.models import NonTranslatableSnippet, TestSnippet
 
-from .utils import assert_permission_denied, make_test_page
+from .utils import (
+    assert_permission_denied,
+    get_snippet_list_url_from_args,
+    make_test_page,
+)
 
 
 def strip_user_perms():
@@ -142,9 +147,7 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
 
     def test(self):
         response = self.client.get(
-            reverse(
-                "wagtailsnippets:list", args=["wagtail_localize_test", "testsnippet"]
-            )
+            get_snippet_list_url_from_args("wagtail_localize_test", "testsnippet")
         )
 
         extra = ' title="Sync translated snippets"' if WAGTAIL_VERSION > (2, 15) else ""
@@ -159,9 +162,7 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
         self.source.delete()
 
         response = self.client.get(
-            reverse(
-                "wagtailsnippets:list", args=["wagtail_localize_test", "testsnippet"]
-            )
+            get_snippet_list_url_from_args("wagtail_localize_test", "testsnippet")
         )
 
         self.assertNotContains(response, "Sync translated snippets")
@@ -170,9 +171,7 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
         strip_user_perms()
 
         response = self.client.get(
-            reverse(
-                "wagtailsnippets:list", args=["wagtail_localize_test", "testsnippet"]
-            )
+            get_snippet_list_url_from_args("wagtail_localize_test", "testsnippet")
         )
 
         self.assertNotContains(response, "Sync translated snippets")
@@ -274,14 +273,7 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
                 {
                     "title": str(self.fr_snippet),
                     "locale": self.fr_locale,
-                    "edit_url": reverse(
-                        "wagtailsnippets:edit",
-                        args=[
-                            "wagtail_localize_test",
-                            "testsnippet",
-                            self.fr_snippet.id,
-                        ],
-                    ),
+                    "edit_url": get_snippet_edit_url(self.fr_snippet),
                 }
             ],
         )
@@ -391,13 +383,7 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
             )
         )
 
-        self.assertRedirects(
-            response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
-            ),
-        )
+        self.assertRedirects(response, get_snippet_edit_url(self.en_snippet))
 
         # The FR version shouldn't be updated yet
         self.fr_snippet.refresh_from_db()
@@ -417,10 +403,7 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
-            ),
+            get_snippet_edit_url(self.en_snippet),
         )
 
         # The FR version should be updated

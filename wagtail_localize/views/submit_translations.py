@@ -14,6 +14,7 @@ from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
+from wagtail_localize.compat import get_snippet_edit_url_from_args
 from wagtail_localize.components import TranslationComponentManager
 from wagtail_localize.operations import translate_object, translate_page_subtree
 from wagtail_localize.tasks import background
@@ -223,22 +224,16 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
         if translated_snippet:
             # If the editor chose a single locale to translate to, redirect to
             # the newly translated snippet's edit view.
-            return reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    self.kwargs["app_label"],
-                    self.kwargs["model_name"],
-                    translated_snippet.pk,
-                ],
-            )
-
-        return reverse(
-            "wagtailsnippets:edit",
-            args=[
+            return get_snippet_edit_url_from_args(
                 self.kwargs["app_label"],
                 self.kwargs["model_name"],
-                self.kwargs["pk"],
-            ],
+                translated_snippet.pk,
+            )
+
+        return get_snippet_edit_url_from_args(
+            self.kwargs["app_label"],
+            self.kwargs["model_name"],
+            self.kwargs["pk"],
         )
 
     def get_success_message(self, locales):

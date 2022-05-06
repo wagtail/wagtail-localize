@@ -45,7 +45,11 @@ from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 
-from wagtail_localize.compat import DATE_FORMAT
+from wagtail_localize.compat import (
+    DATE_FORMAT,
+    get_snippet_delete_url,
+    get_snippet_edit_url,
+)
 from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import (
     OverridableSegment,
@@ -740,14 +744,7 @@ def edit_translation(request, translation, instance):
             return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
         elif instance._meta.model in get_snippet_models():
-            return reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    instance._meta.app_label,
-                    instance._meta.model_name,
-                    quote(instance.pk),
-                ],
-            )
+            return get_snippet_edit_url(instance)
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
@@ -981,14 +978,7 @@ def edit_translation(request, translation, instance):
                             "wagtailadmin_pages:delete", args=[instance.id]
                         )
                         if isinstance(instance, Page)
-                        else reverse(
-                            "wagtailsnippets:delete",
-                            args=[
-                                instance._meta.app_label,
-                                instance._meta.model_name,
-                                quote(instance.pk),
-                            ],
-                        ),
+                        else get_snippet_delete_url(instance),
                         "stopTranslationUrl": reverse(
                             "wagtail_localize:stop_translation", args=[translation.id]
                         ),
@@ -1105,12 +1095,7 @@ def restart_translation(request, translation, instance):
     if isinstance(instance, Page):
         return redirect("wagtailadmin_pages:edit", instance.id)
     elif instance._meta.model in get_snippet_models():
-        return redirect(
-            "wagtailsnippets:edit",
-            instance._meta.app_label,
-            instance._meta.model_name,
-            quote(instance.pk),
-        )
+        return redirect(get_snippet_edit_url(instance))
     elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return redirect(
             "{app_label}_{model_name}_modeladmin_edit".format(

@@ -49,7 +49,7 @@ from wagtail.core.models import (
 from wagtail.core.utils import find_available_slug
 from wagtail.snippets.models import get_snippet_models
 
-from .compat import DATE_FORMAT
+from .compat import DATE_FORMAT, get_snippet_edit_url
 from .fields import copy_synchronised_fields
 from .locales.components import LocaleComponentModelForm, register_locale_component
 from .segments import (
@@ -119,14 +119,7 @@ def get_edit_url(instance):
         return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
     elif instance._meta.model in get_snippet_models():
-        return reverse(
-            "wagtailsnippets:edit",
-            args=[
-                instance._meta.app_label,
-                instance._meta.model_name,
-                quote(instance.id),
-            ],
-        )
+        return get_snippet_edit_url(instance)
 
     elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return reverse(

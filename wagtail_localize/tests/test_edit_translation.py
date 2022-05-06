@@ -32,6 +32,7 @@ from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
 
+from wagtail_localize.compat import get_snippet_delete_url, get_snippet_edit_url
 from wagtail_localize.models import (
     OverridableSegment,
     SegmentOverride,
@@ -56,7 +57,7 @@ from wagtail_localize.views.edit_translation import (
 )
 from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
-from .utils import assert_permission_denied
+from .utils import assert_permission_denied, get_snippet_add_url_from_args
 
 
 RICH_TEXT_DATA = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a>.</li><li>Special characters: \'"!? セキレイ</li></ul>'
@@ -1338,16 +1339,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             )
 
     def test_edit_snippet_translation(self):
-        response = self.client.get(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            )
-        )
+        response = self.client.get(get_snippet_edit_url(self.fr_snippet))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
             response, "wagtail_localize/admin/edit_translation.html"
@@ -1379,14 +1371,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                 {
                     "title": f"TestSnippet object ({self.snippet.id})",
                     "locale": {"code": "en", "displayName": "English"},
-                    "editUrl": reverse(
-                        "wagtailsnippets:edit",
-                        args=[
-                            TestSnippet._meta.app_label,
-                            TestSnippet._meta.model_name,
-                            self.snippet.id,
-                        ],
-                    ),
+                    "editUrl": get_snippet_edit_url(self.snippet),
                 }
             ],
         )
@@ -1402,14 +1387,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertIsNone(props["links"]["unlockUrl"])
         self.assertEqual(
             props["links"]["deleteUrl"],
-            reverse(
-                "wagtailsnippets:delete",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_delete_url(self.fr_snippet),
         )
 
         self.assertEqual(props["previewModes"], [])
@@ -1445,16 +1423,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.moderators_group.permissions.filter(
             content_type=ContentType.objects.get_for_model(TestSnippet)
         ).delete()
-        response = self.client.get(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            )
-        )
+        response = self.client.get(get_snippet_edit_url(self.fr_snippet))
 
         assert_permission_denied(self, response)
 
@@ -1767,14 +1736,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         )
 
         response = self.client.post(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
             {
                 "action": "publish",
             },
@@ -1782,14 +1744,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
         )
 
         # Check success message
@@ -1823,14 +1778,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         ).delete()
 
         response = self.client.post(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
             {
                 "action": "publish",
             },
@@ -1936,14 +1884,7 @@ class TestRestartTranslation(EditTranslationTestData, TestCase):
         self.snippet_translation.enabled = False
         self.snippet_translation.save()
         response = self.client.post(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
             {
                 "localize-restart-translation": "yes",
             },
@@ -1951,14 +1892,7 @@ class TestRestartTranslation(EditTranslationTestData, TestCase):
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
         )
 
         self.snippet_translation.refresh_from_db()
@@ -1999,16 +1933,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
         self.snippet_translation.enabled = False
         self.snippet_translation.save()
 
-        response = self.client.get(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            )
-        )
+        response = self.client.get(get_snippet_edit_url(self.fr_snippet))
 
         self.assertContains(response, "Start Synced translation")
 
@@ -2019,16 +1944,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
     def test_doesnt_show_when_no_translation_for_snippet(self):
         self.snippet_translation.delete()
 
-        response = self.client.get(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            )
-        )
+        response = self.client.get(get_snippet_edit_url(self.fr_snippet))
 
         self.assertNotContains(response, "Start Synced translation")
 
@@ -2038,9 +1954,8 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
     )
     def test_doesnt_show_on_create_for_snippet(self):
         response = self.client.get(
-            reverse(
-                "wagtailsnippets:add",
-                args=[TestSnippet._meta.app_label, TestSnippet._meta.model_name],
+            get_snippet_add_url_from_args(
+                TestSnippet._meta.app_label, TestSnippet._meta.model_name
             )
         )
         self.assertNotContains(response, "Start Synced translation")
@@ -2051,16 +1966,7 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
     )
     def test_doesnt_show_for_untranslatable_snippet(self):
         snippet = NonTranslatableSnippet.objects.create(field="Test")
-        response = self.client.get(
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    NonTranslatableSnippet._meta.app_label,
-                    NonTranslatableSnippet._meta.model_name,
-                    snippet.id,
-                ],
-            )
-        )
+        response = self.client.get(get_snippet_edit_url(snippet))
         self.assertNotContains(response, "Start Synced translation")
 
 
@@ -2787,27 +2693,13 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
                     str(po).encode("utf-8"),
                     content_type="text/x-gettext-translation",
                 ),
-                "next": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
+                "next": get_snippet_edit_url(self.fr_snippet),
             },
         )
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
         )
 
         translation = StringTranslation.objects.get(
@@ -2959,27 +2851,13 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
                     "Foo".encode("utf-8"),
                     content_type="text/x-gettext-translation",
                 ),
-                "next": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
+                "next": get_snippet_edit_url(self.fr_snippet),
             },
         )
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
         )
 
         # User should be warned with a message
@@ -3031,27 +2909,13 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
                         f.name.encode("utf-8"),
                         content_type="text/x-gettext-translation",
                     ),
-                    "next": reverse(
-                        "wagtailsnippets:edit",
-                        args=[
-                            TestSnippet._meta.app_label,
-                            TestSnippet._meta.model_name,
-                            self.fr_snippet.id,
-                        ],
-                    ),
+                    "next": get_snippet_edit_url(self.fr_snippet),
                 },
             )
 
             self.assertRedirects(
                 response,
-                reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
+                get_snippet_edit_url(self.fr_snippet),
             )
 
             # User should be warned with a message
@@ -3091,27 +2955,13 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
                     str(po).encode("utf-8"),
                     content_type="text/x-gettext-translation",
                 ),
-                "next": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
+                "next": get_snippet_edit_url(self.fr_snippet),
             },
         )
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
         )
 
         # User should be warned with a message
@@ -3173,14 +3023,7 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
                     str(po).encode("utf-8"),
                     content_type="text/x-gettext-translation",
                 ),
-                "next": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
+                "next": get_snippet_edit_url(self.fr_snippet),
             },
         )
 
@@ -3247,27 +3090,13 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
                 "wagtail_localize:machine_translate", args=[self.snippet_translation.id]
             ),
             {
-                "next": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
+                "next": get_snippet_edit_url(self.fr_snippet),
             },
         )
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
         )
 
         translation = StringTranslation.objects.get(
@@ -3368,28 +3197,12 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
             reverse(
                 "wagtail_localize:machine_translate", args=[self.snippet_translation.id]
             ),
-            {
-                "next": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
-            },
+            {"next": get_snippet_edit_url(self.fr_snippet)},
         )
 
         self.assertRedirects(
             response,
-            reverse(
-                "wagtailsnippets:edit",
-                args=[
-                    TestSnippet._meta.app_label,
-                    TestSnippet._meta.model_name,
-                    self.fr_snippet.id,
-                ],
-            ),
+            get_snippet_edit_url(self.fr_snippet),
         )
 
         # User should be warned with a message
@@ -3443,14 +3256,7 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
                 "wagtail_localize:machine_translate", args=[self.snippet_translation.id]
             ),
             {
-                "next": reverse(
-                    "wagtailsnippets:edit",
-                    args=[
-                        TestSnippet._meta.app_label,
-                        TestSnippet._meta.model_name,
-                        self.fr_snippet.id,
-                    ],
-                ),
+                "next": get_snippet_edit_url(self.fr_snippet),
             },
         )
 
