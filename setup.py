@@ -43,6 +43,7 @@ setup(
         "Framework :: Django :: 4.0",
         "Framework :: Wagtail",
         "Framework :: Wagtail :: 2",
+        "Framework :: Wagtail :: 3",
     ],
     install_requires=[
         "Django>=2.2,<4.1",
