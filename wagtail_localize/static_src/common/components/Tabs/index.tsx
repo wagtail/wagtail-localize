@@ -15,8 +15,63 @@ export interface TabsProps {
 
 // Remove bottom margin that Wagtail adds by default
 // This makes it tricky to align the toolbox consistently when there are both tabs and no tabs
-const ULWithoutMargin = styled.ul`
+const StyledTabs = styled.ul`
     margin-bottom: 0;
+    margin-top: 0;
+    background-color: var(--color-primary);
+
+    > li {
+        list-style-type: none;
+        width: 33%;
+        float: left;
+        padding: 0;
+        position: relative;
+        margin-right: 2px;
+
+        @media screen and (min-width: 50em) {
+            width: auto;
+            padding: 0;
+        }
+
+        &:first-of-type {
+            margin-left: 0;
+        }
+
+        > a {
+            background-color: var(--color-primary-darker);
+            text-transform: uppercase;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+            padding: 0.6em 0.7em 0.8em;
+            color: #fff;
+            border-top: 0.3em solid var(--color-primary-darker);
+            max-height: 1.44em;
+            overflow: hidden;
+
+            @media screen and (min-width: 50em) {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        }
+
+        &.active > a {
+            box-shadow: none;
+            color: #333;
+            background-color: #fff;
+            border-top: 0.3em solid #333;
+        }
+    }
+
+    &:before,
+    &:after {
+        content: ' ';
+        display: table;
+    }
+
+    &:after {
+        clear: both;
+    }
 `;
 
 export const Tabs: FunctionComponent<TabsProps> = ({ tabs, children }) => {
@@ -24,7 +79,7 @@ export const Tabs: FunctionComponent<TabsProps> = ({ tabs, children }) => {
 
     return (
         <>
-            <ULWithoutMargin className="tab-nav merged" role="tablist">
+            <StyledTabs className="tab-nav merged" role="tablist">
                 {tabs.map(tab => {
                     const onClick = (
                         e: React.MouseEvent<HTMLAnchorElement>
@@ -35,7 +90,7 @@ export const Tabs: FunctionComponent<TabsProps> = ({ tabs, children }) => {
 
                     const classNames = [];
 
-                    if (tab.slug == currentTab) {
+                    if (tab.slug === currentTab) {
                         classNames.push('active');
                     }
 
@@ -61,7 +116,7 @@ export const Tabs: FunctionComponent<TabsProps> = ({ tabs, children }) => {
                         </li>
                     );
                 })}
-            </ULWithoutMargin>
+            </StyledTabs>
             <div className="tab-content">
                 <CurrentTabContext.Provider value={currentTab}>
                     {children}
@@ -83,7 +138,8 @@ export const TabContent: FunctionComponent<Tab> = ({ slug, children }) => {
     return (
         <SectionWithoutPadding
             id={`tab-${slug}`}
-            className={slug == currentTab ? 'active' : ''}
+            className={slug === currentTab ? 'active' : ''}
+            hidden={slug !== currentTab}
         >
             {children}
         </SectionWithoutPadding>
