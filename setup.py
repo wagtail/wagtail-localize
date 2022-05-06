@@ -53,6 +53,7 @@ setup(
             "mkdocs-mermaid2-plugin==0.5.1",
             "mkdocstrings==0.14.0",
             "mkdocs-include-markdown-plugin==2.8.0",
+            "pygments==2.11.2",
         ],
     },
     zip_safe=False,
