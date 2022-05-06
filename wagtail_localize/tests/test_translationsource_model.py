@@ -793,6 +793,8 @@ class TestSchemaOutOfDate(TestCase):
         self.assertFalse(self.source.schema_out_of_date())
 
     def test_schema_is_out_of_date_if_source_schema_version_is_old(self):
-        self.source.schema_version = "0001_initial"
+        # note: we reset test app migrations on a regular basis, so
+        # this sets a stub initial schema version.
+        self.source.schema_version = "0001_initial_stub"
         self.source.save()
         self.assertTrue(self.source.schema_out_of_date())

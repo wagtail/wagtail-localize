@@ -50,6 +50,7 @@ nav:
       - Installation guide: how-to/installation.md
       - Configuring translatable fields: how-to/field-configuration.md
       - Translatable ModelAdmin: how-to/modeladmin.md
+      - Configuring background tasks: how-to/configure-background-tasks.md
       - Integrations:
           - Pontoon: how-to/integrations/pontoon.md
           - Machine Translation: how-to/integrations/machine-translation.md
