@@ -46,7 +46,7 @@ setup(
     ],
     install_requires=[
         "Django>=2.2,<4.1",
-        "Wagtail>=2.11,<2.17",
+        "Wagtail>=2.11,<4.0",
         "polib>=1.1,<2.0",
         "typing_extensions>=4.0",
     ],
