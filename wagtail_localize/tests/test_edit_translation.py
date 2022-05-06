@@ -1315,7 +1315,9 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
 
     def test_edit_page_from_outdated_translation_source(self):
-        self.page_source.schema_version = "0001_initial"
+        # note: we reset test app migrations on a regular basis, so
+        # this sets a stub initial schema version.
+        self.page_source.schema_version = "0001_initial_stub"
         self.page_source.save()
 
         response = self.client.get(
