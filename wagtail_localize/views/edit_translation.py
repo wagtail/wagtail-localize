@@ -755,6 +755,21 @@ def edit_translation(request, translation, instance):
                 args=[quote(instance.pk)],
             )
 
+    def get_delete_url(instance):
+        if isinstance(instance, Page):
+            return reverse("wagtailadmin_pages:delete", args=[instance.id])
+        elif instance._meta.model in get_snippet_models():
+            return get_snippet_delete_url(instance)
+
+        elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
+            return reverse(
+                "{app_label}_{model_name}_modeladmin_delete".format(
+                    app_label=instance._meta.app_label,
+                    model_name=instance._meta.model_name,
+                ),
+                args=[quote(instance.pk)],
+            )
+
     def get_submit_translation_url(instance):
         if isinstance(instance, Page):
             return reverse(
@@ -974,11 +989,7 @@ def edit_translation(request, translation, instance):
                         )
                         if isinstance(instance, Page)
                         else None,
-                        "deleteUrl": reverse(
-                            "wagtailadmin_pages:delete", args=[instance.id]
-                        )
-                        if isinstance(instance, Page)
-                        else get_snippet_delete_url(instance),
+                        "deleteUrl": get_delete_url(instance),
                         "stopTranslationUrl": reverse(
                             "wagtail_localize:stop_translation", args=[translation.id]
                         ),
