@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2] - 2022-05-20
+
+### Added
+
+- [Translatable ModelAdmin](https://github.com/wagtail/wagtail-localize/pull/550) @dinoperovic
+- [Support for Wagtail 3.0](https://github.com/wagtail/wagtail-localize/pull/569) + Wagtail 3.0 PyPI trove classifier @zerolab
+- [Add a mechanism for plugging in task queues](https://github.com/wagtail/wagtail-localize/pull/549) @kaedroho
+- [Django 4.0 PyPI trove classifier](https://github.com/wagtail/wagtail-localize/pull/566) @lb-
+
+### Fixed
+
+- [Stop translations from being automatically published when source is in draft state](https://github.com/wagtail/wagtail-localize/pull/511) @AndrewCalderSpringload
+- [Fix header styling for Wagtail 3.0](https://github.com/wagtail/wagtail-localize/pull/560) @kaedroho
+- [Limit width of segment editor on wide screens](https://github.com/wagtail/wagtail-localize/pull/561) @kaedroho
+- Compatibility with Wagtail 4.0 - [#557](https://github.com/wagtail/wagtail-localize/pull/557), [#572](https://github.com/wagtail/wagtail-localize/pull/572) @zerolab
+
 ## [1.1.1] - 2022-04-28
 
 ### Fixed
@@ -99,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.1.2...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.2...HEAD
+[1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.2...v1.2
 [1.1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/wagtail/wagtail-localize/compare/v1.1...v1.1.1
 [1.1]: https://github.com/wagtail/wagtail-localize/compare/v1.1rc2...v1.1
