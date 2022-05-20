@@ -60,3 +60,9 @@ def get_snippet_delete_url(snippet):
         "wagtailsnippets:delete",
         args=[snippet._meta.app_label, snippet._meta.model_name, quote(snippet.pk)],
     )
+
+
+def get_revision_model():
+    if WAGTAIL_VERSION >= (4, 0):
+        return "wagtailcore.Revision"
+    return "wagtailcore.PageRevision"
