@@ -49,7 +49,7 @@ from wagtail.core.models import (
 from wagtail.core.utils import find_available_slug
 from wagtail.snippets.models import get_snippet_models
 
-from .compat import DATE_FORMAT, get_snippet_edit_url
+from .compat import DATE_FORMAT, get_revision_model, get_snippet_edit_url
 from .fields import copy_synchronised_fields
 from .locales.components import LocaleComponentModelForm, register_locale_component
 from .segments import (
@@ -1362,7 +1362,7 @@ class TranslationLog(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     page_revision = models.ForeignKey(
-        "wagtailcore.PageRevision",
+        get_revision_model(),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
