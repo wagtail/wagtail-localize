@@ -8,15 +8,20 @@ on:
 
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: '3.8'
       - uses: pre-commit/action@v2.0.3
@@ -43,14 +48,20 @@ jobs:
             django: '3.2'
             wagtail: '3.0'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python }}
       - name: Install Tox
         run: |
           python -m pip install tox
+      - name: Cache tox environments
+        id: cache-tox
+        uses: actions/cache@v3
+        with:
+          path: .tox
+          key: tox-${{ hashFiles('setup.py') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-sqlite
       - name: Test
         run: |
           tox
@@ -108,14 +119,20 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python }}
       - name: Install Tox
         run: |
           python -m pip install tox
+      - name: Cache tox environments
+        id: cache-tox
+        uses: actions/cache@v3
+        with:
+          path: .tox
+          key: tox-${{ hashFiles('setup.py') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-postgres
       - name: Test
         run: |
           tox
@@ -131,9 +148,9 @@ jobs:
         python: ['3.8']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
