@@ -470,10 +470,15 @@ def register_icons(icons):
 
 
 if WAGTAIL_VERSION >= (4, 0):
+    from django.conf import settings
+
     from .models import LocaleSynchronization
 
     @hooks.register("construct_translated_pages_to_cascade_actions")
-    def construct_synced_page_tree_list(pages: List[Page], action: str):
+    def construct_synced_page_tree_list(pages: List[Page], action: str) -> dict:
+        if not getattr(settings, "WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS", False):
+            return {}
+
         locale_sync_map = {}
         for page in pages:
             # TODO: what about locale C follows B which follows A, when we come in from A?

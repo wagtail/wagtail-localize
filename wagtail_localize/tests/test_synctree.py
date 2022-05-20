@@ -1,7 +1,7 @@
 import unittest
 
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core.models import Locale, Page
@@ -307,6 +307,27 @@ class TestConstructSyncedPageTreeListHook(SyncTreeTestsSetupBase):
                 results = hook([self.en_aboutpage], action)
                 self.assertDictEqual(results, {})
 
+    def test_hook_returns_nothing_without_explicit_setting(self):
+        self.setup_locale_synchronisation(self.fr_locale, self.en_locale)
+        hook = self._get_hook_function()
+        for action in ["unpublish", "delete", "move"]:
+            with self.subTest(
+                f"Calling construct_translated_pages_to_cascade_actions with {action} "
+                f"without WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS set"
+            ):
+                results = hook([self.en_aboutpage], action)
+                self.assertDictEqual(results, {})
+
+        with override_settings(WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS=False):
+            for action in ["unpublish", "delete", "move"]:
+                with self.subTest(
+                    f"Calling construct_translated_pages_to_cascade_actions with {action} "
+                    f"and WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS=False"
+                ):
+                    results = hook([self.en_aboutpage], action)
+                    self.assertDictEqual(results, {})
+
+    @override_settings(WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS=True)
     def test_hook_returns_relevant_pages_from_synced_locale_on_unpublish_action(self):
         self.setup_locale_synchronisation(self.fr_locale, self.en_locale)
         hook = self._get_hook_function()
@@ -323,6 +344,7 @@ class TestConstructSyncedPageTreeListHook(SyncTreeTestsSetupBase):
         self.assertIsNotNone(results.get(self.en_aboutpage))
         self.assertQuerysetEqual(results[self.en_aboutpage], Page.objects.none())
 
+    @override_settings(WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS=True)
     def test_hook_returns_relevant_pages_from_synced_locale_on_move_action(self):
         self.setup_locale_synchronisation(self.fr_locale, self.en_locale)
         hook = self._get_hook_function()
@@ -332,6 +354,7 @@ class TestConstructSyncedPageTreeListHook(SyncTreeTestsSetupBase):
             results[self.en_aboutpage], Page.objects.filter(pk=self.fr_aboutpage.pk)
         )
 
+    @override_settings(WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS=True)
     def test_hook_returns_relevant_pages_from_synced_locale_on_delete_action(self):
         self.setup_locale_synchronisation(self.fr_locale, self.en_locale)
         hook = self._get_hook_function()
