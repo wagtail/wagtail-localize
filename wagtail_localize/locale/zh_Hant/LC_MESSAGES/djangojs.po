@@ -3,11 +3,11 @@
 # Ocin Leung, 2021
 # Andy Kong <worminfo@gmail.com>, 2021
 # Yeh Yen-Ke <yyken@outlook.com>, 2021
-# ongchi <ihcgno@icloud.com>, 2021
+# ChihWei Wang <ihcgno@icloud.com>, 2021
 #
 msgid ""
 msgstr ""
-"Last-Translator: ongchi <ihcgno@icloud.com>, 2021\n"
+"Last-Translator: ChihWei Wang <ihcgno@icloud.com>, 2021\n"
 "Language-Team: Chinese Traditional (https://www.transifex.com/torchbox/"
 "teams/8009/zh-Hant/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

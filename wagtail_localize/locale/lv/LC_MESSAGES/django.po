@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 11:21+0000\n"
+"POT-Creation-Date: 2022-04-28 15:24+0000\n"
 "Last-Translator: Maris Serzans <maris.serzans@gmail.com>, 2021\n"
 "Language-Team: Latvian (https://www.transifex.com/torchbox/teams/8009/lv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

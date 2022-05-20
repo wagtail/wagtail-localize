@@ -20,7 +20,7 @@ msgid "Apply editor lock"
 msgstr "Editor-Sperre anwenden"
 
 msgid "Breadcrumb"
-msgstr "Brotkrümel"
+msgstr "Breadcrumb"
 
 msgid "Cancel"
 msgstr "Abbrechen"

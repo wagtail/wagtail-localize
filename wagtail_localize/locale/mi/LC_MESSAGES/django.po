@@ -1,12 +1,13 @@
 #
 # Translators:
 # Awatea Randall <awatea@octave.nz>, 2021
+# Dan Braghis, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 11:21+0000\n"
-"Last-Translator: Awatea Randall <awatea@octave.nz>, 2021\n"
+"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"Last-Translator: Dan Braghis, 2022\n"
 "Language-Team: Maori (https://www.transifex.com/torchbox/teams/8009/mi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: mi\n"
