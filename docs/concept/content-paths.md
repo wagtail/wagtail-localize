@@ -46,13 +46,13 @@ The content path of the text extracted from the `name` field would be `cities.76
 
 We need to use an identifier that can be shared with the translations as well. Translations of this page will have their own set of child objects so they will have different IDs as well. The `translation_key` field, however, keeps it's value across all translations so we can use this to find the correct translated child object to insert an updated translation into.
 
-## StreamField blocks
+## `StreamField` blocks
 
 Format: `<streamfield field name>.<block id>`
 
 All StreamField blocks have a UUID that is shared across translations, so the translation of a streamfield block will have the same UUID as the source. This allows us to use it in the content path.
 
-## StreamField StructBlock fields
+## `StructBlock` fields
 
 Format: `<streamfield field name>.<block id>.<structblock field name>`
 
@@ -62,12 +62,13 @@ If the StreamField block is a `StructBlock`, we append the name of the field wit
 
 ### `ListBlock`
 
-GitHub Issue: [#22](https://github.com/wagtail/wagtail-localize/issues/22)
+Format: `<streamfield field name>.<block id>.<item id>`
 
-It isn't possible to generate content paths to instances within a `ListBlock` as there is no stable identifier that we can use to reference each instance.
+If the `ListBlock` is nested in a `StructBlock`, `StreamBlock` or a variation of the two, we append the name of the corresponding block as well as the id to the end of the content path.
 
-Content paths need to be stable across revisions. We can't use the index of instances within a `ListBlock` as these can be changed if a user re-orders the blocks and may cause translations to be inserted into the wrong blocks!
+!!! info
 
-The recommended work around at the moment is to change all `ListBlock`s into nested `StreamBlock`s instead.
+    Prior to Wagtail 2.16 it was not possible to generate content paths to instances within a `ListBlock` as there were no stable identifiers that we could be used to reference each instance.
+    Content paths need to be stable across revisions. We could not use the index of instances within a `ListBlock` as they would change on re-order and could cause translations to be inserted into the wrong blocks!
 
-We should be able to solve this one when [Wagtail RFC 65](https://github.com/wagtail/rfcs/pull/65) is implemented, which adds UUIDs into `ListBlock`.
+    Wagtail 2.16 implemented [Wagtail RFC 65](https://github.com/wagtail/rfcs/pull/65). wagtail-localize 1.1 and Wagtail 2.16+ added full support for `ListBlock`.
