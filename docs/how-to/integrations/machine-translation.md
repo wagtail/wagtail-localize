@@ -19,14 +19,28 @@ This document describes how to configure various machine translators, as well as
 
 Website: [https://cloud.google.com/translate](https://cloud.google.com/translate)
 
-```python
-WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    "CLASS": "wagtail_localize.machine_translators.google.GoogleCloudTranslator",
-    "OPTIONS": {
-        "PROJECT_ID": "<Your project ID here>",
-    },
-}
-```
+1. Google Cloud Translate requires some optional dependencies. Install wagtail-localize with the google plugin:
+
+    ```
+    pip install wagtail-localize[google]
+    ```
+
+2. You will need to authenticate with google cloud in some way. Documentation for this can be found at [https://googleapis.dev/python/google-api-core/latest/auth.html](https://googleapis.dev/python/google-api-core/latest/auth.html). It is likely that the most convenient method to do this will be to download a [service account keyfile](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) and set an envoronment variable
+
+    ```bash
+    GOOGLE_APPLICATION_CREDENTIALS="/path/to/keyfile.json"
+    ```
+
+3. Configure wagtail-localize:
+
+    ```python
+    WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+        "CLASS": "wagtail_localize.machine_translators.google.GoogleCloudTranslator",
+        "OPTIONS": {
+            "PROJECT_ID": "<Your project ID here>",
+        },
+    }
+    ```
 
 ## DeepL
 

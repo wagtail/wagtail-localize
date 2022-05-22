@@ -65,6 +65,9 @@ setup(
             "mkdocs-include-markdown-plugin==2.8.0",
             "pygments==2.11.2",
         ],
+        "google": [
+            "google-cloud-translate>=3.0.0",
+        ]
     },
     zip_safe=False,
 )
