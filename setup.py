@@ -67,7 +67,7 @@ setup(
         ],
         "google": [
             "google-cloud-translate>=3.0.0",
-        ]
+        ],
     },
     zip_safe=False,
 )
