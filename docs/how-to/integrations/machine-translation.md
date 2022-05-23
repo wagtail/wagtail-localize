@@ -25,7 +25,7 @@ Website: [https://cloud.google.com/translate](https://cloud.google.com/translate
    pip install wagtail-localize[google]
    ```
 
-2. You will need to authenticate with google cloud in some way. Documentation for this can be found at [https://googleapis.dev/python/google-api-core/latest/auth.html](https://googleapis.dev/python/google-api-core/latest/auth.html). It is likely that the most convenient method to do this will be to download a [service account keyfile](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) and set an envoronment variable
+2. You will need to authenticate with Google Cloud in some way. Documentation for this can be found at [https://googleapis.dev/python/google-api-core/latest/auth.html](https://googleapis.dev/python/google-api-core/latest/auth.html). It is likely that the most convenient method to do this will be to download a [service account key file](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) and set an envoronment variable
 
    ```bash
    GOOGLE_APPLICATION_CREDENTIALS="/path/to/keyfile.json"
