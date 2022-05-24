@@ -315,6 +315,7 @@ class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
                     locale_id=TranslationSource.objects.get(
                         object_id=page.translation_key,
                         specific_content_type=page.content_type_id,
+                        translations__target_locale=page.locale,
                     ).locale_id,
                 ).exists()
             )

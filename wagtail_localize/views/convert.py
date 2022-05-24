@@ -29,6 +29,7 @@ def convert_to_alias(request, page_id):
         translation_source = TranslationSource.objects.get(
             object_id=page.translation_key,
             specific_content_type=page.content_type_id,
+            translations__target_locale=page.locale,
         )
 
         source_page = translation_source.get_source_instance()

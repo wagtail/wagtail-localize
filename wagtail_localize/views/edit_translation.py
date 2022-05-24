@@ -905,6 +905,7 @@ def edit_translation(request, translation, instance):
                     locale_id=TranslationSource.objects.get(
                         object_id=instance.translation_key,
                         specific_content_type=instance.content_type_id,
+                        translations__target_locale=instance.locale,
                     ).locale_id,
                 )
                 .exclude(pk=instance.pk)
