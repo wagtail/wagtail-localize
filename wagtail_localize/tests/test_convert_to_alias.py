@@ -99,6 +99,20 @@ class ConvertToAliasTest(ConvertToAliasTestData, TestCase):
             reverse("wagtail_localize:convert_to_alias", args=[self.fr_page.id]),
         )
 
+    def test_page_action_available_for_translated_page_from_translated_page(self):
+        de_locale = Locale.objects.create(language_code="de")
+        self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.fr_page.id],
+            ),
+            {"locales": [de_locale.id]},
+        )
+
+        de_page = self.fr_page.get_translation(de_locale)
+        de_page.refresh_from_db()
+        self.assertTrue(self._page_action_is_shown(de_page))
+
 
 class ConvertToAliasViewTest(ConvertToAliasTestData, TestCase):
     def setUp(self):
@@ -214,3 +228,23 @@ class ConvertToAliasViewTest(ConvertToAliasTestData, TestCase):
                 target_locale=self.fr_page.locale_id,
             ).exists()
         )
+
+    def test_convert_translation_from_translated_page(self):
+        de_locale = Locale.objects.create(language_code="de")
+        self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.fr_page.id],
+            ),
+            {"locales": [de_locale.id]},
+        )
+        de_page = self.fr_page.get_translation(de_locale)
+        self.assertIsNone(de_page.alias_of_id)
+        response = self.client.post(
+            reverse("wagtail_localize:convert_to_alias", args=[de_page.id])
+        )
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[de_page.id])
+        )
+        de_page.refresh_from_db()
+        self.assertEqual(de_page.alias_of_id, self.fr_page.id)
