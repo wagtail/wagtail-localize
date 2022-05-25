@@ -253,6 +253,10 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             props["links"]["deleteUrl"],
             reverse("wagtailadmin_pages:delete", args=[self.fr_page.id]),
         )
+        self.assertEqual(
+            props["links"]["convertToAliasUrl"],
+            reverse("wagtail_localize:convert_to_alias", args=[self.fr_page.id]),
+        )
 
         self.assertEqual(
             props["previewModes"],
@@ -1449,6 +1453,34 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_edit_page_translation_from_translated_page_show_convert_to_alias_button(
+        self,
+    ):
+        de_locale = Locale.objects.create(language_code="de")
+        self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.fr_page.id],
+            ),
+            {"locales": [de_locale.id]},
+        )
+        de_page = self.fr_page.get_translation(de_locale)
+        response = self.client.get(
+            reverse("wagtailadmin_pages:edit", args=[de_page.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "wagtail_localize/admin/edit_translation.html"
+        )
+
+        # Check props
+        props = json.loads(response.context["props"])
+
+        self.assertEqual(
+            props["links"]["convertToAliasUrl"],
+            reverse("wagtail_localize:convert_to_alias", args=[de_page.id]),
+        )
 
 
 @freeze_time("2020-08-21")
