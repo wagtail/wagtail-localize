@@ -78,6 +78,13 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
         create_url = reverse("wagtail_localize_test_testmodel_modeladmin_create")
         response = self.client.get(create_url)
 
+        # Check for correct Form Action
+        self.assertContains(
+            response,
+            '<form action="/admin/wagtail_localize_test/testmodel/create/?locale=en"',
+        )
+
+        # Check, if other Language is available in Dropdown
         self.assertContains(
             response,
             '<a href="/admin/wagtail_localize_test/testmodel/create/?locale=de"',
