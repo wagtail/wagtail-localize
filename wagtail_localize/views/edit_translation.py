@@ -71,13 +71,19 @@ else:
 
 if WAGTAIL_VERSION >= (3, 0):
     # TODO: tidy this up once we drop support for Wagtail < 3.0
-    from wagtail.admin.panels import FieldPanel, ObjectList, PageChooserPanel
+    from wagtail.admin.panels import (
+        FieldPanel,
+        InlinePanel,
+        ObjectList,
+        PageChooserPanel,
+    )
     from wagtail.admin.panels import PanelGroup as BaseCompositeEditHandler
     from wagtail.admin.panels import TabbedInterface
 else:
     from wagtail.admin.edit_handlers import (
         BaseCompositeEditHandler,
         FieldPanel,
+        InlinePanel,
         ObjectList,
         PageChooserPanel,
         TabbedInterface,
@@ -286,6 +292,11 @@ class TabHelper:
             elif isinstance(edit_handler, FieldPanel):
                 field_edit_handlers[edit_handler.field_name] = edit_handler
 
+            elif WAGTAIL_VERSION >= (3, 0) and isinstance(edit_handler, InlinePanel):
+                # we can only reliably get panel definitions with the relevant instance data in Wagtail 3.0+
+                for panel in edit_handler.panel_definitions:
+                    walk(panel)
+
         walk(self.edit_handler)
 
         return field_edit_handlers
@@ -319,16 +330,12 @@ def get_segment_location_info(
             if issubclass(field.related_model, Page):
                 edit_handler = tab_helper.get_field_edit_handler(field.name)
 
-                if WAGTAIL_VERSION >= (2, 17):
+                if WAGTAIL_VERSION >= (3, 0):
                     # @see https://github.com/wagtail/wagtail/pull/7684
                     # the target_models is set in the ModelFieldRegistry for ForeignKeys
-
-                    if WAGTAIL_VERSION >= (3, 0):
-                        widget_overrides = edit_handler.get_form_options().get(
-                            "widgets", {}
-                        )
-                    else:
-                        widget_overrides = edit_handler.widget_overrides()
+                    widget_overrides = edit_handler.get_form_options().get(
+                        "widgets", {}
+                    )
                     # Check for explicit `page_types` kwarg in PageChooserPanel
                     if field.name in widget_overrides and hasattr(
                         widget_overrides[field.name], "target_models"
@@ -352,20 +359,20 @@ def get_segment_location_info(
                                 "widget"
                             ].target_models
                         ]
-                else:
-                    allowed_page_types = [
-                        "{app}.{model}".format(
-                            app=model._meta.app_label, model=model._meta.model_name
-                        )
-                        for model in edit_handler.target_models()
-                    ]
-
-                if isinstance(edit_handler, PageChooserPanel):
                     return {
                         "type": "page_chooser",
                         "allowed_page_types": allowed_page_types,
                     }
-
+                elif isinstance(edit_handler, PageChooserPanel):
+                    return {
+                        "type": "page_chooser",
+                        "allowed_page_types": [
+                            "{app}.{model}".format(
+                                app=model._meta.app_label, model=model._meta.model_name
+                            )
+                            for model in edit_handler.target_models()
+                        ],
+                    }
                 else:
                     return {"type": "unknown"}
 

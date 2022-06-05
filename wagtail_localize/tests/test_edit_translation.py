@@ -50,6 +50,7 @@ from wagtail_localize.test.models import (
     TestHomePage,
     TestPage,
     TestSnippet,
+    TestSnippetOrderable,
 )
 from wagtail_localize.views.edit_translation import (
     edit_override,
@@ -558,6 +559,52 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                     "wagtail_localize_test.testpage",
                 ],
             },
+        )
+
+    def test_page_chooser_in_orderable(self):
+        self.snippet.test_snippet_orderable.add(
+            TestSnippetOrderable(orderable_text="foo", orderable_page=self.home_page)
+        )
+        TranslationSource.update_or_create_from_instance(self.snippet)
+
+        response = self.client.get(get_snippet_edit_url(self.fr_snippet))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "wagtail_localize/admin/edit_translation.html"
+        )
+
+        # Check props
+        props = json.loads(response.context["props"])
+
+        segments_by_content_path = {
+            segment["contentPath"]: segment for segment in props["segments"]
+        }
+        orderable_block_id = [
+            segment["location"]["blockId"]
+            for segment in props["segments"]
+            if segment["location"]["field"] == "Test snippet orderable"
+        ][0]
+        orderable_page_path = (
+            f"test_snippet_orderable.{orderable_block_id}.orderable_page"
+        )
+        if WAGTAIL_VERSION >= (3, 0):
+            self.assertEqual(
+                segments_by_content_path[orderable_page_path]["location"]["widget"],
+                {
+                    "type": "page_chooser",
+                    "allowed_page_types": [
+                        "wagtailcore.page",
+                    ],
+                },
+            )
+        else:
+            self.assertEqual(
+                segments_by_content_path[orderable_page_path]["location"]["widget"],
+                {"type": "unknown"},
+            )
+        self.assertEqual(
+            segments_by_content_path[orderable_page_path]["location"]["subField"],
+            "Orderable page",
         )
 
     def test_snippet_chooser_widgets(self):
