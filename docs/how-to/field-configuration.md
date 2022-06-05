@@ -1,5 +1,9 @@
 # Configuring translatable fields
 
+!!! attention
+
+    It is not currently possible to configure `StructBlock` translatable fields. See [Issue #307](https://github.com/wagtail/wagtail-localize/issues/307) for more details.
+
 By default, Wagtail Localize will decide for you which fields are translatable and which fields should just be synchronised.
 This is decided by some simple rules described in the [Auto-generation of Translatable Fields](/concept/translatable-fields-autogen)
 explanation.
@@ -7,7 +11,7 @@ explanation.
 This guide describes how to override this behaviour partially or completely. Firstly, a quick explanation of what this configuration
 does.
 
-## Types of translatable field
+## Types of translatable fields
 
 ### Translatable
 
