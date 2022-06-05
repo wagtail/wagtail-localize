@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2022-06-05
+
+### Fixed
+
+- [Queryset filter to get translation source](https://github.com/wagtail/wagtail-localize/pull/578) @sheralim012
+- (PageChooser widget extraction in `Orderable`s)[https://github.com/wagtail/wagtail-localize/pull/584] @zerolab
+- (Fix duplicate locale definition in `TranslatableCreateView` template)[https://github.com/wagtail/wagtail-localize/pull/584] @benmth
+
+### Changed
+
+- [Improve docs for Google Cloud Translate](https://github.com/wagtail/wagtail-localize/pull/578) @chris48s
+- [Update field configuration docs with note about `translatable_fields` support in `StructBlock`](https://github.com/wagtail/wagtail-localize/pull/582) @enzedonline
+
 ## [1.2] - 2022-05-20
 
 ### Added
@@ -115,7 +128,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.2...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/wagtail/wagtail-localize/compare/v1.2...v1.2.1
 [1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.2...v1.2
 [1.1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/wagtail/wagtail-localize/compare/v1.1...v1.1.1
