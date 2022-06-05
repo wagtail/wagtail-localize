@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -35,7 +36,7 @@ except ImportError:
 
 
 @register_snippet
-class TestSnippet(TranslatableMixin, models.Model):
+class TestSnippet(TranslatableMixin, ClusterableModel):
     field = models.TextField(gettext_lazy("field"))
     # To test field level validation of snippets
     small_charfield = models.CharField(max_length=10, blank=True)
@@ -43,6 +44,33 @@ class TestSnippet(TranslatableMixin, models.Model):
     translatable_fields = [
         TranslatableField("field"),
         TranslatableField("small_charfield"),
+        TranslatableField("test_snippet_orderable"),
+    ]
+
+    panels = [
+        FieldPanel("field"),
+        FieldPanel("small_charfield"),
+        InlinePanel("test_snippet_orderable"),
+    ]
+
+
+class TestSnippetOrderable(TranslatableMixin, Orderable):
+    parent = ParentalKey(
+        "TestSnippet",
+        related_name="test_snippet_orderable",
+    )
+    orderable_text = models.CharField(max_length=30, null=False, blank=False)
+    orderable_page = models.ForeignKey(
+        Page,
+        blank=True,
+        null=True,
+        related_name="+",
+        on_delete=models.CASCADE,
+    )
+
+    panels = [
+        PageChooserPanel("orderable_page"),
+        FieldPanel("orderable_text"),
     ]
 
 
