@@ -1,13 +1,14 @@
 #
 # Translators:
-# Mitja Pagon <mitja.pagon@inueni.com>, 2021
 # Andrej, 2022
+# Mitja Pagon <mitja.pagon@inueni.com>, 2022
+# Matej Stavanja <matej.stavanja@zfm.si>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Andrej, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Matej Stavanja <matej.stavanja@zfm.si>, 2022\n"
 "Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,6 +18,27 @@ msgstr ""
 
 msgid "Disable"
 msgstr "Onemogoči"
+
+msgid "Translate"
+msgstr "Prevedi"
+
+msgid "Saving…"
+msgstr "Shranjevanje ..."
+
+msgid "Save"
+msgstr "Shrani"
+
+msgid "Start Synced translation"
+msgstr "Začnite sinhronizirani prevod"
+
+msgid "Delete"
+msgstr "Izbriši"
+
+msgid "Download XLSX"
+msgstr "Prenesi XLSX"
+
+msgid "Download CSV"
+msgstr "Prenesi CSV"
 
 msgid "Up to date"
 msgstr "Ažurno"
@@ -108,9 +130,6 @@ msgstr "Območja"
 msgid "All child pages will be created."
 msgstr "Vse podrejene strani bodo ustvarjene."
 
-msgid "Translate"
-msgstr "Prevedi"
-
 msgid "Translate page"
 msgstr "Prevedi stran"
 
@@ -119,6 +138,3 @@ msgstr "Objavi takoj"
 
 msgid "Sync translated pages"
 msgstr "Sinhroniziraj prevedene strani"
-
-msgid "Start Synced translation"
-msgstr "Začnite sinhronizirani prevod"

@@ -7,18 +7,52 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
 "Last-Translator: Loic Teixeira, 2022\n"
 "Language-Team: French (https://www.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
+"1000000 == 0 ? 1 : 2;\n"
 
 msgid "Disable"
 msgstr "Désactiver"
 
 msgid "Dummy translator"
 msgstr "Traducteur factice"
+
+msgid "Translate"
+msgstr "Traduire"
+
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Start Synced translation"
+msgstr "Commencer la synchronisation des traductions"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Download XLSX"
+msgstr "Télécharger en XLSX"
+
+msgid "Download CSV"
+msgstr "Télécharger en CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Traduire {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Le {model_name} '{object}' a été soumis avec succès pour traduction en "
+"{locales}"
 
 msgid "Up to date"
 msgstr "À jour"
@@ -212,9 +246,7 @@ msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Inclure le sous-arbre ({} page)"
 msgstr[1] "Inclure le sous-arbre ({} pages)"
-
-msgid "Translate"
-msgstr "Traduire"
+msgstr[2] "Inclure le sous-arbre ({} pages)"
 
 msgid "{} locales"
 msgstr "{} régions"
@@ -228,18 +260,6 @@ msgid ""
 "{locales}"
 msgstr ""
 "La page '{page_title}' a été soumise avec succès pour traduction en {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Traduire {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"Le {model_name} '{object}' a été soumis avec succès pour traduction en "
-"{locales}"
 
 msgid "Publish immediately"
 msgstr "Publier immédiatement"
@@ -271,6 +291,3 @@ msgstr "Synchroniser les blocs traduits"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synchroniser les traductions de '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Commencer la synchronisation des traductions"

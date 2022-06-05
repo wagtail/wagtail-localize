@@ -1,16 +1,29 @@
 #
 # Translators:
-# Amós Oviedo <amos.oviedo@gmail.com>, 2021
+# Amós Oviedo <amos.oviedo@gmail.com>, 2022
+# Matt Westcott <matthew@torchbox.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Matt Westcott <matthew@torchbox.com>, 2022\n"
 "Language-Team: Galician (https://www.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: gl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Saving…"
+msgstr "Gardando…"
+
+msgid "Save"
+msgstr "Gardar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Download CSV"
+msgstr "Descargar CSV"
 
 msgid "Status"
 msgstr "Estado"

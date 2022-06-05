@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
 "Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2022\n"
 "Language-Team: Croatian (Croatia) (https://www.transifex.com/torchbox/"
 "teams/8009/hr_HR/)\n"
@@ -17,11 +17,36 @@ msgstr ""
 msgid "Disable"
 msgstr "Onemogući"
 
+msgid "Translate"
+msgstr "Prevedi"
+
+msgid "Saving…"
+msgstr "Spremanje..."
+
+msgid "Save"
+msgstr "Spremi"
+
+msgid "Delete"
+msgstr "Izbriši"
+
+msgid "Download XLSX"
+msgstr "Preuzmi XLSX"
+
+msgid "Download CSV"
+msgstr "Preuzmi CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Prevedi {model_name}"
+
 msgid "Enable"
 msgstr "Omogući"
 
 msgid "Yes, convert it"
 msgstr "Da, pretvori"
+
+msgid "Submit"
+msgstr "Prevedi"
 
 msgid "Status"
 msgstr "Status"
@@ -29,5 +54,21 @@ msgstr "Status"
 msgid "Content"
 msgstr "Sadržaj"
 
+msgid "Select all"
+msgstr "Odaberi sve"
+
 msgid "Locales"
 msgstr "Lokaliteti"
+
+msgid "All child pages will be created."
+msgstr "Sve podstranice će biti stvorene."
+
+msgid "{} locales"
+msgstr "{} lokaliteti"
+
+msgid "Translate page"
+msgstr "Prevedi stranicu"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Prevedi '%(title)s'"

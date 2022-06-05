@@ -1,17 +1,29 @@
 #
 # Translators:
 # Amawalee Combe <dang@getsalebox.com>, 2021
-# Walaksawan Vervoort <nula_wala@yahoo.com>, 2021
+# Walaksawan Vervoort <nula_wala@yahoo.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Walaksawan Vervoort <nula_wala@yahoo.com>, 2021\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Walaksawan Vervoort <nula_wala@yahoo.com>, 2022\n"
 "Language-Team: Thai (https://www.transifex.com/torchbox/teams/8009/th/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: th\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Saving…"
+msgstr "กำลังเซฟ...,กำลังเก็บข้อมูล"
+
+msgid "Save"
+msgstr "เซฟ,เก็บข้อมูล"
+
+msgid "Delete"
+msgstr "ลบ,ลบทิ้ง"
+
+msgid "Download CSV"
+msgstr "ดาวโหลด ช่องที่ให้เขียนตอบสำหรับเกบข้อมูลแบบตาราง"
 
 msgid "Status"
 msgstr "สถานะ"

@@ -1,16 +1,17 @@
 #
 # Translators:
-# Sergey Mazanov <mvver@outlook.com>, 2021
 # Eugene <eugene.mechanism@gmail.com>, 2021
 # Alexey Trofimov <funkindy@gmail.com>, 2021
-# sergeybe <sergeybe@gmail.com>, 2022
 # Влад <integration.into.society@gmail.com>, 2022
+# sergeybe <sergeybe@gmail.com>, 2022
+# Sergey Mazanov <mvver@outlook.com>, 2022
+# Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Влад <integration.into.society@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022\n"
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -23,6 +24,37 @@ msgstr "Отключить"
 
 msgid "Dummy translator"
 msgstr "Фиктивный переводчик"
+
+msgid "Translate"
+msgstr "Перевести"
+
+msgid "Saving…"
+msgstr "Сохранение..."
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Start Synced translation"
+msgstr "Начать синхронизированный перевод"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Download XLSX"
+msgstr "Скачать XLSX"
+
+msgid "Download CSV"
+msgstr "Скачать CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Перевести {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr " {model_name} '{object}' успешно подтвержден для перевода на {locales}"
 
 msgid "Up to date"
 msgstr "до даты"
@@ -234,9 +266,6 @@ msgstr[1] "Содержит дочерние страницы ({} страниц
 msgstr[2] "Содержит дочерние страницы ({} страниц)"
 msgstr[3] "Содержит дочерние страницы ({} страниц)"
 
-msgid "Translate"
-msgstr "Перевести"
-
 msgid "{} locales"
 msgstr "{} локалей"
 
@@ -249,16 +278,6 @@ msgid ""
 "{locales}"
 msgstr ""
 "Страница '{page_title}' успешно подтверждена для перевода на  {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Перевести {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr " {model_name} '{object}' успешно подтвержден для перевода на {locales}"
 
 msgid "Publish immediately"
 msgstr "Опубликовать немедленно"
@@ -289,9 +308,6 @@ msgstr "Синхронизировать переведенные сниппет
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Синхронизировать переводы '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Начать синхронизированный перевод"
 
 msgid "Convert to alias page"
 msgstr "Преобразовать в псевдоним страницы"

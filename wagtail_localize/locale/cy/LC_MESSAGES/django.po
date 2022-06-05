@@ -1,13 +1,14 @@
 #
 # Translators:
-# Adam Hughes <adamhughes31@gmail.com>, 2021
 # Philip Crisp, 2022
+# Adam Hughes <adamhughes31@gmail.com>, 2022
+# Matt Westcott <matthew@torchbox.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Philip Crisp, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Matt Westcott <matthew@torchbox.com>, 2022\n"
 "Language-Team: Welsh (https://www.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
@@ -19,6 +20,39 @@ msgstr "Analluogi"
 
 msgid "Dummy translator"
 msgstr "Cyfieithydd ffug"
+
+msgid "Translate"
+msgstr "Cyfieithu"
+
+msgid "Saving…"
+msgstr "Cadw…"
+
+msgid "Save"
+msgstr "Cadw"
+
+msgid "Start Synced translation"
+msgstr "Dechrau cyfieithiad cysoni"
+
+msgid "Delete"
+msgstr "Dileu"
+
+msgid "Download XLSX"
+msgstr "Lawrlwythwch XSLX"
+
+msgid "Download CSV"
+msgstr "Lawrlwythwch CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Cyfieithu {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Cafodd y {model_name} '{object}' ei gyflwyno'n llwyddiannus i'w gyfieithu i "
+"{locales}"
 
 msgid "Up to date"
 msgstr "Yn gyfoes"
@@ -236,9 +270,6 @@ msgstr[1] "Cynnwys is-goeden ({} tudalen)"
 msgstr[2] "Cynnwys is-goeden ({} tudalen)"
 msgstr[3] "Cynnwys is-goeden ({} tudalen)"
 
-msgid "Translate"
-msgstr "Cyfieithu"
-
 msgid "{} locales"
 msgstr "{} locales"
 
@@ -251,18 +282,6 @@ msgid ""
 "{locales}"
 msgstr ""
 "Cyflwynwyd y dudalen '{page_title}' yn llwyddiannus i'w chyfieithu i "
-"{locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Cyfieithu {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"Cafodd y {model_name} '{object}' ei gyflwyno'n llwyddiannus i'w gyfieithu i "
 "{locales}"
 
 msgid "Publish immediately"
@@ -295,9 +314,6 @@ msgstr "Cysoni pytiau wedi'u cyfieithu"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Cysoni cyfieithiadau o '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Dechrau cyfieithiad cysoni"
 
 msgid "Convert to alias page"
 msgstr "Trosi i dudalen arallenw"

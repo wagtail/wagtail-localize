@@ -1,16 +1,17 @@
 #
 # Translators:
-# Yin Guanhao <sopium@mysterious.site>, 2021
 # hanfeng <appweb.cn@gmail.com>, 2021
 # Favo Yang <favoyang@gmail.com>, 2021
-# 汇民 王 <whuim@qq.com>, 2021
 # Ford Guo <agile.guo@gmail.com>, 2022
+# 汇民 王 <whuim@qq.com>, 2022
+# Yin Guanhao <sopium@mysterious.site>, 2022
+# Vincent Zhao <zhaopu2008@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Ford Guo <agile.guo@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Vincent Zhao <zhaopu2008@gmail.com>, 2022\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,6 +23,37 @@ msgstr "禁用"
 
 msgid "Dummy translator"
 msgstr "虚拟译者"
+
+msgid "Translate"
+msgstr "翻译"
+
+msgid "Saving…"
+msgstr "正在保存..."
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Start Synced translation"
+msgstr "同步翻译"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Download XLSX"
+msgstr "下载XLSX"
+
+msgid "Download CSV"
+msgstr "下载CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "翻译 {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr "{model_name} '{object}' 的翻译成功提交到 {locales}"
 
 msgid "Up to date"
 msgstr "保持最新"
@@ -199,9 +231,6 @@ msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "包含下级 ({} 页面)"
 
-msgid "Translate"
-msgstr "翻译"
-
 msgid "{} locales"
 msgstr "{} 区域"
 
@@ -213,16 +242,6 @@ msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr "页面 '{page_title}' 的翻译成功提交到 {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "翻译 {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr "{model_name} '{object}' 的翻译成功提交到 {locales}"
 
 msgid "Publish immediately"
 msgstr "立即发布"
@@ -252,6 +271,3 @@ msgstr "同步翻译的片段"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "同步 '%(title)s' 的翻译"
-
-msgid "Start Synced translation"
-msgstr "同步翻译"

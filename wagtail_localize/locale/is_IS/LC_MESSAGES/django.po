@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
 "Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2022\n"
 "Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
@@ -19,6 +19,38 @@ msgstr "Afvirkja"
 
 msgid "Dummy translator"
 msgstr "Gervi þýðandi"
+
+msgid "Translate"
+msgstr "Þýða"
+
+msgid "Saving…"
+msgstr "Vista..."
+
+msgid "Save"
+msgstr "Vista"
+
+msgid "Start Synced translation"
+msgstr "Hefja samræmda þýðingu"
+
+msgid "Delete"
+msgstr "Eyða"
+
+msgid "Download XLSX"
+msgstr "Sækja XLSX"
+
+msgid "Download CSV"
+msgstr "Sækja CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Þýða {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Tókst að senda inn þýðingar fyrir {model_name} '{object}' inn í {locales}"
 
 msgid "Up to date"
 msgstr "Uppfært"
@@ -205,9 +237,6 @@ msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Innifela undirsíður ({} síður)"
 msgstr[1] "Innifela undirsíður ({} síður)"
 
-msgid "Translate"
-msgstr "Þýða"
-
 msgid "{} locales"
 msgstr "{} þýðingar"
 
@@ -219,17 +248,6 @@ msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr "Tókst að senda inn síðuna '{page_title}' í þýðingu fyrir {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Þýða {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"Tókst að senda inn þýðingar fyrir {model_name} '{object}' inn í {locales}"
 
 msgid "Publish immediately"
 msgstr "Setja í birtingu strax"
@@ -261,9 +279,6 @@ msgstr "Samræma þýdd snifsi"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Samræma þýðingar á '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Hefja samræmda þýðingu"
 
 msgid "Convert to alias page"
 msgstr "Breyta í spegilsíðu"

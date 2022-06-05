@@ -1,14 +1,14 @@
 #
 # Translators:
 # Laszlo Molnar <lazlowmiller@gmail.com>, 2021
-# Istvan Farkas <istvan.farkas@gmail.com>, 2022
 # Dan Braghis, 2022
+# Istvan Farkas <istvan.farkas@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Dan Braghis, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2022\n"
 "Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,6 +20,39 @@ msgstr "Kikapcsol"
 
 msgid "Dummy translator"
 msgstr "Üres fordító"
+
+msgid "Translate"
+msgstr "Fordítás"
+
+msgid "Saving…"
+msgstr "Mentés folyamatban..."
+
+msgid "Save"
+msgstr "Mentés"
+
+msgid "Start Synced translation"
+msgstr "Szinkronizált fordítás elkezdése"
+
+msgid "Delete"
+msgstr "Törlés"
+
+msgid "Download XLSX"
+msgstr "XLSX letöltése"
+
+msgid "Download CSV"
+msgstr "CSV letöltése"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "{model_name} fordítása"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"A(z) {model_name} '{object}' be lett küldve fordításra a következő "
+"nyelveken: {locales}"
 
 msgid "Up to date"
 msgstr "Friss"
@@ -212,9 +245,6 @@ msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Aloldalakkal együtt ({} oldal)"
 msgstr[1] "Aloldalakkal együtt ({} oldal)"
 
-msgid "Translate"
-msgstr "Fordítás"
-
 msgid "{} locales"
 msgstr "{} területi beállítás"
 
@@ -228,18 +258,6 @@ msgid ""
 msgstr ""
 "A(z) '{page_title}' oldal be lett küldve fordításra a következő nyelveken: "
 "{locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "{model_name} fordítása"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"A(z) {model_name} '{object}' be lett küldve fordításra a következő "
-"nyelveken: {locales}"
 
 msgid "Publish immediately"
 msgstr "Azonnali közzététel"
@@ -271,6 +289,3 @@ msgstr "Lefordított elemek szinkronizálása"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "'%(title)s' fordításainak szinkronizálása"
-
-msgid "Start Synced translation"
-msgstr "Szinkronizált fordítás elkezdése"

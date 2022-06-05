@@ -1,14 +1,15 @@
 #
 # Translators:
-# Thomas Kunambi <kunambi@gmail.com>, 2021
 # Martin Sandström <martin@marteinn.se>, 2022
 # Philip Andersen <renegadevi@codeofmagi.net>, 2022
+# Thomas Kunambi <kunambi@gmail.com>, 2022
+# Andreas Lans <andreas.lans@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Andreas Lans <andreas.lans@gmail.com>, 2022\n"
 "Language-Team: Swedish (https://www.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -19,6 +20,38 @@ msgstr "Inaktivera"
 
 msgid "Dummy translator"
 msgstr "Testöversättare"
+
+msgid "Translate"
+msgstr "Översätt"
+
+msgid "Saving…"
+msgstr "Sparar..."
+
+msgid "Save"
+msgstr "Spara"
+
+msgid "Start Synced translation"
+msgstr "Starta synkroniserad översättning"
+
+msgid "Delete"
+msgstr "Radera"
+
+msgid "Download XLSX"
+msgstr "Ladda ner XLSX"
+
+msgid "Download CSV"
+msgstr "Ladda ner CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Översätt {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"{model_name} '{object}' lyckades skickas för översättning till {locales}"
 
 msgid "Up to date"
 msgstr "Aktuell"
@@ -233,9 +266,6 @@ msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Inkludera underträd ({} sida)"
 msgstr[1] "Inkludera underträd ({} sidor)"
 
-msgid "Translate"
-msgstr "Översätt"
-
 msgid "{} locales"
 msgstr "{} språk"
 
@@ -247,17 +277,6 @@ msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr "Sidan '{page_title}' lyckades skickas för översättning till {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Översätt {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"{model_name} '{object}' lyckades skickas för översättning till {locales}"
 
 msgid "Publish immediately"
 msgstr "Publicera omgående"
@@ -289,9 +308,6 @@ msgstr "Synkronisera översatta fragment"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synkronisera översättningar av '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Starta synkroniserad översättning"
 
 msgid "Convert to alias page"
 msgstr "Konvertera till en alias-sida"

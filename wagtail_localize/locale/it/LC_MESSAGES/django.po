@@ -1,23 +1,57 @@
 #
 # Translators:
-# Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
+# Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2022
 # Marco Badan <marco.badan@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
 "Last-Translator: Marco Badan <marco.badan@gmail.com>, 2022\n"
 "Language-Team: Italian (https://www.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
 
 msgid "Disable"
 msgstr "Disabilita"
 
 msgid "Dummy translator"
 msgstr "Traduttore fittizio"
+
+msgid "Translate"
+msgstr "Traduci"
+
+msgid "Saving…"
+msgstr "Salvataggio in corso…"
+
+msgid "Save"
+msgstr "Salva"
+
+msgid "Start Synced translation"
+msgstr "Inizia traduzione sincronizzata"
+
+msgid "Delete"
+msgstr "Elimina"
+
+msgid "Download XLSX"
+msgstr "Scarica XLSX"
+
+msgid "Download CSV"
+msgstr "Scarica CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Traduci {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Il {model_name} '{object}' è stato inviato con successo per la traduzione in "
+"{locales}"
 
 msgid "Up to date"
 msgstr "Aggiornato"
@@ -209,9 +243,7 @@ msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Includi sottoalbero ({} pagina)"
 msgstr[1] "Include includi sottoalbero  ({} pagine)"
-
-msgid "Translate"
-msgstr "Traduci"
+msgstr[2] "Include includi sottoalbero  ({} pagine)"
 
 msgid "{} locales"
 msgstr "{} lingue"
@@ -225,18 +257,6 @@ msgid ""
 "{locales}"
 msgstr ""
 "La pagina '{page_title}' è stata inviata con successo per la traduzione in "
-"{locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Traduci {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"Il {model_name} '{object}' è stato inviato con successo per la traduzione in "
 "{locales}"
 
 msgid "Publish immediately"
@@ -270,5 +290,5 @@ msgstr "Sincronizza snippets tradotti"
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizza traduzioni per '%(title)s'"
 
-msgid "Start Synced translation"
-msgstr "Inizia traduzione sincronizzata"
+msgid "Convert to alias page"
+msgstr "Converti in pagina alias"

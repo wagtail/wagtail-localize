@@ -2,16 +2,17 @@
 # Translators:
 # Johannes Spielmann <j@spielmannsolutions.com>, 2021
 # Tammo van Lessen <tvanlessen@gmail.com>, 2021
-# Ettore Atalan <atalanttore@googlemail.com>, 2021
-# oliverengel <codeangel@posteo.de>, 2022
-# th3hamm0r <stefan@hammerworxx.com>, 2022
 # jnns, 2022
+# Ettore Atalan <atalanttore@googlemail.com>, 2022
+# oliverengel <codeangel@posteo.de>, 2022
+# Moritz Pfeiffer <moritz@alp-phone.ch>, 2022
+# th3hamm0r <stefan@hammerworxx.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: jnns, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: th3hamm0r <stefan@hammerworxx.com>, 2022\n"
 "Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -22,6 +23,43 @@ msgstr "Deaktivieren"
 
 msgid "Dummy translator"
 msgstr "Dummyübersetzer"
+
+msgid "Translate"
+msgstr "Übersetzen"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Synchronisiere übersetzte %(model_name)s"
+
+msgid "Saving…"
+msgstr "Speichern…"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Start Synced translation"
+msgstr "Synchronisierte Übersetzung starten"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Download XLSX"
+msgstr "XLSX herunterladen"
+
+msgid "Download CSV"
+msgstr "CSV herunterladen"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Übersetze {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Das {model_name} '{object}' wurde erfolgreich zur Übersetzung in {locales} "
+"eingereicht"
 
 msgid "Up to date"
 msgstr "Aktuell"
@@ -240,9 +278,6 @@ msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Teilbaum ({} Seite) einbeziehen"
 msgstr[1] "Teilbaum ({} Seiten) einbeziehen"
 
-msgid "Translate"
-msgstr "Übersetzen"
-
 msgid "{} locales"
 msgstr "{} locale"
 
@@ -255,18 +290,6 @@ msgid ""
 "{locales}"
 msgstr ""
 "Die Seite '{page_title}' wurde erfolgreich zur Übersetzung in {locales} "
-"eingereicht"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Übersetze {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"Das {model_name} '{object}' wurde erfolgreich zur Übersetzung in {locales} "
 "eingereicht"
 
 msgid "Publish immediately"
@@ -299,9 +322,6 @@ msgstr "Synchronisiere übersetzte Schnipsel"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synchronisere Übersetzungen von %(title)s"
-
-msgid "Start Synced translation"
-msgstr "Synchronisierte Übersetzung starten"
 
 msgid "Convert to alias page"
 msgstr "In Alias umwandeln"

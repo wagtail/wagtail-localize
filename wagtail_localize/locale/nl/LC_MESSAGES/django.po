@@ -2,14 +2,15 @@
 # Translators:
 # Huib Keemink <huib@creativedutchmen.com>, 2021
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
-# Loic Teixeira, 2022
+# Rob Moorman <rob@moori.nl>, 2022
 # Thijs Kramer <thijskramer@gmail.com>, 2022
+# Loic Teixeira, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Thijs Kramer <thijskramer@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Loic Teixeira, 2022\n"
 "Language-Team: Dutch (https://www.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -20,6 +21,39 @@ msgstr "Uitschakelen"
 
 msgid "Dummy translator"
 msgstr "Dummy-vertaler"
+
+msgid "Translate"
+msgstr "Vertaal"
+
+msgid "Saving…"
+msgstr "Bezig met opslaan…"
+
+msgid "Save"
+msgstr "Opslaan"
+
+msgid "Start Synced translation"
+msgstr "Start synchrone vertaling"
+
+msgid "Delete"
+msgstr "Verwijderen"
+
+msgid "Download XLSX"
+msgstr "Download XLSX"
+
+msgid "Download CSV"
+msgstr "Download CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Vertaal {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"{model_name} '{object}' is succesvol verzonden om vertaald te worden in het "
+"{locales}"
 
 msgid "Up to date"
 msgstr "Actueel"
@@ -237,9 +271,6 @@ msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Neem onderliggende boomstructuur mee ({} pagina)"
 msgstr[1] "Neem onderliggende boomstructuur mee ({} pagina's)"
 
-msgid "Translate"
-msgstr "Vertaal"
-
 msgid "{} locales"
 msgstr "{} taalregio's"
 
@@ -253,18 +284,6 @@ msgid ""
 msgstr ""
 "De pagina '{page_title}' is succesvol verzonden om in {locales} vertaald te "
 "worden."
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Vertaal {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"{model_name} '{object}' is succesvol verzonden om vertaald te worden in het "
-"{locales}"
 
 msgid "Publish immediately"
 msgstr "Direct publiceren"
@@ -296,9 +315,6 @@ msgstr "Synchroniseer vertaalde knipsels"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synchroniseer vertalingen van '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Start synchrone vertaling"
 
 msgid "Convert to alias page"
 msgstr "Naar alias-pagina omzetten"

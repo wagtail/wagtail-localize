@@ -1,16 +1,33 @@
 #
 # Translators:
-# pyzenberg <pyzenberg@gmail.com>, 2021
+# pyzenberg <pyzenberg@gmail.com>, 2022
+# Mostafa Heidarian <tabvar@gmail.com>, 2022
+# Ehsan jahanbakhsh <man207ej@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: pyzenberg <pyzenberg@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Ehsan jahanbakhsh <man207ej@gmail.com>, 2022\n"
 "Language-Team: Persian (https://www.transifex.com/torchbox/teams/8009/fa/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fa\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Saving…"
+msgstr "در حال ذخیره سازی"
+
+msgid "Save"
+msgstr "ذخیره"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Download XLSX"
+msgstr "دانلود XLSX"
+
+msgid "Download CSV"
+msgstr "دانلود CSV"
 
 msgid "Status"
 msgstr "وضعیت"

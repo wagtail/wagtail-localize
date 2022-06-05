@@ -1,16 +1,15 @@
 #
 # Translators:
 # Viktor Shytiuk <VicHunting@yandex.ua>, 2021
-# Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
 # Anastasiia La, 2021
 # d55ee35323c0c760f088259cd23b1b6d_9e8a7d1 <5459f3ae99ecdd5ed0be0220acd46004_1019581>, 2022
+# Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: d55ee35323c0c760f088259cd23b1b6d_9e8a7d1 "
-"<5459f3ae99ecdd5ed0be0220acd46004_1019581>, 2022\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2022\n"
 "Language-Team: Ukrainian (https://www.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,6 +24,36 @@ msgstr "Вимкнути"
 
 msgid "Dummy translator"
 msgstr "Фіктивний переклад"
+
+msgid "Translate"
+msgstr "Перекласти"
+
+msgid "Saving…"
+msgstr "Йде зберігання..."
+
+msgid "Save"
+msgstr "Зберегти"
+
+msgid "Delete"
+msgstr "Видалити"
+
+msgid "Download XLSX"
+msgstr "Завантажити XLSX"
+
+msgid "Download CSV"
+msgstr "Завантажити CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Перекласти {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Об'єкт '{object}' моделі {model_name} успішно надіслано для перекладу на "
+"{locales}"
 
 msgid "Up to date"
 msgstr "Актуально"
@@ -217,9 +246,6 @@ msgstr[1] "Включає гілку ({} сторінок)"
 msgstr[2] "Включає гілку ({} сторінок)"
 msgstr[3] "Включає гілку ({} сторінок)"
 
-msgid "Translate"
-msgstr "Перекласти"
-
 msgid "{} locales"
 msgstr "{} локалі"
 
@@ -231,18 +257,6 @@ msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr "Сторінка '{page_title}' успішно надіслано для перекладу на {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Перекласти {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"Об'єкт '{object}' моделі {model_name} успішно надіслано для перекладу на "
-"{locales}"
 
 msgid "Publish immediately"
 msgstr "Опублікувати негайно"

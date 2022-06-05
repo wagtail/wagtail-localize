@@ -1,12 +1,12 @@
 #
 # Translators:
-# Tatsiana Tsygan <art.tatsiana@gmail.com>, 2021
+# Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
-"Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2021\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022\n"
 "Language-Team: Belarusian (https://www.transifex.com/torchbox/teams/8009/"
 "be/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,6 +14,21 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
+
+msgid "Saving…"
+msgstr "Захаваць..."
+
+msgid "Save"
+msgstr "Захаваць"
+
+msgid "Delete"
+msgstr "Выдаліць"
+
+msgid "Download XLSX"
+msgstr "Спампаваць XLSX"
+
+msgid "Download CSV"
+msgstr "Спампаваць CSV"
 
 msgid "Status"
 msgstr "Статус"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
 "Last-Translator: Roger Pons <rogerpons@gmail.com>, 2022\n"
 "Language-Team: Catalan (https://www.transifex.com/torchbox/teams/8009/ca/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,6 +15,21 @@ msgstr ""
 
 msgid "Disable"
 msgstr "Desactivar"
+
+msgid "Saving…"
+msgstr "Desant..."
+
+msgid "Save"
+msgstr "Desar"
+
+msgid "Delete"
+msgstr "Esborrar"
+
+msgid "Download XLSX"
+msgstr "Baixa XLSX"
+
+msgid "Download CSV"
+msgstr "Baixa CSV"
 
 msgid "Enable"
 msgstr "Habilitar"

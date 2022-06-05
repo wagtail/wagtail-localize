@@ -5,15 +5,16 @@
 # Alessio Di Stasio <aledista@gmail.com>, 2021
 # Stefano Marchetto <airbatum@gmail.com>, 2021
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
-# Marco Badan <marco.badan@gmail.com>, 2021
+# Marco Badan <marco.badan@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2021\n"
+"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2022\n"
 "Language-Team: Italian (https://www.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
 
 msgid "[DELETED]"
 msgstr "[DELETED]"
@@ -53,6 +54,9 @@ msgstr "Scegli una pagina"
 
 msgid "Choose an image"
 msgstr "Scegli una immagine"
+
+msgid "Convert to alias page"
+msgstr "Converti in pagina alias"
 
 msgid "Delete"
 msgstr "Elimina"

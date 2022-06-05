@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
 "Last-Translator: Dan Braghis, 2022\n"
 "Language-Team: Romanian (https://www.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,6 +18,37 @@ msgstr "Dezactivează"
 
 msgid "Dummy translator"
 msgstr "Traducător fals"
+
+msgid "Translate"
+msgstr "Traduceți"
+
+msgid "Saving…"
+msgstr "În curs de salvare..."
+
+msgid "Save"
+msgstr "Salvează"
+
+msgid "Start Synced translation"
+msgstr "Începe traducere sincronizată"
+
+msgid "Delete"
+msgstr "Șterge"
+
+msgid "Download XLSX"
+msgstr "Descarcă XLSX"
+
+msgid "Download CSV"
+msgstr "Descarcă CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Traduce {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr "{model_name} '{object}' a fost trimis(ă) pentru traducere în {locales}"
 
 msgid "Up to date"
 msgstr "Actualizat"
@@ -231,9 +262,6 @@ msgstr[0] "Include pagini descendente ({} pagină)"
 msgstr[1] "Include pagini descendente ({} pagini)"
 msgstr[2] "Include pagini descendente ({} pagini)"
 
-msgid "Translate"
-msgstr "Traduceți"
-
 msgid "{} locales"
 msgstr "{} localizări"
 
@@ -245,16 +273,6 @@ msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr "Pagina '{page_title}' a fost trimisă pentru traducere în {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Traduce {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr "{model_name} '{object}' a fost trimis(ă) pentru traducere în {locales}"
 
 msgid "Publish immediately"
 msgstr "Publichează imediat"
@@ -286,9 +304,6 @@ msgstr "Sincronizează fragmente traduse"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizează traducerile pentru '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Începe traducere sincronizată"
 
 msgid "Convert to alias page"
 msgstr "Convertează în pagină alias"

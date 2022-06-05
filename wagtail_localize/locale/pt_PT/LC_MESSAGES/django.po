@@ -2,25 +2,59 @@
 # Translators:
 # Jose Lourenco <jose@lourenco.ws>, 2021
 # Diogo Silva <diogo_silva30@hotmail.com>, 2021
-# Luís Tiago Favas <traducoes@favas.eu>, 2021
+# Luís Tiago Favas <traducoes@favas.eu>, 2022
 # Tiago Henriques <trinosauro@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 15:24+0000\n"
+"POT-Creation-Date: 2022-05-20 14:32+0000\n"
 "Last-Translator: Tiago Henriques <trinosauro@gmail.com>, 2022\n"
 "Language-Team: Portuguese (Portugal) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pt_PT\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
+"1000000 == 0 ? 1 : 2;\n"
 
 msgid "Disable"
 msgstr "Desativar"
 
 msgid "Dummy translator"
 msgstr "Tradutor simulado"
+
+msgid "Translate"
+msgstr "Traduzir"
+
+msgid "Saving…"
+msgstr "A gravar…"
+
+msgid "Save"
+msgstr "Gravar"
+
+msgid "Start Synced translation"
+msgstr "Iniciar tradução Sincronizada"
+
+msgid "Delete"
+msgstr "Apagar"
+
+msgid "Download XLSX"
+msgstr "Descarregar XLSX"
+
+msgid "Download CSV"
+msgstr "Descarregar CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Traduzir {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"O {model_name} '{object}' foi enviado com sucesso para tradução para "
+"{locales}"
 
 msgid "Up to date"
 msgstr "Atual"
@@ -235,9 +269,7 @@ msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Incluir sub-árvore ({} página)"
 msgstr[1] "Incluir sub-árvore ({} páginas)"
-
-msgid "Translate"
-msgstr "Traduzir"
+msgstr[2] "Incluir sub-árvore ({} páginas)"
 
 msgid "{} locales"
 msgstr "{} regiões"
@@ -251,18 +283,6 @@ msgid ""
 "{locales}"
 msgstr ""
 "A página  '{page_title}' foi enviada com sucesso para tradução para {locales}"
-
-#, python-brace-format
-msgid "Translate {model_name}"
-msgstr "Traduzir {model_name}"
-
-#, python-brace-format
-msgid ""
-"The {model_name} '{object}' was successfully submitted for translation into "
-"{locales}"
-msgstr ""
-"O {model_name} '{object}' foi enviado com sucesso para tradução para "
-"{locales}"
 
 msgid "Publish immediately"
 msgstr "Publicar imediatamente"
@@ -294,9 +314,6 @@ msgstr "Sincronizar trechos traduzidos"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizar traduções de '%(title)s'"
-
-msgid "Start Synced translation"
-msgstr "Iniciar tradução Sincronizada"
 
 msgid "Convert to alias page"
 msgstr "Converter em página de atalho"
