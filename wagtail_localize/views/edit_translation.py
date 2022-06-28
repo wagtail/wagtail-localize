@@ -1043,6 +1043,7 @@ def edit_translation(request, translation, instance):
                 },
                 cls=DjangoJSONEncoder,
             ),
+            "has_editor_css": WAGTAIL_VERSION <= (4, 0),
         },
     )
 

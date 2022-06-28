@@ -13,7 +13,9 @@
 {% endblock %}
 
 {% block extra_css %}
-    {% include "wagtailadmin/pages/_editor_css.html" %}
+    {% if has_editor_css %}
+        {% include "wagtailadmin/pages/_editor_css.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block extra_js %}
