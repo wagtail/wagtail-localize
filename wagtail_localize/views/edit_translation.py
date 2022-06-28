@@ -63,9 +63,7 @@ from wagtail_localize.segments import StringSegmentValue
 
 
 if WAGTAIL_VERSION >= (4, 0):
-    from wagtail.snippets.views.snippets import (
-        get_snippet_panel as get_snippet_edit_handler,
-    )
+    from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
 else:
     from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
