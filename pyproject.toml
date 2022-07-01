@@ -1,0 +1,71 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "wagtail-localize"
+authors = [{name = "Karl Hobley", email = "karl@torchbox.com"}]
+description = "Translation plugin for Wagtail CMS"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Framework :: Django",
+    "Framework :: Django :: 2.2",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.0",
+    "Framework :: Wagtail",
+    "Framework :: Wagtail :: 2",
+    "Framework :: Wagtail :: 3"
+]
+dynamic = ["version"]
+requires-python = ">=3.7"
+dependencies = [
+    "Django>=2.2,<4.1",
+    "Wagtail>=2.11,<4.0",
+    "polib>=1.1,<2.0",
+    "typing_extensions>=4.0"
+]
+
+[project.optional-dependencies]
+testing = [
+    "dj-database-url==0.5.0",
+    "freezegun==1.1.0",
+    "django-rq>=2.5,<3.0"
+]
+documentation = [
+    "mkdocs==1.1.2",
+    "mkdocs-material==6.2.8",
+    "mkdocs-mermaid2-plugin==0.5.1",
+    "mkdocstrings==0.14.0",
+    "mkdocs-include-markdown-plugin==2.8.0",
+    "pygments==2.11.2"
+]
+google = [
+    "google-cloud-translate>=3.0.0"
+]
+
+[project.urls]
+Home = "https://www.wagtail-localize.org"
+Source = "https://github.com/wagtail/wagtail-localize"
+Documentation = "https://www.wagtail-localize.org"
+
+[tool.flit.module]
+name = "wagtail_localize"
+
+[tool.flit.sdist]
+exclude = [
+    "wagtail_localize/static_src",
+    "wagtail_localize/test",
+    "wagtail_localize/tests",
+    ".gitignore"
+]
