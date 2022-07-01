@@ -1,8 +1,0 @@
-include LICENSE *.rst *.txt *.md
-graft wagtail_localize
-prune **/__pycache__
-prune **/static_src
-prune **/test
-prune **/tests
-global-exclude *.py[co]
-global-exclude .gitignore
