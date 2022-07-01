@@ -67,5 +67,20 @@ exclude = [
     "wagtail_localize/static_src",
     "wagtail_localize/test",
     "wagtail_localize/tests",
-    ".gitignore"
+    "wagtail_localize/machine_translators/tests",
+    "wagtail_localize/segments/tests",
+    "wagtail_localize/static/.gitignore",
+    "Makefile",
+    "scripts",
+    "docs",
+    ".*",
+    "*.js",
+    "*.json",
+    "*.ini",
+    "*.yml",
+    "netlify.toml",
+    "testmanage.py",
+]
+include = [
+    "wagtail_localize/static"
 ]
