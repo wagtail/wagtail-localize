@@ -1,4 +1,5 @@
-*.pyc
+__pycache__/
+*.py[co]
 /build
 /dist
 /wagtail_localize.egg-info
