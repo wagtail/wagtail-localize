@@ -381,6 +381,23 @@ def get_segment_location_info(
                 return {"type": "image_chooser"}
 
             elif issubclass(field.related_model, tuple(get_snippet_models())):
+                if WAGTAIL_VERSION >= (4, 0, 0):
+                    chooser_url = reverse(
+                        "wagtailsnippetchoosers_%s_%s:choose"
+                        % (
+                            field.related_model._meta.app_label,
+                            field.related_model._meta.model_name,
+                        )
+                    )
+                else:
+                    chooser_url = reverse(
+                        "wagtailsnippets:choose",
+                        args=[
+                            field.related_model._meta.app_label,
+                            field.related_model._meta.model_name,
+                        ],
+                    )
+
                 return {
                     "type": "snippet_chooser",
                     "snippet_model": {
@@ -389,13 +406,7 @@ def get_segment_location_info(
                         "verbose_name": field.related_model._meta.verbose_name,
                         "verbose_name_plural": field.related_model._meta.verbose_name_plural,
                     },
-                    "chooser_url": reverse(
-                        "wagtailsnippets:choose",
-                        args=[
-                            field.related_model._meta.app_label,
-                            field.related_model._meta.model_name,
-                        ],
-                    ),
+                    "chooser_url": chooser_url,
                 }
 
         elif isinstance(
@@ -428,6 +439,22 @@ def get_segment_location_info(
             return {"type": "image_chooser"}
 
         elif isinstance(block, SnippetChooserBlock):
+            if WAGTAIL_VERSION >= (4, 0, 0):
+                chooser_url = reverse(
+                    "wagtailsnippetchoosers_%s_%s:choose"
+                    % (
+                        block.target_model._meta.app_label,
+                        block.target_model._meta.model_name,
+                    )
+                )
+            else:
+                chooser_url = reverse(
+                    "wagtailsnippets:choose",
+                    args=[
+                        block.target_model._meta.app_label,
+                        block.target_model._meta.model_name,
+                    ],
+                )
             return {
                 "type": "snippet_chooser",
                 "snippet_model": {
@@ -436,13 +463,7 @@ def get_segment_location_info(
                     "verbose_name": block.target_model._meta.verbose_name,
                     "verbose_name_plural": block.target_model._meta.verbose_name_plural,
                 },
-                "chooser_url": reverse(
-                    "wagtailsnippets:choose",
-                    args=[
-                        block.target_model._meta.app_label,
-                        block.target_model._meta.model_name,
-                    ],
-                ),
+                "chooser_url": chooser_url,
             }
 
         elif isinstance(
