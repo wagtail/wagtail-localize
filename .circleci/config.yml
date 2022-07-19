@@ -78,7 +78,7 @@ workflows:
       - nightly-wagtail-test
     triggers:
       - schedule:
-          cron: "0 0 * * 1"
+          cron: '0 0 * * *'
           filters:
             branches:
               only:
