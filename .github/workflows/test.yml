@@ -155,8 +155,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
-          pip install django~=3.2
-          pip install -e.[testing]
+          pip install flit
+          flit install --deps production --extras testing
           pip install coverage==5.4
       - name: Test
         run: |
