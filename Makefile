@@ -38,7 +38,7 @@ clean:	## 🗑️  - Remove __pycache__ and test artifacts
 
 package-setup:
 	@echo "📦 - Packaging for PyPI"
-	python3 setup.py clean --all sdist bdist_wheel
+	flit build --setup-py
 
 package: clean package-setup  ## 📦 - Package for PyPI
 
