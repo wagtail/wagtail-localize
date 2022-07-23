@@ -61,7 +61,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .tox
-          key: tox-${{ hashFiles('setup.py') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-sqlite
+          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-sqlite
       - name: Test
         run: |
           tox
@@ -132,7 +132,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .tox
-          key: tox-${{ hashFiles('setup.py') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-postgres
+          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-postgres
       - name: Test
         run: |
           tox
