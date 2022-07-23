@@ -40,7 +40,8 @@ jobs:
           - pip-{{ .Branch }}-
           - pip-main-
 
-      - run: pip install -e .[testing]
+      - run: pip install flit
+      - run: flit install --deps production --extras testing
 
       - type: cache-save
         key: pip-{{ .Branch }}-{{ epoch }}
@@ -56,7 +57,8 @@ jobs:
       - checkout
       - run: git clone git@github.com:wagtail/wagtail.git
 
-      - run: pip install -e .[testing]
+      - run: pip install flit
+      - run: flit install --deps production --extras testing
       - run: pip install ./wagtail
 
       - run: python testmanage.py test
