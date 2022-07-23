@@ -56,8 +56,18 @@ cd wagtail-localize
 
 With your preferred virtualenv activated, install testing dependencies:
 
+#### Using pip
+
 ```sh
+pip install pip>=21.3
 pip install -e .[testing] -U
+```
+
+#### Using flit
+
+```sh
+pip install flit
+flit install
 ```
 
 ### pre-commit
