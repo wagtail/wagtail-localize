@@ -146,11 +146,9 @@ def register_submit_translation_permission():
     )
 
 
-@hooks.register("register_page_listing_more_buttons")
-def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
-    if (
-        page_perms.user.has_perm("wagtail_localize.submit_translation")
-        and not page.is_root()
+def page_listing_more_buttons(page, page_perms, next_url=None):
+    if not page.is_root() and page_perms.user.has_perm(
+        "wagtail_localize.submit_translation"
     ):
         # If there's at least one locale that we haven't translated into yet, show "Translate this page" button
         has_locale_to_translate_to = Locale.objects.exclude(
@@ -176,6 +174,23 @@ def page_listing_more_buttons(page, page_perms, is_parent=False, next_url=None):
             yield wagtailadmin_widgets.Button(
                 _("Sync translated pages"), url, priority=65
             )
+
+
+if WAGTAIL_VERSION >= (4, 0, 0):
+
+    @hooks.register("register_page_listing_more_buttons")
+    def register_page_listing_more_buttons(page, page_perms, next_url=None):
+        for button in page_listing_more_buttons(page, page_perms, next_url):
+            yield button
+
+else:
+
+    @hooks.register("register_page_listing_more_buttons")
+    def register_page_listing_more_buttons(
+        page, page_perms, is_parent=False, next_url=None
+    ):
+        for button in page_listing_more_buttons(page, page_perms, next_url):
+            yield button
 
 
 @hooks.register("register_snippet_listing_buttons")
