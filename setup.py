@@ -46,8 +46,8 @@ setup(
         "Framework :: Wagtail :: 3",
     ],
     install_requires=[
-        "Django>=2.2,<4.1",
-        "Wagtail>=2.11,<4.0",
+        "Django>=2.2",
+        "Wagtail>=2.11",
         "polib>=1.1,<2.0",
         "typing_extensions>=4.0",
     ],
