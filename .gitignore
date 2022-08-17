@@ -15,3 +15,5 @@ __pycache__/
 /test-static
 /test-media
 .idea
+
+.DS_Store
