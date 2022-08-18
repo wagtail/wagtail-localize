@@ -369,8 +369,8 @@ const SegmentToolbar = styled.ul`
 
 const SegmentList = styled.ul`
     list-style-type: none;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 80px;
+    padding-right: 80px;
     max-width: 1200px;
 `;
 

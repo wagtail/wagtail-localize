@@ -6,6 +6,11 @@
 {% block titletag %}{% blocktrans with instance=translation.source.as_instance locale=translation.target_locale %}Translation of {{ instance }} into {{ locale }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
+    <div class="w-sticky w-top-0 w-z-header">
+      {% page_permissions page as page_perms %}
+      {% include 'wagtailadmin/shared/headers/page_edit_header.html' with page=page page_perms=page_perms content_type=page.content_type %}
+      {% include "wagtailadmin/shared/side_panels.html" with page=page page_perms=page_perms page_for_status=page content_type=page.content_type %}
+    </div>
     <div class="js-translation-editor" data-props="{{ props }}">
         {# Generates the CSRF token hidden input. This is read by the JavaScript. #}
         {% csrf_token %}
