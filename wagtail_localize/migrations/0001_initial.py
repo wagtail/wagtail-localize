@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
+from wagtail_localize.compat import get_revision_model
 
 
 class Migration(migrations.Migration):
@@ -147,7 +148,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
                         related_name="+",
-                        to="wagtailcore.PageRevision",
+                        to=get_revision_model(),
                     ),
                 ),
                 (
