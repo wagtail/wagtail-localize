@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const StyledButtonLink = styled.a`
     &.button--live {
         background-color: #fff;
-        color: var(--color-primary);
+        color: var(--w-color--primary);
         border-radius: 2px;
         font-size: 14px;
         font-weight: 600;
