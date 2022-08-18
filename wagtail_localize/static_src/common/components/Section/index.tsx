@@ -5,10 +5,10 @@ const Title = styled.div`
     box-sizing: border-box;
     height: 40px;
     -webkit-font-smoothing: auto;
-    background: #fcf2f2;
-    color: #200200;
+    background-color: var(--w-color-secondary-50);
+    color: var(--w-color-secondary);
     text-transform: uppercase;
-    padding: 0.9em 0 0.9em 5em;
+    padding: 0.9em 0 0.9em 95px;
     font-size: 0.95em;
     margin: 0;
     line-height: 1.5em;
@@ -44,7 +44,7 @@ const Title = styled.div`
         color: #fff;
         padding: 0;
         margin: 0;
-        background-color: #f37e77;
+        background-color: var(--w-color-primary);
     }
 `;
 
