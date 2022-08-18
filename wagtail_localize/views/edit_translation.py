@@ -946,6 +946,7 @@ def edit_translation(request, translation, instance):
         request,
         "wagtail_localize/admin/edit_translation.html",
         {
+            "page": instance,
             "translation": translation,
             # These props are passed directly to the TranslationEditor react component
             "props": json.dumps(
