@@ -40,7 +40,7 @@ const Title = styled.div`
         top: 0;
         line-height: 1.8em;
         left: 0;
-        width: 50px;
+        width: 80px;
         color: #fff;
         padding: 0;
         margin: 0;
