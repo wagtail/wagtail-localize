@@ -74,9 +74,12 @@ class TestSubmitPageTranslationWithComponents(TestCase, WagtailTestUtils):
             },
         )
 
-        self.assertContains(
-            response, "component-form__fieldname-custom_text_field error"
+        components = list(response.context["components"])
+        _, _, component_form = components[1]
+        self.assertEqual(
+            component_form.errors["custom_text_field"], ["This field is required."]
         )
+        # Check that error message is actually rendered
         self.assertContains(response, "This field is required")
 
         self.assertEqual(CustomTranslationData.objects.count(), 0)
