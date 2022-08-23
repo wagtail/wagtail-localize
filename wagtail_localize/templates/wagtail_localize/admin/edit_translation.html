@@ -9,7 +9,7 @@
     {% if not uses_legacy_header %} 
     <div class="w-sticky w-top-0 w-z-header">
       {% page_permissions page as page_perms %}
-      {% include 'wagtailadmin/shared/headers/page_edit_header.html' with page=page page_perms=page_perms content_type=page.content_type %}
+      {% include 'wagtailadmin/shared/headers/page_edit_header.html' with page=page page_for_status=page page_perms=page_perms content_type=page.content_type %}
       {% include "wagtailadmin/shared/side_panels.html" with page=page page_perms=page_perms page_for_status=page content_type=page.content_type %}
     </div>
     {% endif %}
