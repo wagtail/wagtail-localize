@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from 'react';
-import gettext from 'gettext';
 
 import Icon from '../Icon';
 
@@ -70,13 +69,11 @@ export interface PreviewMode {
 interface ActionMenuProps {
   defaultAction: React.ReactNode;
   actions: React.ReactNode[];
-  previewModes?: PreviewMode[];
 }
 
 const ActionMenu: FunctionComponent<ActionMenuProps> = ({
   defaultAction,
-  actions,
-  previewModes
+  actions
 }) => {
   const wrappedActions = actions.map(action => <li>{action}</li>);
 
