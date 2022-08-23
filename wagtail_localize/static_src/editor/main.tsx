@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import TranslationEditor from "./components/TranslationEditor"
+import LegacyTranslationEditor from "../wagtail_2.15_LTS/editor/components/TranslationEditor"
 
 document.addEventListener('DOMContentLoaded', async () => {
   const element = document.querySelector('.js-translation-editor');
@@ -14,18 +16,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const props = JSON.parse(element.dataset.props)
 
-      let TranslationEditor = React.lazy(() => import("./components/TranslationEditor"))
+      let Component = TranslationEditor
       if (props.uses_legacy_header) {
-        TranslationEditor = React.lazy(() => import("../wagtail_2.15_LTS/editor/components/TranslationEditor"))
+        Component = LegacyTranslationEditor
       }
 
       ReactDOM.render(
-        <React.Suspense fallback={<div>Loading translation editor...</div>}>
-          <TranslationEditor
-            csrfToken={csrfToken}
-            {...props}
-          />
-        </React.Suspense>,
+        <Component
+          csrfToken={csrfToken}
+          {...props}
+        />,
         element
       );
     } else {
