@@ -88,9 +88,9 @@ const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({
   }
 
   return (
-    <div className={`header-meta--${name} w-flex w-flex-row w-items-center`}>
+    <div className={`w-p-4 header-meta--${name} w-flex w-flex-row w-items-center`}>
       {sourceRendered}
-      <svg aria-hidden="true" className="icon icon-arrow-right w-w-4 w-h-4 w-ml-3"><use href="#icon-arrow-right"></use></svg>
+      <svg aria-hidden="true" className="icon icon-arrow-right w-w-4 w-h-4"><use href="#icon-arrow-right"></use></svg>
       {targetRendered}
     </div>
   );
