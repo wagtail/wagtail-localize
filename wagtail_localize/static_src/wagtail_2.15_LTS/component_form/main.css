@@ -1,0 +1,42 @@
+/* Put a box around component forms */
+.component-form {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Align component form buttons to the right */
+.component-form button {
+    float: right;
+}
+.component-form::after {
+    content: ' ';
+    display: table;
+    clear: both;
+}
+
+/* Hide the enabled checkbox */
+.component-form__fieldname-enabled {
+    display: none;
+}
+
+/* Hide fields if the form is disabled */
+.component-form--disabled .component-form__fields {
+    display: none;
+}
+
+/* Show enabled button if the form is disabled */
+.component-form__enable-button {
+    display: none;
+}
+
+.component-form--disabled .component-form__enable-button {
+    display: block;
+}
+
+/* Hide disabled button if the form is disabled */
+.component-form--disabled .component-form__disable-button {
+    display: none;
+}
