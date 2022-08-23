@@ -19,8 +19,7 @@ const ToolboxWrapper = styled.div`
 
 const ToolWrapper = styled.div`
     float: left;
-    margin-bottom: 20px;
-    min-height: 100px;
+    margin-bottom: 40px;
 `;
 
 const HiddenFileInput = styled.input`
@@ -92,7 +91,7 @@ const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
         </a>
       </ToolWrapper>
 
-      <ToolWrapper>
+      <ToolWrapper className='w-tabs__panel'>
         <p>
           {gettext(
             'Upload translated PO file to submit translations'

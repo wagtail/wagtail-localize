@@ -40,27 +40,32 @@ const Title = styled.div`
         top: 0;
         line-height: 1.8em;
         left: 0;
-        width: 80px;
         color: #fff;
         padding: 0;
         margin: 0;
         background-color: var(--w-color-primary);
+
+        width: 20px;
+    
+        @media screen and (min-width: 800px) {
+          width: 80px;
+        }
     }
 `;
 
 interface SectionProps {
-    title: string;
+  title: string;
 }
 
 const Section: FunctionComponent<SectionProps> = ({ title, children }) => {
-    return (
-        <section>
-            <Title>
-                <h3>{title}</h3>
-            </Title>
-            {children}
-        </section>
-    );
+  return (
+    <section>
+      <Title>
+        <h3>{title}</h3>
+      </Title>
+      {children}
+    </section>
+  );
 };
 
 export default Section;
