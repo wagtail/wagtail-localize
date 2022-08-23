@@ -942,6 +942,8 @@ def edit_translation(request, translation, instance):
     else:
         add_convert_to_alias_url = False
 
+    uses_legacy_header = WAGTAIL_VERSION <= (4, 0)
+
     return render(
         request,
         "wagtail_localize/admin/edit_translation.html",
