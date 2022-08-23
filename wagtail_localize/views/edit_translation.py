@@ -951,6 +951,7 @@ def edit_translation(request, translation, instance):
             # These props are passed directly to the TranslationEditor react component
             "props": json.dumps(
                 {
+                    "uses_legacy_header": uses_legacy_header,
                     "adminBaseUrl": reverse("wagtailadmin_home"),
                     "object": {
                         "title": str(instance),
@@ -1064,7 +1065,7 @@ def edit_translation(request, translation, instance):
                 cls=DjangoJSONEncoder,
             ),
             "has_editor_css": WAGTAIL_VERSION <= (4, 0),
-            "uses_react_header": WAGTAIL_VERSION <= (4, 0),
+            "uses_legacy_header": uses_legacy_header
         },
     )
 

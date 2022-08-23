@@ -6,7 +6,7 @@
 {% block titletag %}{% blocktrans with instance=translation.source.as_instance locale=translation.target_locale %}Translation of {{ instance }} into {{ locale }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
-    {% if not props.uses_react_header %}
+    {% if not uses_legacy_header %} 
     <div class="w-sticky w-top-0 w-z-header">
       {% page_permissions page as page_perms %}
       {% include 'wagtailadmin/shared/headers/page_edit_header.html' with page=page page_perms=page_perms content_type=page.content_type %}
