@@ -33,6 +33,7 @@ from wagtail.admin import messages
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
+from wagtail.admin.ui.side_panels import PageSidePanels
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
@@ -944,10 +945,18 @@ def edit_translation(request, translation, instance):
 
     uses_legacy_header = WAGTAIL_VERSION <= (4, 0)
 
+    side_panels = PageSidePanels(
+        request,
+        instance,
+        preview_enabled=False,
+        comments_enabled=False,
+    )
+
     return render(
         request,
         "wagtail_localize/admin/edit_translation.html",
         {
+            "side_panels": side_panels,
             "page": instance,
             "translation": translation,
             # These props are passed directly to the TranslationEditor react component
