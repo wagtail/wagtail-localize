@@ -376,9 +376,14 @@ const SegmentToolbar = styled.ul`
 
 const SegmentList = styled.ul`
     list-style-type: none;
-    padding-left: 80px;
-    padding-right: 80px;
     max-width: 1200px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    @media screen and (min-width: 800px) {
+      padding-left: 80px;
+      padding-right: 80px;
+    }
 `;
 
 interface EditorStringSegmentProps {
@@ -632,7 +637,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
           },
           onload: (window as any).PAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
           responses: {
-                    pageChosen: function(pageData: any) {
+            pageChosen: function (pageData: any) {
               saveOverride(segment, pageData.id, csrfToken, dispatch);
             }
           }
@@ -653,79 +658,79 @@ const EditorSynchronisedValueSegment: FunctionComponent<
         />
       );
     } else if (widget.type == 'image_chooser') {
-        const onClickChangeImage = () => {
-            (window as any).ModalWorkflow({
-                url: (window as any).chooserUrls.imageChooser,
-                onload: (window as any).IMAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
-                responses: {
-                    imageChosen: function(imageData: any) {
-                        saveOverride(
-                            segment,
-                            imageData.id,
-                            csrfToken,
-                            dispatch
-                        );
-                    }
-                }
-            });
-        };
-        if (!isLocked) {
-            buttons.push(
-                <ActionButton onClick={onClickChangeImage}>
-                    {gettext('Change image')}
-                </ActionButton>
-            );
-        }
-
-        value = (
-            <ImageChooser
-                adminBaseUrl={adminBaseUrl}
-                imageId={(override && override.value) || segment.value}
-            />
+      const onClickChangeImage = () => {
+        (window as any).ModalWorkflow({
+          url: (window as any).chooserUrls.imageChooser,
+          onload: (window as any).IMAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
+          responses: {
+            imageChosen: function (imageData: any) {
+              saveOverride(
+                segment,
+                imageData.id,
+                csrfToken,
+                dispatch
+              );
+            }
+          }
+        });
+      };
+      if (!isLocked) {
+        buttons.push(
+          <ActionButton onClick={onClickChangeImage}>
+            {gettext('Change image')}
+          </ActionButton>
         );
+      }
+
+      value = (
+        <ImageChooser
+          adminBaseUrl={adminBaseUrl}
+          imageId={(override && override.value) || segment.value}
+        />
+      );
     } else if (widget.type == 'document_chooser') {
-        const onClickChangeDocument = () => {
-            (window as any).ModalWorkflow({
-                url: (window as any).chooserUrls.documentChooser,
-                onload: (window as any).DOCUMENT_CHOOSER_MODAL_ONLOAD_HANDLERS,
-                responses: {
-                    documentChosen: function(documentData: any) {
-                        saveOverride(
-                            segment,
-                            documentData.id,
-                            csrfToken,
-                            dispatch
-                        );
-                    }
-                }
-            });
-        };
-        if (!isLocked) {
-            buttons.push(
-                <ActionButton onClick={onClickChangeDocument}>
-                    {gettext('Change document')}
-                </ActionButton>
-            );
-        }
-
-        value = (
-            <DocumentChooser
-                adminBaseUrl={adminBaseUrl}
-                documentId={(override && override.value) || segment.value}
-            />
+      const onClickChangeDocument = () => {
+        (window as any).ModalWorkflow({
+          url: (window as any).chooserUrls.documentChooser,
+          onload: (window as any).DOCUMENT_CHOOSER_MODAL_ONLOAD_HANDLERS,
+          responses: {
+            documentChosen: function (documentData: any) {
+              saveOverride(
+                segment,
+                documentData.id,
+                csrfToken,
+                dispatch
+              );
+            }
+          }
+        });
+      };
+      if (!isLocked) {
+        buttons.push(
+          <ActionButton onClick={onClickChangeDocument}>
+            {gettext('Change document')}
+          </ActionButton>
         );
+      }
+
+      value = (
+        <DocumentChooser
+          adminBaseUrl={adminBaseUrl}
+          documentId={(override && override.value) || segment.value}
+        />
+      );
     } else if (widget.type == 'snippet_chooser') {
-        const onClickChangeSnippet = () => {
-            (window as any).ModalWorkflow({
-                url: widget.chooser_url,
-                onload: (window as any).SNIPPET_CHOOSER_MODAL_ONLOAD_HANDLERS,
-                responses: {
-                    snippetChosen: function(snippetData: any) {
-                        saveOverride(
-                            segment,
-                            snippetData.id,
-                            csrfToken,
-                            dispatch
+      const onClickChangeSnippet = () => {
+        (window as any).ModalWorkflow({
+          url: widget.chooser_url,
+          onload: (window as any).SNIPPET_CHOOSER_MODAL_ONLOAD_HANDLERS,
+          responses: {
+            snippetChosen: function (snippetData: any) {
+              saveOverride(
+                segment,
+                snippetData.id,
+                csrfToken,
+                dispatch
               );
             }
           }
