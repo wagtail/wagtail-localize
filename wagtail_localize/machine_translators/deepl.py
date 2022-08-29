@@ -25,7 +25,7 @@ class DeepLTranslator(BaseMachineTranslator):
     _DEEPL_SERVER_URL_FREE = "https://api-free.deepl.com/v2/translate"
     
     def translate(self, source_locale, target_locale, strings):
-        server_url = self._DEEPL_SERVER_URL_FREE if util.auth_key_is_free_account(auth_key) else self._DEEPL_SERVER_URL
+        server_url = self._DEEPL_SERVER_URL_FREE if auth_key_is_free_account(auth_key) else self._DEEPL_SERVER_URL
         response = requests.post(
             server_url,
             {
