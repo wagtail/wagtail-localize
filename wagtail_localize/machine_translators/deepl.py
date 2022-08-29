@@ -25,11 +25,12 @@ class DeepLTranslator(BaseMachineTranslator):
     _DEEPL_SERVER_URL_FREE = "https://api-free.deepl.com/v2/translate"
     
     def translate(self, source_locale, target_locale, strings):
+        auth_key = self.options["AUTH_KEY"]
         server_url = self._DEEPL_SERVER_URL_FREE if auth_key_is_free_account(auth_key) else self._DEEPL_SERVER_URL
         response = requests.post(
             server_url,
             {
-                "auth_key": self.options["AUTH_KEY"],
+                "auth_key": auth_key,
                 "text": [string.data for string in strings],
                 "tag_handling": "xml",
                 "source_lang": language_code(source_locale.language_code),
