@@ -178,6 +178,9 @@ LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [
 
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
     "CLASS": "wagtail_localize.machine_translators.dummy.DummyTranslator",
+    "OPTIONS": {
+        "AUTH_KEY": "<Your DeepL key here>",
+    },
 }
 
 
