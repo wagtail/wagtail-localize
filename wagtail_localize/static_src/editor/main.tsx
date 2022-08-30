@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const props = JSON.parse(element.dataset.props)
 
       let Component = TranslationEditor
-      if (props.uses_legacy_header) {
+      if (props.has_legacy_styling) {
         Component = LegacyTranslationEditor
       }
 
