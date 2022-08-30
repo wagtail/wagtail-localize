@@ -247,7 +247,7 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({
 };
 
 export const BlockLabel = styled.h3`
-    color: var(--w-color-primary);
+    color: var(--w-color-secondary-100);
     border: 1px solid #f5f5f5;
     padding-left: 11px;
     padding-right: 11px;
