@@ -22,181 +22,179 @@ const StyledButtonLink = styled.a`
 `;
 
 interface HeaderButtonActionProps {
-  label: string;
-  onClick: () => void;
-  title?: string;
-  classes?: string[];
-  icon?: string;
+    label: string;
+    onClick: () => void;
+    title?: string;
+    classes?: string[];
+    icon?: string;
 }
 
 export const HeaderButtonAction: FunctionComponent<HeaderButtonActionProps> = ({
-  label,
-  onClick,
-  title,
-  classes,
-  icon
+    label,
+    onClick,
+    title,
+    classes,
+    icon
 }) => {
-  let classNames = ['button'];
+    let classNames = ['button'];
 
-  if (classes) {
-    classNames = classNames.concat(classes);
-  }
+    if (classes) {
+        classNames = classNames.concat(classes);
+    }
 
-  return (
-    <button
-      className={classNames.join(' ')}
-      title={title}
-      onClick={onClick}
-    >
-      {icon && <Icon name={icon} />} {label}
-    </button>
-  );
+    return (
+        <button
+            className={classNames.join(' ')}
+            title={title}
+            onClick={onClick}
+        >
+            {icon && <Icon name={icon} />} {label}
+        </button>
+    );
 };
 
 interface HeaderLinkActionProps {
-  label: string;
-  href: string;
-  title?: string;
-  classes?: string[];
-  icon?: string;
+    label: string;
+    href: string;
+    title?: string;
+    classes?: string[];
+    icon?: string;
 }
 
 export const HeaderLinkAction: FunctionComponent<HeaderLinkActionProps> = ({
-  label,
-  href,
-  title,
-  classes,
-  icon
+    label,
+    href,
+    title,
+    classes,
+    icon
 }) => {
-  let classNames = ['button'];
+    let classNames = ['button'];
 
-  if (classes) {
-    classNames = classNames.concat(classes);
-  }
+    if (classes) {
+        classNames = classNames.concat(classes);
+    }
 
-  return (
-    <StyledButtonLink
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={classNames.join(' ')}
-      title={title}
-    >
-      {icon && <Icon name={icon} />} {label}
-    </StyledButtonLink>
-  );
+    return (
+        <StyledButtonLink
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classNames.join(' ')}
+            title={title}
+        >
+            {icon && <Icon name={icon} />} {label}
+        </StyledButtonLink>
+    );
 };
 
 interface HeaderMetaProps {
-  name: string;
-  value: string | React.ReactFragment;
-  icon?: string;
+    name: string;
+    value: string | React.ReactFragment;
+    icon?: string;
 }
 
 export const HeaderMeta: FunctionComponent<HeaderMetaProps> = ({
-  name,
-  value,
-  icon
+    name,
+    value,
+    icon
 }) => {
-  return (
-    <li className={`header-meta--${name}`}>
-      {icon && <Icon name={icon} />} {value}
-    </li>
-  );
+    return (
+        <li className={`header-meta--${name}`}>
+            {icon && <Icon name={icon} />} {value}
+        </li>
+    );
 };
 
 interface HeaderDropdownLinkOption {
-  label: string;
-  href: string;
+    label: string;
+    href: string;
 }
 
 interface HeaderMetaDropdownProps {
-  name: string;
-  label: string;
-  options: HeaderDropdownLinkOption[];
-  icon?: string;
-  title?: string;
-  classes?: string[];
+    name: string;
+    label: string;
+    options: HeaderDropdownLinkOption[];
+    icon?: string;
+    title?: string;
+    classes?: string[];
 }
 
 export const HeaderMetaDropdown: FunctionComponent<HeaderMetaDropdownProps> = ({
-  name,
-  label,
-  options,
-  icon,
-  title,
-  classes
+    name,
+    label,
+    options,
+    icon,
+    title,
+    classes
 }) => {
-  let classNames = ['c-dropdown', 't-inverted'];
+    let classNames = ['c-dropdown', 't-inverted'];
 
-  if (classes) {
-    classNames = classNames.concat(classes);
-  }
+    if (classes) {
+        classNames = classNames.concat(classes);
+    }
 
-  let items = options.map(({ label, href }) => {
+    let items = options.map(({ label, href }) => {
+        return (
+            <li key={href} className="c-dropdown__item ">
+                <a href={href} aria-label="" className="u-link is-live">
+                    {label}
+                </a>
+            </li>
+        );
+    });
+
     return (
-      <li key={href} className="c-dropdown__item ">
-        <a href={href} aria-label="" className="u-link is-live">
-          {label}
-        </a>
-      </li>
+        <HeaderMeta
+            name={name}
+            icon={icon}
+            value={
+                <div
+                    className={classNames.join(' ')}
+                    data-dropdown=""
+                    style={{ display: 'inline-block' }}
+                >
+                    <a
+                        href="javascript:void(0)"
+                        aria-label={title}
+                        className="c-dropdown__button u-btn-current"
+                    >
+                        {label}
+                        <div
+                            data-dropdown-toggle=""
+                            className="o-icon c-dropdown__toggle c-dropdown__togle--icon [ icon icon-arrow-down ]"
+                        >
+                            <Icon name="arrow-down" />
+                            <Icon name="arrow-up" />
+                        </div>
+                    </a>
+                    <div className="t-dark">
+                        <ul className="c-dropdown__menu u-toggle  u-arrow u-arrow--tl u-background">
+                            {items}
+                        </ul>
+                    </div>
+                </div>
+            }
+        />
     );
-  });
-
-  return (
-    <HeaderMeta
-      name={name}
-      icon={icon}
-      value={
-        <div
-          className={classNames.join(' ')}
-          data-dropdown=""
-          style={{ display: 'inline-block' }}
-        >
-          <a
-            href="javascript:void(0)"
-            aria-label={title}
-            className="c-dropdown__button u-btn-current"
-          >
-            {label}
-            <div
-              data-dropdown-toggle=""
-              className="o-icon c-dropdown__toggle c-dropdown__togle--icon [ icon icon-arrow-down ]"
-            >
-              <Icon name="arrow-down" />
-              <Icon name="arrow-up" />
-            </div>
-          </a>
-          <div className="t-dark">
-            <ul className="c-dropdown__menu u-toggle  u-arrow u-arrow--tl u-background">
-              {items}
-            </ul>
-          </div>
-        </div>
-      }
-    />
-  );
 };
 
 export interface BreadcrumbItem {
-  id: number;
-  isRoot: boolean;
-  title: string;
-  exploreUrl: string;
+    id: number;
+    isRoot: boolean;
+    title: string;
+    exploreUrl: string;
 }
 
 interface HeaderProps {
-  meta?: React.ReactNode;
+    meta?: React.ReactNode;
 }
 
-const Header: FunctionComponent<HeaderProps> = ({
-  meta
-}) => {
-  return (
-    <div>
-      <ul className="row header-meta w-list-none">{meta}</ul>
-    </div>
-  );
+const Header: FunctionComponent<HeaderProps> = ({ meta }) => {
+    return (
+        <div>
+            <ul className="row header-meta w-list-none">{meta}</ul>
+        </div>
+    );
 };
 
 export default Header;
