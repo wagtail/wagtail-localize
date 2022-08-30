@@ -40,129 +40,129 @@ const StyledCloudIcon = styled(CloudIcon)`
 `;
 
 interface EditorToolboxProps extends EditorProps, EditorState {
-  dispatch: React.Dispatch<EditorAction>;
-  csrfToken: string;
+    dispatch: React.Dispatch<EditorAction>;
+    csrfToken: string;
 }
 
 const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
-  object: { isLocked },
-  links,
-  machineTranslator,
-  csrfToken,
-  stringTranslations,
-  segments
+    object: { isLocked },
+    links,
+    machineTranslator,
+    csrfToken,
+    stringTranslations,
+    segments
 }) => {
-  if (isLocked) {
-    return <></>;
-  }
-
-  const hasUntranslatedSegments =
-    Array.from(stringTranslations.keys()).length < segments.length;
-
-  const uploadPofileForm = React.useRef<HTMLFormElement>(null);
-  const uploadPofileFileInput = React.useRef<HTMLInputElement>(null);
-
-  const onClickUploadPO = () => {
-    if (uploadPofileFileInput.current) {
-      uploadPofileFileInput.current.click();
+    if (isLocked) {
+        return <></>;
     }
-  };
 
-  const uploadPofile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
+    const hasUntranslatedSegments =
+        Array.from(stringTranslations.keys()).length < segments.length;
 
-    if (uploadPofileForm.current) {
-      uploadPofileForm.current.submit();
-    }
-  };
+    const uploadPofileForm = React.useRef<HTMLFormElement>(null);
+    const uploadPofileFileInput = React.useRef<HTMLInputElement>(null);
 
-  return (
-    <ToolboxWrapper>
-      <ToolWrapper className='w-tabs__panel'>
-        <p>
-          {gettext('Download PO file and input translations offline')}
-        </p>
-        <a
-          className="button button-primary button--icon"
-          href={links.downloadPofile}
-          download
-        >
-          <Icon name="download" /> {gettext('Download PO file')}
-        </a>
-      </ToolWrapper>
+    const onClickUploadPO = () => {
+        if (uploadPofileFileInput.current) {
+            uploadPofileFileInput.current.click();
+        }
+    };
 
-      <ToolWrapper className='w-tabs__panel'>
-        <p>
-          {gettext(
-            'Upload translated PO file to submit translations'
-          )}
-        </p>
-        <button
-          className="button button-primary button--icon"
-          onClick={onClickUploadPO}
-        >
-          <Icon name="upload" /> {gettext('Upload PO file')}
-        </button>
-        <form
-          ref={uploadPofileForm}
-          action={links.uploadPofile}
-          method="post"
-          encType="multipart/form-data"
-        >
-          <input
-            type="hidden"
-            name="csrfmiddlewaretoken"
-            value={csrfToken}
-          />
-          <input
-            type="hidden"
-            name="next"
-            value={window.location.href}
-          />
-          <HiddenFileInput
-            ref={uploadPofileFileInput}
-            onChange={uploadPofile}
-            type="file"
-            name="file"
-          />
-        </form>
-      </ToolWrapper>
+    const uploadPofile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
 
-      {machineTranslator && (
-        <ToolWrapper>
-          <p>
-            {gettext('Translate all missing strings with ') +
-              machineTranslator.name}
-          </p>
-          <form
-            action={machineTranslator.url}
-            method="post"
-            encType="multipart/form-data"
-          >
-            <input
-              type="hidden"
-              name="csrfmiddlewaretoken"
-              value={csrfToken}
-            />
-            <input
-              type="hidden"
-              name="next"
-              value={window.location.href}
-            />
-            <button
-              type="submit"
-              className="button button-primary button--icon"
-              disabled={!hasUntranslatedSegments}
-            >
-              <StyledCloudIcon />{' '}
-              {gettext('Translate with ') +
-                machineTranslator.name}
-            </button>
-          </form>
-        </ToolWrapper>
-      )}
-    </ToolboxWrapper>
-  );
+        if (uploadPofileForm.current) {
+            uploadPofileForm.current.submit();
+        }
+    };
+
+    return (
+        <ToolboxWrapper>
+            <ToolWrapper className="w-tabs__panel">
+                <p>
+                    {gettext('Download PO file and input translations offline')}
+                </p>
+                <a
+                    className="button button-primary button--icon"
+                    href={links.downloadPofile}
+                    download
+                >
+                    <Icon name="download" /> {gettext('Download PO file')}
+                </a>
+            </ToolWrapper>
+
+            <ToolWrapper className="w-tabs__panel">
+                <p>
+                    {gettext(
+                        'Upload translated PO file to submit translations'
+                    )}
+                </p>
+                <button
+                    className="button button-primary button--icon"
+                    onClick={onClickUploadPO}
+                >
+                    <Icon name="upload" /> {gettext('Upload PO file')}
+                </button>
+                <form
+                    ref={uploadPofileForm}
+                    action={links.uploadPofile}
+                    method="post"
+                    encType="multipart/form-data"
+                >
+                    <input
+                        type="hidden"
+                        name="csrfmiddlewaretoken"
+                        value={csrfToken}
+                    />
+                    <input
+                        type="hidden"
+                        name="next"
+                        value={window.location.href}
+                    />
+                    <HiddenFileInput
+                        ref={uploadPofileFileInput}
+                        onChange={uploadPofile}
+                        type="file"
+                        name="file"
+                    />
+                </form>
+            </ToolWrapper>
+
+            {machineTranslator && (
+                <ToolWrapper>
+                    <p>
+                        {gettext('Translate all missing strings with ') +
+                            machineTranslator.name}
+                    </p>
+                    <form
+                        action={machineTranslator.url}
+                        method="post"
+                        encType="multipart/form-data"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrfmiddlewaretoken"
+                            value={csrfToken}
+                        />
+                        <input
+                            type="hidden"
+                            name="next"
+                            value={window.location.href}
+                        />
+                        <button
+                            type="submit"
+                            className="button button-primary button--icon"
+                            disabled={!hasUntranslatedSegments}
+                        >
+                            <StyledCloudIcon />{' '}
+                            {gettext('Translate with ') +
+                                machineTranslator.name}
+                        </button>
+                    </form>
+                </ToolWrapper>
+            )}
+        </ToolboxWrapper>
+    );
 };
 
 export default EditorToolbox;

@@ -27,18 +27,18 @@ const Title = styled.div`
 `;
 
 interface SectionProps {
-  title: string;
+    title: string;
 }
 
 const Section: FunctionComponent<SectionProps> = ({ title, children }) => {
-  return (
-    <section>
-      <Title>
-        <h3>{title}</h3>
-      </Title>
-      {children}
-    </section>
-  );
+    return (
+        <section>
+            <Title>
+                <h3>{title}</h3>
+            </Title>
+            {children}
+        </section>
+    );
 };
 
 export default Section;
