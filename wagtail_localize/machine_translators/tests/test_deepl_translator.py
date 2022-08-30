@@ -5,6 +5,7 @@ from wagtail_localize.machine_translators.deepl import DeepLTranslator
 
 
 class TestDeeplTranslator(TestCase):
+    @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR["CLASS"]="wagtail_localize.machine_translators.deepl.DeepLTranslator")
     def setUp(self):
         pass
     
