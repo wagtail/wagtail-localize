@@ -943,7 +943,7 @@ def edit_translation(request, translation, instance):
     else:
         add_convert_to_alias_url = False
 
-    uses_legacy_header = WAGTAIL_VERSION <= (4, 0)
+    has_legacy_styling = WAGTAIL_VERSION <= (4, 0)
 
     side_panels = LocalizedPageSidePanels(
         request,
@@ -961,7 +961,7 @@ def edit_translation(request, translation, instance):
             # These props are passed directly to the TranslationEditor react component
             "props": json.dumps(
                 {
-                    "uses_legacy_header": uses_legacy_header,
+                    "has_legacy_styling": has_legacy_styling,
                     "adminBaseUrl": reverse("wagtailadmin_home"),
                     "object": {
                         "title": str(instance),
@@ -1074,8 +1074,7 @@ def edit_translation(request, translation, instance):
                 },
                 cls=DjangoJSONEncoder,
             ),
-            "has_editor_css": WAGTAIL_VERSION <= (4, 0),
-            "uses_legacy_header": uses_legacy_header
+            "has_legacy_styling": has_legacy_styling
         },
     )
 
