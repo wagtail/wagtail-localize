@@ -10,11 +10,11 @@ from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.decorators import method_decorator
 from django.db import models, transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext as _
@@ -33,8 +33,8 @@ from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
+from wagtail.admin.ui.side_panels import PagePreviewSidePanel, PageSidePanels
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.admin.ui.side_panels import PageSidePanels, PagePreviewSidePanel
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, TranslatableMixin
@@ -947,11 +947,7 @@ def edit_translation(request, translation, instance):
 
     has_legacy_styling = WAGTAIL_VERSION <= (4, 0)
 
-    side_panels = LocalizedPageSidePanels(
-        request,
-        instance,
-        translation
-    )
+    side_panels = LocalizedPageSidePanels(request, instance, translation)
 
     return render(
         request,
@@ -1076,15 +1072,13 @@ def edit_translation(request, translation, instance):
                 },
                 cls=DjangoJSONEncoder,
             ),
-            "has_legacy_styling": has_legacy_styling
+            "has_legacy_styling": has_legacy_styling,
         },
     )
 
 
 class LocalizedPageSidePanels(PageSidePanels):
-    def __init__(
-        self, request, page, translation
-    ):
+    def __init__(self, request, page, translation):
         super().__init__(request, page, preview_enabled=False, comments_enabled=False)
 
         self.side_panels += [
