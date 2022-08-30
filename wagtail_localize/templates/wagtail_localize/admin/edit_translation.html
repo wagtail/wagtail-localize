@@ -6,7 +6,7 @@
 {% block titletag %}{% blocktrans with instance=translation.source.as_instance locale=translation.target_locale %}Translation of {{ instance }} into {{ locale }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
-    {% if not uses_legacy_header %} 
+    {% if not has_legacy_styling %} 
     <div class="w-sticky w-top-0 w-z-header">
       {% page_permissions page as page_perms %}
       {% include 'wagtailadmin/shared/headers/page_edit_header.html' with page=page page_for_status=page page_perms=page_perms content_type=page.content_type %}
@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block extra_css %}
-    {% if has_editor_css %}
+    {% if has_legacy_styling %}
         {% include "wagtailadmin/pages/_editor_css.html" %}
     {% endif %}
 {% endblock %}

@@ -146,7 +146,7 @@ export interface SegmentOverride {
 }
 
 export interface EditorProps {
-  uses_legacy_header: boolean;
+  has_legacy_styling: boolean;
   adminBaseUrl: string;
   csrfToken: string;
   object: {
