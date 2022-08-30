@@ -24,48 +24,21 @@ const Title = styled.div`
         color: inherit;
         font-size: inherit;
     }
-
-    &::before {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-shadow: none;
-        font-family: wagtail;
-        text-transform: none;
-        content: '';
-        text-align: center;
-        display: block;
-        position: absolute;
-        z-index: 2;
-        font-size: 2em;
-        top: 0;
-        line-height: 1.8em;
-        left: 0;
-        color: #fff;
-        padding: 0;
-        margin: 0;
-        background-color: var(--w-color-primary);
-
-        width: 20px;
-    
-        @media screen and (min-width: 800px) {
-          width: 80px;
-        }
-    }
 `;
 
 interface SectionProps {
-  title: string;
+    title: string;
 }
 
 const Section: FunctionComponent<SectionProps> = ({ title, children }) => {
-  return (
-    <section>
-      <Title>
-        <h3>{title}</h3>
-      </Title>
-      {children}
-    </section>
-  );
+    return (
+        <section>
+            <Title>
+                <h3>{title}</h3>
+            </Title>
+            {children}
+        </section>
+    );
 };
 
 export default Section;
