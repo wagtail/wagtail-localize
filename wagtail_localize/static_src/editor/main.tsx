@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TranslationEditor from "./components/TranslationEditor"
-import LegacyTranslationEditor from "../wagtail_2.15_LTS/editor/components/TranslationEditor"
+import LegacyTranslationEditor from "../legacy/editor/components/TranslationEditor"
 
 document.addEventListener('DOMContentLoaded', async () => {
   const element = document.querySelector('.js-translation-editor');
