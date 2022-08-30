@@ -10,6 +10,7 @@ from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.decorators import method_decorator
 from django.db import models, transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -45,6 +46,7 @@ from wagtail.images.models import AbstractImage
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
+from wagtail.utils.decorators import xframe_options_sameorigin_override
 
 from wagtail_localize.compat import (
     DATE_FORMAT,
@@ -1134,6 +1136,7 @@ def user_can_edit_instance(user, instance):
         return user_can_edit_snippet_type(user, instance.__class__)
 
 
+@method_decorator(xframe_options_sameorigin_override)
 def preview_translation(request, translation_id, mode=None):
     translation = get_object_or_404(Translation, id=translation_id)
 
