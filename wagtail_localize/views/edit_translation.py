@@ -1136,17 +1136,17 @@ def preview_translation(request, translation_id, mode=None):
 
     instance = translation.get_target_instance()
 
-    # if not isinstance(instance, Page):
-    #     raise Http404
+    if not isinstance(instance, Page):
+        raise Http404
 
-    # if not user_can_edit_instance(request.user, instance):
-    #     raise PermissionDenied
+    if not user_can_edit_instance(request.user, instance):
+        raise PermissionDenied
 
     if mode is None:
         mode = instance.default_preview_mode
 
-    # if mode not in dict(instance.preview_modes):
-    #     raise Http404
+    if mode not in dict(instance.preview_modes):
+        raise Http404
 
     translation = translation.source.get_ephemeral_translated_instance(
         translation.target_locale, fallback=True
