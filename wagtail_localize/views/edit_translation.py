@@ -557,6 +557,7 @@ def edit_translation(request, translation, instance):
 
         page_perms = instance.permissions_for_user(request.user)
 
+        is_page = True
         is_live = instance.live
         is_locked = instance.locked
 
@@ -577,11 +578,12 @@ def edit_translation(request, translation, instance):
         can_lock = page_perms.can_lock()
         can_unlock = page_perms.can_unlock()
         can_delete = page_perms.can_delete()
-
     else:
         # Snippet
         # Note: Edit permission is already checked by the edit snippet view
+        page_perms = None
 
+        is_page = False
         is_live = True
         is_locked = False
         last_published_at = None
@@ -946,17 +948,25 @@ def edit_translation(request, translation, instance):
     else:
         add_convert_to_alias_url = False
 
-    has_legacy_styling = WAGTAIL_VERSION <= (4, 0)
-
-    side_panels = LocalizedPageSidePanels(request, instance, translation)
+    if WAGTAIL_VERSION >= (4, 0):
+        has_legacy_styling = False
+        side_panels = (
+            LocalizedPageSidePanels(request, instance, translation) if is_page else None
+        )
+    else:
+        has_legacy_styling = True
+        side_panels = None
 
     return render(
         request,
         "wagtail_localize/admin/edit_translation.html",
         {
-            "side_panels": side_panels,
-            "page": instance,
             "translation": translation,
+            "instance": instance,
+            "side_panels": side_panels,
+            "is_page": is_page,
+            "page_perms": page_perms,
+            "model_opts": instance._meta,
             # These props are passed directly to the TranslationEditor react component
             "props": json.dumps(
                 {

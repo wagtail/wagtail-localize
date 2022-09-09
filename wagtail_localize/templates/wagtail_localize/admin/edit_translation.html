@@ -7,11 +7,18 @@
 
 {% block content %}
     {% if not has_legacy_styling %}
-    <div class="w-sticky w-top-0 w-z-header">
-      {% page_permissions page as page_perms %}
-      {% include 'wagtailadmin/shared/headers/page_edit_header.html' with page=page page_for_status=page page_perms=page_perms content_type=page.content_type %}
-      {% include "wagtailadmin/shared/side_panels.html" with page=page page_perms=page_perms page_for_status=page content_type=page.content_type %}
-    </div>
+        {% if is_page %}
+            <div class="w-sticky w-top-0 w-z-header">
+                {% include 'wagtailadmin/shared/headers/page_edit_header.html' with page=instance page_for_status=instance page_perms=page_perms content_type=instance.content_type %}
+                {% include "wagtailadmin/shared/side_panels.html" with page=instance page_for_status=instance page_perms=page_perms content_type=instance.content_type %}
+            </div>
+        {% else %}
+            <div class="w-sticky w-top-0 w-z-header">
+                {% include 'wagtail_localize/admin/includes/generic_header.html' %}
+                {# FIXME: include side panels #}
+            </div>
+            {% include "wagtailadmin/shared/header.html" with title=instance icon="snippet" merged=1 only %}
+        {% endif %}
     {% endif %}
     <div class="js-translation-editor" data-props="{{ props }}">
         {# Generates the CSRF token hidden input. This is read by the JavaScript. #}
