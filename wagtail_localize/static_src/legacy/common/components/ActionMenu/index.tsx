@@ -102,7 +102,7 @@ const ActionMenu: FunctionComponent<ActionMenuProps> = ({
 
                 {/* Single-mode preview */}
                 {previewModes && previewModes.length == 1 && (
-                    <li className="preview">
+                    <li className="preview dropdown">
                         <a
                             className="button button--icon"
                             href={previewModes[0].url}

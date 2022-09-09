@@ -180,6 +180,7 @@ export interface EditorProps {
         stopTranslationUrl: string;
         convertToAliasUrl: string;
     };
+    previewModes: PreviewMode[];
     machineTranslator: {
         name: string;
         url: string;
