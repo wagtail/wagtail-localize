@@ -11,6 +11,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     object: { isLocked },
     perms,
     links,
+    previewModes,
     locale
 }) => {
     let actions = [
@@ -149,6 +150,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                         <ActionMenu
                             defaultAction={defaultAction}
                             actions={actions}
+                            previewModes={previewModes}
                         />
                     </li>
                 </ul>
@@ -157,7 +159,11 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     } else {
         return (
             <footer>
-                <ActionMenu defaultAction={defaultAction} actions={actions} />
+                <ActionMenu
+                    defaultAction={defaultAction}
+                    actions={actions}
+                    previewModes={previewModes}
+                />
             </footer>
         );
     }
