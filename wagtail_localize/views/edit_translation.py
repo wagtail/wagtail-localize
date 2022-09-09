@@ -33,7 +33,6 @@ from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
-from wagtail.admin.ui.side_panels import PagePreviewSidePanel, PageSidePanels
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
@@ -67,6 +66,8 @@ from wagtail_localize.segments import StringSegmentValue
 
 if WAGTAIL_VERSION >= (4, 0):
     from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
+
+    from wagtail_localize.side_panels import LocalizedPageSidePanels
 else:
     from wagtail.snippets.views.snippets import get_snippet_edit_handler
 
@@ -1075,48 +1076,6 @@ def edit_translation(request, translation, instance):
             "has_legacy_styling": has_legacy_styling,
         },
     )
-
-
-class LocalizedPageSidePanels(PageSidePanels):
-    def __init__(self, request, page, translation):
-        super().__init__(request, page, preview_enabled=False, comments_enabled=False)
-
-        self.side_panels += [
-            LocalizedPagePreviewSidePanel(page, self.request, translation),
-        ]
-
-
-class LocalizedPagePreviewSidePanel(PagePreviewSidePanel):
-    def __init__(self, object, request, translation):
-        super().__init__(object, request)
-        self.translation = translation
-
-    def get_context_data(self, parent_context):
-        context = super().get_context_data(parent_context)
-
-        preview_modes = [
-            {
-                "mode": mode,
-                "label": label,
-                "url": reverse(
-                    "wagtail_localize:preview_translation",
-                    args=[self.translation.id],
-                )
-                if mode == self.object.default_preview_mode
-                else reverse(
-                    "wagtail_localize:preview_translation",
-                    args=[self.translation.id, mode],
-                ),
-            }
-            for mode, label in (
-                self.object.preview_modes if isinstance(self.object, Page) else []
-            )
-        ]
-
-        for mode in preview_modes:
-            context["preview_url"] = mode["url"]
-
-        return context
 
 
 def user_can_edit_instance(user, instance):
