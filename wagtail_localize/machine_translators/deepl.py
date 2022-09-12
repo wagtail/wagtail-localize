@@ -17,7 +17,7 @@ class DeepLTranslator(BaseMachineTranslator):
     display_name = "DeepL"
 
     def get_api_endpoint(self):
-        if self.options["AUTH_KEY"].endswith(":fx"):
+        if self.options.get("AUTH_KEY", "").endswith(":fx"):
             return "https://api-free.deepl.com/v2/translate"
         return "https://api.deepl.com/v2/translate"
 
