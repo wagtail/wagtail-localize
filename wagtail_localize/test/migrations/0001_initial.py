@@ -4,6 +4,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
 import uuid
+from wagtail import VERSION as WAGTAIL_VERSION
 import wagtail.core.blocks
 import wagtail.core.blocks.field_block
 import wagtail.core.fields
@@ -18,9 +19,14 @@ class Migration(migrations.Migration):
 
     initial = True
 
+    core_migration = (
+        "0076_modellogentry_revision"
+        if WAGTAIL_VERSION >= (4, 0)
+        else "0059_apply_collection_ordering"
+    )
     dependencies = [
-        ("wagtaildocs", "0010_document_file_hash"),
         ("wagtailcore", "0059_apply_collection_ordering"),
+        ("wagtaildocs", "0010_document_file_hash"),
         ("wagtailimages", "0022_uploadedimage"),
         ("wagtail_localize", "0015_translationcontext_field_path"),
     ]

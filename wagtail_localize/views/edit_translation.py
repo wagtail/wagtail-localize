@@ -45,7 +45,6 @@ from wagtail.images.models import AbstractImage
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
-from wagtail.utils.decorators import xframe_options_sameorigin_override
 
 from wagtail_localize.compat import (
     DATE_FORMAT,
@@ -66,10 +65,15 @@ from wagtail_localize.segments import StringSegmentValue
 
 if WAGTAIL_VERSION >= (4, 0):
     from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
+    from wagtail.utils.decorators import xframe_options_sameorigin_override
 
     from wagtail_localize.side_panels import LocalizedPageSidePanels
 else:
     from wagtail.snippets.views.snippets import get_snippet_edit_handler
+
+    def xframe_options_sameorigin_override(func):
+        return func
+
 
 if WAGTAIL_VERSION >= (3, 0):
     # TODO: tidy this up once we drop support for Wagtail < 3.0

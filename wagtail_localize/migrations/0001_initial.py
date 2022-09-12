@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail_localize.compat import get_revision_model
 
 
@@ -9,8 +10,13 @@ class Migration(migrations.Migration):
 
     initial = True
 
+    core_migration = (
+        "0076_modellogentry_revision"
+        if WAGTAIL_VERSION >= (4, 0)
+        else "0057_page_locale_fields_notnull"
+    )
     dependencies = [
-        ("wagtailcore", "0057_page_locale_fields_notnull"),
+        ("wagtailcore", core_migration),
         ("contenttypes", "0002_remove_content_type_name"),
     ]
 
