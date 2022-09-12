@@ -77,7 +77,7 @@ const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
     };
 
     return (
-        <ToolboxWrapper>
+        <ToolboxWrapper className="w-mt-4">
             <ToolWrapper className="w-tabs__panel">
                 <p>
                     {gettext('Download PO file and input translations offline')}
