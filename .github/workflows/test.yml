@@ -46,6 +46,9 @@ jobs:
           - python: '3.9'
             django: '3.2'
             wagtail: '3.0'
+          - python: '3.9'
+            django: '3.2'
+            wagtail: '4.0'
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
@@ -76,43 +79,46 @@ jobs:
         python: ['3.7', '3.8', '3.9']
         django: ['2.2']
         wagtail: ['2.11', '2.12', '2.13']
-        postgres: ['10.8']
         experimental: [false]
         include:
           # Add test for Django 3.2 that is only suported on Wagtail 2.13+
           - python: '3.9'
             django: '3.2'
             wagtail: '2.14'
-            postgres: '10.8'
             experimental: false
           - python: '3.9'
             django: '3.2'
             wagtail: '2.15'
-            postgres: '10.8'
             experimental: false
           - python: '3.9'
             django: '3.2'
             wagtail: '2.16'
-            postgres: '10.8'
             experimental: false
           - python: '3.9'
             django: '4.0'
             wagtail: '2.16'
-            postgres: '10.8'
             experimental: false
           - python: '3.9'
             django: '3.2'
             wagtail: '3.0'
-            postgres: '10.8'
             experimental: false
           - python: '3.9'
             django: '4.0'
             wagtail: '3.0'
-            postgres: '10.8'
+            experimental: false
+          - python: '3.9'
+            django: '4.0'
+            wagtail: '4.0'
+            experimental: false
+          - python: '3.9'
+            django: '4.1'
+            wagtail: '4.0'
             experimental: false
     services:
       postgres:
-        image: postgres:${{ matrix.postgres }}
+        image: ${{ matrix.postgres || 'postgres:11' }}
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
