@@ -329,7 +329,6 @@ const SegmentValue = styled.div`
 `;
 
 const ActionButton = styled.button`
-    text-transform: uppercase;
     font-size: 0.8em;
     font-weight: bold;
     color: var(--w-color-secondary);

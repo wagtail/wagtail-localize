@@ -7,7 +7,6 @@ const Title = styled.div`
     -webkit-font-smoothing: auto;
     background-color: var(--w-color-secondary-50);
     color: var(--w-color-secondary);
-    text-transform: uppercase;
     padding: 0.9em 0 0.9em 95px;
     font-size: 0.95em;
     margin: 0;
