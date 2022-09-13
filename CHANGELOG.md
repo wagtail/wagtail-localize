@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3alpha1] - 2022-09-13
+
+### Added
+
+- [Support for Wagtail 4.0](https://github.com/wagtail/wagtail-localize/pull/613) @janbaykara, @zerolab
+  [#588](https://github.com/wagtail/wagtail-localize/pull/588), [#592](https://github.com/wagtail/wagtail-localize/pull/592),
+  [#599](https://github.com/wagtail/wagtail-localize/pull/599), [#601](https://github.com/wagtail/wagtail-localize/pull/601) with extra thanks to @gasman
+- [flit for packaging](https://github.com/wagtail/wagtail-localize/pull/589) @engineervix @chris48s
+- [Support for the DeepL free API endpoint](https://github.com/wagtail/wagtail-localize/pull/604) @ramiboutas with hat/tip to @vladox
+
 ## [1.2.1] - 2022-06-05
 
 ### Fixed
@@ -128,7 +138,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.2.1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3alpha1...HEAD
+[1.3alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.2.1...v1.3alpha1
 [1.2.1]: https://github.com/wagtail/wagtail-localize/compare/v1.2...v1.2.1
 [1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.2...v1.2
 [1.1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.1...v1.1.2
