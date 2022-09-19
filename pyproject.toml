@@ -31,8 +31,8 @@ classifiers = [
 dynamic = ["version"]
 requires-python = ">=3.7"
 dependencies = [
-    "Django>=2.2,<4.2",
-    "Wagtail>=2.11,<5.0",
+    "Django>=3.2,<4.2",
+    "Wagtail>=2.15,<5.0",
     "polib>=1.1,<2.0",
     "typing_extensions>=4.0"
 ]
