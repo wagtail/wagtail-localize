@@ -3,7 +3,6 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core.models import Locale, Page, PageViewRestriction
 from wagtail.tests.utils import WagtailTestUtils
 
@@ -646,11 +645,10 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
             get_snippet_list_url_from_args("wagtail_localize_test", "testsnippet")
         )
 
-        extra = ' title="Translate"' if WAGTAIL_VERSION >= (2, 15) else ""
         self.assertContains(
             response,
             (
-                f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/"{extra}>Translate</a>'
+                f'href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/" title="Translate">Translate</a>'
             ),
         )
 

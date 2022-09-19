@@ -527,7 +527,7 @@ class TranslationSource(models.Model):
 
         if isinstance(instance, Page):
             content_json = self.content_json
-            if WAGTAIL_VERSION >= (2, 17):
+            if WAGTAIL_VERSION >= (3, 0):
                 # see https://github.com/wagtail/wagtail/pull/8024
                 content_json = json.loads(content_json)
             return instance.with_content_json(content_json)

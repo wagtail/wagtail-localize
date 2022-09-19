@@ -18,16 +18,6 @@ from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import TestChildObject, TestPage, TestSnippet
 
 
-def streamfield_raw_data(stream_data):
-    """
-    Extracts raw_data from streamfields. The attribute for doing this changed in Wagtail 2.12
-    """
-    if WAGTAIL_VERSION >= (2, 12):
-        return stream_data.raw_data
-    else:
-        return stream_data.stream_data
-
-
 def make_test_page(**kwargs):
     root_page = Page.objects.get(id=1)
     kwargs.setdefault("title", "Test page")
@@ -287,7 +277,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -317,7 +307,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -347,7 +337,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -381,7 +371,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -418,7 +408,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -451,7 +441,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -485,7 +475,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -515,7 +505,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -554,7 +544,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -598,7 +588,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -647,7 +637,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),
@@ -690,7 +680,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
         translated_page.refresh_from_db()
 
         self.assertEqual(
-            list(streamfield_raw_data(translated_page.test_streamfield)),
+            list(translated_page.test_streamfield.raw_data),
             [
                 {
                     "id": str(block_id),

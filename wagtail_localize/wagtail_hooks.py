@@ -13,21 +13,9 @@ from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
+from wagtail.core.log_actions import LogFormatter
 from wagtail.core.models import Locale, Page, TranslatableMixin
-
-
-if WAGTAIL_VERSION >= (2, 15):
-    from wagtail.core.log_actions import LogFormatter
-
-# The `wagtail.snippets.action_menu` module is introduced in https://github.com/wagtail/wagtail/pull/6384
-# FIXME: Remove this check when this module is merged into master
-try:
-    from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
-
-    SNIPPET_RESTART_TRANSLATION_ENABLED = True
-except ImportError:
-    SNIPPET_RESTART_TRANSLATION_ENABLED = False
-
+from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
 from wagtail.snippets.widgets import SnippetListingButton
 
 # Import synctree so it can register its signal handler
@@ -283,7 +271,7 @@ class RestartTranslationPageActionMenuItem(PageActionMenuItem):
     icon_name = "undo"
     classname = "action-secondary"
 
-    def _is_shown(self, context):
+    def is_shown(self, context):
         # Only show this menu item on the edit view where there was a previous translation record
         if context["view"] != "edit":
             return False
@@ -293,16 +281,6 @@ class RestartTranslationPageActionMenuItem(PageActionMenuItem):
             target_locale_id=context["page"].locale_id,
             enabled=False,
         ).exists()
-
-    if WAGTAIL_VERSION >= (2, 15):
-
-        def is_shown(self, context):
-            return self._is_shown(context)
-
-    else:
-
-        def is_shown(self, request, context):
-            return self._is_shown(context)
 
 
 @hooks.register("register_page_action_menu_item")
@@ -316,7 +294,7 @@ class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
     icon_name = "wagtail-localize-convert"
     classname = "action-secondary"
 
-    def _is_shown(self, context):
+    def is_shown(self, context):
         # Only show this menu item on the edit view where there was a previous translation record
         if context["view"] != "edit":
             return False
@@ -336,16 +314,6 @@ class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
             )
         except TranslationSource.DoesNotExist:
             return False
-
-    if WAGTAIL_VERSION >= (2, 15):
-
-        def is_shown(self, context):
-            return self._is_shown(context)
-
-    else:
-
-        def is_shown(self, request, context):
-            return self._is_shown(context)
 
 
 @hooks.register("register_page_action_menu_item")
@@ -384,41 +352,30 @@ def before_edit_snippet(request, instance):
             pass
 
 
-if SNIPPET_RESTART_TRANSLATION_ENABLED:
+class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
+    label = gettext_lazy("Start Synced translation")
+    name = "localize-restart-translation"
+    icon_name = "undo"
+    classname = "action-secondary"
 
-    class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
-        label = gettext_lazy("Start Synced translation")
-        name = "localize-restart-translation"
-        icon_name = "undo"
-        classname = "action-secondary"
+    def is_shown(self, context):
+        # Only show this menu item on the edit view where there was a previous translation record
+        if context["view"] != "edit":
+            return False
 
-        def _is_shown(self, context):
-            # Only show this menu item on the edit view where there was a previous translation record
-            if context["view"] != "edit":
-                return False
+        if not issubclass(context["model"], TranslatableMixin):
+            return False
 
-            if not issubclass(context["model"], TranslatableMixin):
-                return False
+        return Translation.objects.filter(
+            source__object_id=context["instance"].translation_key,
+            target_locale_id=context["instance"].locale_id,
+            enabled=False,
+        ).exists()
 
-            return Translation.objects.filter(
-                source__object_id=context["instance"].translation_key,
-                target_locale_id=context["instance"].locale_id,
-                enabled=False,
-            ).exists()
 
-        if WAGTAIL_VERSION >= (2, 15):
-
-            def is_shown(self, context):
-                return self._is_shown(context)
-
-        else:
-
-            def is_shown(self, request, context):
-                return self._is_shown(context)
-
-    @hooks.register("register_snippet_action_menu_item")
-    def register_restart_translation_snippet_action_menu_item(model):
-        return RestartTranslationSnippetActionMenuItem(order=0)
+@hooks.register("register_snippet_action_menu_item")
+def register_restart_translation_snippet_action_menu_item(model):
+    return RestartTranslationSnippetActionMenuItem(order=0)
 
 
 class TranslationsReportMenuItem(MenuItem):
@@ -438,44 +395,20 @@ def register_wagtail_localize2_report_menu_item():
 
 @hooks.register("register_log_actions")
 def wagtail_localize_log_actions(actions):
+    @actions.register_action("wagtail_localize.convert_to_alias")
+    class ConvertToAliasActionFormatter(LogFormatter):
+        label = gettext_lazy("Convert page to alias")
 
-    if WAGTAIL_VERSION >= (2, 15):
-
-        @actions.register_action("wagtail_localize.convert_to_alias")
-        class ConvertToAliasActionFormatter(LogFormatter):
-            label = gettext_lazy("Convert page to alias")
-
-            def format_message(self, log_entry):
-                try:
-                    return _(
-                        "Converted page '%(title)s' to an alias of the translation source page '%(source_title)s'"
-                    ) % {
-                        "title": log_entry.data["page"]["title"],
-                        "source_title": log_entry.data["source"]["title"],
-                    }
-                except KeyError:
-                    return _(
-                        "Converted page to an alias of the translation source page"
-                    )
-
-    else:
-
-        def convert_to_alias_message(data):
+        def format_message(self, log_entry):
             try:
                 return _(
                     "Converted page '%(title)s' to an alias of the translation source page '%(source_title)s'"
                 ) % {
-                    "title": data["page"]["title"],
-                    "source_title": data["source"]["title"],
+                    "title": log_entry.data["page"]["title"],
+                    "source_title": log_entry.data["source"]["title"],
                 }
             except KeyError:
                 return _("Converted page to an alias of the translation source page")
-
-        actions.register_action(
-            "wagtail_localize.convert_to_alias",
-            _("Convert page to alias"),
-            convert_to_alias_message,
-        )
 
 
 @hooks.register("register_icons")

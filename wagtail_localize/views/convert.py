@@ -117,7 +117,7 @@ def sync_alias(source_page, alias_page, revision=None, _content_json=None):
     if _content_json is None:
         _content_json = source_page.to_json()
 
-    if WAGTAIL_VERSION >= (2, 17):
+    if WAGTAIL_VERSION >= (3, 0):
         # see https://github.com/wagtail/wagtail/pull/8024
         _content_json = json.loads(_content_json)
 
@@ -185,7 +185,7 @@ def sync_alias(source_page, alias_page, revision=None, _content_json=None):
         )
 
     # Update any aliases of that alias
-    if WAGTAIL_VERSION >= (2, 17):
+    if WAGTAIL_VERSION >= (3, 0):
         alias_page.update_aliases(revision=revision, _content=_content_json)
     else:
         alias_page.update_aliases(revision=revision, _content_json=_content_json)

@@ -35,7 +35,7 @@ class ConvertToAliasTest(ConvertToAliasTestData, TestCase):
         menu_item = ConvertToAliasPageActionMenuItem()
         context = {"view": view, "page": page}
 
-        return menu_item._is_shown(context)
+        return menu_item.is_shown(context)
 
     def test_page_action_not_available_on_non_translation_pages(self):
         self.assertFalse(self._page_action_is_shown(self.page))

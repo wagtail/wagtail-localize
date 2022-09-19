@@ -14,8 +14,6 @@ import os
 
 import dj_database_url
 
-from wagtail import VERSION as WAGTAIL_VERSION
-
 
 # Build paths inside the project like this: os.path.join(PROJECT_DIR, ...)
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -183,12 +181,10 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
     },
 }
 
-
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-if WAGTAIL_VERSION >= (2, 15):
-    WAGTAILSEARCH_BACKENDS = {
-        "default": {
-            "BACKEND": "wagtail.search.backends.database",
-        }
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.database",
     }
+}
