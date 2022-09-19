@@ -5,7 +5,6 @@ import uuid
 
 import polib
 
-from django import VERSION as DJANGO_VERSION
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -1376,18 +1375,11 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertContains(
-                response,
-                "The data model for &#x27;Test page&#x27; has been changed since the last translation sync. "
-                "If any new fields have been added recently, these may not be visible until the next translation sync.",
-            )
-        else:
-            self.assertContains(
-                response,
-                "The data model for &#39;Test page&#39; has been changed since the last translation sync. "
-                "If any new fields have been added recently, these may not be visible until the next translation sync.",
-            )
+        self.assertContains(
+            response,
+            "The data model for &#x27;Test page&#x27; has been changed since the last translation sync. "
+            "If any new fields have been added recently, these may not be visible until the next translation sync.",
+        )
 
     def test_edit_snippet_translation(self):
         response = self.client.get(get_snippet_edit_url(self.fr_snippet))
@@ -1571,16 +1563,10 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "success")
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                messages[0].message,
-                "Published &#x27;The title&#x27; in French.\n\n\n\n\n",
-            )
-        else:
-            self.assertEqual(
-                messages[0].message,
-                "Published &#39;The title&#39; in French.\n\n\n\n\n",
-            )
+        self.assertEqual(
+            messages[0].message,
+            "Published &#x27;The title&#x27; in French.\n\n\n\n\n",
+        )
 
         # Check the page was published
         self.fr_page.refresh_from_db()
@@ -1619,16 +1605,10 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "warning")
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                messages[0].message,
-                "Published &#x27;The title&#x27; in French with missing translations - see below.\n\n\n\n\n",
-            )
-        else:
-            self.assertEqual(
-                messages[0].message,
-                "Published &#39;The title&#39; in French with missing translations - see below.\n\n\n\n\n",
-            )
+        self.assertEqual(
+            messages[0].message,
+            "Published &#x27;The title&#x27; in French with missing translations - see below.\n\n\n\n\n",
+        )
 
         # Check the page was published
         self.fr_page.refresh_from_db()
@@ -1670,16 +1650,10 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "error")
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                messages[0].message,
-                "New validation errors were found when publishing &#x27;The title&#x27; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n",
-            )
-        else:
-            self.assertEqual(
-                messages[0].message,
-                "New validation errors were found when publishing &#39;The title&#39; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n",
-            )
+        self.assertEqual(
+            messages[0].message,
+            "New validation errors were found when publishing &#x27;The title&#x27; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n",
+        )
 
         # Check that the test_charfield was not changed
         self.fr_page.refresh_from_db()
@@ -1728,16 +1702,10 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "warning")
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                messages[0].message,
-                "Published &#x27;The title&#x27; in French with missing translations - see below.\n\n\n\n\n",
-            )
-        else:
-            self.assertEqual(
-                messages[0].message,
-                "Published &#39;The title&#39; in French with missing translations - see below.\n\n\n\n\n",
-            )
+        self.assertEqual(
+            messages[0].message,
+            "Published &#x27;The title&#x27; in French with missing translations - see below.\n\n\n\n\n",
+        )
 
         # Check that the test_charfield was not changed
         self.fr_page.refresh_from_db()
@@ -1769,16 +1737,10 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "error")
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                messages[0].message,
-                "New validation errors were found when publishing &#x27;The title&#x27; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n",
-            )
-        else:
-            self.assertEqual(
-                messages[0].message,
-                "New validation errors were found when publishing &#39;The title&#39; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n",
-            )
+        self.assertEqual(
+            messages[0].message,
+            "New validation errors were found when publishing &#x27;The title&#x27; in French. Please fix them or click publish again to ignore these translations for now.\n\n\n\n\n",
+        )
 
         # Check that the test_synchronized_emailfield was not changed
         self.fr_page.refresh_from_db()
@@ -1830,16 +1792,10 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "success")
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                messages[0].message,
-                f"Published &#x27;TestSnippet object ({self.fr_snippet.id})&#x27; in French.\n\n\n\n\n",
-            )
-        else:
-            self.assertEqual(
-                messages[0].message,
-                f"Published &#39;TestSnippet object ({self.fr_snippet.id})&#39; in French.\n\n\n\n\n",
-            )
+        self.assertEqual(
+            messages[0].message,
+            f"Published &#x27;TestSnippet object ({self.fr_snippet.id})&#x27; in French.\n\n\n\n\n",
+        )
 
         # Check the snippet was published
         self.fr_snippet.refresh_from_db()
@@ -3288,16 +3244,10 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "warning")
 
-        if DJANGO_VERSION >= (3, 0):
-            self.assertEqual(
-                messages[0].message,
-                "There isn&#x27;t anything left to translate.\n\n\n\n\n",
-            )
-        else:
-            self.assertEqual(
-                messages[0].message,
-                "There isn&#39;t anything left to translate.\n\n\n\n\n",
-            )
+        self.assertEqual(
+            messages[0].message,
+            "There isn&#x27;t anything left to translate.\n\n\n\n\n",
+        )
 
         translation = StringTranslation.objects.get(
             translation_of__data="Test snippet",
