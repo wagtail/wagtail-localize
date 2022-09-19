@@ -4,12 +4,13 @@
 # abdulaziz alfuhigi <abajall@gmail.com>, 2022
 # Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2022
 # ultraify media <ultraify@gmail.com>, 2022
+# Younes Oumakhou, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
-"Last-Translator: ultraify media <ultraify@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
+"Last-Translator: Younes Oumakhou, 2022\n"
 "Language-Team: Arabic (https://www.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
@@ -25,8 +26,14 @@ msgstr "حفظ"
 msgid "Delete"
 msgstr "حذف"
 
+msgid "Download XLSX"
+msgstr "تنزيل XLSX"
+
 msgid "Download CSV"
 msgstr "تنزيل ملف CSV"
+
+msgid "Go back"
+msgstr "رجوع"
 
 msgid "Content type"
 msgstr "نوع المحتويات"
@@ -36,3 +43,6 @@ msgstr "الحالة"
 
 msgid "Content"
 msgstr "محتوى"
+
+msgid "Select all"
+msgstr "تحديد الكل"

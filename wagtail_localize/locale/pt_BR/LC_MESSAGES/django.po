@@ -3,14 +3,16 @@
 # Ed Wurch <ewurch@gmail.com>, 2021
 # Claudemiro Alves Feitosa Neto <dimiro1@gmail.com>, 2021
 # Éder Brito <britoederr@gmail.com>, 2021
+# Iuri L. Machado, 2021
 # Luiz Boaretto <lboaretto@gmail.com>, 2022
-# Iuri L. Machado, 2022
+# Rodrigo de Almeida Sottomaior Macedo <rmsolucoeseminformatica@protonmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
-"Last-Translator: Iuri L. Machado, 2022\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
+"Last-Translator: Rodrigo de Almeida Sottomaior Macedo "
+"<rmsolucoeseminformatica@protonmail.com>, 2022\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -290,3 +292,6 @@ msgstr "Sincronizar trechos traduzidos"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizar traduções de '%(title)s'"
+
+msgid "Convert to alias page"
+msgstr "Converter em página de atalho"

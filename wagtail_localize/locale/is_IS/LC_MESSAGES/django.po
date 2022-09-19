@@ -1,13 +1,13 @@
 #
 # Translators:
-# saevarom <saevar@saevar.is>, 2022
 # Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2022
+# saevarom <saevar@saevar.is>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
-"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
+"Last-Translator: saevarom <saevar@saevar.is>, 2022\n"
 "Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,6 +22,10 @@ msgstr "Gervi þýðandi"
 
 msgid "Translate"
 msgstr "Þýða"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Samræma þýdd %(model_name)s"
 
 msgid "Saving…"
 msgstr "Vista..."
@@ -107,8 +111,28 @@ msgstr "Óþekkt id fannst í <a> tagi: {}"
 msgid "Enable"
 msgstr "Virkja"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Breyta yfir í spegilsíðu %(title)s"
+
+msgid "Convert to alias"
+msgstr "Breyta í spegilsíðu"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Ertu viss um að þú viljir breyta þessari síðu í spegilsíðu? Þetta mun "
+"yfirskrifa efni síðunnar með efni "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Já, breyta"
+
+msgid "No, leave it as a page"
+msgstr "Nei, ekki breyta"
 
 #, python-format
 msgid ""
@@ -165,6 +189,9 @@ msgid ""
 msgstr ""
 "Síðasta samræmingar dagsetning var %(last_sync_date)s. Þú ert að fara að "
 "samræma eftirfarandi:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "Síðu '{}' hefur verið breytt í spegilsíðu."
 
 msgid "Content"
 msgstr "Innihald"
@@ -282,3 +309,17 @@ msgstr "Samræma þýðingar á '%(title)s'"
 
 msgid "Convert to alias page"
 msgstr "Breyta í spegilsíðu"
+
+msgid "Convert page to alias"
+msgstr " Breyta síðu í spegilsíðu"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Breytti '%(title)s' í spegilsíðu af upprunasíðu þýðingarinnar "
+"'%(source_title)s'"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Breytti síðu í spegilsíðu af þýðingu upprunasíðunnar."

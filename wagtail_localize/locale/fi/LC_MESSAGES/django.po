@@ -2,14 +2,14 @@
 # Translators:
 # Aarni Koskela, 2021
 # Glen Somerville <glen.somerville@gmail.com>, 2021
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2022
 # Valter Maasalo <vmaasalo@gmail.com>, 2022
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
-"Last-Translator: Valter Maasalo <vmaasalo@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2022\n"
 "Language-Team: Finnish (https://www.transifex.com/torchbox/teams/8009/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fi\n"
@@ -119,6 +119,12 @@ msgstr "Valitse kaikki"
 
 msgid "Locales"
 msgstr "Maa-asetustot"
+
+msgid "All child pages will be created."
+msgstr "Kaikki lapsisivut luodaan."
+
+msgid "{} locales"
+msgstr "{} maa-asetustoa"
 
 msgid "Translate page"
 msgstr "Käännä sivu"

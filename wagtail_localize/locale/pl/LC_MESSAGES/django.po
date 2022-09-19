@@ -3,12 +3,13 @@
 # Mateusz <undefined5102@gmail.com>, 2021
 # Łukasz Bołdys (Lukasz Boldys), 2021
 # Miłosz Miśkiewicz, 2022
+# Dominik Lech, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
-"Last-Translator: Miłosz Miśkiewicz, 2022\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
+"Last-Translator: Dominik Lech, 2022\n"
 "Language-Team: Polish (https://www.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -36,6 +37,10 @@ msgstr "Pobierz XLSX"
 
 msgid "Download CSV"
 msgstr "Pobierz CSV"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "Przetłumacz {model_name}"
 
 msgid "Up to date"
 msgstr "Aktualny"
@@ -157,8 +162,59 @@ msgstr ""
 msgid "Content"
 msgstr "Treść"
 
+msgid "Translation has been stopped."
+msgstr "Tłumaczenie zostało zatrzymane."
+
+msgid "Translation has been restarted."
+msgstr "Tłumaczenie zostało zrestartowane."
+
+msgid "Please upload a valid PO file."
+msgstr "Prześlij poprawny plik PO."
+
+msgid "Successfully imported translations from PO File."
+msgstr "Pomyślnie zaimportowano tłumaczenia z pliku PO."
+
+msgid "Successfully translated with {}."
+msgstr "Pomyślnie przetłumaczono z {}."
+
+msgid "There isn't anything left to translate."
+msgstr "Nie pozostało nic do przetłumaczenia."
+
+msgid "Source title"
+msgstr "Tytuł źródłowy"
+
+msgid "Translations"
+msgstr "Tłumaczenia"
+
 msgid "Select all"
 msgstr "Zaznacz wszystkie"
 
 msgid "Locales"
 msgstr "Lokalizacje"
+
+msgid "All child pages will be created."
+msgstr "Wszystkie strony podrzędne zostaną utworzone."
+
+msgid "Translate page"
+msgstr "Przetłumacz stronę"
+
+msgid "Publish immediately"
+msgstr "Opublikuj teraz"
+
+msgid "Update existing translations"
+msgstr "Zaktualizuj istniejące tłumaczenia"
+
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "Pomyślnie zaktualizowano tłumaczenia dla '{object}'"
+
+msgid "Sync translated pages"
+msgstr "Zsynchronizuj przetłumaczone strony"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "Przetłumacz '%(title)s'"
+
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "Zsynchronizuj tłumaczenia '%(title)s'"

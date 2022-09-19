@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
 "Last-Translator: Vincent Zhao <zhaopu2008@gmail.com>, 2022\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"

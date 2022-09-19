@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
 "Last-Translator: Marco Badan <marco.badan@gmail.com>, 2022\n"
 "Language-Team: Italian (https://www.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -111,8 +111,28 @@ msgstr "Id non riconosciuto trovato in una tag <a>: {}"
 msgid "Enable"
 msgstr "Abilita"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Converti in alias %(title)s"
+
+msgid "Convert to alias"
+msgstr "Converti in alias"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Sei sicuro di voler convertire questa pagina in un alias? Questo "
+"sovrascriverà il contenuto della pagina con il contenuto di "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Sì, convertilo"
+
+msgid "No, leave it as a page"
+msgstr "No, lascialo come una pagina"
 
 #, python-format
 msgid ""
@@ -170,6 +190,9 @@ msgid ""
 msgstr ""
 "L'ultima data di sincronizzazione è stata %(last_sync_date)s. Stai per "
 "sincronizzare quanto segue:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "La pagina '{}' è stata convertita in un alias."
 
 msgid "Content"
 msgstr "Contenuto"
@@ -292,3 +315,6 @@ msgstr "Sincronizza traduzioni per '%(title)s'"
 
 msgid "Convert to alias page"
 msgstr "Converti in pagina alias"
+
+msgid "Convert page to alias"
+msgstr "Converti pagina in alias"

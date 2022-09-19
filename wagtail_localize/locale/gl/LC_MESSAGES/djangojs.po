@@ -1,17 +1,45 @@
 #
 # Translators:
 # Amós Oviedo <amos.oviedo@gmail.com>, 2021
+# X Bello <xbello@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2021\n"
+"Last-Translator: X Bello <xbello@gmail.com>, 2022\n"
 "Language-Team: Galician (https://www.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: gl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "[DELETED]"
+msgstr "[ELIMINADO]"
+
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueo de editor"
+
+msgid "Breadcrumb"
+msgstr "Miga de pan"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Change %s"
+msgstr "Cambia %s"
+
+msgid "Change document"
+msgstr "Cambiar documento"
+
+msgid "Change image"
+msgstr "Cambiar imaxe"
+
+msgid "Change page"
+msgstr "Cambiar páxina"
+
+msgid "Changed"
+msgstr "Cambiado"
+
+msgid "Choose a %s"
+msgstr "Escolle un %s"
 
 msgid "Choose a document"
 msgstr "Seleccionar un documento"
@@ -22,8 +50,17 @@ msgstr "Selecciona unha páxina"
 msgid "Choose an image"
 msgstr "Seleccionar unha imaxe"
 
+msgid "Convert to alias page"
+msgstr "Converter en páxina alias"
+
 msgid "Delete"
 msgstr "Eliminar"
+
+msgid "Download PO file"
+msgstr "Descargar arquivo PO"
+
+msgid "Download PO file and input translations offline"
+msgstr "Descargar arquivo PO e introducir traduccións sen conexión"
 
 msgid "Draft"
 msgstr "Borrador"
@@ -43,17 +80,47 @@ msgstr "Editar esta imaxe"
 msgid "Edit this page"
 msgstr "Editar esta páxina"
 
+msgid "Fetching %s information..."
+msgstr "Recopilando información de %s..."
+
+msgid "Fetching document information..."
+msgstr "Recopilando información do documento..."
+
+msgid "Fetching image information..."
+msgstr "Recopilar información da imaxe..."
+
+msgid "Fetching page information..."
+msgstr "Recopilando información da páxina..."
+
 msgid "Live"
 msgstr "En vivo"
 
 msgid "Lock"
 msgstr "Bloquear"
 
+msgid "Not translated"
+msgstr "Non traducido"
+
 msgid "Preview"
 msgstr "Previsualizar"
 
+msgid "Publish in "
+msgstr "Publicar en "
+
+msgid "Published"
+msgstr "Publicada"
+
+msgid "Published on "
+msgstr "Publicar en"
+
 msgid "Publishing..."
 msgstr "Publicando..."
+
+msgid "Remove editor lock"
+msgstr "Quitar bloqueo do editor"
+
+msgid "Revert to %s version"
+msgstr "Reverter á versión %s"
 
 msgid "Save"
 msgstr "Gardar"
@@ -61,8 +128,39 @@ msgstr "Gardar"
 msgid "Saving..."
 msgstr "Gardando..."
 
+msgid "segments translated"
+msgstr "anacos traducidos"
+
+msgid "Server error"
+msgstr "Erro do servidor"
+
+msgid "Stop Synced translation"
+msgstr "Deter traducción Sincronizada"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Hai segmentos sen gardar. Por favor, gárdaos ou cancélaos antes de sair."
+
+msgid "Translate"
+msgstr "Traducir"
+
+msgid "Translate all missing strings with "
+msgstr "Traducir tódolos textos faltantes con"
+
+msgid "Translate with "
+msgstr "Traducir con"
+
 msgid "Unlock"
 msgstr "Desbloquear"
 
 msgid "Unpublish"
 msgstr "Cancelar publicación"
+
+msgid "Upload PO file"
+msgstr "Subir arquivo PO"
+
+msgid "Upload translated PO file to submit translations"
+msgstr "Subir arquivo PO traducido para enviar traduccións"
+
+msgid "Uses %s version"
+msgstr "Usa a versión %s"

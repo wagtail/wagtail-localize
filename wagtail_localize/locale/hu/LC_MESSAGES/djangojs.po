@@ -50,6 +50,9 @@ msgstr "Oldal kiválasztása"
 msgid "Choose an image"
 msgstr "Kép kiválasztása"
 
+msgid "Convert to alias page"
+msgstr "Kapcsolt példánnyá konvertálás"
+
 msgid "Delete"
 msgstr "Törlés"
 

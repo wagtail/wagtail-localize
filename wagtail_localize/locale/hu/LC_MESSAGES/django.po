@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
 "Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2022\n"
 "Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
@@ -23,6 +23,10 @@ msgstr "Üres fordító"
 
 msgid "Translate"
 msgstr "Fordítás"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Szinkronfordított %(model_name)s"
 
 msgid "Saving…"
 msgstr "Mentés folyamatban..."
@@ -112,8 +116,28 @@ msgstr "Érvénytelen id egy <a> tagben: {}"
 msgid "Enable"
 msgstr "Bekapcsol"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "%(title)s kapcsolt példánnyá konvertálása"
+
+msgid "Convert to alias"
+msgstr "Kapcsolt példánnyá konvertálás"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Biztosan át szeretné alakítani ezt az oldalt egy kapcsolt példánnyá? Az "
+"oldal jelenlegi tartalma felül lesz írva a következő oldal tartalmával: "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Igen, konvertálom"
+
+msgid "No, leave it as a page"
+msgstr "Nem, maradjon oldal"
 
 #, python-format
 msgid ""
@@ -170,6 +194,9 @@ msgid ""
 msgstr ""
 "Az utolsó szinkron ekkor történt: %(last_sync_date)s. A következők lesznek "
 "szinkronizálva:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "A(z) '{}' oldal kapcsolt oldallá lett konvertálva."
 
 msgid "Content"
 msgstr "Tartalom"
@@ -289,3 +316,21 @@ msgstr "Lefordított elemek szinkronizálása"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "'%(title)s' fordításainak szinkronizálása"
+
+msgid "Convert to alias page"
+msgstr "Kapcsolt példánnyá konvertálás"
+
+msgid "Convert page to alias"
+msgstr "Oldal konvertálása kapcsolt példánnyá"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"'%(title)s' oldal átkonverálva a(z) '%(source_title)s' oldal kapcsolt "
+"példányává"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr ""
+"Az oldal át lett konvertálva a fordítás forrás oldal kapcsolt példányává"

@@ -1,11 +1,11 @@
 #
 # Translators:
 # Léo <leo@naeka.fr>, 2021
-# Loic Teixeira, 2021
+# Loic Teixeira, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Loic Teixeira, 2021\n"
+"Last-Translator: Loic Teixeira, 2022\n"
 "Language-Team: French (https://www.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -50,6 +50,9 @@ msgstr "Choisir une page"
 
 msgid "Choose an image"
 msgstr "Choisir une image"
+
+msgid "Convert to alias page"
+msgstr "Convertir en alias de page"
 
 msgid "Delete"
 msgstr "Supprimer"

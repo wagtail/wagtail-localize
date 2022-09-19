@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:32+0000\n"
+"POT-Creation-Date: 2022-06-05 14:59+0000\n"
 "Last-Translator: Loic Teixeira, 2022\n"
 "Language-Team: French (https://www.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,6 +23,10 @@ msgstr "Traducteur factice"
 
 msgid "Translate"
 msgstr "Traduire"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Synchroniser le/la %(model_name)s traduit(e)"
 
 msgid "Saving…"
 msgstr "Enregistrement…"
@@ -112,8 +116,28 @@ msgstr "ID non reconnu dans la balise <a> : {}"
 msgid "Enable"
 msgstr "Activer"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Convertir en alias « %(title)s »"
+
+msgid "Convert to alias"
+msgstr "Convertir en alias"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Êtes-vous sûr(e) de vouloir convertir cette pas en un alias ? Cela va "
+"remplacer le contenu de la page par le contenu de "
+"« %(source_page_title)s » (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Oui, convertir"
+
+msgid "No, leave it as a page"
+msgstr "Non, conserver en tant que page"
 
 #, python-format
 msgid ""
@@ -171,6 +195,9 @@ msgid ""
 msgstr ""
 "La dernière synchronisation a eu lieu le %(last_sync_date)s. Vous êtes sur "
 "le point de synchroniser les changements suivants :"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "La page « {}' » a été convertie en un alias."
 
 msgid "Content"
 msgstr "Contenu"
@@ -291,3 +318,20 @@ msgstr "Synchroniser les blocs traduits"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Synchroniser les traductions de '%(title)s'"
+
+msgid "Convert to alias page"
+msgstr "Convertir en alias"
+
+msgid "Convert page to alias"
+msgstr "Convertir la page en un alias"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"La page « %(title)s » a été convertie en un alias de traduction de la page "
+"source « %(source_title)s »"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "La page a été convertie en un alias de traduction de la page source"

@@ -4,10 +4,11 @@
 # Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2021
 # Ahmed Miske Sidi Med <boutien321@gmail.com>, 2021
 # abdulaziz alfuhigi <abajall@gmail.com>, 2021
+# Younes Oumakhou, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: abdulaziz alfuhigi <abajall@gmail.com>, 2021\n"
+"Last-Translator: Younes Oumakhou, 2022\n"
 "Language-Team: Arabic (https://www.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
@@ -55,6 +56,9 @@ msgstr "قفل"
 
 msgid "Preview"
 msgstr "نظر مقدم"
+
+msgid "Published"
+msgstr "تم نشره"
 
 msgid "Publishing..."
 msgstr "يتم النشر..."
