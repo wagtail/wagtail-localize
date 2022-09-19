@@ -33,22 +33,13 @@ jobs:
     strategy:
       matrix:
         python: ['3.7', '3.8', '3.9']
-        django: ['2.2']
-        wagtail: ['2.11', '2.12', '2.13']
+        django: ['3.2']
+        wagtail: ['2.15', '2.16', '3.0', '4.0']
         include:
-          # Add test for Django 3.2 that is only suported on Wagtail 2.13+
           - python: '3.9'
-            django: '3.2'
-            wagtail: '2.15'
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '2.16'
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '3.0'
-          - python: '3.9'
-            django: '3.2'
+            django: '4.1'
             wagtail: '4.0'
+            experimental: false
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
@@ -77,30 +68,13 @@ jobs:
     strategy:
       matrix:
         python: ['3.7', '3.8', '3.9']
-        django: ['2.2']
-        wagtail: ['2.11', '2.12', '2.13']
+        django: ['3.2']
+        wagtail: ['2.15', '2.16', '3.0']
         experimental: [false]
         include:
-          # Add test for Django 3.2 that is only suported on Wagtail 2.13+
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '2.14'
-            experimental: false
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '2.15'
-            experimental: false
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '2.16'
-            experimental: false
           - python: '3.9'
             django: '4.0'
             wagtail: '2.16'
-            experimental: false
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '3.0'
             experimental: false
           - python: '3.9'
             django: '4.0'
