@@ -2,11 +2,7 @@
 {% load i18n wagtailadmin_tags %}
 
 {% block header %}
-  {% if wagtail_version >= "2.15" %}
     {% include "modeladmin/includes/header_with_history.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon tabbed=1 merged=1 latest_log_entry=latest_log_entry history_url=history_url %}
-  {% else %}
-    {% include "wagtailadmin/shared/header_with_locale_selector.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon tabbed=1 merged=1 %}
-  {% endif %}
 {% endblock %}
 
 {% block form_actions %}

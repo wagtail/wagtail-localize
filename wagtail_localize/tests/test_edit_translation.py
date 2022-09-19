@@ -55,7 +55,6 @@ from wagtail_localize.views.edit_translation import (
     edit_override,
     edit_string_translation,
 )
-from wagtail_localize.wagtail_hooks import SNIPPET_RESTART_TRANSLATION_ENABLED
 
 from .utils import assert_permission_denied, get_snippet_add_url_from_args
 
@@ -1960,10 +1959,6 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         self.assertNotContains(response, "Start Synced translation")
 
-    @unittest.skipUnless(
-        SNIPPET_RESTART_TRANSLATION_ENABLED,
-        "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384",
-    )
     def test_snippet(self):
         self.snippet_translation.enabled = False
         self.snippet_translation.save()
@@ -1972,10 +1967,6 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         self.assertContains(response, "Start Synced translation")
 
-    @unittest.skipUnless(
-        SNIPPET_RESTART_TRANSLATION_ENABLED,
-        "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384",
-    )
     def test_doesnt_show_when_no_translation_for_snippet(self):
         self.snippet_translation.delete()
 
@@ -1983,10 +1974,6 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
 
         self.assertNotContains(response, "Start Synced translation")
 
-    @unittest.skipUnless(
-        SNIPPET_RESTART_TRANSLATION_ENABLED,
-        "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384",
-    )
     def test_doesnt_show_on_create_for_snippet(self):
         response = self.client.get(
             get_snippet_add_url_from_args(
@@ -1995,10 +1982,6 @@ class TestRestartTranslationButton(EditTranslationTestData, TestCase):
         )
         self.assertNotContains(response, "Start Synced translation")
 
-    @unittest.skipUnless(
-        SNIPPET_RESTART_TRANSLATION_ENABLED,
-        "wagtail.snippets.action_menu module doesn't exist. See: https://github.com/wagtail/wagtail/pull/6384",
-    )
     def test_doesnt_show_for_untranslatable_snippet(self):
         snippet = NonTranslatableSnippet.objects.create(field="Test")
         response = self.client.get(get_snippet_edit_url(snippet))

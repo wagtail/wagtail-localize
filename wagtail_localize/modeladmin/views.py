@@ -8,12 +8,12 @@ from django.shortcuts import get_object_or_404
 from django.urls import NoReverseMatch, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.contrib.modeladmin.views import (
     ChooseParentView,
     CreateView,
     DeleteView,
     EditView,
+    HistoryView,
     IndexView,
     InspectView,
 )
@@ -23,12 +23,6 @@ from wagtail.utils.version import get_main_version
 from wagtail_localize.models import Translation
 from wagtail_localize.views import edit_translation
 from wagtail_localize.views.submit_translations import SubmitTranslationView
-
-
-if WAGTAIL_VERSION >= (2, 15):
-    from wagtail.contrib.modeladmin.views import HistoryView
-else:
-    HistoryView = object
 
 
 class TranslatableViewMixin:

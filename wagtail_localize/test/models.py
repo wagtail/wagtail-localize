@@ -13,7 +13,7 @@ from wagtail.admin.edit_handlers import (
     StreamFieldPanel,
     TabbedInterface,
 )
-from wagtail.core import blocks
+from wagtail.core import blocks, telepath
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, TranslatableMixin
 from wagtail.documents.blocks import DocumentChooserBlock
@@ -26,13 +26,6 @@ from wagtail_localize.components import register_translation_component
 from wagtail_localize.fields import SynchronizedField, TranslatableField
 from wagtail_localize.models import TranslationSource
 from wagtail_localize.segments import StringSegmentValue
-
-
-# Telepath added in Wagtail 2.13
-try:
-    from wagtail.core import telepath
-except ImportError:
-    telepath = False
 
 
 @register_snippet
@@ -160,17 +153,16 @@ class ListStructBlock(blocks.StructBlock):
     links_list = blocks.ListBlock(LinksList())
 
 
-if telepath:
+class CustomBlockWithoutExtractMethodAdapter(telepath.Adapter):
+    js_constructor = "CustomBlockWithoutExtractMethod"
 
-    class CustomBlockWithoutExtractMethodAdapter(telepath.Adapter):
-        js_constructor = "CustomBlockWithoutExtractMethod"
+    def js_args(self, block):
+        return []
 
-        def js_args(self, block):
-            return []
 
-    telepath.register(
-        CustomBlockWithoutExtractMethodAdapter(), CustomBlockWithoutExtractMethod
-    )
+telepath.register(
+    CustomBlockWithoutExtractMethodAdapter(), CustomBlockWithoutExtractMethod
+)
 
 
 class TestStreamBlock(blocks.StreamBlock):
