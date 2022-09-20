@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3alpha1] - 2022-09-13
+## [1.3alpha2] - 2022-09-20
+
+### Fixed
+
+- [Migration dependency](https://github.com/wagtail/wagtail-localize/pull/616). With thanks to @iscilyas for testing and reporting.
+
+## [1.3alpha1] - 2022-09-19
 
 ### Added
 
@@ -138,8 +144,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3alpha1...HEAD
-[1.3alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.2.1...v1.3alpha1
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3alpha.2...HEAD
+[1.3alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.3.0-alpha.1...v1.3.0-alpha.2
+[1.3alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.2.1...v1.3.0-alpha.1
 [1.2.1]: https://github.com/wagtail/wagtail-localize/compare/v1.2...v1.2.1
 [1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.2...v1.2
 [1.1.2]: https://github.com/wagtail/wagtail-localize/compare/v1.1.1...v1.1.2
