@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3alpha4] - 2022-09-22
+
+### Fixed
+
+- [Missing modal include on the edit translation page](https://github.com/wagtail/wagtail-localize/issues/618)
+
+### Removed
+
+- [Support for Wagtail < 2.15](https://github.com/wagtail/wagtail-localize/pull/617)
+
 ## [1.3alpha3] - 2022-09-20
 
 ### Fixed
