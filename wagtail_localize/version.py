@@ -39,9 +39,3 @@ def get_complete_version(version=None):
         assert version[3] in ("dev", "alpha", "beta", "rc", "final")
 
     return version
-
-
-# release must be one of alpha, beta, rc, or final
-VERSION = (1, 3, 0, "alpha", 3)
-
-__version__ = get_version(VERSION)
