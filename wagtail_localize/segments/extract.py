@@ -238,8 +238,10 @@ def extract_segments(instance):
                 )
 
         elif isinstance(field, RichTextField):
+            value = field.value_from_object(instance)
+
             if is_translatable:
-                template, strings = extract_strings(field.value_from_object(instance))
+                template, strings = extract_strings(value)
 
                 # Find all unique href values
                 hrefs = set()

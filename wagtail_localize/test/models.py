@@ -218,6 +218,7 @@ class TestPage(Page):
     test_urlfield = models.URLField(blank=True)
 
     test_richtextfield = RichTextField(blank=True)
+    test_null_richtextfield = RichTextField(blank=True, null=True)
     test_streamfield = StreamField(TestStreamBlock, blank=True, **SF_KWARGS)
 
     test_snippet = models.ForeignKey(
@@ -281,6 +282,7 @@ class TestPage(Page):
         TranslatableField("test_slugfield"),
         TranslatableField("test_urlfield"),
         TranslatableField("test_richtextfield"),
+        TranslatableField("test_null_richtextfield"),
         TranslatableField("test_streamfield"),
         TranslatableField("test_snippet"),
         TranslatableField("test_childobjects"),

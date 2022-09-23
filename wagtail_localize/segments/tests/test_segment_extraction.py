@@ -113,6 +113,10 @@ class TestSegmentExtraction(TestCase):
             [segment.wrap("test_richtextfield") for segment in RICH_TEXT_TEST_OUTPUT],
         )
 
+    def test_null_richtextfield(self):
+        page = make_test_page(test_null_richtextfield=None)
+        self.assertEqual(extract_segments(page), [])
+
     def test_snippet(self):
         test_snippet = TestSnippet.objects.create(field="Test content")
         page = make_test_page(test_snippet=test_snippet)
