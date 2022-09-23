@@ -43,9 +43,12 @@ from wagtail_localize.models import (
     TranslationSource,
 )
 from wagtail_localize.test.models import (
+    Header,
+    NavigationLink,
     NonTranslatableSnippet,
     PageWithCustomEditHandler,
     PageWithCustomEditHandlerChildObject,
+    SubNavigationLink,
     TestHomePage,
     TestPage,
     TestSnippet,
@@ -1475,6 +1478,31 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             messages[0].message,
             "Sorry, you do not have permission to access this area.\n\n\n\n\n",
         )
+
+    def test_edit_nested_snippet_translation(self):
+        for permission in Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(Header)
+        ):
+            self.moderators_group.permissions.add(permission)
+
+        snippet = Header.objects.create(name="Test header snippet")
+        nav_link = NavigationLink(label="Nav", page=self.page)
+        nav_link.sub_navigation_links = [
+            SubNavigationLink(label="SubNav", page=self.home_page)
+        ]
+        snippet.navigation_links = [nav_link]
+        snippet.save()
+
+        snippet_source, created = TranslationSource.get_or_create_from_instance(snippet)
+        snippet_translation = Translation.objects.create(
+            source=snippet_source,
+            target_locale=self.fr_locale,
+        )
+        snippet_translation.save_target()
+        fr_snippet = snippet.get_translation(self.fr_locale)
+
+        response = self.client.get(get_snippet_edit_url(fr_snippet))
+        self.assertEqual(response.status_code, 200)
 
     def test_edit_translation_when_block_deleted_from_source_page(self):
         # Tests for #433 - If a streamfield block that contained translatable text was deleted

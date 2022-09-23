@@ -543,3 +543,71 @@ class CustomTranslationData(models.Model):
 )
 class CustomButSimpleTranslationData(models.Model):
     notes = models.CharField(max_length=255)
+
+
+class SubNavigationLink(Orderable, TranslatableMixin):
+    sub_nav = ParentalKey(
+        "wagtail_localize_test.NavigationLink",
+        on_delete=models.CASCADE,
+        related_name="sub_navigation_links",
+        null=True,
+    )
+
+    label = models.CharField(max_length=255)
+
+    page = models.ForeignKey(
+        "wagtailcore.Page",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        blank=True,
+    )
+
+    panels = [
+        FieldPanel("label"),
+        PageChooserPanel("page"),
+    ]
+
+    class Meta(TranslatableMixin.Meta):
+        pass
+
+
+class NavigationLink(ClusterableModel, Orderable, TranslatableMixin):
+    snippet = ParentalKey(
+        "wagtail_localize_test.Header",
+        on_delete=models.CASCADE,
+        related_name="navigation_links",
+    )
+    label = models.CharField(max_length=255)
+
+    page = models.ForeignKey(
+        Page, null=True, on_delete=models.SET_NULL, related_name="+", blank=True
+    )
+
+    panels = [
+        FieldPanel("label"),
+        PageChooserPanel("page"),
+        InlinePanel("sub_navigation_links", heading="Sub navigation"),
+    ]
+
+    class Meta(TranslatableMixin.Meta):
+        pass
+
+    def __str__(self) -> str:
+        return self.label
+
+
+@register_snippet
+class Header(ClusterableModel, TranslatableMixin):
+    name = models.CharField(max_length=100, null=True)
+
+    panels = [
+        FieldPanel("name"),
+        InlinePanel("navigation_links", heading="Main navigation"),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta(TranslatableMixin.Meta):
+        pass
