@@ -265,6 +265,9 @@ class TextExtractStrings(TestCase):
             ],
         )
 
+    def test_extract_strings_from_none(self):
+        self.assertEqual(extract_strings(None), ("", []))
+
     def test_block_tag_in_inline_tag(self):
         # If an inline tag contains a block tag. The inline tag must be in the template.
         # Testing for issue https://github.com/mozilla/donate-wagtail/issues/586
