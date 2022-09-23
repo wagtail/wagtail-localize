@@ -298,7 +298,11 @@ class TabHelper:
             elif isinstance(edit_handler, FieldPanel):
                 field_edit_handlers[edit_handler.field_name] = edit_handler
 
-            elif WAGTAIL_VERSION >= (3, 0) and isinstance(edit_handler, InlinePanel):
+            elif (
+                WAGTAIL_VERSION >= (3, 0)
+                and isinstance(edit_handler, InlinePanel)
+                and edit_handler.model is not None
+            ):
                 # we can only reliably get panel definitions with the relevant instance data in Wagtail 3.0+
                 for panel in edit_handler.panel_definitions:
                     walk(panel)
@@ -537,8 +541,10 @@ def get_segment_location_info(
             "field": capfirst(field.related_model._meta.verbose_name),
             "order": order,
             "blockId": content_path_components[1],
-            "fieldHelpText": child_field.help_text,
-            "subField": capfirst(child_field.verbose_name),
+            "fieldHelpText": getattr(child_field, "help_text", ""),
+            "subField": capfirst(child_field.verbose_name)
+            if hasattr(child_field, "verbose_name")
+            else None,
             "widget": widget_from_field(child_field) if widget else None,
         }
 
