@@ -554,7 +554,7 @@ def get_segment_location_info(
             "field": capfirst(field.verbose_name),
             "order": order,
             "blockId": None,
-            "fieldHelpText": field.help_text,
+            "fieldHelpText": getattr(field, "help_text", ""),
             "subField": None,
             "widget": widget_from_field(field) if widget else None,
         }
