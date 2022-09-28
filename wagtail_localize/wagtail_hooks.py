@@ -1,3 +1,4 @@
+from typing import List
 from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
@@ -415,3 +416,49 @@ def wagtail_localize_log_actions(actions):
 def register_icons(icons):
     # icon id "wagtail-localize-convert" (which translates to `.icon-wagtail-localize-convert`)
     return icons + ["wagtail_localize/icons/wagtail-localize-convert.svg"]
+
+
+if WAGTAIL_VERSION >= (4, 0):
+    from django.conf import settings
+
+    from .models import LocaleSynchronization
+
+    @hooks.register("construct_translated_pages_to_cascade_actions")
+    def construct_synced_page_tree_list(pages: List[Page], action: str) -> dict:
+        if not getattr(settings, "WAGTAILLOCALIZE_CASCADE_PAGE_ACTIONS", False):
+            return {}
+
+        locale_sync_map = {}
+        for page in pages:
+            # TODO: what about locale C follows B which follows A, when we come in from A?
+            if page.locale_id not in locale_sync_map:
+                locale_sync_map[page.locale_id] = list(
+                    LocaleSynchronization.objects.filter(
+                        sync_from=page.locale_id
+                    ).values_list("locale", flat=True)
+                )
+
+        page_list = {}
+        if action == "unpublish":
+            for page in pages:
+                if not locale_sync_map[page.locale_id]:
+                    # no locales sync from this page locale
+                    continue
+
+                page_list[page] = Page.objects.translation_of(
+                    page, inclusive=False
+                ).filter(
+                    alias_of__isnull=True, locale__in=locale_sync_map[page.locale_id]
+                )
+        elif action in ["move", "delete"]:
+            for page in pages:
+                if not locale_sync_map[page.locale_id]:
+                    # no locales sync from this page locale
+                    continue
+
+                # only include those translations or aliases from locales that sync from this locale
+                page_list[page] = Page.objects.translation_of(
+                    page, inclusive=False
+                ).filter(locale__in=locale_sync_map[page.locale_id])
+
+        return page_list
