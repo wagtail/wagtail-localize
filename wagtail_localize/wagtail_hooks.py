@@ -162,7 +162,7 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
 
             yield set_button_icon(
                 wagtailadmin_widgets.Button(_("Translate this page"), url, priority=60),
-                "site",
+                "wagtail-localize-language",
             )
 
         # If the page is the source for translations, show "Sync translated pages" button
@@ -430,5 +430,9 @@ def wagtail_localize_log_actions(actions):
 
 @hooks.register("register_icons")
 def register_icons(icons):
-    # icon id "wagtail-localize-convert" (which translates to `.icon-wagtail-localize-convert`)
-    return icons + ["wagtail_localize/icons/wagtail-localize-convert.svg"]
+    return icons + [
+        # icon id "wagtail-localize-convert" (which translates to `.icon-wagtail-localize-convert`)
+        "wagtail_localize/icons/wagtail-localize-convert.svg",
+        # icon id "wagtail-localize-language" (which translates to `.icon-wagtail-localize-language`)
+        "wagtail_localize/icons/wagtail-localize-language.svg",
+    ]
