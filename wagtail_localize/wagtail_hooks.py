@@ -134,6 +134,18 @@ def register_submit_translation_permission():
     )
 
 
+if WAGTAIL_VERSION >= (4, 0, 0):
+
+    def set_button_icon(button, icon_name):
+        button.icon_name = icon_name
+        return button
+
+else:
+
+    def set_button_icon(button, icon_name):
+        return button
+
+
 def page_listing_more_buttons(page, page_perms, next_url=None):
     if not page.is_root() and page_perms.user.has_perm(
         "wagtail_localize.submit_translation"
@@ -148,8 +160,9 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
         if has_locale_to_translate_to:
             url = reverse("wagtail_localize:submit_page_translation", args=[page.id])
 
-            yield wagtailadmin_widgets.Button(
-                _("Translate this page"), url, priority=60
+            yield set_button_icon(
+                wagtailadmin_widgets.Button(_("Translate this page"), url, priority=60),
+                "site",
             )
 
         # If the page is the source for translations, show "Sync translated pages" button
@@ -159,19 +172,23 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
             if next_url is not None:
                 url += "?" + urlencode({"next": next_url})
 
-            yield wagtailadmin_widgets.Button(
-                _("Sync translated pages"), url, priority=65
+            yield set_button_icon(
+                wagtailadmin_widgets.Button(
+                    _("Sync translated pages"), url, priority=65
+                ),
+                "resubmit",
             )
 
 
 if WAGTAIL_VERSION >= (4, 0, 0):
 
-    @hooks.register("register_page_listing_more_buttons")
-    def register_page_listing_more_buttons(page, page_perms, next_url=None):
-        for button in page_listing_more_buttons(page, page_perms, next_url):
-            yield button
+    hooks.register("register_page_header_buttons", page_listing_more_buttons)
+    hooks.register("register_page_listing_more_buttons", page_listing_more_buttons)
 
 else:
+
+    if WAGTAIL_VERSION >= (2, 16, 0):
+        hooks.register("register_page_header_buttons", page_listing_more_buttons)
 
     @hooks.register("register_page_listing_more_buttons")
     def register_page_listing_more_buttons(
