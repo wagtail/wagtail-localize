@@ -13,6 +13,7 @@ from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core.models import Page
 from wagtail.snippets.models import get_snippet_models
+from wagtail.utils.version import get_main_version
 
 from wagtail_localize.compat import get_snippet_edit_url
 from wagtail_localize.models import TranslationSource
@@ -112,6 +113,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                 "next_url": self.get_success_url(),
                 "back_url": self.get_success_url() or self.get_default_success_url(),
                 "components": self.components,
+                "wagtail_version": get_main_version(),
             }
         )
         return context

@@ -1,4 +1,3 @@
-
 {% extends "wagtailadmin/base.html" %}
 {% load i18n wagtailadmin_tags %}
 {% block titletag %}{{ view.get_title }} {{ view.get_subtitle }}{% endblock %}
@@ -8,7 +7,8 @@
 
     <div class="nice-padding">
         <div class="help-block help-info">
-            <p><b>{% trans "Why would I sync my page?" %}</b></p>
+            {% if wagtail_version >= "3.0" %}{% icon name="help" %}{% endif %}
+            <p><strong>{% trans "Why would I sync my page?" %}</strong></p>
             <p>{% trans "Changes are not automatically applied between translated pages. Syncing will add new content for translation and remove deleted content." %}</p>
         </div>
 
