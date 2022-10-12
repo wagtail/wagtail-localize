@@ -194,6 +194,31 @@ class TestStreamBlock(blocks.StreamBlock):
 
     test_chooserstructblock = TestChooserStructBlock()
     test_nestedchooserstructblock = TestNestedChooserStructBlock()
+    test_chooser_in_struct_in_listblock = blocks.ListBlock(
+        blocks.StructBlock(
+            [
+                ("page", blocks.PageChooserBlock(required=False)),
+            ]
+        )
+    )
+
+    # chooser in struct in list in stream in listblock
+    test_chooser_in_struct_in_list_in_stream_in_listblock = blocks.ListBlock(
+        blocks.StreamBlock(
+            [
+                (
+                    "list",
+                    blocks.ListBlock(
+                        blocks.StructBlock(
+                            [
+                                ("page", blocks.PageChooserBlock(required=False)),
+                            ]
+                        )
+                    ),
+                ),
+            ]
+        )
+    )
 
 
 class TestCustomField(models.TextField):
