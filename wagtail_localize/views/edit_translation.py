@@ -500,7 +500,7 @@ def get_segment_location_info(
             return widget_from_block(
                 block.child_blocks.get(block_field_name), content_components
             )
-        elif isinstance(block, blocks.ListBlock):
+        elif isinstance(block, blocks.ListBlock) and content_components is not None:
             return widget_from_block(block.child_block, content_components[1:])
 
         return {"type": "unknown"}
@@ -513,6 +513,17 @@ def get_segment_location_info(
             block_field_name = field_path_components[2]
             block_field = block_type.child_blocks[block_field_name].label
             content_components = field_path_components[2:]
+        elif isinstance(block_type, blocks.ListBlock):
+            block_field = None
+            content_components = None
+            if isinstance(
+                block_type.child_block, (blocks.StructBlock, blocks.StreamBlock)
+            ):
+                block_field_name = field_path_components[3]
+                block_field = block_type.child_block.child_blocks[
+                    block_field_name
+                ].label
+                content_components = field_path_components[2:]
         else:
             block_field = None
             content_components = None
