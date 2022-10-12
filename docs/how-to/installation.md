@@ -46,7 +46,24 @@ on your model. The default value is `synced`.
 e.g.
 
 ```python
+from wagtail.models import Page
+
+
 class MyPage(Page):
     localize_default_translation_mode = "simple"
     # ...
 ```
+
+## Control translation cleanup mode
+
+<!-- prettier-ignore -->
+!!! info "Changed in 1.3"
+    Prior to version 1.3, `Translation` objects were marked as disabled and all related data was kept. This led to
+    confusion and poor user experience. To restore the previous behaviour,
+    set `WAGTAILLOCALIZE_DISABLE_ON_DELETE = True` in your settings file.
+
+Wagtail Localize will remove translation data when the translation source (e.g. original page)
+or the translation destination (e.g. translated page) is deleted.
+
+To disable the `Translation` object and keep the related data, such as translated strings or overrides,
+set `WAGTAILLOCALIZE_DISABLE_ON_DELETE = True` in your settings file.
