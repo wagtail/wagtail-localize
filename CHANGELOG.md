@@ -177,7 +177,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3alpha.3...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3...HEAD
+[1.3]: https://github.com/wagtail/wagtail-localize/compare/v1.3.0-alpha.3...v1.3
 [1.3alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.3.0-alpha.1...v1.3.0-alpha.3
 [1.3alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.2.1...v1.3.0-alpha.1
 [1.2.1]: https://github.com/wagtail/wagtail-localize/compare/v1.2...v1.2.1
