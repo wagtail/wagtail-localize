@@ -19,12 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [#616](https://github.com/wagtail/wagtail-localize/pull/616), [#618](https://github.com/wagtail/wagtail-localize/issues/618),
   [#630](https://github.com/wagtail/wagtail-localize/pull/630)r
 - [Clean up localize data on source/destination removal](https://github.com/wagtail/wagtail-localize/pull/622) @zerolab
+  To preserve the old behaviour, set `WAGTAILLOCALIZE_DISABLE_ON_DELETE = True` in your settings file.
 - [Buttons to the page header menu](https://github.com/wagtail/wagtail-localize/pull/628) @th3hamm0r
 
 ### Fixed
 
 - [Guard against `ManyToOneRel` child field without help text or verbose name](https://github.com/wagtail/wagtail-localize/pull/620) @zerolab
-- Widget extraction for choosers in `StructBlock` in `ListBlock` (https://github.com/wagtail/wagtail-localize/pull/633) @zerolab
+- [Widget extraction for choosers in `StructBlock` in `ListBlock`](https://github.com/wagtail/wagtail-localize/pull/633) @zerolab
 
 ### Removed
 
