@@ -169,7 +169,7 @@ class StringSegmentValue(BaseValue):
 
 class TemplateSegmentValue(BaseValue):
     """
-    Represents a HTML template used to recombine the values of RichTextField/Blocks.
+    Represents an HTML template used to recombine the values of RichTextField/Blocks.
 
     Attributes:
         path (str): The content path of the segment.

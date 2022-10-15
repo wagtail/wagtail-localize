@@ -2025,7 +2025,7 @@ class TemplateSegment(BaseSegment):
 
     Attributes:
         template (ForeignKey to Template): The template that was extracted.
-        source (ForiegnKey[TranslationSource]): The source content that the string was extracted from.
+        source (ForeignKey[TranslationSource]): The source content that the string was extracted from.
         context (ForeignKey to TranslationContext): The context, which contains the position of the string in the source content.
         order (PositiveIntegerField): The index that this segment appears on the page.
     """
@@ -2216,7 +2216,12 @@ def cleanup_translation_on_delete(instance, **kwargs):
     # There are no more translations for this key, so do the full cleanup.
     if not Translation.objects.filter(source__object_id=translation_key).exists():
         # Must be done separately because of `on_delete=models.Protect`
-        for model in [OverridableSegment, RelatedObjectSegment, StringSegment]:
+        for model in [
+            OverridableSegment,
+            RelatedObjectSegment,
+            StringSegment,
+            TemplateSegment,
+        ]:
             model.objects.filter(context__object_id=translation_key).delete()
 
         for model in [SegmentOverride, StringTranslation]:
