@@ -15,5 +15,6 @@ __pycache__/
 /test-static
 /test-media
 .idea
+.fleet
 
 .DS_Store

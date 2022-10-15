@@ -1038,8 +1038,8 @@ class Translation(models.Model):
 
     An instance of this model is created whenever an object is submitted for translation into a new language.
 
-    They can be disabled at any time, and are disabled automatically if either the source or destination object is
-    deleted.
+    They can be disabled at any time, and are deleted or disabled automatically if either the source or
+    destination object is deleted.
 
     If the translation of a page is disabled, the page editor of the translation would return to the normal Wagtail
     editor.
@@ -2191,14 +2191,59 @@ def disable_translation_on_delete(instance, **kwargs):
     )
 
 
+def cleanup_translation_on_delete(instance, **kwargs):
+    """
+    When either the source or destination object is deleted, remove the corresponding translation data.
+
+    When all translations of the object are removed, delete all remaining metadata.
+    """
+    translation_key = instance.translation_key
+    locale_id = instance.locale_id
+
+    StringTranslation.objects.filter(
+        context__object_id=translation_key, locale=locale_id
+    ).delete()
+    SegmentOverride.objects.filter(
+        context__object__translation_key=translation_key, locale=locale_id
+    ).delete()
+    Translation.objects.filter(source__object_id=translation_key).filter(
+        # Remove the translations where this object was the source
+        Q(source__locale_id=locale_id)
+        # Remove the translations where this object was the destination
+        | Q(target_locale_id=locale_id)
+    ).delete()
+
+    # There are no more translations for this key, so do the full cleanup.
+    if not Translation.objects.filter(source__object_id=translation_key).exists():
+        # Must be done separately because of `on_delete=models.Protect`
+        for model in [OverridableSegment, RelatedObjectSegment, StringSegment]:
+            model.objects.filter(context__object_id=translation_key).delete()
+
+        for model in [SegmentOverride, StringTranslation]:
+            model.objects.filter(
+                context__object__translation_key=translation_key
+            ).delete()
+
+        # This will cascade to TranslationSource, TranslationLog, TranslationContext as well as any extracted segments.
+        TranslatableObject.objects.filter(translation_key=translation_key).delete()
+
+
+def handle_translation_on_delete(instance, **kwargs):
+    if getattr(settings, "WAGTAILLOCALIZE_DISABLE_ON_DELETE", False):
+        disable_translation_on_delete(instance, **kwargs)
+    else:
+        cleanup_translation_on_delete(instance, **kwargs)
+
+
 def register_post_delete_signal_handlers():
     for model in get_translatable_models():
-        post_delete.connect(disable_translation_on_delete, sender=model)
+        post_delete.connect(handle_translation_on_delete, sender=model)
 
 
 class LocaleSynchronizationModelForm(LocaleComponentModelForm):
     def validate_with_locale(self, locale):
-        # Note, we must compare the language_codes as it may be the same locale record but the language_code was updated in this request
+        # Note: we must compare the language_codes as it may be the same locale record,
+        # but the language_code was updated in this request
         if (
             "sync_from" in self.cleaned_data
             and locale.language_code == self.cleaned_data["sync_from"].language_code

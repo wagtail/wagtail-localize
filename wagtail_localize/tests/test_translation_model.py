@@ -2,18 +2,22 @@ from unittest import mock
 
 import polib
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from wagtail.core.models import Locale, Page
 
 from wagtail_localize.models import (
     CannotSaveDraftError,
     NoViewRestrictionsError,
+    OverridableSegment,
+    SegmentOverride,
     String,
     StringNotUsedInContext,
     StringTranslation,
+    TranslatableObject,
     Translation,
     TranslationContext,
+    TranslationLog,
     TranslationSource,
     UnknownContext,
     UnknownString,
@@ -705,9 +709,11 @@ class TestSaveTarget(TestCase):
         self.assertEqual(translated_snippet.field.charfield, "Some Test")
 
 
+@override_settings(WAGTAILLOCALIZE_DISABLE_ON_DELETE=True)
 class TestDeleteSourceDisablesTranslation(TestCase):
-    def setUp(self):
-        self.fr_locale = Locale.objects.create(language_code="fr")
+    @classmethod
+    def setUpTestData(cls):
+        cls.fr_locale = Locale.objects.create(language_code="fr")
 
     def test_page(self):
         page = create_test_page(
@@ -749,10 +755,109 @@ class TestDeleteSourceDisablesTranslation(TestCase):
         self.assertFalse(translation.enabled)
 
 
-class TestDeleteDestinationDisablesTranslation(TestCase):
-    def setUp(self):
-        self.fr_locale = Locale.objects.create(language_code="fr")
-        self.es_locale = Locale.objects.create(language_code="es")
+class TestDeleteSourceRemovesAllTranslationData(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+
+    def test_page(self):
+        page = create_test_page(
+            title="Test page",
+            slug="test-slug",
+            test_charfield="Test content",
+            test_synchronized_emailfield="email@example.com",
+        )
+        source = TranslationSource.objects.get()
+        fr_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        fr_translation.save_target()
+
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test content"),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+        SegmentOverride.objects.create(
+            locale=self.fr_locale,
+            context=OverridableSegment.objects.get(
+                source=source, context__path="test_synchronized_emailfield"
+            ).context,
+            data_json='"overridden@example.com"',
+        )
+
+        self.assertEqual(Translation.objects.count(), 1)
+        self.assertEqual(StringTranslation.objects.count(), 1)
+        self.assertEqual(SegmentOverride.objects.count(), 1)
+        self.assertEqual(TranslatableObject.objects.count(), 1)
+        self.assertEqual(TranslationSource.objects.count(), 1)
+        self.assertEqual(TranslationLog.objects.count(), 1)
+        self.assertEqual(TranslationContext.objects.count(), 2)
+
+        page.delete()
+        self.assertEqual(Translation.objects.count(), 0)
+        self.assertEqual(StringTranslation.objects.count(), 0)
+        self.assertEqual(SegmentOverride.objects.count(), 0)
+        self.assertEqual(TranslationSource.objects.count(), 0)
+        self.assertEqual(TranslationLog.objects.count(), 0)
+        self.assertEqual(TranslationContext.objects.count(), 0)
+
+    def test_snippet(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+        fr_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        fr_translation.save_target()
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test content"),
+            context=TranslationContext.objects.get(path="field"),
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        # Create a separate Spanish translation to check the deletion completeness
+        es_locale = Locale.objects.create(language_code="es")
+        es_translation = Translation.objects.create(
+            source=source,
+            target_locale=es_locale,
+        )
+        es_translation.save_target()
+
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test content"),
+            context=TranslationContext.objects.get(path="field"),
+            locale=es_locale,
+            data="Contenido de prueba",
+        )
+
+        self.assertEqual(Translation.objects.count(), 2)
+        self.assertEqual(StringTranslation.objects.count(), 2)
+        self.assertEqual(SegmentOverride.objects.count(), 0)
+        self.assertEqual(TranslatableObject.objects.count(), 1)
+        self.assertEqual(TranslationSource.objects.count(), 1)
+        self.assertEqual(TranslationLog.objects.count(), 2)
+        self.assertEqual(TranslationContext.objects.count(), 1)
+
+        snippet.delete()
+        self.assertEqual(Translation.objects.count(), 0)
+        self.assertEqual(StringTranslation.objects.count(), 0)
+        self.assertEqual(SegmentOverride.objects.count(), 0)
+        self.assertEqual(TranslationSource.objects.count(), 0)
+        self.assertEqual(TranslationLog.objects.count(), 0)
+        self.assertEqual(TranslationContext.objects.count(), 0)
+
+
+@override_settings(WAGTAILLOCALIZE_DISABLE_ON_DELETE=True)
+class TestDeleteDestinationDisablesTranslationWhenConfigured(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+        cls.es_locale = Locale.objects.create(language_code="es")
 
     def test_page(self):
         page = create_test_page(
@@ -761,7 +866,6 @@ class TestDeleteDestinationDisablesTranslation(TestCase):
             test_charfield="Test content",
             test_textfield="More test content",
         )
-
         source = TranslationSource.objects.get()
         fr_translation = Translation.objects.create(
             source=source,
@@ -816,6 +920,136 @@ class TestDeleteDestinationDisablesTranslation(TestCase):
         es_translation.refresh_from_db()
         self.assertFalse(fr_translation.enabled)
         self.assertTrue(es_translation.enabled)
+
+
+class TestDeleteDestinationRemovesTranslationData(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+        cls.es_locale = Locale.objects.create(language_code="es")
+
+    def test_page(self):
+        page = create_test_page(
+            title="Test page",
+            slug="test-slug",
+            test_charfield="Test content",
+            test_synchronized_emailfield="email@example.com",
+        )
+        source = TranslationSource.objects.get()
+        fr_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        fr_translation.save_target()
+
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test content"),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+        SegmentOverride.objects.create(
+            locale=self.fr_locale,
+            context=OverridableSegment.objects.get(
+                source=source, context__path="test_synchronized_emailfield"
+            ).context,
+            data_json='"overridden@example.com"',
+        )
+
+        # Create a separate Spanish translation to check the deletion completeness
+        es_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.es_locale,
+        )
+        es_translation.save_target()
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test content"),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.es_locale,
+            data="Contenido de prueba",
+        )
+        SegmentOverride.objects.create(
+            locale=self.es_locale,
+            context=OverridableSegment.objects.get(
+                source=source, context__path="test_synchronized_emailfield"
+            ).context,
+            data_json='"overridden+es@example.com"',
+        )
+
+        self.assertEqual(Translation.objects.count(), 2)
+        self.assertEqual(StringTranslation.objects.count(), 2)
+        self.assertEqual(SegmentOverride.objects.count(), 2)
+        self.assertEqual(TranslationSource.objects.count(), 1)
+        self.assertEqual(TranslationLog.objects.count(), 2)
+        self.assertEqual(TranslationContext.objects.count(), 2)
+
+        page.get_translation(self.fr_locale).delete()
+        self.assertEqual(Translation.objects.count(), 1)
+        self.assertEqual(StringTranslation.objects.count(), 1)
+        self.assertEqual(SegmentOverride.objects.count(), 1)
+        self.assertEqual(TranslationSource.objects.count(), 1)
+        self.assertEqual(TranslationLog.objects.count(), 2)
+        self.assertEqual(TranslationContext.objects.count(), 2)
+
+        # when all translations are removed, we clean everything, including contexts and logs
+        page.get_translation(self.es_locale).delete()
+        self.assertEqual(Translation.objects.count(), 0)
+        self.assertEqual(StringTranslation.objects.count(), 0)
+        self.assertEqual(SegmentOverride.objects.count(), 0)
+        self.assertEqual(TranslationSource.objects.count(), 0)
+        self.assertEqual(TranslationLog.objects.count(), 0)
+        self.assertEqual(TranslationContext.objects.count(), 0)
+
+    def test_snippet(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+        fr_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+        fr_translation.save_target()
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test content"),
+            context=TranslationContext.objects.get(path="field"),
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        # Create a separate Spanish translation to check the deletion completeness
+        es_translation = Translation.objects.create(
+            source=source,
+            target_locale=self.es_locale,
+        )
+        es_translation.save_target()
+
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test content"),
+            context=TranslationContext.objects.get(path="field"),
+            locale=self.es_locale,
+            data="Contenido de prueba",
+        )
+
+        self.assertEqual(Translation.objects.count(), 2)
+        self.assertEqual(TranslationSource.objects.count(), 1)
+        self.assertEqual(StringTranslation.objects.count(), 2)
+        self.assertEqual(TranslationLog.objects.count(), 2)
+        self.assertEqual(TranslationContext.objects.count(), 1)
+
+        snippet.get_translation(self.fr_locale).delete()
+        self.assertEqual(Translation.objects.count(), 1)
+        self.assertEqual(StringTranslation.objects.count(), 1)
+        self.assertEqual(TranslationSource.objects.count(), 1)
+        self.assertEqual(TranslationContext.objects.count(), 1)
+        self.assertEqual(TranslationLog.objects.count(), 2)
+
+        # deleting all translations should remove everything else
+        snippet.get_translation(self.es_locale).delete()
+        self.assertEqual(Translation.objects.count(), 0)
+        self.assertEqual(StringTranslation.objects.count(), 0)
+        self.assertEqual(TranslationSource.objects.count(), 0)
+        self.assertEqual(TranslationContext.objects.count(), 0)
+        self.assertEqual(TranslationLog.objects.count(), 0)
 
 
 class TestTranslationSourceViewRestrictions(TestCase):

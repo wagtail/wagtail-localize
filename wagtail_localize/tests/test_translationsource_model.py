@@ -2,7 +2,7 @@ import json
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Locale, Page, PageLogEntry
@@ -535,6 +535,7 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         self.assertEqual(e.exception.segment.string, self.string)
         self.assertEqual(e.exception.locale, self.dest_locale)
 
+    @override_settings(WAGTAILLOCALIZE_DISABLE_ON_DELETE=True)
     def test_create_related_object_not_ready(self):
         self.translated_snippet.delete()
 
