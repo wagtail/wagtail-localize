@@ -10,10 +10,12 @@ from wagtail_localize.models import (
     CannotSaveDraftError,
     NoViewRestrictionsError,
     OverridableSegment,
+    RelatedObjectSegment,
     SegmentOverride,
     String,
     StringNotUsedInContext,
     StringTranslation,
+    TemplateSegment,
     TranslatableObject,
     Translation,
     TranslationContext,
@@ -765,7 +767,9 @@ class TestDeleteSourceRemovesAllTranslationData(TestCase):
             title="Test page",
             slug="test-slug",
             test_charfield="Test content",
+            test_richtextfield="<h1>This is a heading</h1><p>This is a paragraph.</p>",
             test_synchronized_emailfield="email@example.com",
+            test_snippet=TestSnippet.objects.create(field="Test snippet"),
         )
         source = TranslationSource.objects.get()
         fr_translation = Translation.objects.create(
@@ -791,15 +795,19 @@ class TestDeleteSourceRemovesAllTranslationData(TestCase):
         self.assertEqual(Translation.objects.count(), 1)
         self.assertEqual(StringTranslation.objects.count(), 1)
         self.assertEqual(SegmentOverride.objects.count(), 1)
-        self.assertEqual(TranslatableObject.objects.count(), 1)
+        self.assertEqual(TemplateSegment.objects.count(), 1)
+        self.assertEqual(RelatedObjectSegment.objects.count(), 1)
+        self.assertEqual(TranslatableObject.objects.count(), 2)  # page and snippet
         self.assertEqual(TranslationSource.objects.count(), 1)
         self.assertEqual(TranslationLog.objects.count(), 1)
-        self.assertEqual(TranslationContext.objects.count(), 2)
+        self.assertEqual(TranslationContext.objects.count(), 4)
 
         page.delete()
         self.assertEqual(Translation.objects.count(), 0)
         self.assertEqual(StringTranslation.objects.count(), 0)
         self.assertEqual(SegmentOverride.objects.count(), 0)
+        self.assertEqual(TemplateSegment.objects.count(), 0)
+        self.assertEqual(RelatedObjectSegment.objects.count(), 0)
         self.assertEqual(TranslationSource.objects.count(), 0)
         self.assertEqual(TranslationLog.objects.count(), 0)
         self.assertEqual(TranslationContext.objects.count(), 0)
@@ -933,7 +941,9 @@ class TestDeleteDestinationRemovesTranslationData(TestCase):
             title="Test page",
             slug="test-slug",
             test_charfield="Test content",
+            test_richtextfield="<h1>This is a heading</h1><p>This is a paragraph.</p>",
             test_synchronized_emailfield="email@example.com",
+            test_snippet=TestSnippet.objects.create(field="Test snippet"),
         )
         source = TranslationSource.objects.get()
         fr_translation = Translation.objects.create(
@@ -979,23 +989,27 @@ class TestDeleteDestinationRemovesTranslationData(TestCase):
         self.assertEqual(Translation.objects.count(), 2)
         self.assertEqual(StringTranslation.objects.count(), 2)
         self.assertEqual(SegmentOverride.objects.count(), 2)
+        self.assertEqual(TemplateSegment.objects.count(), 1)
+        self.assertEqual(RelatedObjectSegment.objects.count(), 1)
         self.assertEqual(TranslationSource.objects.count(), 1)
         self.assertEqual(TranslationLog.objects.count(), 2)
-        self.assertEqual(TranslationContext.objects.count(), 2)
+        self.assertEqual(TranslationContext.objects.count(), 4)
 
         page.get_translation(self.fr_locale).delete()
         self.assertEqual(Translation.objects.count(), 1)
         self.assertEqual(StringTranslation.objects.count(), 1)
         self.assertEqual(SegmentOverride.objects.count(), 1)
+        self.assertEqual(TemplateSegment.objects.count(), 1)
         self.assertEqual(TranslationSource.objects.count(), 1)
         self.assertEqual(TranslationLog.objects.count(), 2)
-        self.assertEqual(TranslationContext.objects.count(), 2)
+        self.assertEqual(TranslationContext.objects.count(), 4)
 
         # when all translations are removed, we clean everything, including contexts and logs
         page.get_translation(self.es_locale).delete()
         self.assertEqual(Translation.objects.count(), 0)
         self.assertEqual(StringTranslation.objects.count(), 0)
         self.assertEqual(SegmentOverride.objects.count(), 0)
+        self.assertEqual(TemplateSegment.objects.count(), 0)
         self.assertEqual(TranslationSource.objects.count(), 0)
         self.assertEqual(TranslationLog.objects.count(), 0)
         self.assertEqual(TranslationContext.objects.count(), 0)
