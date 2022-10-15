@@ -39,7 +39,7 @@ msgid "Changed"
 msgstr "Cambiado"
 
 msgid "Choose a %s"
-msgstr "Escolle un %s"
+msgstr "Elixe un %s"
 
 msgid "Choose a document"
 msgstr "Seleccionar un documento"
