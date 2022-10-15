@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3] - 2022-10-15
+
+### Added
+
+- [flit for packaging](https://github.com/wagtail/wagtail-localize/pull/589) @engineervix @chris48s
+- [Support for the DeepL free API endpoint](https://github.com/wagtail/wagtail-localize/pull/604) @ramiboutas and hat tip to @vladox
+- [Support for Wagtail 4.0](https://github.com/wagtail/wagtail-localize/pull/613) @janbaykara, @zerolab, @gasman
+  Including [#588](https://github.com/wagtail/wagtail-localize/pull/588)[#592](https://github.com/wagtail/wagtail-localize/pull/592),
+  [#599](https://github.com/wagtail/wagtail-localize/pull/599), [#601](https://github.com/wagtail/wagtail-localize/pull/601),
+  [#616](https://github.com/wagtail/wagtail-localize/pull/616), [#618](https://github.com/wagtail/wagtail-localize/issues/618),
+  [#630](https://github.com/wagtail/wagtail-localize/pull/630)r
+- [Clean up localize data on source/destination removal](https://github.com/wagtail/wagtail-localize/pull/622) @zerolab
+- [Buttons to the page header menu](https://github.com/wagtail/wagtail-localize/pull/628) @th3hamm0r
+
+### Fixed
+
+- [Guard against `ManyToOneRel` child field without help text or verbose name](https://github.com/wagtail/wagtail-localize/pull/620) @zerolab
+- Widget extraction for choosers in `StructBlock` in `ListBlock` (https://github.com/wagtail/wagtail-localize/pull/633) @zerolab
+
+### Removed
+
+- [Support for Wagtail < 2.15](https://github.com/wagtail/wagtail-localize/pull/617)
+
 ## [1.3alpha4] - 2022-09-22
 
 ### Fixed
