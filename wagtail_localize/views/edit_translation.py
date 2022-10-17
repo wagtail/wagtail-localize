@@ -502,6 +502,8 @@ def get_segment_location_info(
             )
         elif isinstance(block, blocks.ListBlock) and content_components is not None:
             return widget_from_block(block.child_block, content_components[1:])
+        elif isinstance(block, blocks.ListBlock) and content_components is None:
+            return widget_from_block(block.child_block)
 
         return {"type": "unknown"}
 
