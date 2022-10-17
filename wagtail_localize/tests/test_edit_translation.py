@@ -1012,6 +1012,97 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
         )
 
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (2, 16),
+        "ListBlocks are supported starting with Wagtail 2.16",
+    )
+    def test_choosers_in_listblock(self):
+        home_page_with_specific_type = self.home_page.add_child(
+            instance=TestHomePage(title="Test home page", slug="test-home-page")
+        )
+        self.page.test_page = self.home_page
+        self.page.test_page_specific_type = home_page_with_specific_type
+
+        image_chooser_in_listblock_id = uuid.uuid4()
+
+        image_streamblock_id = uuid.uuid4()
+        test_image = Image.objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+
+        document_chooser_in_listblock_id = uuid.uuid4()
+        document_streamblock_id = uuid.uuid4()
+        test_document = Document.objects.create(
+            title="Test document", file=get_test_image_file()
+        )
+
+        STREAM_DATA = [
+            {
+                "id": str(image_chooser_in_listblock_id),
+                "type": "test_image_chooser_in_listblock",
+                "value": [
+                    {
+                        "id": image_streamblock_id,
+                        "type": "item",
+                        "value": test_image.id,
+                    },
+                ],
+            },
+            {
+                "id": str(document_chooser_in_listblock_id),
+                "type": "test_document_chooser_in_listblock",
+                "value": [
+                    {
+                        "id": document_streamblock_id,
+                        "type": "item",
+                        "value": test_document.id,
+                    },
+                ],
+            },
+        ]
+        self.page.test_streamfield = StreamValue(
+            TestPage.test_streamfield.field.stream_block,
+            STREAM_DATA,
+            is_lazy=True,
+        )
+        self.page.save()
+
+        # Update source
+        TranslationSource.update_or_create_from_instance(self.page)
+
+        response = self.client.get(
+            reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "wagtail_localize/admin/edit_translation.html"
+        )
+
+        # Check props
+        props = json.loads(response.context["props"])
+
+        segments_by_content_path = {
+            segment["contentPath"]: segment
+            for segment in props["segments"]
+            if segment["contentPath"].startswith("test_streamfield")
+        }
+
+        image_chooser_in_listblock = (
+            f"test_streamfield.{image_chooser_in_listblock_id}.{image_streamblock_id}"
+        )
+        document_chooser_in_listblock = f"test_streamfield.{document_chooser_in_listblock_id}.{document_streamblock_id}"
+
+        self.assertEqual(
+            segments_by_content_path[image_chooser_in_listblock]["location"]["widget"],
+            {"type": "image_chooser"},
+        )
+        self.assertEqual(
+            segments_by_content_path[document_chooser_in_listblock]["location"][
+                "widget"
+            ],
+            {"type": "document_chooser"},
+        )
+
     def test_choosers_in_stream_block_in_structblock(self):
         home_page_with_specific_type = self.home_page.add_child(
             instance=TestHomePage(title="Test home page", slug="test-home-page")
