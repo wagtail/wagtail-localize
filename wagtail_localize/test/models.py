@@ -201,6 +201,12 @@ class TestStreamBlock(blocks.StreamBlock):
             ]
         )
     )
+    test_image_chooser_in_listblock = blocks.ListBlock(
+        ImageChooserBlock(),
+    )
+    test_document_chooser_in_listblock = blocks.ListBlock(
+        DocumentChooserBlock(),
+    )
 
     # chooser in struct in list in stream in listblock
     test_chooser_in_struct_in_list_in_stream_in_listblock = blocks.ListBlock(
