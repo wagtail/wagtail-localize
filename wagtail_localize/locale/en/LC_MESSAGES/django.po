@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-15 13:09+0000\n"
+"POT-Creation-Date: 2022-10-17 21:00+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -232,24 +232,24 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#: views/edit_translation.py:637
+#: views/edit_translation.py:639
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
 "Please fix them or click publish again to ignore these translations for now."
 msgstr ""
 
-#: views/edit_translation.py:665
+#: views/edit_translation.py:667
 #, python-brace-format
 msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 
-#: views/edit_translation.py:675
+#: views/edit_translation.py:677
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr ""
 
-#: views/edit_translation.py:947
+#: views/edit_translation.py:949
 #, python-brace-format
 msgid ""
 "The data model for '{model_name}' has been changed since the last "
@@ -257,31 +257,31 @@ msgid ""
 "be visible until the next translation sync."
 msgstr ""
 
-#: views/edit_translation.py:1164
+#: views/edit_translation.py:1166
 msgid "Translation has been stopped."
 msgstr ""
 
-#: views/edit_translation.py:1175
+#: views/edit_translation.py:1177
 msgid "Translation has been restarted."
 msgstr ""
 
-#: views/edit_translation.py:1343
+#: views/edit_translation.py:1345
 msgid "Please upload a valid PO file."
 msgstr ""
 
-#: views/edit_translation.py:1352
+#: views/edit_translation.py:1354
 msgid "Cannot import PO file that was created for a different translation."
 msgstr ""
 
-#: views/edit_translation.py:1360
+#: views/edit_translation.py:1362
 msgid "Successfully imported translations from PO File."
 msgstr ""
 
-#: views/edit_translation.py:1435
+#: views/edit_translation.py:1437
 msgid "Successfully translated with {}."
 msgstr ""
 
-#: views/edit_translation.py:1439
+#: views/edit_translation.py:1441
 msgid "There isn't anything left to translate."
 msgstr ""
 
