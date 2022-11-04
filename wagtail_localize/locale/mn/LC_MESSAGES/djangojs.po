@@ -2,10 +2,11 @@
 # Translators:
 # Delgermurun Purevkhuuu <info@delgermurun.com>, 2021
 # Myagmarjav Enkhbileg <miigaa.lucky@gmail.com>, 2021
+# Soft Exim, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Myagmarjav Enkhbileg <miigaa.lucky@gmail.com>, 2021\n"
+"Last-Translator: Soft Exim, 2022\n"
 "Language-Team: Mongolian (https://www.transifex.com/torchbox/teams/8009/"
 "mn/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -46,7 +47,7 @@ msgid "Edit this page"
 msgstr "Энэ хуудсыг засах"
 
 msgid "Live"
-msgstr "Нийтлэгдсэн"
+msgstr "Шууд"
 
 msgid "Lock"
 msgstr "Түгжих"
@@ -56,6 +57,9 @@ msgstr "Урдчилж харах"
 
 msgid "Save"
 msgstr "Хадгалах"
+
+msgid "Unlock"
+msgstr "Түгжээг тайлах"
 
 msgid "Unpublish"
 msgstr "Нийтлэхгүй байх"

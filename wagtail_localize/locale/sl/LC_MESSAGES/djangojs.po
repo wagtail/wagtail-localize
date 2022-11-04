@@ -2,11 +2,11 @@
 # Translators:
 # Mitja Pagon <mitja.pagon@inueni.com>, 2021
 # UP, 2021
-# Andrej, 2022
+# Andrej Marsetič, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Andrej, 2022\n"
+"Last-Translator: Andrej Marsetič, 2022\n"
 "Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,14 +20,29 @@ msgstr "[IZBRISANO]"
 msgid "Apply editor lock"
 msgstr "Uporabi zaklepanje urejevalnika"
 
+msgid "Breadcrumb"
+msgstr "Drobtina"
+
 msgid "Cancel"
 msgstr "Prekliči"
+
+msgid "Change %s"
+msgstr "Spremeni %s"
+
+msgid "Change document"
+msgstr "Spremeni dokument"
 
 msgid "Change image"
 msgstr "Spremeni sliko"
 
+msgid "Change page"
+msgstr "Spremeni stran"
+
 msgid "Changed"
 msgstr "Spremenjeno"
+
+msgid "Choose a %s"
+msgstr "Izberite %s"
 
 msgid "Choose a document"
 msgstr "Izberite dokument"
@@ -62,14 +77,26 @@ msgstr "Uredi sliko"
 msgid "Edit this page"
 msgstr "Uredi stran"
 
+msgid "Fetching image information..."
+msgstr "Pridobivanje informacij o sliki ..."
+
+msgid "Fetching page information..."
+msgstr "Pridobivanje informacij o strani ..."
+
 msgid "Live"
 msgstr "V živo"
 
 msgid "Lock"
 msgstr "Zakleni"
 
+msgid "Not translated"
+msgstr "Ni prevedeno"
+
 msgid "Preview"
 msgstr "Predogled"
+
+msgid "Publish in "
+msgstr "Objavi v"
 
 msgid "Published"
 msgstr "Objavljeno"
@@ -83,8 +110,17 @@ msgstr "Shrani"
 msgid "Saving..."
 msgstr "Shranjevanje..."
 
+msgid "Server error"
+msgstr "Napaka strežnika"
+
+msgid "Stop Synced translation"
+msgstr "Ustavi sinhroniziran prevod"
+
 msgid "Translate"
 msgstr "Prevedi"
+
+msgid "Translate all missing strings with "
+msgstr "prevedite vse manjkajoče nize z"
 
 msgid "Translate with "
 msgstr "Prevedi z"

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-23 10:28+0000\n"
+"POT-Creation-Date: 2022-10-17 21:00+0000\n"
 "Last-Translator: Loic Teixeira, 2022\n"
 "Language-Team: French (https://www.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -55,7 +55,7 @@ msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
-"Le {model_name} '{object}' a été soumis avec succès pour traduction en "
+"Le {model_name} « {object} » a été soumis avec succès pour traduction en "
 "{locales}"
 
 msgid "Up to date"
@@ -201,7 +201,7 @@ msgstr ""
 "le point de synchroniser les changements suivants :"
 
 msgid "Page '{}' has been converted into an alias."
-msgstr "La page « {}' » a été convertie en un alias."
+msgstr "La page « {} » a été convertie en un alias."
 
 msgid "Content"
 msgstr "Contenu"
@@ -223,7 +223,7 @@ msgstr ""
 
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
-msgstr "'{object}' a été publié(e) en {locale}."
+msgstr "« {object} » a été publié(e) en {locale}."
 
 #, python-brace-format
 msgid ""
@@ -290,7 +290,8 @@ msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
-"La page '{page_title}' a été soumise avec succès pour traduction en {locales}"
+"La page « {page_title} » a été soumise avec succès pour traduction en "
+"{locales}"
 
 msgid "Publish immediately"
 msgstr "Publier immédiatement"
@@ -307,21 +308,21 @@ msgstr "Mettre à jour les traductions existantes"
 
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
-msgstr "Les traductions ont été mises à jour avec succès pour '{object}'"
+msgstr "Les traductions ont été mises à jour avec succès pour « {object} »"
 
 msgid "Sync translated pages"
 msgstr "Synchroniser les pages traduites"
 
 #, python-format
 msgid "Translate '%(title)s'"
-msgstr "Traduire '%(title)s'"
+msgstr "Traduire « %(title)s »"
 
 msgid "Sync translated snippets"
-msgstr "Synchroniser les blocs traduits"
+msgstr "Synchroniser les fragments traduits"
 
 #, python-format
 msgid "Sync translations of '%(title)s'"
-msgstr "Synchroniser les traductions de '%(title)s'"
+msgstr "Synchroniser les traductions de « %(title)s »"
 
 msgid "Convert to alias page"
 msgstr "Convertir en alias"

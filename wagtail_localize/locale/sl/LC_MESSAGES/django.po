@@ -1,15 +1,15 @@
 #
 # Translators:
-# Andrej, 2022
 # Mitja Pagon <mitja.pagon@inueni.com>, 2022
 # Matej Stavanja <matej.stavanja@zfm.si>, 2022
 # andrej55 <andrej.marsetic@gmail.com>, 2022
+# Andrej Marsetič, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-23 10:28+0000\n"
-"Last-Translator: andrej55 <andrej.marsetic@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-10-17 21:00+0000\n"
+"Last-Translator: Andrej Marsetič, 2022\n"
 "Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -120,6 +120,9 @@ msgstr "Prevajanje je bilo znova zagnano."
 msgid "Please upload a valid PO file."
 msgstr "Naložite veljavno PO datoteko."
 
+msgid "Successfully imported translations from PO File."
+msgstr "Prevodi so bili uspešno uvoženi iz datoteke PO."
+
 msgid "Source title"
 msgstr "Naslov izvirnika"
 
@@ -143,6 +146,9 @@ msgstr "Prevedi stran"
 
 msgid "Publish immediately"
 msgstr "Objavi takoj"
+
+msgid "Update existing translations"
+msgstr "Posodobite obstoječe prevode"
 
 msgid "Sync translated pages"
 msgstr "Sinhroniziraj prevedene strani"

@@ -2,16 +2,16 @@
 # Translators:
 # Eugene <eugene.mechanism@gmail.com>, 2021
 # Alexey Trofimov <funkindy@gmail.com>, 2021
-# Влад <integration.into.society@gmail.com>, 2022
 # sergeybe <sergeybe@gmail.com>, 2022
 # Sergey Mazanov <mvver@outlook.com>, 2022
 # Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022
+# Влад <integration.into.society@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-23 10:28+0000\n"
-"Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-10-17 21:00+0000\n"
+"Last-Translator: Влад <integration.into.society@gmail.com>, 2022\n"
 "Language-Team: Russian (https://www.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -27,6 +27,10 @@ msgstr "Фиктивный переводчик"
 
 msgid "Translate"
 msgstr "Перевести"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Синхронизировать переводы %(model_name)s"
 
 msgid "Saving…"
 msgstr "Сохранение..."
@@ -153,6 +157,10 @@ msgstr "Перевести эту страницу"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Перевод с %(instance)s на %(locale)s"
 
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Редактировать %(object_type)s %(title)s"
+
 msgid "Submit"
 msgstr "Отправить"
 
@@ -191,6 +199,9 @@ msgid ""
 msgstr ""
 "Дата последней синхронизации: %(last_sync_date)s. Вы собираетесь "
 "синхронизировать следующее:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "Страница '{}' преобразована в псевдоним."
 
 msgid "Content"
 msgstr "Содержимое"
