@@ -1,5 +1,6 @@
+from unittest import mock
+
 from django.test import TestCase, override_settings
-from google.cloud.translate import TranslationServiceClient
 
 from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.machine_translators.google import GoogleCloudTranslator
@@ -35,22 +36,55 @@ SETTINGS_WITHOUT_CREDENTIALS = {
 
 
 class TestCloudTranslateTranslator(TestCase):
+    @mock.patch(
+        "wagtail_localize.machine_translators.google.translate.TranslationServiceClient.__init__",
+        return_value=None,
+    )
     @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR=SETTINGS_WITHOUT_CREDENTIALS)
-    def test_no_credentials_option_initialisation(self):
+    def test_no_credentials_option_initialisation(self, translationsserviceclient_init):
         translator = get_machine_translator()
         self.assertIsInstance(translator, GoogleCloudTranslator)
-        self.assertIsInstance(translator.client, TranslationServiceClient)
+        translator.client
+        translationsserviceclient_init.assert_called_once_with()
 
+    @mock.patch(
+        "wagtail_localize.machine_translators.google.service_account.Credentials.from_service_account_info",
+        return_value="MOCKED",
+    )
+    @mock.patch(
+        "wagtail_localize.machine_translators.google.translate.TranslationServiceClient.__init__",
+        return_value=None,
+    )
     @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR=SETTINGS_WITH_CREDENTIALS)
-    def test_credentials_option_initialisation(self):
+    def test_credentials_option_initialisation(
+        self, translationsserviceclient_init, from_service_account_info
+    ):
         translator = get_machine_translator()
         self.assertIsInstance(translator, GoogleCloudTranslator)
-        self.assertIsInstance(translator.client, TranslationServiceClient)
+        translator.client
+        from_service_account_info.assert_called_once_with(
+            SETTINGS_WITH_CREDENTIALS["OPTIONS"]["CREDENTIALS"]
+        )
+        translationsserviceclient_init.assert_called_once_with(credentials="MOCKED")
 
+    @mock.patch(
+        "wagtail_localize.machine_translators.google.service_account.Credentials.from_service_account_file",
+        return_value="MOCKED",
+    )
+    @mock.patch(
+        "wagtail_localize.machine_translators.google.translate.TranslationServiceClient.__init__",
+        return_value=None,
+    )
     @override_settings(
         WAGTAILLOCALIZE_MACHINE_TRANSLATOR=SETTINGS_WITH_CREDENTIALS_PATH
     )
-    def test_credentials_path_option_initialisation(self):
+    def test_credentials_path_option_initialisation(
+        self, translationsserviceclient_init, from_service_account_file
+    ):
         translator = get_machine_translator()
         self.assertIsInstance(translator, GoogleCloudTranslator)
-        self.assertIsInstance(translator.client, TranslationServiceClient)
+        translator.client
+        from_service_account_file.assert_called_once_with(
+            SETTINGS_WITH_CREDENTIALS_PATH["OPTIONS"]["CREDENTIALS_PATH"]
+        )
+        translationsserviceclient_init.assert_called_once_with(credentials="MOCKED")
