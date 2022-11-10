@@ -664,7 +664,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 url: (window as any).chooserUrls.imageChooser,
                 onload: (window as any).IMAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
                 responses: {
-                    imageChosen: function(imageData: any) {
+                    chosen: function(imageData: any) {
                         saveOverride(
                             segment,
                             imageData.id,
@@ -695,7 +695,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 url: (window as any).chooserUrls.documentChooser,
                 onload: (window as any).DOCUMENT_CHOOSER_MODAL_ONLOAD_HANDLERS,
                 responses: {
-                    documentChosen: function(documentData: any) {
+                    chosen: function(documentData: any) {
                         saveOverride(
                             segment,
                             documentData.id,
