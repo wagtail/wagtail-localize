@@ -54,6 +54,14 @@ class MyPage(Page):
     # ...
 ```
 
+
+## Disabling default publication of tranlsated pages
+
+Live pages that are submitted for translation are made live immediately. If you wish pages to stay in draft form at that point, set `WAGTAIL_LOCALIZE_PUBLISH_TRANSLATIONS_OF_LIVE_PAGES = False` in your settings file.
+
+
+
+
 ## Control translation cleanup mode
 
 <!-- prettier-ignore -->

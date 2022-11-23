@@ -73,7 +73,11 @@ class TranslationCreator:
             self.mappings[source].append(translation)
 
             # Determine whether or not to publish the translation.
-            publish = getattr(instance, "live", True)
+            publish_on_translate_setting = getattr(settings, "WAGTAIL_LOCALIZE_PUBLISH_TRANSLATIONS_OF_LIVE_PAGES", True)
+            if publish_on_translate_setting == True:
+                publish = getattr(instance, "live", True)
+            else:
+                publish = False
 
             try:
                 translation.save_target(user=self.user, publish=publish)
