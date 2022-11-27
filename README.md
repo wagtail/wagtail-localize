@@ -66,7 +66,7 @@ pip install -e .[testing] -U
 #### Using flit
 
 ```sh
-pip install flit
+pip install "flit>=3.8.0"
 flit install
 ```
 
