@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2022-11-29
+
+### Fixed
+
+-  [Rename imageChosen, documentChosen to chosen](https://github.com/wagtail/wagtail-localize/pull/650) @spikenn
+
+### Changed
+
+- Bump flit to >= 3.8.0 and use glob pattern in exclude declaration (https://github.com/wagtail/wagtail-localize/pull/658) @chris48s
+
 ## [1.3.2] - 2022-11-04
 
 ### Fixed
@@ -192,7 +202,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3.2...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3.3...HEAD
+[1.3.2]: https://github.com/wagtail/wagtail-localize/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/wagtail/wagtail-localize/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/wagtail/wagtail-localize/compare/v1.3...v1.3.1
 [1.3]: https://github.com/wagtail/wagtail-localize/compare/v1.3.0-alpha.3...v1.3
