@@ -41,7 +41,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-Run `collectstatic --link` to collect the necessary static files:
+`wagtail-localize` loads additional assets for the editing interface. Run the `collectstatic` management command to collect all the required assets.
 
 ```shell
 python manage.py collectstatic --link
