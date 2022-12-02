@@ -41,6 +41,12 @@ INSTALLED_APPS = [
 ]
 ```
 
+Run `collectstatic --link` to collect the necessary static files:
+
+```shell
+python manage.py collectstatic --link
+```
+
 ## Contributing
 
 All contributions are welcome!
