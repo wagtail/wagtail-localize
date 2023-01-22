@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4] - 2023-01-22
+
+### Added
+
+- Improve authentication options for GoogleCloudTranslator (https://github.com/wagtail/wagtail-localize/pull/645) @ababic
+  See https://www.wagtail-localize.org/how-to/integrations/machine-translation/ for further details.
+- Add setting to skip publication when live pages are submitted for translation (https://github.com/wagtail/wagtail-localize/pull/656) @mattlinares
+  The setting is `WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE`, defaulting to `True`.
+
 ## [1.3.3] - 2022-11-29
 
 ### Fixed
@@ -203,6 +212,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
 [unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3.3...HEAD
+[1.4]: https://github.com/wagtail/wagtail-localize/compare/v1.3.3...v1.4
 [1.3.2]: https://github.com/wagtail/wagtail-localize/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/wagtail/wagtail-localize/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/wagtail/wagtail-localize/compare/v1.3...v1.3.1
