@@ -23,10 +23,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Python 3.8
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
-      - uses: pre-commit/action@v2.0.3
+      - uses: pre-commit/action@v3.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -35,18 +35,26 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        python: ['3.7', '3.8', '3.9']
+        python: ['3.7', '3.8', '3.9', '3.10', '3.11']
         django: ['3.2']
-        wagtail: ['2.15', '2.16', '3.0', '4.0']
+        wagtail: ['2.15', '2.16', '3.0', '4.0', '4.1', '4.2']
         include:
-          - python: '3.9'
+          - python: '3.10'
             django: '4.1'
             wagtail: '4.0'
+            experimental: false
+          - python: '3.10'
+            django: '4.1'
+            wagtail: '4.1'
+            experimental: false
+          - python: '3.11'
+            django: '4.1'
+            wagtail: '4.2'
             experimental: false
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Install Tox
@@ -70,9 +78,9 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        python: ['3.7', '3.8', '3.9']
+        python: ['3.7', '3.8', '3.9', '3.10', '3.11']
         django: ['3.2']
-        wagtail: ['2.15', '2.16', '3.0']
+        wagtail: ['2.15', '2.16', '3.0', '4.0', '4.1', '4.2']
         experimental: [false]
         include:
           - python: '3.9'
@@ -91,6 +99,18 @@ jobs:
             django: '4.1'
             wagtail: '4.0'
             experimental: false
+          - python: '3.10'
+            django: '4.1'
+            wagtail: '4.0'
+            experimental: false
+          - python: '3.10'
+            django: '4.1'
+            wagtail: '4.1'
+            experimental: false
+          - python: '3.11'
+            django: '4.1'
+            wagtail: '4.2'
+            experimental: false
     services:
       postgres:
         image: ${{ matrix.postgres || 'postgres:11' }}
@@ -103,7 +123,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Install Tox
@@ -132,7 +152,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -144,6 +164,6 @@ jobs:
         run: |
           coverage run testmanage.py test
       - name: 'Upload coverage to Codecov'
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
