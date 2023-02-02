@@ -37,12 +37,8 @@ jobs:
       matrix:
         python: ['3.7', '3.8', '3.9', '3.10', '3.11']
         django: ['3.2']
-        wagtail: ['2.15', '2.16', '3.0', '4.0', '4.1', '4.2']
+        wagtail: ['2.15', '4.1', '4.2']
         include:
-          - python: '3.10'
-            django: '4.1'
-            wagtail: '4.0'
-            experimental: false
           - python: '3.10'
             django: '4.1'
             wagtail: '4.1'
@@ -80,29 +76,9 @@ jobs:
       matrix:
         python: ['3.7', '3.8', '3.9', '3.10']
         django: ['3.2']
-        wagtail: ['2.15', '2.16', '3.0', '4.0', '4.1', '4.2']
+        wagtail: ['2.15', '4.1', '4.2']
         experimental: [false]
         include:
-          - python: '3.9'
-            django: '4.0'
-            wagtail: '2.16'
-            experimental: false
-          - python: '3.9'
-            django: '4.0'
-            wagtail: '3.0'
-            experimental: false
-          - python: '3.9'
-            django: '4.0'
-            wagtail: '4.0'
-            experimental: false
-          - python: '3.9'
-            django: '4.1'
-            wagtail: '4.0'
-            experimental: false
-          - python: '3.10'
-            django: '4.1'
-            wagtail: '4.0'
-            experimental: false
           - python: '3.10'
             django: '4.1'
             wagtail: '4.1'
