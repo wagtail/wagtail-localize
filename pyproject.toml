@@ -31,7 +31,7 @@ dynamic = ["version"]
 requires-python = ">=3.7"
 dependencies = [
     "Django>=3.2,<4.2",
-    "Wagtail>=4.1,<5.0",
+    "Wagtail>=4.1",
     "polib>=1.1,<2.0",
     "typing_extensions>=4.0"
 ]
