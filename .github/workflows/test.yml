@@ -75,22 +75,75 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11']
-        django: ['3.2', '4.0', '4.1']
+        python: ['3.8', '3.9', '3.10']
+        django: ['4.0', '4.1']
         wagtail: ['4.1', '4.2']
+        postgres: ['15']
         experimental: [false]
         include:
           - python: '3.7'
             django: '3.2'
             wagtail: '4.1'
+            postgres: '12'
             experimental: false
           - python: '3.7'
             django: '3.2'
             wagtail: '4.2'
+            postgres: '12'
+            experimental: false
+          - python: '3.8'
+            django: '3.2'
+            wagtail: '4.1'
+            postgres: '12'
+            experimental: false
+          - python: '3.8'
+            django: '3.2'
+            wagtail: '4.2'
+            postgres: '12'
+            experimental: false
+          - python: '3.9'
+            django: '3.2'
+            wagtail: '4.1'
+            postgres: '12'
+            experimental: false
+          - python: '3.9'
+            django: '3.2'
+            wagtail: '4.2'
+            postgres: '12'
+            experimental: false
+          - python: '3.10'
+            django: '3.2'
+            wagtail: '4.1'
+            postgres: '12'
+            experimental: false
+          - python: '3.10'
+            django: '3.2'
+            wagtail: '4.2'
+            postgres: '12'
+            experimental: false
+          - python: '3.11'
+            django: '4.0'
+            wagtail: '4.1'
+            postgres: '15'
+            experimental: false
+          - python: '3.11'
+            django: '4.0'
+            wagtail: '4.2'
+            postgres: '15'
+            experimental: false
+          - python: '3.11'
+            django: '4.1'
+            wagtail: '4.1'
+            postgres: '15'
+            experimental: false
+          - python: '3.11'
+            django: '4.1'
+            wagtail: '4.2'
+            postgres: '15'
             experimental: false
     services:
       postgres:
-        image: ${{ matrix.postgres || 'postgres:11' }}
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -111,13 +164,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .tox
-          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-postgres
+          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-postgres${{ matrix.postgres }}
       - name: Test
         run: |
           tox
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/wagtail_localize
-          TOXENV: python${{ matrix.python }}-django${{ matrix.django }}-wagtail${{ matrix.wagtail }}-postgres
+          TOXENV: python${{ matrix.python }}-django${{ matrix.django }}-wagtail${{ matrix.wagtail }}-postgres${{ matrix.postgres }}
 
   coverage:
     runs-on: ubuntu-latest
