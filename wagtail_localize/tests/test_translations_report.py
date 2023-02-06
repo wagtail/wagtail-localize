@@ -1,8 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from wagtail.core.models import Locale, Page
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import Locale, Page
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.test.models import TestSnippet

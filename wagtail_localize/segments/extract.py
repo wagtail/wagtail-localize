@@ -2,9 +2,9 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.core import blocks
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, TranslatableMixin
+from wagtail import blocks
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page, TranslatableMixin
 
 from wagtail_localize.segments import (
     OverridableSegmentValue,

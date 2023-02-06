@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.snippets.models import get_snippet_models
 from wagtail.utils.version import get_main_version
 

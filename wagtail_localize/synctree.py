@@ -1,8 +1,8 @@
 from collections import defaultdict
 
 from django.utils.functional import cached_property
-from wagtail.core import hooks
-from wagtail.core.models import Locale, Page
+from wagtail import hooks
+from wagtail.models import Locale, Page
 
 
 class PageIndex:

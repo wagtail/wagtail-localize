@@ -21,13 +21,13 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
-from wagtail.admin.edit_handlers import FieldPanel
-from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Locale, Page
+from wagtail.admin.panels import FieldPanel
+from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
 from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import Locale, Page
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_localize.compat import get_snippet_delete_url, get_snippet_edit_url
 from wagtail_localize.models import (

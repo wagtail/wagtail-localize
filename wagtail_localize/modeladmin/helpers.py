@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from wagtail.contrib.modeladmin.helpers import ButtonHelper, PageButtonHelper
 from wagtail.contrib.modeladmin.views import InspectView
-from wagtail.core.models import Locale, Page, TranslatableMixin
+from wagtail.models import Locale, Page, TranslatableMixin
 
 from wagtail_localize.models import TranslationSource
 

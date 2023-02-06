@@ -3,7 +3,7 @@ from collections import defaultdict
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from wagtail_localize.models import Translation, TranslationSource
 

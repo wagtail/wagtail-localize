@@ -3,8 +3,8 @@ import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page, Site
+from wagtail.blocks import StreamValue
+from wagtail.models import Page, Site
 
 from wagtail_localize.segments import (
     OverridableSegmentValue,

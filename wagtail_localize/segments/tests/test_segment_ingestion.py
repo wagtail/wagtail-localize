@@ -2,8 +2,8 @@ import unittest
 import uuid
 
 from django.test import TestCase
-from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Locale, Page
+from wagtail.blocks import StreamValue
+from wagtail.models import Locale, Page
 
 from wagtail_localize.fields import copy_synchronised_fields
 from wagtail_localize.segments import (

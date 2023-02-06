@@ -8,13 +8,8 @@ from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from wagtail.admin import messages
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core.models import (
-    Page,
-    PageLogEntry,
-    TranslatableMixin,
-    _copy_m2m_relations,
-)
-from wagtail.core.signals import page_published
+from wagtail.models import Page, PageLogEntry, TranslatableMixin, _copy_m2m_relations
+from wagtail.signals import page_published
 
 from wagtail_localize.models import Translation, TranslationSource
 

@@ -29,6 +29,7 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from wagtail import blocks
 from wagtail.admin import messages
 from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList
@@ -37,14 +38,13 @@ from wagtail.admin.panels import TabbedInterface
 from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core import blocks
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Page, TranslatableMixin
-from wagtail.core.utils import cautious_slugify
+from wagtail.coreutils import cautious_slugify
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.models import AbstractDocument
+from wagtail.fields import StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import AbstractImage
+from wagtail.models import Page, TranslatableMixin
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type

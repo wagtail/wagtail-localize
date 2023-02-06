@@ -3,8 +3,8 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from wagtail.core.models import Locale, Page, PageViewRestriction
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import Locale, Page, PageViewRestriction
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_localize.compat import get_snippet_edit_url
 from wagtail_localize.models import Translation, TranslationSource

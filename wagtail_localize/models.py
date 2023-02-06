@@ -36,17 +36,17 @@ from modelcluster.models import (
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
+from wagtail import blocks
 from wagtail.blocks.list_block import ListValue
-from wagtail.core import blocks
-from wagtail.core.fields import StreamField
-from wagtail.core.models import (
+from wagtail.coreutils import find_available_slug
+from wagtail.fields import StreamField
+from wagtail.models import (
     Page,
     PageLogEntry,
     TranslatableMixin,
     _copy,
     get_translatable_models,
 )
-from wagtail.core.utils import find_available_slug
 from wagtail.snippets.models import get_snippet_models
 
 from .compat import DATE_FORMAT, get_revision_model, get_snippet_edit_url

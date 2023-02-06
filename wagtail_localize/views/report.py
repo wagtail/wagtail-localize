@@ -8,7 +8,7 @@ from django_filters.fields import ModelChoiceField
 from modelcluster.fields import ParentalKey
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.views.reports import ReportView
-from wagtail.core.models import get_translatable_models
+from wagtail.models import get_translatable_models
 
 from wagtail_localize.models import Translation
 

@@ -2,9 +2,9 @@ from collections import defaultdict
 
 from django.apps import apps
 from django.db import models
-from wagtail.core import blocks
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.rich_text import RichText
+from wagtail import blocks
+from wagtail.fields import RichTextField, StreamField
+from wagtail.rich_text import RichText
 
 from wagtail_localize.strings import restore_strings
 

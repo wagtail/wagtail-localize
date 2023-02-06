@@ -4,19 +4,19 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from wagtail.admin.edit_handlers import (
+from wagtail import blocks, telepath
+from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
     ObjectList,
     PageChooserPanel,
     TabbedInterface,
 )
-from wagtail.core import blocks, telepath
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page, TranslatableMixin
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.models import Orderable, Page, TranslatableMixin
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import register_snippet
 

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from wagtail.core.models import Locale, Page, PageLogEntry
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import Locale, Page, PageLogEntry
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_localize.models import LocaleSynchronization, Translation
 from wagtail_localize.test.models import TestPage

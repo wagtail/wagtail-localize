@@ -8,12 +8,12 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
+from wagtail import hooks
 from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
-from wagtail.core import hooks
-from wagtail.core.log_actions import LogFormatter
-from wagtail.core.models import Locale, Page, TranslatableMixin
+from wagtail.log_actions import LogFormatter
+from wagtail.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
 from wagtail.snippets.widgets import SnippetListingButton
 

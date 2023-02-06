@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy, ngettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core.models import Locale, Page, TranslatableMixin
+from wagtail.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
 from wagtail_localize.compat import get_snippet_edit_url_from_args
