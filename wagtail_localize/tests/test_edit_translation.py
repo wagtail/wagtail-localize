@@ -1,6 +1,5 @@
 import json
 import tempfile
-import unittest
 import uuid
 
 import polib
@@ -22,7 +21,6 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.core.blocks import StreamValue
 from wagtail.core.models import Locale, Page
@@ -588,21 +586,15 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         orderable_page_path = (
             f"test_snippet_orderable.{orderable_block_id}.orderable_page"
         )
-        if WAGTAIL_VERSION >= (3, 0):
-            self.assertEqual(
-                segments_by_content_path[orderable_page_path]["location"]["widget"],
-                {
-                    "type": "page_chooser",
-                    "allowed_page_types": [
-                        "wagtailcore.page",
-                    ],
-                },
-            )
-        else:
-            self.assertEqual(
-                segments_by_content_path[orderable_page_path]["location"]["widget"],
-                {"type": "unknown"},
-            )
+        self.assertEqual(
+            segments_by_content_path[orderable_page_path]["location"]["widget"],
+            {
+                "type": "page_chooser",
+                "allowed_page_types": [
+                    "wagtailcore.page",
+                ],
+            },
+        )
         self.assertEqual(
             segments_by_content_path[orderable_page_path]["location"]["subField"],
             "Orderable page",
@@ -836,10 +828,6 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_choosers_in_listblock_in_stream_blocks(self):
         home_page_with_specific_type = self.home_page.add_child(
             instance=TestHomePage(title="Test home page", slug="test-home-page")
@@ -906,10 +894,6 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_choosers_in_structblock_in_listblock(self):
         home_page_with_specific_type = self.home_page.add_child(
             instance=TestHomePage(title="Test home page", slug="test-home-page")
@@ -1012,10 +996,6 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_choosers_in_listblock(self):
         home_page_with_specific_type = self.home_page.add_child(
             instance=TestHomePage(title="Test home page", slug="test-home-page")

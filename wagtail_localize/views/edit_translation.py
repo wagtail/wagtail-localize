@@ -29,9 +29,12 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
 from wagtail.admin.navigation import get_explorable_root_page
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList
+from wagtail.admin.panels import PanelGroup as BaseCompositeEditHandler
+from wagtail.admin.panels import TabbedInterface
+from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.core import blocks
@@ -45,6 +48,7 @@ from wagtail.images.models import AbstractImage
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
+from wagtail.utils.decorators import xframe_options_sameorigin_override
 
 from wagtail_localize.compat import (
     DATE_FORMAT,
@@ -61,39 +65,7 @@ from wagtail_localize.models import (
     TranslationSource,
 )
 from wagtail_localize.segments import StringSegmentValue
-
-
-if WAGTAIL_VERSION >= (4, 0):
-    from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
-    from wagtail.utils.decorators import xframe_options_sameorigin_override
-
-    from wagtail_localize.side_panels import LocalizedPageSidePanels
-else:
-    from wagtail.snippets.views.snippets import get_snippet_edit_handler
-
-    def xframe_options_sameorigin_override(func):
-        return func
-
-
-if WAGTAIL_VERSION >= (3, 0):
-    # TODO: tidy this up once we drop support for Wagtail < 3.0
-    from wagtail.admin.panels import (
-        FieldPanel,
-        InlinePanel,
-        ObjectList,
-        PageChooserPanel,
-    )
-    from wagtail.admin.panels import PanelGroup as BaseCompositeEditHandler
-    from wagtail.admin.panels import TabbedInterface
-else:
-    from wagtail.admin.edit_handlers import (
-        BaseCompositeEditHandler,
-        FieldPanel,
-        InlinePanel,
-        ObjectList,
-        PageChooserPanel,
-        TabbedInterface,
-    )
+from wagtail_localize.side_panels import LocalizedPageSidePanels
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -206,24 +178,17 @@ class TabHelper:
 
     @cached_property
     def field_tab_mapping(self):
-        if WAGTAIL_VERSION >= (3, 0):
-            # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
-            # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
-            # only interested in "tabbing"
-            is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
-        else:
-            is_tabbed = isinstance(self.edit_handler, TabbedInterface)
+        # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
+        # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
+        # only interested in "tabbing"
+        is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
 
         if is_tabbed:
             field_tabs = {}
             for tab in self.edit_handler.children:
-                if WAGTAIL_VERSION >= (3, 0):
-                    form_options = tab.get_form_options()
-                    required_fields = form_options.get("fields", [])
-                    required_formsets = form_options.get("formsets", {}).keys()
-                else:
-                    required_fields = tab.required_fields()
-                    required_formsets = tab.required_formsets().keys()
+                form_options = tab.get_form_options()
+                required_fields = form_options.get("fields", [])
+                required_formsets = form_options.get("formsets", {}).keys()
 
                 for tab_field in required_fields:
                     field_tabs[tab_field] = tab.heading
@@ -243,25 +208,18 @@ class TabHelper:
 
     @cached_property
     def field_ordering_mapping(self):
-        if WAGTAIL_VERSION >= (3, 0):
-            # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
-            # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
-            # only interested in "tabbing"
-            is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
-        else:
-            is_tabbed = isinstance(self.edit_handler, TabbedInterface)
+        # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
+        # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
+        # only interested in "tabbing"
+        is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
 
         if is_tabbed:
             field_orderings = {}
             order = 0
             for tab in self.edit_handler.children:
-                if WAGTAIL_VERSION >= (3, 0):
-                    form_options = tab.get_form_options()
-                    required_fields = form_options.get("fields", [])
-                    required_formsets = form_options.get("formsets", {})
-                else:
-                    required_fields = tab.required_fields()
-                    required_formsets = tab.required_formsets().keys()
+                form_options = tab.get_form_options()
+                required_fields = form_options.get("fields", [])
+                required_formsets = form_options.get("formsets", {})
                 for tab_field in required_fields:
                     # TODO(someday): Orderings of fields within inline panels.
                     # (currently, they will all be assigned the same order value,
@@ -299,9 +257,7 @@ class TabHelper:
                 field_edit_handlers[edit_handler.field_name] = edit_handler
 
             elif (
-                WAGTAIL_VERSION >= (3, 0)
-                and isinstance(edit_handler, InlinePanel)
-                and edit_handler.model is not None
+                isinstance(edit_handler, InlinePanel) and edit_handler.model is not None
             ):
                 # we can only reliably get panel definitions with the relevant instance data in Wagtail 3.0+
                 for panel in edit_handler.panel_definitions:
@@ -340,51 +296,36 @@ def get_segment_location_info(
             if issubclass(field.related_model, Page):
                 edit_handler = tab_helper.get_field_edit_handler(field.name)
 
-                if WAGTAIL_VERSION >= (3, 0):
-                    # @see https://github.com/wagtail/wagtail/pull/7684
-                    # the target_models is set in the ModelFieldRegistry for ForeignKeys
-                    widget_overrides = edit_handler.get_form_options().get(
-                        "widgets", {}
-                    )
-                    # Check for explicit `page_types` kwarg in PageChooserPanel
-                    if field.name in widget_overrides and hasattr(
-                        widget_overrides[field.name], "target_models"
-                    ):
-                        allowed_page_types = [
-                            "{app}.{model}".format(
-                                app=model._meta.app_label,
-                                model=model._meta.model_name,
-                            )
-                            for model in widget_overrides[field.name].target_models
-                        ]
-                    else:
-                        from wagtail.admin.forms.models import registry
-
-                        allowed_page_types = [
-                            "{app}.{model}".format(
-                                app=model._meta.app_label,
-                                model=model._meta.model_name,
-                            )
-                            for model in registry.foreign_key_lookup(field)[
-                                "widget"
-                            ].target_models
-                        ]
-                    return {
-                        "type": "page_chooser",
-                        "allowed_page_types": allowed_page_types,
-                    }
-                elif isinstance(edit_handler, PageChooserPanel):
-                    return {
-                        "type": "page_chooser",
-                        "allowed_page_types": [
-                            "{app}.{model}".format(
-                                app=model._meta.app_label, model=model._meta.model_name
-                            )
-                            for model in edit_handler.target_models()
-                        ],
-                    }
+                # @see https://github.com/wagtail/wagtail/pull/7684
+                # the target_models is set in the ModelFieldRegistry for ForeignKeys
+                widget_overrides = edit_handler.get_form_options().get("widgets", {})
+                # Check for explicit `page_types` kwarg in PageChooserPanel
+                if field.name in widget_overrides and hasattr(
+                    widget_overrides[field.name], "target_models"
+                ):
+                    allowed_page_types = [
+                        "{app}.{model}".format(
+                            app=model._meta.app_label,
+                            model=model._meta.model_name,
+                        )
+                        for model in widget_overrides[field.name].target_models
+                    ]
                 else:
-                    return {"type": "unknown"}
+                    from wagtail.admin.forms.models import registry
+
+                    allowed_page_types = [
+                        "{app}.{model}".format(
+                            app=model._meta.app_label,
+                            model=model._meta.model_name,
+                        )
+                        for model in registry.foreign_key_lookup(field)[
+                            "widget"
+                        ].target_models
+                    ]
+                return {
+                    "type": "page_chooser",
+                    "allowed_page_types": allowed_page_types,
+                }
 
             elif issubclass(field.related_model, AbstractDocument):
                 return {"type": "document_chooser"}
@@ -393,23 +334,13 @@ def get_segment_location_info(
                 return {"type": "image_chooser"}
 
             elif issubclass(field.related_model, tuple(get_snippet_models())):
-                if WAGTAIL_VERSION >= (4, 0, 0):
-                    chooser_url = reverse(
-                        "wagtailsnippetchoosers_%s_%s:choose"
-                        % (
-                            field.related_model._meta.app_label,
-                            field.related_model._meta.model_name,
-                        )
+                chooser_url = reverse(
+                    "wagtailsnippetchoosers_%s_%s:choose"
+                    % (
+                        field.related_model._meta.app_label,
+                        field.related_model._meta.model_name,
                     )
-                else:
-                    chooser_url = reverse(
-                        "wagtailsnippets:choose",
-                        args=[
-                            field.related_model._meta.app_label,
-                            field.related_model._meta.model_name,
-                        ],
-                    )
-
+                )
                 return {
                     "type": "snippet_chooser",
                     "snippet_model": {
@@ -451,22 +382,13 @@ def get_segment_location_info(
             return {"type": "image_chooser"}
 
         elif isinstance(block, SnippetChooserBlock):
-            if WAGTAIL_VERSION >= (4, 0, 0):
-                chooser_url = reverse(
-                    "wagtailsnippetchoosers_%s_%s:choose"
-                    % (
-                        block.target_model._meta.app_label,
-                        block.target_model._meta.model_name,
-                    )
+            chooser_url = reverse(
+                "wagtailsnippetchoosers_%s_%s:choose"
+                % (
+                    block.target_model._meta.app_label,
+                    block.target_model._meta.model_name,
                 )
-            else:
-                chooser_url = reverse(
-                    "wagtailsnippets:choose",
-                    args=[
-                        block.target_model._meta.app_label,
-                        block.target_model._meta.model_name,
-                    ],
-                )
+            )
             return {
                 "type": "snippet_chooser",
                 "snippet_model": {
@@ -971,14 +893,10 @@ def edit_translation(request, translation, instance):
     else:
         add_convert_to_alias_url = False
 
-    if WAGTAIL_VERSION >= (4, 0):
-        has_legacy_styling = False
-        side_panels = (
-            LocalizedPageSidePanels(request, instance, translation) if is_page else None
-        )
-    else:
-        has_legacy_styling = True
-        side_panels = None
+    has_legacy_styling = False
+    side_panels = (
+        LocalizedPageSidePanels(request, instance, translation) if is_page else None
+    )
 
     return render(
         request,

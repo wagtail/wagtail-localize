@@ -2,7 +2,6 @@ from collections import defaultdict
 
 from django.apps import apps
 from django.db import models
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.core import blocks
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.rich_text import RichText
@@ -203,20 +202,19 @@ class StreamFieldSegmentsWriter:
         return struct_block
 
     def handle_list_block(self, list_block, segments):
-        if WAGTAIL_VERSION >= (2, 16):
-            segments_by_block = defaultdict(list)
+        segments_by_block = defaultdict(list)
 
-            for segment in segments:
-                block_uuid, segment = segment.unwrap()
-                segments_by_block[block_uuid].append(segment)
+        for segment in segments:
+            block_uuid, segment = segment.unwrap()
+            segments_by_block[block_uuid].append(segment)
 
-            for block_index, block in enumerate(list_block.bound_blocks):
-                block_segments = segments_by_block[block.id]
-                list_block.bound_blocks[block_index].value = self.handle_block(
-                    block.block, block.value, block_segments
-                )
+        for block_index, block in enumerate(list_block.bound_blocks):
+            block_segments = segments_by_block[block.id]
+            list_block.bound_blocks[block_index].value = self.handle_block(
+                block.block, block.value, block_segments
+            )
 
-            return list_block
+        return list_block
 
     def get_stream_block_child_data(self, stream_block, block_uuid):
         for stream_child in stream_block:

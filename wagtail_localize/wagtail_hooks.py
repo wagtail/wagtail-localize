@@ -8,7 +8,6 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
@@ -134,16 +133,9 @@ def register_submit_translation_permission():
     )
 
 
-if WAGTAIL_VERSION >= (4, 0, 0):
-
-    def set_button_icon(button, icon_name):
-        button.icon_name = icon_name
-        return button
-
-else:
-
-    def set_button_icon(button, icon_name):
-        return button
+def set_button_icon(button, icon_name):
+    button.icon_name = icon_name
+    return button
 
 
 def page_listing_more_buttons(page, page_perms, next_url=None):
@@ -180,22 +172,8 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
             )
 
 
-if WAGTAIL_VERSION >= (4, 0, 0):
-
-    hooks.register("register_page_header_buttons", page_listing_more_buttons)
-    hooks.register("register_page_listing_more_buttons", page_listing_more_buttons)
-
-else:
-
-    if WAGTAIL_VERSION >= (2, 16, 0):
-        hooks.register("register_page_header_buttons", page_listing_more_buttons)
-
-    @hooks.register("register_page_listing_more_buttons")
-    def register_page_listing_more_buttons(
-        page, page_perms, is_parent=False, next_url=None
-    ):
-        for button in page_listing_more_buttons(page, page_perms, next_url):
-            yield button
+hooks.register("register_page_header_buttons", page_listing_more_buttons)
+hooks.register("register_page_listing_more_buttons", page_listing_more_buttons)
 
 
 @hooks.register("register_snippet_listing_buttons")

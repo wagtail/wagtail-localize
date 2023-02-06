@@ -4,13 +4,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
     ObjectList,
     PageChooserPanel,
-    StreamFieldPanel,
     TabbedInterface,
 )
 from wagtail.core import blocks, telepath
@@ -236,7 +234,7 @@ class TestCustomField(models.TextField):
         return [StringSegmentValue("foo", "{} and some extra".format(value))]
 
 
-SF_KWARGS = {"use_json_field": True} if WAGTAIL_VERSION >= (4, 0) else {}
+SF_KWARGS = {"use_json_field": True}
 
 
 class TestPage(Page):
@@ -345,9 +343,7 @@ class TestPage(Page):
         FieldPanel("test_slugfield"),
         FieldPanel("test_urlfield"),
         FieldPanel("test_richtextfield"),
-        FieldPanel("test_streamfield")
-        if WAGTAIL_VERSION >= (3, 0)
-        else StreamFieldPanel("test_streamfield"),
+        FieldPanel("test_streamfield"),
         FieldPanel("test_snippet"),
         InlinePanel("test_childobjects"),
         FieldPanel("test_customfield"),
@@ -357,9 +353,7 @@ class TestPage(Page):
         FieldPanel("test_synchronized_slugfield"),
         FieldPanel("test_synchronized_urlfield"),
         FieldPanel("test_synchronized_richtextfield"),
-        FieldPanel("test_synchronized_streamfield")
-        if WAGTAIL_VERSION >= (3, 0)
-        else StreamFieldPanel("test_synchronized_streamfield"),
+        FieldPanel("test_synchronized_streamfield"),
         FieldPanel("test_synchronized_image"),
         FieldPanel("test_synchronized_document"),
         FieldPanel("test_synchronized_snippet"),

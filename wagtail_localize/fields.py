@@ -2,14 +2,8 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel, get_all_child_relations
 from treebeard.mp_tree import MP_Node
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, TranslatableMixin
-
-
-try:
-    from wagtail.core.models import COMMENTS_RELATION_NAME
-except ImportError:
-    COMMENTS_RELATION_NAME = "comments"
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import COMMENTS_RELATION_NAME, Page, TranslatableMixin
 
 
 class BaseTranslatableField:
