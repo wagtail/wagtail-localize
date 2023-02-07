@@ -1,3 +1,4 @@
+from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -6,7 +7,6 @@ from django.urls import reverse
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
-from wagtail_localize.compat import get_snippet_edit_url
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.test.models import (
     NonTranslatableSnippet,
@@ -16,11 +16,7 @@ from wagtail_localize.test.models import (
     TestWithTranslationModeEnabledPage,
 )
 
-from .utils import (
-    assert_permission_denied,
-    get_snippet_list_url_from_args,
-    make_test_page,
-)
+from .utils import assert_permission_denied, make_test_page
 
 
 def strip_user_perms():
@@ -642,7 +638,7 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
 
     def test(self):
         response = self.client.get(
-            get_snippet_list_url_from_args("wagtail_localize_test", "testsnippet")
+            reverse("wagtailsnippets_wagtail_localize_test_testsnippet:list")
         )
 
         self.assertContains(
@@ -657,7 +653,7 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         de_snippet.save()
 
         response = self.client.get(
-            get_snippet_list_url_from_args("wagtail_localize_test", "testsnippet")
+            reverse("wagtailsnippets_wagtail_localize_test_testsnippet:list")
         )
 
         self.assertNotContains(response, "Translate")
@@ -666,9 +662,7 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         self.en_snippet.copy_for_translation(self.de_locale)
 
         response = self.client.get(
-            get_snippet_list_url_from_args(
-                "wagtail_localize_test", "nontranslatablesnippet"
-            )
+            reverse("wagtailsnippets_wagtail_localize_test_nontranslatablesnippet:list")
         )
 
         self.assertNotContains(response, "Translate")
@@ -677,7 +671,7 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         strip_user_perms()
 
         response = self.client.get(
-            get_snippet_list_url_from_args("wagtail_localize_test", "testsnippet")
+            reverse("wagtailsnippets_wagtail_localize_test_testsnippet:list")
         )
 
         self.assertNotContains(response, "Translate")
@@ -825,7 +819,10 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
 
         self.assertRedirects(
             response,
-            get_snippet_edit_url(translated_snippet),
+            reverse(
+                f"wagtailsnippets_{translated_snippet._meta.app_label}_{translated_snippet._meta.model_name}:edit",
+                args=[quote(translated_snippet.pk)],
+            ),
         )
 
     def test_post_submit_snippet_translation_into_multiple_locales(self):
@@ -839,7 +836,10 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
 
         self.assertRedirects(
             response,
-            get_snippet_edit_url(self.en_snippet),
+            reverse(
+                f"wagtailsnippets_{self.en_snippet._meta.app_label}_{self.en_snippet._meta.model_name}:edit",
+                args=[quote(self.en_snippet.pk)],
+            ),
         )
 
         # Check French translation

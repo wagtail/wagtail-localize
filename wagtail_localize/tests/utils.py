@@ -22,11 +22,3 @@ def make_test_page(parent, cls=None, **kwargs):
     cls = cls or TestPage
     kwargs.setdefault("title", "Test page")
     return parent.add_child(instance=cls(**kwargs))
-
-
-def get_snippet_list_url_from_args(app_label, model_name):
-    return reverse(f"wagtailsnippets_{app_label}_{model_name}:list")
-
-
-def get_snippet_add_url_from_args(app_label, model_name):
-    return reverse(f"wagtailsnippets_{app_label}_{model_name}:add")

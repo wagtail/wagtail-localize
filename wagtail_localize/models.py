@@ -49,7 +49,7 @@ from wagtail.models import (
 )
 from wagtail.snippets.models import get_snippet_models
 
-from .compat import DATE_FORMAT, get_revision_model, get_snippet_edit_url
+from .compat import DATE_FORMAT
 from .fields import copy_synchronised_fields
 from .locales.components import LocaleComponentModelForm, register_locale_component
 from .segments import (
@@ -111,7 +111,10 @@ def get_edit_url(instance):
         return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
     elif instance._meta.model in get_snippet_models():
-        return get_snippet_edit_url(instance)
+        return reverse(
+            f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:edit",
+            args=[quote(instance.pk)],
+        )
 
     elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return reverse(
@@ -1352,7 +1355,7 @@ class TranslationLog(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     page_revision = models.ForeignKey(
-        get_revision_model(),
+        "wagtailcore.Revision",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

@@ -133,11 +133,6 @@ def register_submit_translation_permission():
     )
 
 
-def set_button_icon(button, icon_name):
-    button.icon_name = icon_name
-    return button
-
-
 def page_listing_more_buttons(page, page_perms, next_url=None):
     if not page.is_root() and page_perms.user.has_perm(
         "wagtail_localize.submit_translation"
@@ -152,9 +147,11 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
         if has_locale_to_translate_to:
             url = reverse("wagtail_localize:submit_page_translation", args=[page.id])
 
-            yield set_button_icon(
-                wagtailadmin_widgets.Button(_("Translate this page"), url, priority=60),
-                "wagtail-localize-language",
+            yield wagtailadmin_widgets.Button(
+                _("Translate this page"),
+                url,
+                priority=60,
+                icon_name="wagtail-localize-language",
             )
 
         # If the page is the source for translations, show "Sync translated pages" button
@@ -164,11 +161,8 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
             if next_url is not None:
                 url += "?" + urlencode({"next": next_url})
 
-            yield set_button_icon(
-                wagtailadmin_widgets.Button(
-                    _("Sync translated pages"), url, priority=65
-                ),
-                "resubmit",
+            yield wagtailadmin_widgets.Button(
+                _("Sync translated pages"), url, priority=60, icon_name="resubmit"
             )
 
 

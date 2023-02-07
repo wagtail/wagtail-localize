@@ -1,7 +1,7 @@
+from django.contrib.admin.utils import quote
+from django.urls import reverse
 from rest_framework import fields, serializers, viewsets
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
-
-from wagtail_localize.compat import get_snippet_edit_url
 
 
 class BaseSnippetSerializer(serializers.ModelSerializer):
@@ -13,7 +13,10 @@ class BaseSnippetSerializer(serializers.ModelSerializer):
         return str(instance)
 
     def get_edit_url(self, instance):
-        return get_snippet_edit_url(instance)
+        return reverse(
+            f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:edit",
+            args=[quote(instance.pk)],
+        )
 
 
 class SnippetViewSet(viewsets.ModelViewSet):

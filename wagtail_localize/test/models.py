@@ -234,9 +234,6 @@ class TestCustomField(models.TextField):
         return [StringSegmentValue("foo", "{} and some extra".format(value))]
 
 
-SF_KWARGS = {"use_json_field": True}
-
-
 class TestPage(Page):
     test_charfield = models.CharField(
         gettext_lazy("char field"), max_length=255, blank=True, null=True, default=""
@@ -248,7 +245,7 @@ class TestPage(Page):
 
     test_richtextfield = RichTextField(blank=True)
     test_null_richtextfield = RichTextField(blank=True, null=True)
-    test_streamfield = StreamField(TestStreamBlock, blank=True, **SF_KWARGS)
+    test_streamfield = StreamField(TestStreamBlock, blank=True, use_json_field=True)
 
     test_snippet = models.ForeignKey(
         TestSnippet, null=True, blank=True, on_delete=models.SET_NULL
@@ -265,7 +262,7 @@ class TestPage(Page):
 
     test_synchronized_richtextfield = RichTextField(blank=True)
     test_synchronized_streamfield = StreamField(
-        TestStreamBlock, blank=True, **SF_KWARGS
+        TestStreamBlock, blank=True, use_json_field=True
     )
 
     test_synchronized_image = models.ForeignKey(
@@ -451,7 +448,7 @@ class TestGenerateTranslatableFieldsPage(Page):
     test_urlfield = models.URLField(blank=True)
 
     test_richtextfield = RichTextField(blank=True)
-    test_streamfield = StreamField(TestStreamBlock, blank=True, **SF_KWARGS)
+    test_streamfield = StreamField(TestStreamBlock, blank=True, use_json_field=True)
 
     test_snippet = models.ForeignKey(
         TestSnippet, null=True, blank=True, on_delete=models.SET_NULL

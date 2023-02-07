@@ -50,11 +50,7 @@ from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 from wagtail.utils.decorators import xframe_options_sameorigin_override
 
-from wagtail_localize.compat import (
-    DATE_FORMAT,
-    get_snippet_delete_url,
-    get_snippet_edit_url,
-)
+from wagtail_localize.compat import DATE_FORMAT
 from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import (
     OverridableSegment,
@@ -721,7 +717,10 @@ def edit_translation(request, translation, instance):
             return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
         elif instance._meta.model in get_snippet_models():
-            return get_snippet_edit_url(instance)
+            return reverse(
+                f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:edit",
+                args=[quote(instance.pk)],
+            )
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
@@ -736,7 +735,10 @@ def edit_translation(request, translation, instance):
         if isinstance(instance, Page):
             return reverse("wagtailadmin_pages:delete", args=[instance.id])
         elif instance._meta.model in get_snippet_models():
-            return get_snippet_delete_url(instance)
+            return reverse(
+                f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:delete",
+                args=[quote(instance.pk)],
+            )
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
@@ -893,7 +895,6 @@ def edit_translation(request, translation, instance):
     else:
         add_convert_to_alias_url = False
 
-    has_legacy_styling = False
     side_panels = (
         LocalizedPageSidePanels(request, instance, translation) if is_page else None
     )
@@ -911,7 +912,6 @@ def edit_translation(request, translation, instance):
             # These props are passed directly to the TranslationEditor react component
             "props": json.dumps(
                 {
-                    "has_legacy_styling": has_legacy_styling,
                     "adminBaseUrl": reverse("wagtailadmin_home"),
                     "object": {
                         "title": str(instance),
@@ -1024,7 +1024,6 @@ def edit_translation(request, translation, instance):
                 },
                 cls=DjangoJSONEncoder,
             ),
-            "has_legacy_styling": has_legacy_styling,
         },
     )
 
@@ -1097,7 +1096,12 @@ def restart_translation(request, translation, instance):
     if isinstance(instance, Page):
         return redirect("wagtailadmin_pages:edit", instance.id)
     elif instance._meta.model in get_snippet_models():
-        return redirect(get_snippet_edit_url(instance))
+        return redirect(
+            reverse(
+                f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:edit",
+                args=[quote(instance.pk)],
+            )
+        )
     elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return redirect(
             "{app_label}_{model_name}_modeladmin_edit".format(
