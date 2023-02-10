@@ -30,125 +30,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  test-sqlite:
+  test-python:
     runs-on: ubuntu-latest
     needs: lint
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11']
-        django: ['3.2', '4.0', '4.1']
-        wagtail: ['4.1', '4.2']
-        experimental: [false]
-        include:
-          - python: '3.7'
-            django: '3.2'
-            wagtail: '4.1'
-            experimental: false
-          - python: '3.7'
-            django: '3.2'
-            wagtail: '4.2'
-            experimental: false
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python }}
-      - name: Install Tox
-        run: |
-          python -m pip install tox
-      - name: Cache tox environments
-        id: cache-tox
-        uses: actions/cache@v3
-        with:
-          path: .tox
-          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-sqlite
-      - name: Test
-        run: |
-          tox
-        env:
-          TOXENV: python${{ matrix.python }}-django${{ matrix.django }}-wagtail${{ matrix.wagtail }}-sqlite
-
-  test-postgres:
-    runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
-    needs: lint
-    strategy:
-      matrix:
-        python: ['3.8', '3.9', '3.10']
-        django: ['4.0', '4.1']
-        wagtail: ['4.1', '4.2']
-        postgres: ['15']
-        experimental: [false]
-        include:
-          - python: '3.7'
-            django: '3.2'
-            wagtail: '4.1'
-            postgres: '12'
-            experimental: false
-          - python: '3.7'
-            django: '3.2'
-            wagtail: '4.2'
-            postgres: '12'
-            experimental: false
-          - python: '3.8'
-            django: '3.2'
-            wagtail: '4.1'
-            postgres: '12'
-            experimental: false
-          - python: '3.8'
-            django: '3.2'
-            wagtail: '4.2'
-            postgres: '12'
-            experimental: false
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '4.1'
-            postgres: '12'
-            experimental: false
-          - python: '3.9'
-            django: '3.2'
-            wagtail: '4.2'
-            postgres: '12'
-            experimental: false
-          - python: '3.10'
-            django: '3.2'
-            wagtail: '4.1'
-            postgres: '12'
-            experimental: false
-          - python: '3.10'
-            django: '3.2'
-            wagtail: '4.2'
-            postgres: '12'
-            experimental: false
-          - python: '3.11'
-            django: '4.0'
-            wagtail: '4.1'
-            postgres: '15'
-            experimental: false
-          - python: '3.11'
-            django: '4.0'
-            wagtail: '4.2'
-            postgres: '15'
-            experimental: false
-          - python: '3.11'
-            django: '4.1'
-            wagtail: '4.1'
-            postgres: '15'
-            experimental: false
-          - python: '3.11'
-            django: '4.1'
-            wagtail: '4.2'
-            postgres: '15'
-            experimental: false
-    services:
-      postgres:
-        image: postgres:${{ matrix.postgres }}
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v3
@@ -156,21 +43,12 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-      - name: Install Tox
+      - name: Install dependencies
         run: |
-          python -m pip install tox
-      - name: Cache tox environments
-        id: cache-tox
-        uses: actions/cache@v3
-        with:
-          path: .tox
-          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-postgres${{ matrix.postgres }}
-      - name: Test
-        run: |
-          tox
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/wagtail_localize
-          TOXENV: python${{ matrix.python }}-django${{ matrix.django }}-wagtail${{ matrix.wagtail }}-postgres${{ matrix.postgres }}
+          python -m pip install --upgrade pip
+          python -m pip install tox tox-gh-actions
+      - name: Test with tox
+        run: tox
 
   coverage:
     runs-on: ubuntu-latest
