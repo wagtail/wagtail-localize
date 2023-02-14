@@ -188,3 +188,5 @@ WAGTAILSEARCH_BACKENDS = {
         "BACKEND": "wagtail.search.backends.database",
     }
 }
+
+WAGTAILADMIN_BASE_URL = "http://example.com"
