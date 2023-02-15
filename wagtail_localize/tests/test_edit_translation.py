@@ -3133,7 +3133,7 @@ class TestUploadPOFileView(EditTranslationTestData, TestCase):
             {
                 "file": SimpleUploadedFile(
                     "translations.po",
-                    "Foo".encode("utf-8"),
+                    b"Foo",
                     content_type="text/x-gettext-translation",
                 ),
                 "next": reverse(

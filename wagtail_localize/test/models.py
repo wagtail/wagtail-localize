@@ -231,7 +231,7 @@ class TestCustomField(models.TextField):
             # Don't disrupt other tests
             return []
 
-        return [StringSegmentValue("foo", "{} and some extra".format(value))]
+        return [StringSegmentValue("foo", f"{value} and some extra")]
 
 
 class TestPage(Page):

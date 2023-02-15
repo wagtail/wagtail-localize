@@ -164,7 +164,7 @@ class StringSegmentValue(BaseValue):
         )
 
     def __repr__(self):
-        return "<StringSegmentValue {} '{}'>".format(self.path, self.render_html())
+        return f"<StringSegmentValue {self.path} '{self.render_html()}'>"
 
 
 class TemplateSegmentValue(BaseValue):
@@ -385,4 +385,4 @@ class OverridableSegmentValue(BaseValue):
         )
 
     def __repr__(self):
-        return "<OverridableSegmentValue {} '{}'>".format(self.path, self.data)
+        return f"<OverridableSegmentValue {self.path} '{self.data}'>"

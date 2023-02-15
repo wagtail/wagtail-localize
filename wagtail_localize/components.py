@@ -90,7 +90,7 @@ class BaseComponentManager:
                     },
                 )
 
-            prefix = "component-{}".format(component_model._meta.db_table)
+            prefix = f"component-{component_model._meta.db_table}"
 
             form_kwargs = {
                 "instance": component_instance,

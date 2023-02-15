@@ -124,7 +124,7 @@ class PageIndex:
         _walk(None)
 
         if remaining_pages:
-            print("Warning: {} orphaned pages!".format(len(remaining_pages)))
+            print(f"Warning: {len(remaining_pages)} orphaned pages!")
 
         return PageIndex(new_pages)
 

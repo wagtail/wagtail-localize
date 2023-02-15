@@ -1235,7 +1235,7 @@ def download_pofile(request, translation_id):
     response = HttpResponse(
         str(translation.export_po()), content_type="text/x-gettext-translation"
     )
-    response["Content-Disposition"] = "attachment; filename=%s-%s.po" % (
+    response["Content-Disposition"] = "attachment; filename={}-{}.po".format(
         slugify(translation.source.object_repr),
         translation.target_locale.language_code,
     )
