@@ -4,8 +4,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Locale, Page, PageLogEntry
+from wagtail.blocks import StreamValue
+from wagtail.models import Locale, Page, PageLogEntry
 
 from wagtail_localize.models import (
     MissingRelatedObjectError,

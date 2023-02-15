@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- [Updated tests to include Wagtail 4.2](https://github.com/wagtail/wagtail-localize/pull/673) @katdom13
+
+### Removed
+
+- [Support for Wagtail < 4.1](https://github.com/wagtail/wagtail-localize/pull/673) @katdom13
+
 ## [1.4] - 2023-01-22
 
 ### Added

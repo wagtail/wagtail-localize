@@ -1,5 +1,4 @@
 from django.urls import reverse
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.ui.side_panels import PagePreviewSidePanel, PageSidePanels
 from wagtail.models import PreviewableMixin
 
@@ -40,18 +39,13 @@ class LocalizedPreviewSidePanel(PagePreviewSidePanel):
 
 class LocalizedPageSidePanels(PageSidePanels):
     def __init__(self, request, page, translation):
-        if WAGTAIL_VERSION >= (4, 1):
-            super().__init__(
-                request,
-                page,
-                preview_enabled=False,
-                comments_enabled=False,
-                show_schedule_publishing_toggle=False,
-            )
-        else:
-            super().__init__(
-                request, page, preview_enabled=False, comments_enabled=False
-            )
+        super().__init__(
+            request,
+            page,
+            preview_enabled=False,
+            comments_enabled=False,
+            show_schedule_publishing_toggle=False,
+        )
 
         # FIXME: enable the preview panels, with an updated JS handler, as preview-panels.js expects a regular form
         # self.side_panels += [

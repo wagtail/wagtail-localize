@@ -2,9 +2,8 @@ import unittest
 import uuid
 
 from django.test import TestCase
-from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Locale, Page
+from wagtail.blocks import StreamValue
+from wagtail.models import Locale, Page
 
 from wagtail_localize.fields import copy_synchronised_fields
 from wagtail_localize.segments import (
@@ -557,9 +556,6 @@ class TestSegmentIngestionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16), "ListBlocks are supported starting Wagtail 2.16"
-    )
     def test_listblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(

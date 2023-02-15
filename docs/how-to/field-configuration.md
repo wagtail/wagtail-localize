@@ -50,7 +50,7 @@ For example, by default the `slug` field on pages is translatable. If you would 
 set it up as syncronised instead using the following snippet:
 
 ```python
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from wagtail_localize.fields import SynchronizedField
 
@@ -71,7 +71,7 @@ You can tell Wagtail to not allow the field to be overridden by passing the keyw
 For example:
 
 ```python
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from wagtail_localize.fields import SynchronizedField
 
@@ -90,7 +90,7 @@ class BlogPage(Page):
 To completely disable Wagtail's auto generation, you can set the `translatable_fields` attribute on the model.
 
 ```python
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from wagtail_localize.fields import TranslatableField, SynchronizedField
 

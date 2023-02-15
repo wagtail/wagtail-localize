@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import messages
-from django.contrib.admin.utils import unquote
+from django.contrib.admin.utils import quote, unquote
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import Http404
@@ -11,10 +11,9 @@ from django.utils.translation import gettext_lazy, ngettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core.models import Locale, Page, TranslatableMixin
+from wagtail.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
-from wagtail_localize.compat import get_snippet_edit_url_from_args
 from wagtail_localize.components import TranslationComponentManager
 from wagtail_localize.operations import translate_object, translate_page_subtree
 from wagtail_localize.tasks import background
@@ -221,19 +220,16 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
         return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
 
     def get_default_success_url(self, translated_snippet=None):
+        pk = self.kwargs["pk"]
+
         if translated_snippet:
             # If the editor chose a single locale to translate to, redirect to
             # the newly translated snippet's edit view.
-            return get_snippet_edit_url_from_args(
-                self.kwargs["app_label"],
-                self.kwargs["model_name"],
-                translated_snippet.pk,
-            )
+            pk = translated_snippet.pk
 
-        return get_snippet_edit_url_from_args(
-            self.kwargs["app_label"],
-            self.kwargs["model_name"],
-            self.kwargs["pk"],
+        return reverse(
+            f"wagtailsnippets_{self.kwargs['app_label']}_{self.kwargs['model_name']}:edit",
+            args=[quote(pk)],
         )
 
     def get_success_message(self, locales):

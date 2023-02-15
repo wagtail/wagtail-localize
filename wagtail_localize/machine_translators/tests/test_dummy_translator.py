@@ -1,5 +1,5 @@
 from django.test import TestCase
-from wagtail.core.models import Locale
+from wagtail.models import Locale
 
 from wagtail_localize.machine_translators.dummy import DummyTranslator
 from wagtail_localize.strings import StringValue

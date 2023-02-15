@@ -1,8 +1,8 @@
 from django.contrib.messages import get_messages
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from wagtail.core.models import Locale
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import Locale
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_localize.locales.components import LOCALE_COMPONENTS
 from wagtail_localize.models import LocaleSynchronization

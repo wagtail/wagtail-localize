@@ -25,15 +25,13 @@ classifiers = [
     "Framework :: Django :: 4.0",
     "Framework :: Django :: 4.1",
     "Framework :: Wagtail",
-    "Framework :: Wagtail :: 2",
-    "Framework :: Wagtail :: 3",
     "Framework :: Wagtail :: 4"
 ]
 dynamic = ["version"]
 requires-python = ">=3.7"
 dependencies = [
     "Django>=3.2,<4.2",
-    "Wagtail>=2.15,<5.0",
+    "Wagtail>=4.1",
     "polib>=1.1,<2.0",
     "typing_extensions>=4.0"
 ]

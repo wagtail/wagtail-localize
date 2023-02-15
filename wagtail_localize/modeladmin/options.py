@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from wagtail.contrib.modeladmin.options import ModelAdmin
-from wagtail.core.models import TranslatableMixin
+from wagtail.models import TranslatableMixin
 
 from .helpers import TranslatableButtonHelper, TranslatablePageButtonHelper
 from .views import (

@@ -4,10 +4,9 @@ from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
 import uuid
-from wagtail import VERSION as WAGTAIL_VERSION
-import wagtail.core.blocks
-import wagtail.core.blocks.field_block
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.blocks.field_block
+import wagtail.fields
 import wagtail.documents.blocks
 import wagtail.embeds.blocks
 import wagtail.images.blocks
@@ -19,11 +18,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    core_migration = (
-        "0076_modellogentry_revision"
-        if WAGTAIL_VERSION >= (4, 0)
-        else "0059_apply_collection_ordering"
-    )
+    core_migration = "0076_modellogentry_revision"
     dependencies = [
         ("wagtailcore", "0059_apply_collection_ordering"),
         ("wagtaildocs", "0010_document_file_hash"),
@@ -125,66 +120,62 @@ class Migration(migrations.Migration):
                 ("test_emailfield", models.EmailField(blank=True, max_length=254)),
                 ("test_slugfield", models.SlugField(blank=True)),
                 ("test_urlfield", models.URLField(blank=True)),
-                ("test_richtextfield", wagtail.core.fields.RichTextField(blank=True)),
+                ("test_richtextfield", wagtail.fields.RichTextField(blank=True)),
                 (
                     "test_streamfield",
-                    wagtail.core.fields.StreamField(
+                    wagtail.fields.StreamField(
                         [
                             (
                                 "test_charblock",
-                                wagtail.core.blocks.CharBlock(max_length=255),
+                                wagtail.blocks.CharBlock(max_length=255),
                             ),
                             (
                                 "test_textblock",
-                                wagtail.core.blocks.TextBlock(label="text block"),
+                                wagtail.blocks.TextBlock(label="text block"),
                             ),
-                            ("test_emailblock", wagtail.core.blocks.EmailBlock()),
-                            ("test_urlblock", wagtail.core.blocks.URLBlock()),
-                            ("test_richtextblock", wagtail.core.blocks.RichTextBlock()),
-                            ("test_rawhtmlblock", wagtail.core.blocks.RawHTMLBlock()),
+                            ("test_emailblock", wagtail.blocks.EmailBlock()),
+                            ("test_urlblock", wagtail.blocks.URLBlock()),
+                            ("test_richtextblock", wagtail.blocks.RichTextBlock()),
+                            ("test_rawhtmlblock", wagtail.blocks.RawHTMLBlock()),
                             (
                                 "test_blockquoteblock",
-                                wagtail.core.blocks.BlockQuoteBlock(),
+                                wagtail.blocks.BlockQuoteBlock(),
                             ),
                             (
                                 "test_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
-                                        ("field_a", wagtail.core.blocks.TextBlock()),
-                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                        ("field_a", wagtail.blocks.TextBlock()),
+                                        ("field_b", wagtail.blocks.TextBlock()),
                                     ]
                                 ),
                             ),
                             (
                                 "test_listblock",
-                                wagtail.core.blocks.ListBlock(
-                                    wagtail.core.blocks.TextBlock()
-                                ),
+                                wagtail.blocks.ListBlock(wagtail.blocks.TextBlock()),
                             ),
                             (
                                 "test_listblock_in_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "title",
-                                            wagtail.core.blocks.CharBlock(
-                                                required=False
-                                            ),
+                                            wagtail.blocks.CharBlock(required=False),
                                         ),
                                         (
                                             "items",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.field_block.CharBlock
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.field_block.CharBlock
                                             ),
                                         ),
                                         (
                                             "links_list",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.StructBlock(
                                                     [
                                                         (
                                                             "heading",
-                                                            wagtail.core.blocks.CharBlock(
+                                                            wagtail.blocks.CharBlock(
                                                                 blank=True,
                                                                 label="List Heading",
                                                                 required=False,
@@ -192,8 +183,8 @@ class Migration(migrations.Migration):
                                                         ),
                                                         (
                                                             "pages",
-                                                            wagtail.core.blocks.ListBlock(
-                                                                wagtail.core.blocks.PageChooserBlock()
+                                                            wagtail.blocks.ListBlock(
+                                                                wagtail.blocks.PageChooserBlock()
                                                             ),
                                                         ),
                                                     ]
@@ -205,35 +196,35 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_nestedstreamblock",
-                                wagtail.core.blocks.StreamBlock(
+                                wagtail.blocks.StreamBlock(
                                     [
-                                        ("block_a", wagtail.core.blocks.TextBlock()),
-                                        ("block_b", wagtail.core.blocks.TextBlock()),
+                                        ("block_a", wagtail.blocks.TextBlock()),
+                                        ("block_b", wagtail.blocks.TextBlock()),
                                         (
                                             "block_l",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.CharBlock()
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.CharBlock()
                                             ),
                                         ),
                                         (
                                             "chooser",
-                                            wagtail.core.blocks.PageChooserBlock(),
+                                            wagtail.blocks.PageChooserBlock(),
                                         ),
                                         (
                                             "chooser_in_struct",
-                                            wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.StructBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     )
                                                 ]
                                             ),
                                         ),
                                         (
                                             "chooser_in_list",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.PageChooserBlock()
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.PageChooserBlock()
                                             ),
                                         ),
                                     ]
@@ -241,23 +232,23 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_streamblock_in_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "nested_stream",
-                                            wagtail.core.blocks.StreamBlock(
+                                            wagtail.blocks.StreamBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     ),
                                                     (
                                                         "checklist",
-                                                        wagtail.core.blocks.StructBlock(
+                                                        wagtail.blocks.StructBlock(
                                                             [
                                                                 (
                                                                     "page",
-                                                                    wagtail.core.blocks.PageChooserBlock(),
+                                                                    wagtail.blocks.PageChooserBlock(),
                                                                 )
                                                             ]
                                                         ),
@@ -270,10 +261,10 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_customstructblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
-                                        ("field_a", wagtail.core.blocks.TextBlock()),
-                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                        ("field_a", wagtail.blocks.TextBlock()),
+                                        ("field_b", wagtail.blocks.TextBlock()),
                                     ]
                                 ),
                             ),
@@ -283,11 +274,11 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_pagechooserblock",
-                                wagtail.core.blocks.PageChooserBlock(),
+                                wagtail.blocks.PageChooserBlock(),
                             ),
                             (
                                 "test_pagechooserblock_with_restricted_types",
-                                wagtail.core.blocks.PageChooserBlock(
+                                wagtail.blocks.PageChooserBlock(
                                     [
                                         "wagtail_localize_test.TestHomePage",
                                         "wagtail_localize_test.TestPage",
@@ -317,21 +308,21 @@ class Migration(migrations.Migration):
                             ("test_embedblock", wagtail.embeds.blocks.EmbedBlock()),
                             (
                                 "test_chooserstructblock",
-                                wagtail.core.blocks.StructBlock(
-                                    [("page", wagtail.core.blocks.PageChooserBlock())]
+                                wagtail.blocks.StructBlock(
+                                    [("page", wagtail.blocks.PageChooserBlock())]
                                 ),
                             ),
                             (
                                 "test_nestedchooserstructblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "nested_page",
-                                            wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.StructBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     )
                                                 ]
                                             ),
@@ -446,70 +437,66 @@ class Migration(migrations.Migration):
                 ("test_emailfield", models.EmailField(blank=True, max_length=254)),
                 ("test_slugfield", models.SlugField(blank=True)),
                 ("test_urlfield", models.URLField(blank=True)),
-                ("test_richtextfield", wagtail.core.fields.RichTextField(blank=True)),
+                ("test_richtextfield", wagtail.fields.RichTextField(blank=True)),
                 (
                     "test_null_richtextfield",
-                    wagtail.core.fields.RichTextField(blank=True, null=True),
+                    wagtail.fields.RichTextField(blank=True, null=True),
                 ),
                 (
                     "test_streamfield",
-                    wagtail.core.fields.StreamField(
+                    wagtail.fields.StreamField(
                         [
                             (
                                 "test_charblock",
-                                wagtail.core.blocks.CharBlock(max_length=255),
+                                wagtail.blocks.CharBlock(max_length=255),
                             ),
                             (
                                 "test_textblock",
-                                wagtail.core.blocks.TextBlock(label="text block"),
+                                wagtail.blocks.TextBlock(label="text block"),
                             ),
-                            ("test_emailblock", wagtail.core.blocks.EmailBlock()),
-                            ("test_urlblock", wagtail.core.blocks.URLBlock()),
-                            ("test_richtextblock", wagtail.core.blocks.RichTextBlock()),
-                            ("test_rawhtmlblock", wagtail.core.blocks.RawHTMLBlock()),
+                            ("test_emailblock", wagtail.blocks.EmailBlock()),
+                            ("test_urlblock", wagtail.blocks.URLBlock()),
+                            ("test_richtextblock", wagtail.blocks.RichTextBlock()),
+                            ("test_rawhtmlblock", wagtail.blocks.RawHTMLBlock()),
                             (
                                 "test_blockquoteblock",
-                                wagtail.core.blocks.BlockQuoteBlock(),
+                                wagtail.blocks.BlockQuoteBlock(),
                             ),
                             (
                                 "test_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
-                                        ("field_a", wagtail.core.blocks.TextBlock()),
-                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                        ("field_a", wagtail.blocks.TextBlock()),
+                                        ("field_b", wagtail.blocks.TextBlock()),
                                     ]
                                 ),
                             ),
                             (
                                 "test_listblock",
-                                wagtail.core.blocks.ListBlock(
-                                    wagtail.core.blocks.TextBlock()
-                                ),
+                                wagtail.blocks.ListBlock(wagtail.blocks.TextBlock()),
                             ),
                             (
                                 "test_listblock_in_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "title",
-                                            wagtail.core.blocks.CharBlock(
-                                                required=False
-                                            ),
+                                            wagtail.blocks.CharBlock(required=False),
                                         ),
                                         (
                                             "items",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.field_block.CharBlock
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.field_block.CharBlock
                                             ),
                                         ),
                                         (
                                             "links_list",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.StructBlock(
                                                     [
                                                         (
                                                             "heading",
-                                                            wagtail.core.blocks.CharBlock(
+                                                            wagtail.blocks.CharBlock(
                                                                 blank=True,
                                                                 label="List Heading",
                                                                 required=False,
@@ -517,8 +504,8 @@ class Migration(migrations.Migration):
                                                         ),
                                                         (
                                                             "pages",
-                                                            wagtail.core.blocks.ListBlock(
-                                                                wagtail.core.blocks.PageChooserBlock()
+                                                            wagtail.blocks.ListBlock(
+                                                                wagtail.blocks.PageChooserBlock()
                                                             ),
                                                         ),
                                                     ]
@@ -530,35 +517,35 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_nestedstreamblock",
-                                wagtail.core.blocks.StreamBlock(
+                                wagtail.blocks.StreamBlock(
                                     [
-                                        ("block_a", wagtail.core.blocks.TextBlock()),
-                                        ("block_b", wagtail.core.blocks.TextBlock()),
+                                        ("block_a", wagtail.blocks.TextBlock()),
+                                        ("block_b", wagtail.blocks.TextBlock()),
                                         (
                                             "block_l",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.CharBlock()
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.CharBlock()
                                             ),
                                         ),
                                         (
                                             "chooser",
-                                            wagtail.core.blocks.PageChooserBlock(),
+                                            wagtail.blocks.PageChooserBlock(),
                                         ),
                                         (
                                             "chooser_in_struct",
-                                            wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.StructBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     )
                                                 ]
                                             ),
                                         ),
                                         (
                                             "chooser_in_list",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.PageChooserBlock()
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.PageChooserBlock()
                                             ),
                                         ),
                                     ]
@@ -566,23 +553,23 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_streamblock_in_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "nested_stream",
-                                            wagtail.core.blocks.StreamBlock(
+                                            wagtail.blocks.StreamBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     ),
                                                     (
                                                         "checklist",
-                                                        wagtail.core.blocks.StructBlock(
+                                                        wagtail.blocks.StructBlock(
                                                             [
                                                                 (
                                                                     "page",
-                                                                    wagtail.core.blocks.PageChooserBlock(),
+                                                                    wagtail.blocks.PageChooserBlock(),
                                                                 )
                                                             ]
                                                         ),
@@ -595,10 +582,10 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_customstructblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
-                                        ("field_a", wagtail.core.blocks.TextBlock()),
-                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                        ("field_a", wagtail.blocks.TextBlock()),
+                                        ("field_b", wagtail.blocks.TextBlock()),
                                     ]
                                 ),
                             ),
@@ -608,11 +595,11 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_pagechooserblock",
-                                wagtail.core.blocks.PageChooserBlock(),
+                                wagtail.blocks.PageChooserBlock(),
                             ),
                             (
                                 "test_pagechooserblock_with_restricted_types",
-                                wagtail.core.blocks.PageChooserBlock(
+                                wagtail.blocks.PageChooserBlock(
                                     [
                                         "wagtail_localize_test.TestHomePage",
                                         "wagtail_localize_test.TestPage",
@@ -642,21 +629,21 @@ class Migration(migrations.Migration):
                             ("test_embedblock", wagtail.embeds.blocks.EmbedBlock()),
                             (
                                 "test_chooserstructblock",
-                                wagtail.core.blocks.StructBlock(
-                                    [("page", wagtail.core.blocks.PageChooserBlock())]
+                                wagtail.blocks.StructBlock(
+                                    [("page", wagtail.blocks.PageChooserBlock())]
                                 ),
                             ),
                             (
                                 "test_nestedchooserstructblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "nested_page",
-                                            wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.StructBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     )
                                                 ]
                                             ),
@@ -689,67 +676,63 @@ class Migration(migrations.Migration):
                 ("test_synchronized_urlfield", models.URLField(blank=True)),
                 (
                     "test_synchronized_richtextfield",
-                    wagtail.core.fields.RichTextField(blank=True),
+                    wagtail.fields.RichTextField(blank=True),
                 ),
                 (
                     "test_synchronized_streamfield",
-                    wagtail.core.fields.StreamField(
+                    wagtail.fields.StreamField(
                         [
                             (
                                 "test_charblock",
-                                wagtail.core.blocks.CharBlock(max_length=255),
+                                wagtail.blocks.CharBlock(max_length=255),
                             ),
                             (
                                 "test_textblock",
-                                wagtail.core.blocks.TextBlock(label="text block"),
+                                wagtail.blocks.TextBlock(label="text block"),
                             ),
-                            ("test_emailblock", wagtail.core.blocks.EmailBlock()),
-                            ("test_urlblock", wagtail.core.blocks.URLBlock()),
-                            ("test_richtextblock", wagtail.core.blocks.RichTextBlock()),
-                            ("test_rawhtmlblock", wagtail.core.blocks.RawHTMLBlock()),
+                            ("test_emailblock", wagtail.blocks.EmailBlock()),
+                            ("test_urlblock", wagtail.blocks.URLBlock()),
+                            ("test_richtextblock", wagtail.blocks.RichTextBlock()),
+                            ("test_rawhtmlblock", wagtail.blocks.RawHTMLBlock()),
                             (
                                 "test_blockquoteblock",
-                                wagtail.core.blocks.BlockQuoteBlock(),
+                                wagtail.blocks.BlockQuoteBlock(),
                             ),
                             (
                                 "test_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
-                                        ("field_a", wagtail.core.blocks.TextBlock()),
-                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                        ("field_a", wagtail.blocks.TextBlock()),
+                                        ("field_b", wagtail.blocks.TextBlock()),
                                     ]
                                 ),
                             ),
                             (
                                 "test_listblock",
-                                wagtail.core.blocks.ListBlock(
-                                    wagtail.core.blocks.TextBlock()
-                                ),
+                                wagtail.blocks.ListBlock(wagtail.blocks.TextBlock()),
                             ),
                             (
                                 "test_listblock_in_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "title",
-                                            wagtail.core.blocks.CharBlock(
-                                                required=False
-                                            ),
+                                            wagtail.blocks.CharBlock(required=False),
                                         ),
                                         (
                                             "items",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.field_block.CharBlock
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.field_block.CharBlock
                                             ),
                                         ),
                                         (
                                             "links_list",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.StructBlock(
                                                     [
                                                         (
                                                             "heading",
-                                                            wagtail.core.blocks.CharBlock(
+                                                            wagtail.blocks.CharBlock(
                                                                 blank=True,
                                                                 label="List Heading",
                                                                 required=False,
@@ -757,8 +740,8 @@ class Migration(migrations.Migration):
                                                         ),
                                                         (
                                                             "pages",
-                                                            wagtail.core.blocks.ListBlock(
-                                                                wagtail.core.blocks.PageChooserBlock()
+                                                            wagtail.blocks.ListBlock(
+                                                                wagtail.blocks.PageChooserBlock()
                                                             ),
                                                         ),
                                                     ]
@@ -770,35 +753,35 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_nestedstreamblock",
-                                wagtail.core.blocks.StreamBlock(
+                                wagtail.blocks.StreamBlock(
                                     [
-                                        ("block_a", wagtail.core.blocks.TextBlock()),
-                                        ("block_b", wagtail.core.blocks.TextBlock()),
+                                        ("block_a", wagtail.blocks.TextBlock()),
+                                        ("block_b", wagtail.blocks.TextBlock()),
                                         (
                                             "block_l",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.CharBlock()
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.CharBlock()
                                             ),
                                         ),
                                         (
                                             "chooser",
-                                            wagtail.core.blocks.PageChooserBlock(),
+                                            wagtail.blocks.PageChooserBlock(),
                                         ),
                                         (
                                             "chooser_in_struct",
-                                            wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.StructBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     )
                                                 ]
                                             ),
                                         ),
                                         (
                                             "chooser_in_list",
-                                            wagtail.core.blocks.ListBlock(
-                                                wagtail.core.blocks.PageChooserBlock()
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.PageChooserBlock()
                                             ),
                                         ),
                                     ]
@@ -806,23 +789,23 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_streamblock_in_structblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "nested_stream",
-                                            wagtail.core.blocks.StreamBlock(
+                                            wagtail.blocks.StreamBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     ),
                                                     (
                                                         "checklist",
-                                                        wagtail.core.blocks.StructBlock(
+                                                        wagtail.blocks.StructBlock(
                                                             [
                                                                 (
                                                                     "page",
-                                                                    wagtail.core.blocks.PageChooserBlock(),
+                                                                    wagtail.blocks.PageChooserBlock(),
                                                                 )
                                                             ]
                                                         ),
@@ -835,10 +818,10 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_customstructblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
-                                        ("field_a", wagtail.core.blocks.TextBlock()),
-                                        ("field_b", wagtail.core.blocks.TextBlock()),
+                                        ("field_a", wagtail.blocks.TextBlock()),
+                                        ("field_b", wagtail.blocks.TextBlock()),
                                     ]
                                 ),
                             ),
@@ -848,11 +831,11 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_pagechooserblock",
-                                wagtail.core.blocks.PageChooserBlock(),
+                                wagtail.blocks.PageChooserBlock(),
                             ),
                             (
                                 "test_pagechooserblock_with_restricted_types",
-                                wagtail.core.blocks.PageChooserBlock(
+                                wagtail.blocks.PageChooserBlock(
                                     [
                                         "wagtail_localize_test.TestHomePage",
                                         "wagtail_localize_test.TestPage",
@@ -882,21 +865,21 @@ class Migration(migrations.Migration):
                             ("test_embedblock", wagtail.embeds.blocks.EmbedBlock()),
                             (
                                 "test_chooserstructblock",
-                                wagtail.core.blocks.StructBlock(
-                                    [("page", wagtail.core.blocks.PageChooserBlock())]
+                                wagtail.blocks.StructBlock(
+                                    [("page", wagtail.blocks.PageChooserBlock())]
                                 ),
                             ),
                             (
                                 "test_nestedchooserstructblock",
-                                wagtail.core.blocks.StructBlock(
+                                wagtail.blocks.StructBlock(
                                     [
                                         (
                                             "nested_page",
-                                            wagtail.core.blocks.StructBlock(
+                                            wagtail.blocks.StructBlock(
                                                 [
                                                     (
                                                         "page",
-                                                        wagtail.core.blocks.PageChooserBlock(),
+                                                        wagtail.blocks.PageChooserBlock(),
                                                     )
                                                 ]
                                             ),

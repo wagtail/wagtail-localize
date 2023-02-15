@@ -3,9 +3,8 @@ import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.core.blocks import StreamValue
-from wagtail.core.models import Page, Site
+from wagtail.blocks import StreamValue
+from wagtail.models import Page, Site
 
 from wagtail_localize.segments import (
     OverridableSegmentValue,
@@ -344,10 +343,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_listblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
@@ -374,10 +369,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
         segments = extract_segments(page)
         self.assertEqual(segments, expected_segments)
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_listblock_not_extracted_when_not_in_block_format(self):
         page = make_test_page_with_streamfield_block(
             uuid.uuid4(), "test_listblock", ["Test content", "Some more test content"]
@@ -387,10 +378,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
         ).handle_stream_block(page.test_streamfield)
         self.assertEqual(segments, [])
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_listblock_in_structblock(self):
         block_id = uuid.uuid4()
         item_one_id = "11111111-1111-1111-1111-111111111111"
@@ -429,10 +416,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
 
         self.assertEqual(segments, expected_segments)
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_listblock_in_listblock(self):
         block_id = uuid.uuid4()
         item_one_id = "11111111-1111-1111-1111-111111111111"
@@ -470,10 +453,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
 
         self.assertEqual(segments, expected_segments)
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_listblock_in_nestedstreamblock(self):
         block_id = uuid.uuid4()
         nested_block_id = uuid.uuid4()
@@ -507,10 +486,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (2, 16),
-        "ListBlocks are supported starting with Wagtail 2.16",
-    )
     def test_list_block_empty_should_not_raise_error(self):
         page = make_test_page_with_streamfield_block(uuid.uuid4(), "test_listblock", [])
         segments = StreamFieldSegmentExtractor(
