@@ -74,7 +74,7 @@ class TranslationCreator:
 
             # Determine whether or not to publish the translation.
             publish_on_translate_setting = getattr(settings, "WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE", True)
-            if publish_on_translate_setting == True:
+            if publish_on_translate_setting is True:
                 publish = getattr(instance, "live", True)
             else:
                 publish = False
