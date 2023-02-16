@@ -11,11 +11,10 @@ from django.utils.translation import gettext_lazy
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.snippets.models import get_snippet_models
 from wagtail.utils.version import get_main_version
 
-from wagtail_localize.compat import get_snippet_edit_url
 from wagtail_localize.models import TranslationSource
 from wagtail_localize.views.submit_translations import TranslationComponentManager
 
@@ -66,7 +65,10 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
             return reverse("wagtailadmin_explore", args=[instance.get_parent().id])
 
         elif instance._meta.model in get_snippet_models():
-            return get_snippet_edit_url(instance)
+            return reverse(
+                f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:edit",
+                args=[quote(instance.pk)],
+            )
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
@@ -81,7 +83,10 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
             return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
         elif instance._meta.model in get_snippet_models():
-            return get_snippet_edit_url(instance)
+            return reverse(
+                f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:edit",
+                args=[quote(instance.pk)],
+            )
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(

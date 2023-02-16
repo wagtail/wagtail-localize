@@ -4,7 +4,7 @@ import polib
 
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from wagtail.core.models import Locale, Page
+from wagtail.models import Locale, Page
 
 from wagtail_localize.models import (
     CannotSaveDraftError,

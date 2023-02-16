@@ -23,10 +23,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Python 3.8
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
-      - uses: pre-commit/action@v2.0.3
+      - uses: pre-commit/action@v3.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -35,92 +35,66 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        python: ['3.7', '3.8', '3.9']
-        django: ['3.2']
-        wagtail: ['2.15', '2.16', '3.0', '4.0']
-        include:
-          - python: '3.9'
-            django: '4.1'
-            wagtail: '4.0'
-            experimental: false
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-      - name: Install Tox
+      - name: Install dependencies
         run: |
-          python -m pip install tox
-      - name: Cache tox environments
-        id: cache-tox
-        uses: actions/cache@v3
-        with:
-          path: .tox
-          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-sqlite
-      - name: Test
-        run: |
-          tox
-        env:
-          TOXENV: python${{ matrix.python }}-django${{ matrix.django }}-wagtail${{ matrix.wagtail }}-sqlite
+          python -m pip install --upgrade pip
+          python -m pip install tox tox-gh-actions
+      - name: Test with tox
+        run: tox
 
   test-postgres:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
     needs: lint
     strategy:
       matrix:
-        python: ['3.7', '3.8', '3.9']
-        django: ['3.2']
-        wagtail: ['2.15', '2.16', '3.0']
-        experimental: [false]
-        include:
-          - python: '3.9'
-            django: '4.0'
-            wagtail: '2.16'
-            experimental: false
-          - python: '3.9'
-            django: '4.0'
-            wagtail: '3.0'
-            experimental: false
-          - python: '3.9'
-            django: '4.0'
-            wagtail: '4.0'
-            experimental: false
-          - python: '3.9'
-            django: '4.1'
-            wagtail: '4.0'
-            experimental: false
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        database: ["postgres"]
+
     services:
       postgres:
-        image: ${{ matrix.postgres || 'postgres:11' }}
+        image: postgres
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        id: setup-python
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-      - name: Install Tox
+
+      - name: Install dependencies
+        id: install-dependencies
         run: |
-          python -m pip install tox
-      - name: Cache tox environments
-        id: cache-tox
-        uses: actions/cache@v3
-        with:
-          path: .tox
-          key: tox-${{ hashFiles('pyproject.toml') }}-py${{ matrix.python }}-dj${{ matrix.django }}-w${{ matrix.wagtail }}-postgres
-      - name: Test
+          python -m pip install --upgrade pip
+          python -m pip install tox tox-gh-actions
+      - name: Test with tox
+        id: test-with-tox
         run: |
           tox
         env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/wagtail_localize
-          TOXENV: python${{ matrix.python }}-django${{ matrix.django }}-wagtail${{ matrix.wagtail }}-postgres
+          DB_NAME: postgres
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DATABASE: ${{ matrix.database }}
 
   coverage:
     runs-on: ubuntu-latest
@@ -132,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -144,6 +118,6 @@ jobs:
         run: |
           coverage run testmanage.py test
       - name: 'Upload coverage to Codecov'
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true

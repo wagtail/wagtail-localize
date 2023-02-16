@@ -1,13 +1,13 @@
 #
 # Translators:
 # Myagmarjav Enkhbileg <miigaa.lucky@gmail.com>, 2022
-# Soft Exim, 2022
+# visual, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-17 21:00+0000\n"
-"Last-Translator: Soft Exim, 2022\n"
+"Last-Translator: visual, 2022\n"
 "Language-Team: Mongolian (https://www.transifex.com/torchbox/teams/8009/"
 "mn/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,6 +28,9 @@ msgstr "XLSX-р татах"
 
 msgid "Download CSV"
 msgstr "CSV татах"
+
+msgid "Yes, convert it"
+msgstr "Тийм, хөрвүүлэх"
 
 msgid "Go back"
 msgstr "Буцах"

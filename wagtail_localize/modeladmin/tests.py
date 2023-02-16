@@ -7,8 +7,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
-from wagtail.core.models import Locale, Page
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import Locale, Page
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_localize.modeladmin import helpers
 from wagtail_localize.modeladmin.options import ModelAdmin, TranslatableModelAdmin

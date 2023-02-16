@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from wagtail.contrib.modeladmin.options import ModelAdmin
-from wagtail.core.models import TranslatableMixin
+from wagtail.models import TranslatableMixin
 
 from .helpers import TranslatableButtonHelper, TranslatablePageButtonHelper
 from .views import (
@@ -52,6 +52,8 @@ class TranslatableModelAdmin(ModelAdmin):
         return [
             "wagtail_localize/modeladmin/%s/%s/translatable_%s.html"
             % (app_label, model_name, action),
-            "wagtail_localize/modeladmin/%s/translatable_%s.html" % (app_label, action),
-            "wagtail_localize/modeladmin/translatable_%s.html" % (action,),
+            "wagtail_localize/modeladmin/{}/translatable_{}.html".format(
+                app_label, action
+            ),
+            "wagtail_localize/modeladmin/translatable_{}.html".format(action),
         ]

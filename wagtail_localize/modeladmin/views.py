@@ -17,7 +17,7 @@ from wagtail.contrib.modeladmin.views import (
     IndexView,
     InspectView,
 )
-from wagtail.core.models import Locale, TranslatableMixin
+from wagtail.models import Locale, TranslatableMixin
 from wagtail.utils.version import get_main_version
 
 from wagtail_localize.models import Translation

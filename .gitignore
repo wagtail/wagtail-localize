@@ -6,6 +6,7 @@ __pycache__/
 /.coverage
 /htmlcov
 /.tox
+/.venv
 /venv
 /.vscode
 /site

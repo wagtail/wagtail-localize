@@ -3,7 +3,7 @@ from collections import defaultdict
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from wagtail_localize.models import Translation, TranslationSource
 
@@ -72,7 +72,6 @@ class TranslationCreator:
 
             self.mappings[source].append(translation)
 
-            # Determine whether or not to publish the translation.
             publish_on_translate_setting = getattr(settings, "WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE", True)
             if publish_on_translate_setting is True:
                 publish = getattr(instance, "live", True)

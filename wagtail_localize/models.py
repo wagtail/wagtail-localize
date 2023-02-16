@@ -36,20 +36,20 @@ from modelcluster.models import (
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
-from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.core import blocks
-from wagtail.core.fields import StreamField
-from wagtail.core.models import (
+from wagtail import blocks
+from wagtail.blocks.list_block import ListValue
+from wagtail.coreutils import find_available_slug
+from wagtail.fields import StreamField
+from wagtail.models import (
     Page,
     PageLogEntry,
     TranslatableMixin,
     _copy,
     get_translatable_models,
 )
-from wagtail.core.utils import find_available_slug
 from wagtail.snippets.models import get_snippet_models
 
-from .compat import DATE_FORMAT, get_revision_model, get_snippet_edit_url
+from .compat import DATE_FORMAT
 from .fields import copy_synchronised_fields
 from .locales.components import LocaleComponentModelForm, register_locale_component
 from .segments import (
@@ -62,14 +62,6 @@ from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue, validate_translation_links
 from .tasks import background
-
-
-if WAGTAIL_VERSION >= (2, 16):
-    # Only use in a 2.16+ context
-    try:
-        from wagtail.blocks.list_block import ListValue
-    except ImportError:
-        from wagtail.core.blocks.list_block import ListValue
 
 
 def pk(obj):
@@ -119,7 +111,10 @@ def get_edit_url(instance):
         return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
     elif instance._meta.model in get_snippet_models():
-        return get_snippet_edit_url(instance)
+        return reverse(
+            f"wagtailsnippets_{instance._meta.app_label}_{instance._meta.model_name}:edit",
+            args=[quote(instance.pk)],
+        )
 
     elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return reverse(
@@ -526,10 +521,8 @@ class TranslationSource(models.Model):
             raise SourceDeletedError
 
         if isinstance(instance, Page):
-            content_json = self.content_json
-            if WAGTAIL_VERSION >= (3, 0):
-                # see https://github.com/wagtail/wagtail/pull/8024
-                content_json = json.loads(content_json)
+            # see https://github.com/wagtail/wagtail/pull/8024
+            content_json = json.loads(self.content_json)
             return instance.with_content_json(content_json)
 
         elif isinstance(instance, ClusterableModel):
@@ -1362,7 +1355,7 @@ class TranslationLog(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     page_revision = models.ForeignKey(
-        get_revision_model(),
+        "wagtailcore.Revision",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -1516,14 +1509,13 @@ class TranslationContext(models.Model):
                         if isinstance(value, blocks.StructValue):
                             blocks_by_id = dict(value)
                         else:
-                            if WAGTAIL_VERSION >= (2, 16) and isinstance(
-                                value, ListValue
-                            ):
+                            if isinstance(value, ListValue):
                                 blocks_by_id = {
                                     block.id: block for block in value.bound_blocks
                                 }
                             else:
                                 blocks_by_id = {block.id: block for block in value}
+
                         block_id = path_components[0]
                         block = blocks_by_id[block_id]
 
@@ -1532,9 +1524,7 @@ class TranslationContext(models.Model):
                             block_def = value.block.child_blocks[block_type]
                             block_value = block
                         else:
-                            if WAGTAIL_VERSION >= (2, 16) and isinstance(
-                                value, ListValue
-                            ):
+                            if isinstance(value, ListValue):
                                 block_type = "item"
                                 block_def = value.list_block.child_block
                             else:
@@ -1551,9 +1541,7 @@ class TranslationContext(models.Model):
                             return [block_type] + get_field_path_from_streamfield_block(
                                 block_value, path_components[1:]
                             )
-                        elif isinstance(
-                            block_def, blocks.ListBlock
-                        ) and WAGTAIL_VERSION >= (2, 16):
+                        elif isinstance(block_def, blocks.ListBlock):
                             return [block_type] + get_field_path_from_streamfield_block(
                                 block_value, path_components[1:]
                             )

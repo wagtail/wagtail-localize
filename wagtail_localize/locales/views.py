@@ -5,14 +5,11 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
-from wagtail.admin.edit_handlers import (
-    ObjectList,
-    extract_panel_definitions_from_model_class,
-)
+from wagtail.admin.panels import ObjectList, extract_panel_definitions_from_model_class
 from wagtail.admin.views import generic
 from wagtail.admin.viewsets.model import ModelViewSet
-from wagtail.core.models import Locale
-from wagtail.core.permissions import locale_permission_policy
+from wagtail.models import Locale
+from wagtail.permissions import locale_permission_policy
 
 from wagtail_localize.components import BaseComponentManager
 

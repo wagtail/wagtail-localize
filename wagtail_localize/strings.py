@@ -248,7 +248,7 @@ class StringValue:
         return isinstance(other, StringValue) and other.data == self.data
 
     def __repr__(self):
-        return "<StringValue '{}'>".format(self.data)
+        return f"<StringValue '{self.data}'>"
 
     def __hash__(self):
         return hash(self.data)

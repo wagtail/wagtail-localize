@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TranslationEditor from './components/TranslationEditor';
-import LegacyTranslationEditor from '../legacy/editor/components/TranslationEditor';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const element = document.querySelector('.js-translation-editor');
@@ -17,9 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const props = JSON.parse(element.dataset.props);
 
             let Component = TranslationEditor;
-            if (props.has_legacy_styling) {
-                Component = LegacyTranslationEditor;
-            }
 
             ReactDOM.render(
                 <Component csrfToken={csrfToken} {...props} />,

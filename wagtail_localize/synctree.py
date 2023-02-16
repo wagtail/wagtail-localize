@@ -1,8 +1,8 @@
 from collections import defaultdict
 
 from django.utils.functional import cached_property
-from wagtail.core import hooks
-from wagtail.core.models import Locale, Page
+from wagtail import hooks
+from wagtail.models import Locale, Page
 
 
 class PageIndex:
@@ -124,7 +124,7 @@ class PageIndex:
         _walk(None)
 
         if remaining_pages:
-            print("Warning: {} orphaned pages!".format(len(remaining_pages)))
+            print(f"Warning: {len(remaining_pages)} orphaned pages!")
 
         return PageIndex(new_pages)
 

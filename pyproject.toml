@@ -25,15 +25,13 @@ classifiers = [
     "Framework :: Django :: 4.0",
     "Framework :: Django :: 4.1",
     "Framework :: Wagtail",
-    "Framework :: Wagtail :: 2",
-    "Framework :: Wagtail :: 3",
     "Framework :: Wagtail :: 4"
 ]
 dynamic = ["version"]
 requires-python = ">=3.7"
 dependencies = [
     "Django>=3.2,<4.2",
-    "Wagtail>=2.15,<5.0",
+    "Wagtail>=4.1",
     "polib>=1.1,<2.0",
     "typing_extensions>=4.0"
 ]
@@ -42,7 +40,8 @@ dependencies = [
 testing = [
     "dj-database-url==0.5.0",
     "freezegun==1.1.0",
-    "django-rq>=2.5,<3.0"
+    "django-rq>=2.5,<3.0",
+    "google-cloud-translate>=3.0.0"
 ]
 documentation = [
     "mkdocs==1.1.2",
@@ -68,9 +67,7 @@ name = "wagtail_localize"
 exclude = [
     "wagtail_localize/static_src",
     "wagtail_localize/test",
-    "wagtail_localize/tests",
-    "wagtail_localize/machine_translators/tests",
-    "wagtail_localize/segments/tests",
+    "wagtail_localize/**/tests",
     "wagtail_localize/static/.gitignore",
     "Makefile",
     "scripts",

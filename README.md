@@ -20,7 +20,7 @@ Wagtail Localize requires the following:
 
 - Python (3.7, 3.8, 3.9, 3.10, 3.11)
 - Django (3.2, 4.0, 4.1)
-- Wagtail (2.15, 2.16, 3.0, 4.0, 4.1) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
+- Wagtail (4.1, 4.2) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
 
 ## Installation
 
@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     "wagtail_localize.locales",  # This replaces "wagtail.locales"
     # ...
 ]
+```
+
+`wagtail-localize` loads additional assets for the editing interface. Run the `collectstatic` management command to collect all the required assets.
+
+```shell
+python manage.py collectstatic
 ```
 
 ## Contributing
@@ -66,7 +72,7 @@ pip install -e .[testing] -U
 #### Using flit
 
 ```sh
-pip install flit
+pip install "flit>=3.8.0"
 flit install
 ```
 
@@ -94,8 +100,8 @@ Now you can run tests as shown below:
 tox
 ```
 
-or, you can run them for a specific environment `tox -e python3.8-django3.2-wagtail2.15` or specific test
-`tox -e python3.9-django3.2-wagtail2.15-sqlite wagtail_localize.tests.test_edit_translation.TestGetEditTranslationView`
+or, you can run them for a specific environment `tox -e python3.8-django3.2-wagtail4.1` or specific test
+`tox -e python3.9-django3.2-wagtail4.1-sqlite wagtail_localize.tests.test_edit_translation.TestGetEditTranslationView`
 
 To run the test app interactively, use `tox -e interactive`, visit `http://127.0.0.1:8020/admin/` and log in with `admin`/`changeme`.
 

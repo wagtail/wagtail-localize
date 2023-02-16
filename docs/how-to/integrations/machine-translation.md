@@ -15,32 +15,103 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 
 This document describes how to configure various machine translators, as well as implement your own integration.
 
-# Google Cloud Translation
+## Google Cloud Translation
 
 Website: [https://cloud.google.com/translate](https://cloud.google.com/translate)
 
-1. Google Cloud Translate requires some optional dependencies. Install wagtail-localize with the google plugin:
+### 1. Install additional dependencies
 
-   ```
-   pip install wagtail-localize[google]
-   ```
+Google Cloud Translate requires some optional dependencies. Install wagtail-localize with the google plugin:
 
-2. You will need to authenticate with Google Cloud in some way. Documentation for this can be found at [https://googleapis.dev/python/google-api-core/latest/auth.html](https://googleapis.dev/python/google-api-core/latest/auth.html). It is likely that the most convenient method to do this will be to download a [service account key file](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) and set an envoronment variable
+```
+pip install wagtail-localize[google]
+```
 
-   ```bash
-   GOOGLE_APPLICATION_CREDENTIALS="/path/to/keyfile.json"
-   ```
+### 2. Configure a service account
 
-3. Configure wagtail-localize:
+For you site to use the API, it will need to authenticate with Google Cloud in some way. Documentation for this can be found at [https://googleapis.dev/python/google-api-core/latest/auth.html](https://googleapis.dev/python/google-api-core/latest/auth.html).
 
-   ```python
-   WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-       "CLASS": "wagtail_localize.machine_translators.google.GoogleCloudTranslator",
-       "OPTIONS": {
-           "PROJECT_ID": "<Your project ID here>",
-       },
-   }
-   ```
+The most common approach is to create a [Service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) for the relevant Project with the **Cloud Translation API User** role (to allow API requests to be made).
+
+Once configured, you should be able to generate and download a [service account key file](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) to use in the next step.
+
+### 3. Configure wagtail-localize:
+
+#### Using the `CREDENTIALS_PATH` option
+
+When it is possible to make key files available securely in each environment, this is the recommended option, as it makes configuration a little more obvious when looking at your settings file.
+
+This option value should be specified in your Django settings, like so:
+
+```python
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    "CLASS": "wagtail_localize.machine_translators.google.GoogleCloudTranslator",
+    "OPTIONS": {
+        "CREDENTIALS_PATH": "/path/to/keyfile.json",
+        "PROJECT_ID": "<Your project ID here>",
+    },
+}
+```
+
+#### Using the `CREDENTIALS` option
+
+If making key files available securely in each environment is not viable, you can use this option to make the same information available as a Python `dict`.
+
+Adding something like the following to your Django settings would allow you to use different key values for each environment, which you may find useful:
+
+```
+import os
+
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    "CLASS": "wagtail_localize.machine_translators.google.GoogleCloudTranslator",
+    "OPTIONS": {
+        "CREDENTIALS": {
+            "type": "service_account",
+            # These values are required, and will usually be unique
+            # for each environment
+            "project_id": os.environ.get("GOOGLE_CLOUD_PROJECT_ID"),
+            "private_key_id": os.environ.get("GOOGLE_CLOUD_PRIVATE_KEY_ID"),
+            # NOTE: Should be provided as a multi-line string
+            "private_key": os.environ.get("GOOGLE_CLOUD_PRIVATE_KEY"),
+            "client_email": os.environ.get("GOOGLE_CLOUD_CLIENT_EMAIL"),
+            "client_id": os.environ.get("GOOGLE_CLOUD_CLIENT_ID"),
+            "client_x509_cert_url": os.environ.get("GOOGLE_CLOUD_CLIENT_CERT_URL"),
+            # These values usually remain the same, but you should check
+            # your key file(s) and override where necessary
+            "auth_uri": os.environ.get(
+                "GOOGLE_CLOUD_AUTH_URI", "https://accounts.google.com/o/oauth2/auth"
+            ),
+            "token_uri": os.environ.get(
+                "GOOGLE_CLOUD_TOKEN_URI" "https://oauth2.googleapis.com/token"
+            ),
+            "auth_provider_x509_cert_url": os.environ.get(
+                "GOOGLE_CLOUD_AUTH_PROVIDER_CERT_URL",
+                "https://www.googleapis.com/oauth2/v1/certs",
+            ),
+        },
+        "PROJECT_ID": "<Your project ID here>",
+    },
+}
+```
+
+#### Seting the `GOOGLE_APPLICATION_CREDENTIALS` env var
+
+An alternative to the `CREDENTIALS_PATH` option is to set an env var value pointing to the correct key path.
+
+```bash
+GOOGLE_APPLICATION_CREDENTIALS="/path/to/keyfile.json"
+```
+
+With this approach, the Python client will look for this value automatically when making translation requests, and all you should need to add to your Django settings is:
+
+```python
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    "CLASS": "wagtail_localize.machine_translators.google.GoogleCloudTranslator",
+    "OPTIONS": {
+        "PROJECT_ID": "<Your project ID here>",
+    },
+}
+```
 
 ## DeepL
 

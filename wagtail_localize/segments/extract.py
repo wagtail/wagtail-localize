@@ -2,10 +2,9 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.core import blocks
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, TranslatableMixin
+from wagtail import blocks
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page, TranslatableMixin
 
 from wagtail_localize.segments import (
     OverridableSegmentValue,
@@ -142,7 +141,7 @@ class StreamFieldSegmentExtractor:
 
     def handle_list_block(self, list_block, raw_value=None):
         segments = []
-        if WAGTAIL_VERSION >= (2, 16) and raw_value is not None:
+        if raw_value is not None:
             # Wagtail 2.16 changes ListBlock values to be ListValue objects (i.e. {'value': '', 'id': ''})
             # and will automatically convert from the simple list format used before. However that requires
             # the block to be saved. bound_blocks will return ListValue objects, so we need to check that the
@@ -186,9 +185,7 @@ class StreamFieldSegmentExtractor:
         segments = []
 
         for index, block in enumerate(stream_block):
-            raw_data = (
-                stream_block.raw_data[index] if WAGTAIL_VERSION >= (2, 16) else None
-            )
+            raw_data = stream_block.raw_data[index]
             segments.extend(
                 segment.wrap(block.id)
                 for segment in self.handle_block(
