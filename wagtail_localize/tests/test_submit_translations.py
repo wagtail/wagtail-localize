@@ -242,6 +242,25 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
 
+    @override_settings(WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE=False)
+    def test_post_submit_page_translation_draft(self):
+        self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_index.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        translation = Translation.objects.get()
+        self.assertEqual(translation.source.locale, self.en_locale)
+        self.assertEqual(translation.target_locale, self.fr_locale)
+        self.assertTrue(translation.created_at)
+
+        # The translated page should've been created and published
+        translated_page = self.en_blog_index.get_translation(self.fr_locale)
+        self.assertFalse(translated_page.live)
+
     def test_post_submit_page_translation_submits_linked_snippets(self):
         self.en_blog_index.test_snippet = TestSnippet.objects.create(
             field="My test snippet"
