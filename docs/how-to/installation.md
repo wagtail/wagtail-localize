@@ -57,7 +57,7 @@ class MyPage(Page):
 ## Disabling default publication of translated pages
 
 Live pages that are submitted for translation are made live immediately. If you wish live pages submitted for
-translatio to remain as drafts, set `WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE = False` in your settings file.
+translation to remain as drafts, set `WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE = False` in your settings file.
 
 ## Control translation cleanup mode
 
