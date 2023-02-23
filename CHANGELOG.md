@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5] - 2023-02-23
+
 ### Changed
 
 - [Updated tests to include Wagtail 4.2](https://github.com/wagtail/wagtail-localize/pull/673) @katdom13
@@ -219,7 +221,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.3.3...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.5...HEAD
+[1.5]: https://github.com/wagtail/wagtail-localize/compare/v1.4...v1.5
 [1.4]: https://github.com/wagtail/wagtail-localize/compare/v1.3.3...v1.4
 [1.3.2]: https://github.com/wagtail/wagtail-localize/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/wagtail/wagtail-localize/compare/v1.3.1...v1.3.2
