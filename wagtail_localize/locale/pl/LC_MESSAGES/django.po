@@ -2,14 +2,14 @@
 # Translators:
 # Mateusz <undefined5102@gmail.com>, 2021
 # Łukasz Bołdys (Lukasz Boldys), 2021
-# Miłosz Miśkiewicz, 2022
 # Dominik Lech, 2022
+# Miłosz Miśkiewicz, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-23 10:28+0000\n"
-"Last-Translator: Dominik Lech, 2022\n"
+"POT-Creation-Date: 2022-10-17 21:00+0000\n"
+"Last-Translator: Miłosz Miśkiewicz, 2023\n"
 "Language-Team: Polish (https://www.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -20,14 +20,24 @@ msgstr ""
 msgid "Disable"
 msgstr "Wyłącz"
 
+msgid "Dummy translator"
+msgstr "Tłumacz udawany"
+
 msgid "Translate"
 msgstr "Tłumacz"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Zsynchronizuj przetłumaczone %(model_name)s"
 
 msgid "Saving…"
 msgstr "Zapisywanie..."
 
 msgid "Save"
 msgstr "Zapisz"
+
+msgid "Start Synced translation"
+msgstr "Rozpocznij zsynchronizowane tłumaczenie"
 
 msgid "Delete"
 msgstr "Usuń"
@@ -100,8 +110,18 @@ msgstr "Nierozpoznane id znaleziono w znaczniku <a>: {}"
 msgid "Enable"
 msgstr "Włącz"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Konwertuj na alias %(title)s"
+
+msgid "Convert to alias"
+msgstr "Konwertuj na alias"
+
 msgid "Yes, convert it"
 msgstr "Tak, konwertuj"
+
+msgid "No, leave it as a page"
+msgstr "Nie, pozostaw to jako stronę"
 
 #, python-format
 msgid ""
@@ -160,8 +180,15 @@ msgstr ""
 "Data ostaniej synchronizacji: %(last_sync_date)s. Masz zamiar synchronizować "
 "następujące: "
 
+msgid "Page '{}' has been converted into an alias."
+msgstr "Strona '{}' została przekonwertowana na alias."
+
 msgid "Content"
 msgstr "Treść"
+
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Opublikowano '{object}' w {locale}."
 
 msgid "Translation has been stopped."
 msgstr "Tłumaczenie zostało zatrzymane."
@@ -196,6 +223,9 @@ msgstr "Lokalizacje"
 msgid "All child pages will be created."
 msgstr "Wszystkie strony podrzędne zostaną utworzone."
 
+msgid "{} locales"
+msgstr "{} lokalizacje"
+
 msgid "Translate page"
 msgstr "Przetłumacz stronę"
 
@@ -216,6 +246,15 @@ msgstr "Zsynchronizuj przetłumaczone strony"
 msgid "Translate '%(title)s'"
 msgstr "Przetłumacz '%(title)s'"
 
+msgid "Sync translated snippets"
+msgstr "Zsynchronizuj przetłumaczone snippety"
+
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Zsynchronizuj tłumaczenia '%(title)s'"
+
+msgid "Convert to alias page"
+msgstr "Konwertuj na alias strony"
+
+msgid "Convert page to alias"
+msgstr "Konwertuj stroną na alias"

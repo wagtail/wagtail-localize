@@ -1,11 +1,11 @@
 #
 # Translators:
-# Miłosz Miśkiewicz, 2021
 # Łukasz Bołdys (Lukasz Boldys), 2021
+# Miłosz Miśkiewicz, 2023
 #
 msgid ""
 msgstr ""
-"Last-Translator: Łukasz Bołdys (Lukasz Boldys), 2021\n"
+"Last-Translator: Miłosz Miśkiewicz, 2023\n"
 "Language-Team: Polish (https://www.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -51,6 +51,9 @@ msgstr "Wybierz stronę"
 
 msgid "Choose an image"
 msgstr "Wybierz obraz"
+
+msgid "Convert to alias page"
+msgstr "Konwertuj na alias strony"
 
 msgid "Delete"
 msgstr "Usuń"

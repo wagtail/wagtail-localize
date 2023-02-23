@@ -85,6 +85,14 @@ msgid "Synchronise content from another locale"
 msgstr "Sinhronizirajte vsebino iz drugega jezika"
 
 msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Izberite jezik, iz katerega želite sinhronizirati vsebino. Vsaka obstoječa "
+"in prihodnja vsebina, ki je avtorska v izbranem jeziku, bo samodejno "
+"kopirana v tega."
+
+msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
 msgstr ""
@@ -155,6 +163,15 @@ msgid "Content"
 msgstr "Vsebina"
 
 #, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Pri objavi '{object}' v {locale} so bile najdene nove napake pri "
+"preverjanju. Prosimo, popravite jih ali znova kliknite Objavi, da za zdaj "
+"prezrete te prevode."
+
+#, python-brace-format
 msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 "Objavljen '{object}' v {locale} z manjkajočimi prevodi - glejte spodaj."
@@ -162,6 +179,16 @@ msgstr ""
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "Objavljen '{object}' v {locale}."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Podatkovni model za '{model_name}' je bil spremenjen od zadnje "
+"sinhronizacije prevoda. Če so bila nedavno dodana nova polja, ta morda ne "
+"bodo vidna do naslednje sinhronizacije prevoda."
 
 msgid "Translation has been stopped."
 msgstr "Prevajanje je bilo ustavljeno."

@@ -1,14 +1,14 @@
 #
 # Translators:
-# Ford Guo <agile.guo@gmail.com>, 2020
 # Yin Guanhao <sopium@mysterious.site>, 2021
 # 祝沙军 <zhushajun@gmail.com>, 2021
 # Favo Yang <favoyang@gmail.com>, 2021
 # 汇民 王 <whuim@qq.com>, 2021
+# Ford Guo <agile.guo@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
-"Last-Translator: 汇民 王 <whuim@qq.com>, 2021\n"
+"Last-Translator: Ford Guo <agile.guo@gmail.com>, 2023\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,6 +53,9 @@ msgstr "选择一个页面"
 
 msgid "Choose an image"
 msgstr "选择一个图片"
+
+msgid "Convert to alias page"
+msgstr "转换成页面别名"
 
 msgid "Delete"
 msgstr "删除"

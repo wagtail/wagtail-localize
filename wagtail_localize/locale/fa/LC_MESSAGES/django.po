@@ -3,12 +3,13 @@
 # pyzenberg <pyzenberg@gmail.com>, 2022
 # Mostafa Heidarian <tabvar@gmail.com>, 2022
 # Ehsan jahanbakhsh <man207ej@gmail.com>, 2022
+# Amir Mahmoodi, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-23 10:28+0000\n"
-"Last-Translator: Ehsan jahanbakhsh <man207ej@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-10-17 21:00+0000\n"
+"Last-Translator: Amir Mahmoodi, 2023\n"
 "Language-Team: Persian (https://www.transifex.com/torchbox/teams/8009/fa/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fa\n"
@@ -29,8 +30,14 @@ msgstr "دانلود XLSX"
 msgid "Download CSV"
 msgstr "دانلود CSV"
 
+msgid "Go back"
+msgstr "بازگشت به عقب"
+
 msgid "Status"
 msgstr "وضعیت"
 
 msgid "Content"
 msgstr "محتوا"
+
+msgid "Select all"
+msgstr "انتخاب همه"

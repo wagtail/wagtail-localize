@@ -2,16 +2,16 @@
 # Translators:
 # hanfeng <appweb.cn@gmail.com>, 2021
 # Favo Yang <favoyang@gmail.com>, 2021
-# Ford Guo <agile.guo@gmail.com>, 2022
 # 汇民 王 <whuim@qq.com>, 2022
 # Yin Guanhao <sopium@mysterious.site>, 2022
 # Vincent Zhao <zhaopu2008@gmail.com>, 2022
+# Ford Guo <agile.guo@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-23 10:28+0000\n"
-"Last-Translator: Vincent Zhao <zhaopu2008@gmail.com>, 2022\n"
+"POT-Creation-Date: 2022-10-17 21:00+0000\n"
+"Last-Translator: Ford Guo <agile.guo@gmail.com>, 2023\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,6 +26,10 @@ msgstr "虚拟译者"
 
 msgid "Translate"
 msgstr "翻译"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "同步翻译的 %(model_name)s"
 
 msgid "Saving…"
 msgstr "正在保存..."
@@ -108,8 +112,18 @@ msgstr "在一个<a>标签中存在无法被识别的ID：{}"
 msgid "Enable"
 msgstr "启用"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "转换成别名 %(title)s"
+
+msgid "Convert to alias"
+msgstr "转换成别名"
+
 msgid "Yes, convert it"
 msgstr "是, 转换它"
+
+msgid "No, leave it as a page"
+msgstr "否，保留为页面"
 
 #, python-format
 msgid ""
@@ -271,3 +285,9 @@ msgstr "同步翻译的片段"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "同步 '%(title)s' 的翻译"
+
+msgid "Convert to alias page"
+msgstr "转换成页面别名"
+
+msgid "Convert page to alias"
+msgstr "将页面转换为别名"

@@ -140,6 +140,10 @@ msgstr "Napaka strežnika"
 msgid "Stop Synced translation"
 msgstr "Ustavi sinhroniziran prevod"
 
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Obstajajo neshranjeni segmenti. Pred odhodom jih shranite ali prekličite."
+
 msgid "Translate"
 msgstr "Prevedi"
 
