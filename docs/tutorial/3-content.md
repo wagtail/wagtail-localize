@@ -185,7 +185,7 @@ Clicking "Edit" here will take the user to the translation editor of the "Dogs" 
 
 !!! note "Stopping translation mode"
 
-    If you would like to make significant changes to the translation, you can strop the translation mode by clicking the
+    If you would like to make significant changes to the translation, you can stop the translation mode by clicking the
     "Stop Synced translation" action in the action menu at the bottom:
 
     ![Stop translation button in action menu](/_static/tutorial/wagtail-stop-translation.png)
