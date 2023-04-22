@@ -5,7 +5,6 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "wagtail-localize"
 authors = [{name = "Karl Hobley", email = "karl@torchbox.com"}]
-url = "https://www.wagtail-localize.org"
 description = "Translation plugin for Wagtail CMS"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -57,6 +56,7 @@ google = [
 ]
 
 [project.urls]
+Home = "https://www.wagtail-localize.org"
 Source = "https://github.com/wagtail/wagtail-localize"
 Documentation = "https://www.wagtail-localize.org"
 
