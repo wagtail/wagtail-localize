@@ -12,7 +12,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     perms,
     links,
     previewModes,
-    locale
+    locale,
 }) => {
     let actions = [
         <form method="POST" action={links.stopTranslationUrl}>
@@ -27,7 +27,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                 <Icon name="cross" />
                 {gettext('Stop Synced translation')}
             </button>
-        </form>
+        </form>,
     ];
 
     if (links.convertToAliasUrl) {

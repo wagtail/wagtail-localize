@@ -51,7 +51,7 @@ const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
     machineTranslator,
     csrfToken,
     stringTranslations,
-    segments
+    segments,
 }) => {
     if (isLocked) {
         return <></>;

@@ -34,7 +34,7 @@ export const HeaderButtonAction: FunctionComponent<HeaderButtonActionProps> = ({
     onClick,
     title,
     classes,
-    icon
+    icon,
 }) => {
     let classNames = ['button'];
 
@@ -66,7 +66,7 @@ export const HeaderLinkAction: FunctionComponent<HeaderLinkActionProps> = ({
     href,
     title,
     classes,
-    icon
+    icon,
 }) => {
     let classNames = ['button'];
 
@@ -96,7 +96,7 @@ interface HeaderMetaProps {
 export const HeaderMeta: FunctionComponent<HeaderMetaProps> = ({
     name,
     value,
-    icon
+    icon,
 }) => {
     return (
         <li className={`header-meta--${name}`}>
@@ -125,7 +125,7 @@ export const HeaderMetaDropdown: FunctionComponent<HeaderMetaDropdownProps> = ({
     options,
     icon,
     title,
-    classes
+    classes,
 }) => {
     let classNames = ['c-dropdown', 't-inverted'];
 

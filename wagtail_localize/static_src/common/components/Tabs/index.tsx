@@ -20,7 +20,7 @@ export const Tabs: FunctionComponent<TabsProps> = ({ tabs, children }) => {
         <div className="w-tabs">
             <div className="w-tabs__wrapper">
                 <div className="w-tabs__list" role="tablist">
-                    {tabs.map(tab => {
+                    {tabs.map((tab) => {
                         const onClick = (
                             e: React.MouseEvent<HTMLAnchorElement>
                         ) => {

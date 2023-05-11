@@ -21,7 +21,7 @@ interface SnippetChooserProps {
 const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
     adminBaseUrl,
     snippetModel,
-    snippetId
+    snippetId,
 }) => {
     const [snippetInfo, setSnippetInfo] = React.useState<SnippetAPI | null>(
         null
@@ -34,7 +34,7 @@ const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
             fetch(
                 `${adminBaseUrl}localize/api/snippets/${snippetModel.app_label}/${snippetModel.model_name}/${snippetId}/`
             )
-                .then(response => response.json())
+                .then((response) => response.json())
                 .then(setSnippetInfo);
         }
     }, [snippetId]);

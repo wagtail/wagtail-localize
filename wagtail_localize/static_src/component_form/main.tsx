@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Component enable buttons
     document
         .querySelectorAll('.component-form__enable-button')
-        .forEach(enableButton => {
+        .forEach((enableButton) => {
             enableButton.addEventListener('click', () => {
                 toggleInput(enableButton, true);
             });
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Component disable buttons
     document
         .querySelectorAll('.component-form__disable-button')
-        .forEach(disableButton => {
+        .forEach((disableButton) => {
             disableButton.addEventListener('click', () => {
                 toggleInput(disableButton, false);
             });

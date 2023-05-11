@@ -18,7 +18,7 @@ interface ImageChooserProps {
 
 const ImageChooser: FunctionComponent<ImageChooserProps> = ({
     adminBaseUrl,
-    imageId
+    imageId,
 }) => {
     const [imageInfo, setImageInfo] = React.useState<ImageAPI | null>(null);
 
@@ -27,7 +27,7 @@ const ImageChooser: FunctionComponent<ImageChooserProps> = ({
 
         if (imageId) {
             fetch(`${adminBaseUrl}api/main/images/${imageId}/`)
-                .then(response => response.json())
+                .then((response) => response.json())
                 .then(setImageInfo);
         }
     }, [imageId]);
