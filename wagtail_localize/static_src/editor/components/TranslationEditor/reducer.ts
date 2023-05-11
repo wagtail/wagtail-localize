@@ -4,7 +4,7 @@ import {
     StringTranslationAPI,
     StringTranslation,
     SegmentOverride,
-    SegmentOverrideAPI
+    SegmentOverrideAPI,
 } from '.';
 
 export interface EditorState {
@@ -113,7 +113,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                 isSaving: true,
                 isErrored: false,
                 comment: gettext('Saving...'),
-                translatedBy: null
+                translatedBy: null,
             });
             break;
         }
@@ -125,7 +125,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                 comment: action.translation.error
                     ? action.translation.error
                     : action.translation.comment,
-                translatedBy: action.translation.last_translated_by
+                translatedBy: action.translation.last_translated_by,
             });
             break;
         }
@@ -142,7 +142,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                     Object.assign({}, translation, {
                         isSaving: false,
                         isErrored: true,
-                        comment: gettext('Server error')
+                        comment: gettext('Server error'),
                     })
                 );
             }
@@ -156,7 +156,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                 value: action.value,
                 isSaving: true,
                 isErrored: false,
-                comment: gettext('Changed')
+                comment: gettext('Changed'),
             });
             break;
         }
@@ -167,7 +167,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                 segmentOverrides.set(
                     action.segmentId,
                     Object.assign({}, override, {
-                        isSaving: true
+                        isSaving: true,
                     })
                 );
             }
@@ -178,7 +178,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                 value: action.override.data,
                 isSaving: false,
                 isErrored: !!action.override.error,
-                comment: action.override.error || gettext('Changed')
+                comment: action.override.error || gettext('Changed'),
             });
             break;
         }
@@ -193,7 +193,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                 segmentOverrides.set(
                     action.segmentId,
                     Object.assign({}, override, {
-                        isSaving: false
+                        isSaving: false,
                     })
                 );
             }
@@ -204,6 +204,6 @@ export function reducer(state: EditorState, action: EditorAction) {
     return Object.assign({}, state, {
         stringTranslations,
         segmentOverrides,
-        editingSegments
+        editingSegments,
     });
 }

@@ -190,10 +190,10 @@ export interface EditorProps {
     initialOverrides: SegmentOverrideAPI[];
 }
 
-const TranslationEditor: FunctionComponent<EditorProps> = props => {
+const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
     // Convert initialStringTranslations into a Map that maps segment ID to translation info
     const stringTranslations: Map<number, StringTranslation> = new Map();
-    props.initialStringTranslations.forEach(translation => {
+    props.initialStringTranslations.forEach((translation) => {
         stringTranslations.set(translation.segment_id, {
             value: translation.data,
             isSaving: false,
@@ -201,18 +201,18 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
             comment: translation.error
                 ? translation.error
                 : translation.comment,
-            translatedBy: translation.last_translated_by
+            translatedBy: translation.last_translated_by,
         });
     });
 
     // Same with initialSegmentOverrides
     const segmentOverrides: Map<number, SegmentOverride> = new Map();
-    props.initialOverrides.forEach(override => {
+    props.initialOverrides.forEach((override) => {
         segmentOverrides.set(override.segment_id, {
             value: override.data,
             isSaving: false,
             isErrored: !!override.error,
-            comment: override.error || gettext('Changed')
+            comment: override.error || gettext('Changed'),
         });
     });
 
@@ -220,7 +220,7 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
     const initialState: EditorState = {
         stringTranslations,
         segmentOverrides,
-        editingSegments: new Set()
+        editingSegments: new Set(),
     };
 
     const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -246,31 +246,31 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
     }, [state.editingSegments]);
 
     const tabData = props.tabs
-        .map(tab => {
+        .map((tab) => {
             const segments = props.segments.filter(
-                segment => segment.location.tab == tab.slug
+                (segment) => segment.location.tab == tab.slug
             );
             const translations = segments.map(
-                segment =>
+                (segment) =>
                     segment.type == 'string' &&
                     state.stringTranslations.get(segment.id)
             );
 
             return {
                 numErrors: translations.filter(
-                    translation => translation && translation.isErrored
+                    (translation) => translation && translation.isErrored
                 ).length,
                 segments,
-                ...tab
+                ...tab,
             };
         })
-        .filter(tab => tab.segments.length > 0);
+        .filter((tab) => tab.segments.length > 0);
 
     let tabs = <></>;
     if (tabData.length > 1) {
         tabs = (
             <Tabs tabs={tabData}>
-                {tabData.map(tab => {
+                {tabData.map((tab) => {
                     return (
                         <TabContent key={tab.slug} {...tab}>
                             <EditorToolbox

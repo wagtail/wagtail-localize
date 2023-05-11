@@ -8,16 +8,16 @@ extractor
         JsExtractors.callExpression('gettext', {
             arguments: {
                 text: 0,
-                context: 1
-            }
+                context: 1,
+            },
         }),
         JsExtractors.callExpression('ngettext', {
             arguments: {
                 text: 1,
                 textPlural: 2,
-                context: 3
-            }
-        })
+                context: 3,
+            },
+        }),
     ])
     .parseFilesGlob('./wagtail_localize/static_src/**/*.@(ts|js|tsx|jsx)');
 

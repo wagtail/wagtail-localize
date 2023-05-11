@@ -15,11 +15,11 @@ const Avatar: FunctionComponent<AvatarProps> = ({ username, avatarUrl }) => {
         if (ref.current) {
             $(ref.current).tooltip({
                 animation: false,
-                title: function() {
+                title: function () {
                     return username;
                 },
                 trigger: 'hover',
-                placement: 'bottom'
+                placement: 'bottom',
             });
         }
     }, [ref]);

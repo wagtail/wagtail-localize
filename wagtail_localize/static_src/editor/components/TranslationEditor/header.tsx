@@ -15,7 +15,7 @@ const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({
     name,
     translations,
     sourceLocale,
-    targetLocale
+    targetLocale,
 }) => {
     // Render source
     const sourceTranslation = translations
@@ -41,7 +41,7 @@ const LocaleMeta: FunctionComponent<LocaleMetaProps> = ({
         .map(({ locale, editUrl }) => {
             return {
                 label: locale.displayName,
-                href: editUrl
+                href: editUrl,
             };
         });
 
@@ -108,7 +108,7 @@ interface EditorHeaderProps extends EditorProps, EditorState {}
 const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
     sourceLocale,
     locale,
-    translations
+    translations,
 }) => {
     return (
         <header className="w-flex w-flex-col sm:w-flex-row w-items-center w-justify-between w-bg-grey-50 w-border-b w-border-grey-100 w-px-0 w-py-0 w-mb-0 w-relative w-top-0 sm:w-sticky w-min-h-slim-header">

@@ -76,9 +76,9 @@ interface ActionMenuProps {
 const ActionMenu: FunctionComponent<ActionMenuProps> = ({
     defaultAction,
     actions,
-    previewModes
+    previewModes,
 }) => {
-    const wrappedActions = actions.map(action => <li>{action}</li>);
+    const wrappedActions = actions.map((action) => <li>{action}</li>);
 
     return (
         <nav aria-label="Actions">

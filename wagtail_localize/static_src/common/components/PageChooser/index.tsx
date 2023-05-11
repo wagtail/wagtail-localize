@@ -13,7 +13,7 @@ interface PageChooserProps {
 
 const PageChooser: FunctionComponent<PageChooserProps> = ({
     adminBaseUrl,
-    pageId
+    pageId,
 }) => {
     const [pageInfo, setPageInfo] = React.useState<PageAPI | null>(null);
 
@@ -22,7 +22,7 @@ const PageChooser: FunctionComponent<PageChooserProps> = ({
 
         if (pageId) {
             fetch(`${adminBaseUrl}api/main/pages/${pageId}/`)
-                .then(response => response.json())
+                .then((response) => response.json())
                 .then(setPageInfo);
         }
     }, [pageId]);

@@ -13,7 +13,7 @@ interface DocumentChooserProps {
 
 const DocumentChooser: FunctionComponent<DocumentChooserProps> = ({
     adminBaseUrl,
-    documentId
+    documentId,
 }) => {
     const [documentInfo, setDocumentInfo] = React.useState<DocumentAPI | null>(
         null
@@ -24,7 +24,7 @@ const DocumentChooser: FunctionComponent<DocumentChooserProps> = ({
 
         if (documentId) {
             fetch(`${adminBaseUrl}api/main/documents/${documentId}/`)
-                .then(response => response.json())
+                .then((response) => response.json())
                 .then(setDocumentInfo);
         }
     }, [documentId]);
