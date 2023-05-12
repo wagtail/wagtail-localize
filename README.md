@@ -66,7 +66,7 @@ With your preferred virtualenv activated, install testing dependencies:
 
 ```sh
 pip install pip>=21.3
-pip install -e .[testing] -U
+pip install -e '.[testing]' -U
 ```
 
 #### Using flit
@@ -81,8 +81,6 @@ flit install
 Note that this project uses [pre-commit](https://github.com/pre-commit/pre-commit). To set up locally:
 
 ```shell
-# if you don't have it yet, globally
-$ pip install pre-commit
 # go to the project directory
 $ cd wagtail-localize
 # initialize pre-commit
