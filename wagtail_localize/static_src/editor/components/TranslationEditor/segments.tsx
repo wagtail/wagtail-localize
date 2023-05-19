@@ -376,13 +376,7 @@ const SegmentToolbar = styled.ul`
 const SegmentList = styled.ul`
     list-style-type: none;
     max-width: 1200px;
-    padding-left: 20px;
-    padding-right: 20px;
-
-    @media screen and (min-width: 800px) {
-        padding-left: 80px;
-        padding-right: 80px;
-    }
+    padding-left: 0;
 `;
 
 interface EditorStringSegmentProps {

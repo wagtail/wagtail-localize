@@ -112,7 +112,7 @@ const EditorHeader: FunctionComponent<EditorHeaderProps> = ({
 }) => {
     return (
         <header className="w-flex w-flex-col sm:w-flex-row w-items-center w-justify-between w-bg-grey-50 w-border-b w-border-grey-100 w-px-0 w-py-0 w-mb-0 w-relative w-top-0 sm:w-sticky w-min-h-slim-header">
-            <div className="w-pl-slim-header w-min-h-slim-header sm:w-pl-0 sm:w-pr-2 w-w-full w-flex-1 w-overflow-x-auto w-box-border">
+            <div className="w-pl-slim-header w-min-h-slim-header sm:w-pl-5 sm:w-pr-2 w-w-full w-flex-1 w-overflow-x-auto w-box-border">
                 <div className="w-flex w-flex-1 w-items-center w-overflow-hidden w-h-slim-header">
                     <LocaleMeta
                         key="locales"

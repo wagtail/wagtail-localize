@@ -295,18 +295,20 @@ const TranslationEditor: FunctionComponent<EditorProps> = props => {
         );
     } else {
         tabs = (
-            <>
-                <EditorToolbox {...props} {...state} dispatch={dispatch} />
-                <Section
-                    title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
-                >
-                    <EditorSegmentList
-                        {...props}
-                        {...state}
-                        dispatch={dispatch}
-                    />
-                </Section>
-            </>
+            <div className="w-tabs">
+                <div className="tab-content">
+                    <EditorToolbox {...props} {...state} dispatch={dispatch} />
+                    <Section
+                        title={`${props.sourceLocale.displayName} to ${props.locale.displayName} translation`}
+                    >
+                        <EditorSegmentList
+                            {...props}
+                            {...state}
+                            dispatch={dispatch}
+                        />
+                    </Section>
+                </div>
+            </div>
         );
     }
 
