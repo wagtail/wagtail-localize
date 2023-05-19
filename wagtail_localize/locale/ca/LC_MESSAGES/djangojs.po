@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Roger Pons <rogerpons@gmail.com>, 2023\n"
-"Language-Team: Catalan (https://www.transifex.com/torchbox/teams/8009/ca/)\n"
+"Language-Team: Catalan (https://app.transifex.com/torchbox/teams/8009/ca/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,9 +17,6 @@ msgstr "[ESBORRAT]"
 
 msgid "Apply editor lock"
 msgstr "Aplica bloqueig d'editor"
-
-msgid "Breadcrumb"
-msgstr "Ruta de navegació"
 
 msgid "Cancel"
 msgstr "Cancel·lar"
@@ -63,9 +60,6 @@ msgstr "Baixar fitxer PO"
 msgid "Download PO file and input translations offline"
 msgstr "Baixar fitxer PO i introduir traduccions fora de línia"
 
-msgid "Draft"
-msgstr "Esborrany"
-
 msgid "Edit"
 msgstr "Editar"
 
@@ -93,9 +87,6 @@ msgstr "Recol·lectant informació de la imatge..."
 msgid "Fetching page information..."
 msgstr "Recol·lectant informació de la pàgina..."
 
-msgid "Live"
-msgstr "En viu"
-
 msgid "Lock"
 msgstr "Bloqueja"
 
@@ -107,12 +98,6 @@ msgstr "Previsualització"
 
 msgid "Publish in "
 msgstr "Publicar a"
-
-msgid "Published"
-msgstr "Publicada"
-
-msgid "Published on "
-msgstr "Publicat a"
 
 msgid "Publishing..."
 msgstr "Publicant..."

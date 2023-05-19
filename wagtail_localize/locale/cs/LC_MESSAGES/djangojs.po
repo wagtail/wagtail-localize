@@ -1,12 +1,11 @@
 #
 # Translators:
-# Kryštof Pilnáček <krystof.pilnacek@rossum.ai>, 2020
 # Mirek Zvolský <zvolsky@seznam.cz>, 2021
 #
 msgid ""
 msgstr ""
 "Last-Translator: Mirek Zvolský <zvolsky@seznam.cz>, 2021\n"
-"Language-Team: Czech (https://www.transifex.com/torchbox/teams/8009/cs/)\n"
+"Language-Team: Czech (https://app.transifex.com/torchbox/teams/8009/cs/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cs\n"
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
@@ -17,9 +16,6 @@ msgstr "[ZRUŠENO]"
 
 msgid "Apply editor lock"
 msgstr "Uzamknout pro úpravy"
-
-msgid "Breadcrumb"
-msgstr "Navigace stránek"
 
 msgid "Cancel"
 msgstr "Storno"
@@ -54,9 +50,6 @@ msgstr "Stáhnout PO soubor"
 msgid "Download PO file and input translations offline"
 msgstr "Stáhnout PO soubor a zadat překlady offline"
 
-msgid "Draft"
-msgstr "Koncept"
-
 msgid "Edit"
 msgstr "Upravit"
 
@@ -81,9 +74,6 @@ msgstr "Získávají se informace o obrázku..."
 msgid "Fetching page information..."
 msgstr "Získávají se informace o stránce..."
 
-msgid "Live"
-msgstr "Publikováno"
-
 msgid "Lock"
 msgstr "Uzamknout"
 
@@ -95,12 +85,6 @@ msgstr "Náhled"
 
 msgid "Publish in "
 msgstr "Publikovat"
-
-msgid "Published"
-msgstr "Publikováno"
-
-msgid "Published on "
-msgstr "Publikováno"
 
 msgid "Publishing..."
 msgstr "Publikování..."

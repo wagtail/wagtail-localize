@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2021\n"
-"Language-Team: Belarusian (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Belarusian (https://app.transifex.com/torchbox/teams/8009/"
 "be/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: be\n"
@@ -17,9 +17,6 @@ msgstr ""
 msgid "Apply editor lock"
 msgstr "Заблакаваць рэдактар"
 
-msgid "Breadcrumb"
-msgstr "Шлях па сайту"
-
 msgid "Choose a document"
 msgstr "Абраць дакумент"
 
@@ -28,9 +25,6 @@ msgstr "Выбраць старонку"
 
 msgid "Delete"
 msgstr "Выдаліць"
-
-msgid "Draft"
-msgstr "Чарнавік"
 
 msgid "Edit"
 msgstr "Рэдагаваць"
@@ -43,9 +37,6 @@ msgstr "Рэдагаваць гэты дакумент"
 
 msgid "Edit this page"
 msgstr "Змяніць гэтую старонку"
-
-msgid "Live"
-msgstr "Размешчана"
 
 msgid "Lock"
 msgstr "Заблакаваць"

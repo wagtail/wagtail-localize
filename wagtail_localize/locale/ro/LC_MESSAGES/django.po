@@ -1,13 +1,14 @@
 #
 # Translators:
 # Dan Braghis, 2022
+# Alex Morega, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 21:00+0000\n"
-"Last-Translator: Dan Braghis, 2022\n"
-"Language-Team: Romanian (https://www.transifex.com/torchbox/teams/8009/ro/)\n"
+"POT-Creation-Date: 2023-02-23 14:15+0000\n"
+"Last-Translator: Alex Morega, 2023\n"
+"Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
 "Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
@@ -46,7 +47,7 @@ msgstr "Descarcă CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
-msgstr "Traduce {model_name}"
+msgstr "Tradu {model_name}"
 
 #, python-brace-format
 msgid ""
@@ -151,6 +152,10 @@ msgstr "Traduceți această pagină"
 #, python-format
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Traducerea %(instance)s în %(locale)s"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Editare %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Trimite"
@@ -258,7 +263,7 @@ msgid "Locales"
 msgstr "Localizări"
 
 msgid "All child pages will be created."
-msgstr "Toate paginile descendete vor fi create."
+msgstr "Toate paginile descendente vor fi create."
 
 msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"

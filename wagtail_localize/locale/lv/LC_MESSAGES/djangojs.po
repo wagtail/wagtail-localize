@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Maris Serzans <maris.serzans@gmail.com>, 2021\n"
-"Language-Team: Latvian (https://www.transifex.com/torchbox/teams/8009/lv/)\n"
+"Language-Team: Latvian (https://app.transifex.com/torchbox/teams/8009/lv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: lv\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
@@ -27,9 +27,6 @@ msgstr "Izvēlēties attēlu"
 msgid "Delete"
 msgstr "Dzēst"
 
-msgid "Draft"
-msgstr "Melnraksts"
-
 msgid "Edit"
 msgstr "Labot"
 
@@ -44,9 +41,6 @@ msgstr "Labot šo attēlu"
 
 msgid "Edit this page"
 msgstr "Labot šo lapu"
-
-msgid "Live"
-msgstr "Aktīva"
 
 msgid "Lock"
 msgstr "Slēgt"

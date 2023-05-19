@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Martin Janšto <mato@jansto.sk>, 2021\n"
-"Language-Team: Slovak (Slovakia) (https://www.transifex.com/torchbox/"
+"Language-Team: Slovak (Slovakia) (https://app.transifex.com/torchbox/"
 "teams/8009/sk_SK/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sk_SK\n"
@@ -25,9 +25,6 @@ msgstr "Vybrať obrázok"
 msgid "Delete"
 msgstr "Vymazať"
 
-msgid "Draft"
-msgstr "Koncept"
-
 msgid "Edit"
 msgstr "Upraviť"
 
@@ -42,9 +39,6 @@ msgstr "Upraviť tento obrázok"
 
 msgid "Edit this page"
 msgstr "Upraviť túto stránku"
-
-msgid "Live"
-msgstr "Live"
 
 msgid "Lock"
 msgstr "Zamknúť"

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: lior abazon <abazon@v15.org.il>, 2021\n"
-"Language-Team: Hebrew (Israel) (https://www.transifex.com/torchbox/"
+"Language-Team: Hebrew (Israel) (https://app.transifex.com/torchbox/"
 "teams/8009/he_IL/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: he_IL\n"
@@ -26,9 +26,6 @@ msgstr "בחרו תמונה"
 msgid "Delete"
 msgstr "מחק"
 
-msgid "Draft"
-msgstr "טיוטה"
-
 msgid "Edit"
 msgstr "ערוך"
 
@@ -43,9 +40,6 @@ msgstr "ערוך תמונה זו "
 
 msgid "Edit this page"
 msgstr "ערוך עמוד זה"
-
-msgid "Live"
-msgstr "חי"
 
 msgid "Preview"
 msgstr "תצוגה מקדימה "

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2022\n"
-"Language-Team: Icelandic (Iceland) (https://www.transifex.com/torchbox/"
+"Language-Team: Icelandic (Iceland) (https://app.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: is_IS\n"
@@ -17,9 +17,6 @@ msgstr "[EYDD]"
 
 msgid "Apply editor lock"
 msgstr "Kveikja á skriflás"
-
-msgid "Breadcrumb"
-msgstr "Brauðmolar"
 
 msgid "Cancel"
 msgstr "Hætta við"
@@ -63,9 +60,6 @@ msgstr "Hlaða niður PO skrá"
 msgid "Download PO file and input translations offline"
 msgstr "Hlaða niður PO skrá og þýða utan nets"
 
-msgid "Draft"
-msgstr "Uppkast"
-
 msgid "Edit"
 msgstr "Breyta"
 
@@ -93,9 +87,6 @@ msgstr "Sæki upplýsingar um mynd..."
 msgid "Fetching page information..."
 msgstr "Sæki upplýsingar um síðu..."
 
-msgid "Live"
-msgstr "Í birtingu"
-
 msgid "Lock"
 msgstr "Læsa"
 
@@ -107,12 +98,6 @@ msgstr "Forskoða"
 
 msgid "Publish in "
 msgstr "Birta í"
-
-msgid "Published"
-msgstr "Sett í birtingu"
-
-msgid "Published on "
-msgstr "Sett í birtingu "
 
 msgid "Publishing..."
 msgstr "Set í birtingu..."

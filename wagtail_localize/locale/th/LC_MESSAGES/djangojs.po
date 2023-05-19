@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Walaksawan Vervoort <nula_wala@yahoo.com>, 2021\n"
-"Language-Team: Thai (https://www.transifex.com/torchbox/teams/8009/th/)\n"
+"Language-Team: Thai (https://app.transifex.com/torchbox/teams/8009/th/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: th\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -26,9 +26,6 @@ msgstr "เลือกรูปภาพ"
 msgid "Delete"
 msgstr "ลบ,ลบทิ้ง"
 
-msgid "Draft"
-msgstr "ร่าง , ข้อความที่เก็บเอาไว้ทำใหม่"
-
 msgid "Edit"
 msgstr "แก้ไข"
 
@@ -43,9 +40,6 @@ msgstr "แก้ไขรูปภาพนี้"
 
 msgid "Edit this page"
 msgstr "แก้ไขหน้านี้"
-
-msgid "Live"
-msgstr "กำลังแสดงสดอยู่,ถ่ายทอดสด"
 
 msgid "Lock"
 msgstr "ล็อค"

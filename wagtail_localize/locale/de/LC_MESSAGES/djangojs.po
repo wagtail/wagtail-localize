@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Stefan Hammer <stefan@hammerworxx.com>, 2022\n"
-"Language-Team: German (https://www.transifex.com/torchbox/teams/8009/de/)\n"
+"Language-Team: German (https://app.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -18,9 +18,6 @@ msgstr "[GELÖSCHT]"
 
 msgid "Apply editor lock"
 msgstr "Editor-Sperre anwenden"
-
-msgid "Breadcrumb"
-msgstr "Breadcrumb"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -64,9 +61,6 @@ msgstr "PO Datei herunterladen"
 msgid "Download PO file and input translations offline"
 msgstr "Lade PO Datei herunter und füge Übersetzungen offline hinzu"
 
-msgid "Draft"
-msgstr "Entwurf"
-
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -94,9 +88,6 @@ msgstr "Bildinformationen werden gesammelt…"
 msgid "Fetching page information..."
 msgstr "Seiteninformationen werden gesammelt…"
 
-msgid "Live"
-msgstr "Live"
-
 msgid "Lock"
 msgstr "Sperren"
 
@@ -108,12 +99,6 @@ msgstr "Vorschau"
 
 msgid "Publish in "
 msgstr "Veröffentlichen in "
-
-msgid "Published"
-msgstr "Veröffentlicht"
-
-msgid "Published on "
-msgstr "Veröffentlicht am "
 
 msgid "Publishing..."
 msgstr "Veröffentlichen..."

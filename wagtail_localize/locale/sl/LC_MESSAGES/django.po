@@ -8,9 +8,9 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 21:00+0000\n"
+"POT-Creation-Date: 2023-02-23 14:15+0000\n"
 "Last-Translator: Andrej Marsetič, 2023\n"
-"Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sl\n"
@@ -99,6 +99,11 @@ msgstr ""
 "Oznaka <{}> ni dovoljena. Nizi lahko vsebujejo samo standardne oznake HTML v "
 "vrstici (kot so <b>, <a>)"
 
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr "Nizi ne smejo imeti oznak HTML z atributi (razen 'id' <a> v oznakah)"
+
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "V oznaki <a> je bil najden neprepoznan ID: {}"
 
@@ -117,6 +122,16 @@ msgstr "Da, pretvori ga"
 
 msgid "No, leave it as a page"
 msgstr "Ne, pustite to kot stran"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"page</a>."
+msgstr ""
+"Ta stran še ni bila prevedena in zrcali <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"stran</a>."
 
 msgid "Translate this page"
 msgstr "Prevedi to stran"
@@ -268,3 +283,6 @@ msgstr "Pretvori v vzdevek strani"
 
 msgid "Convert page to alias"
 msgstr "Pretvori stran v vzdevek"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Stran pretvorjena v vzdevek izvorne strani prevoda"

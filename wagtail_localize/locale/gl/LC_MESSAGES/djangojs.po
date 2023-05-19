@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: X Bello <xbello@gmail.com>, 2022\n"
-"Language-Team: Galician (https://www.transifex.com/torchbox/teams/8009/gl/)\n"
+"Language-Team: Galician (https://app.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: gl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -16,9 +16,6 @@ msgstr "[ELIMINADO]"
 
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueo de editor"
-
-msgid "Breadcrumb"
-msgstr "Miga de pan"
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -62,9 +59,6 @@ msgstr "Descargar arquivo PO"
 msgid "Download PO file and input translations offline"
 msgstr "Descargar arquivo PO e introducir traduccións sen conexión"
 
-msgid "Draft"
-msgstr "Borrador"
-
 msgid "Edit"
 msgstr "Editar"
 
@@ -92,9 +86,6 @@ msgstr "Recopilar información da imaxe..."
 msgid "Fetching page information..."
 msgstr "Recopilando información da páxina..."
 
-msgid "Live"
-msgstr "En vivo"
-
 msgid "Lock"
 msgstr "Bloquear"
 
@@ -106,12 +97,6 @@ msgstr "Previsualizar"
 
 msgid "Publish in "
 msgstr "Publicar en "
-
-msgid "Published"
-msgstr "Publicada"
-
-msgid "Published on "
-msgstr "Publicar en"
 
 msgid "Publishing..."
 msgstr "Publicando..."

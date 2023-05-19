@@ -8,14 +8,11 @@
 msgid ""
 msgstr ""
 "Last-Translator: Py Data Geek <pydatageek@gmail.com>, 2021\n"
-"Language-Team: Turkish (Turkey) (https://www.transifex.com/torchbox/"
+"Language-Team: Turkish (Turkey) (https://app.transifex.com/torchbox/"
 "teams/8009/tr_TR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tr_TR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
-msgid "Breadcrumb"
-msgstr "İçerik haritası"
 
 msgid "Change image"
 msgstr "Resmi değiştir"
@@ -32,9 +29,6 @@ msgstr "Bir resim seç"
 msgid "Delete"
 msgstr "Sil"
 
-msgid "Draft"
-msgstr "Taslak"
-
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -49,9 +43,6 @@ msgstr "Resmi düzenle"
 
 msgid "Edit this page"
 msgstr "Sayfayı düzenle"
-
-msgid "Live"
-msgstr "Yayında"
 
 msgid "Lock"
 msgstr "Kilitle"

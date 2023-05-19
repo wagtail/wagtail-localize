@@ -1,21 +1,17 @@
 #
 # Translators:
-# Ragnar Rebase <rrebase@gmail.com>, 2021
 # Erlend <debcf78e@opayq.com>, 2021
 #
 msgid ""
 msgstr ""
 "Last-Translator: Erlend <debcf78e@opayq.com>, 2021\n"
-"Language-Team: Estonian (https://www.transifex.com/torchbox/teams/8009/et/)\n"
+"Language-Team: Estonian (https://app.transifex.com/torchbox/teams/8009/et/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Apply editor lock"
 msgstr "Rakenda redaktori lukustus"
-
-msgid "Breadcrumb"
-msgstr "Riivsai"
 
 msgid "Cancel"
 msgstr "Tühista"
@@ -35,9 +31,6 @@ msgstr "Valige pilt"
 msgid "Delete"
 msgstr "Kustuta"
 
-msgid "Draft"
-msgstr "Mustand"
-
 msgid "Edit"
 msgstr "Muuda"
 
@@ -53,17 +46,11 @@ msgstr "Muutke seda pilti"
 msgid "Edit this page"
 msgstr "Muutke seda lehte"
 
-msgid "Live"
-msgstr "Otseülekanne"
-
 msgid "Lock"
 msgstr "Lukusta"
 
 msgid "Preview"
 msgstr "Eelvaade"
-
-msgid "Published"
-msgstr "Avaldatud"
 
 msgid "Save"
 msgstr "Salvesta"

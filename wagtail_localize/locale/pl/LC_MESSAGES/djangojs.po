@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Miłosz Miśkiewicz, 2023\n"
-"Language-Team: Polish (https://www.transifex.com/torchbox/teams/8009/pl/)\n"
+"Language-Team: Polish (https://app.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
@@ -18,9 +18,6 @@ msgstr "[USUNIĘTE]"
 
 msgid "Apply editor lock"
 msgstr "Zastosuj blokadę edytorską"
-
-msgid "Breadcrumb"
-msgstr "Breadcrumb"
 
 msgid "Cancel"
 msgstr "Anuluj"
@@ -64,9 +61,6 @@ msgstr "Pobierz plik PO"
 msgid "Download PO file and input translations offline"
 msgstr "Pobierz plik PO i wprowadź tłumaczenia offline"
 
-msgid "Draft"
-msgstr "Szkic"
-
 msgid "Edit"
 msgstr "Edytuj"
 
@@ -94,9 +88,6 @@ msgstr "Pobieranie informacji na temat obrazu"
 msgid "Fetching page information..."
 msgstr "Pobieranie informacji na temat strony..."
 
-msgid "Live"
-msgstr "Opublikowana"
-
 msgid "Lock"
 msgstr "Zablokuj"
 
@@ -108,12 +99,6 @@ msgstr "Podgląd"
 
 msgid "Publish in "
 msgstr "Opublikuj w"
-
-msgid "Published"
-msgstr "Opublikowano"
-
-msgid "Published on "
-msgstr "Opublikowano dnia"
 
 msgid "Publishing..."
 msgstr "Publikowanie..."

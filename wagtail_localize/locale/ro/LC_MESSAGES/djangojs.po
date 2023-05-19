@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Dan Braghis, 2022\n"
-"Language-Team: Romanian (https://www.transifex.com/torchbox/teams/8009/ro/)\n"
+"Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
 "Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
@@ -16,9 +16,6 @@ msgstr "[ȘTERS]"
 
 msgid "Apply editor lock"
 msgstr "Aplică blocaj editorial"
-
-msgid "Breadcrumb"
-msgstr "Traseu navigare"
 
 msgid "Cancel"
 msgstr "Anulează"
@@ -62,9 +59,6 @@ msgstr "Descarcă fișier PO"
 msgid "Download PO file and input translations offline"
 msgstr "Descarcă fișier PO și adaugă traduceri offline"
 
-msgid "Draft"
-msgstr "Ciornă"
-
 msgid "Edit"
 msgstr "Editează"
 
@@ -92,9 +86,6 @@ msgstr "Preluare informație despre imagine..."
 msgid "Fetching page information..."
 msgstr "Preluare informație despre pagină..."
 
-msgid "Live"
-msgstr "Activată"
-
 msgid "Lock"
 msgstr "Încuie"
 
@@ -106,12 +97,6 @@ msgstr "Examinare"
 
 msgid "Publish in "
 msgstr "Publică în"
-
-msgid "Published"
-msgstr "Publicat"
-
-msgid "Published on "
-msgstr "Publicat pe"
 
 msgid "Publishing..."
 msgstr "Publicare..."

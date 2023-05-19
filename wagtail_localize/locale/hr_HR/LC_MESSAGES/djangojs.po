@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2022\n"
-"Language-Team: Croatian (Croatia) (https://www.transifex.com/torchbox/"
+"Language-Team: Croatian (Croatia) (https://app.transifex.com/torchbox/"
 "teams/8009/hr_HR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: hr_HR\n"
@@ -31,9 +31,6 @@ msgstr "Odaberi sliku"
 msgid "Delete"
 msgstr "Izbriši"
 
-msgid "Draft"
-msgstr "Skica"
-
 msgid "Edit"
 msgstr "Uredi"
 
@@ -49,17 +46,11 @@ msgstr "Uredi ovu sliku"
 msgid "Edit this page"
 msgstr "Uredi ovu stranicu"
 
-msgid "Live"
-msgstr "Uživo"
-
 msgid "Lock"
 msgstr "Zaključavanje"
 
 msgid "Preview"
 msgstr "Pregled"
-
-msgid "Published"
-msgstr "Objavljeno"
 
 msgid "Save"
 msgstr "Spremi"

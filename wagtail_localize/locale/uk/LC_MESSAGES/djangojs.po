@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Anastasiia La, 2021\n"
-"Language-Team: Ukrainian (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Ukrainian (https://app.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: uk\n"
@@ -24,9 +24,6 @@ msgstr "[Видалено]"
 
 msgid "Apply editor lock"
 msgstr "Застосувати редакторське блокування"
-
-msgid "Breadcrumb"
-msgstr "Ланцюжок навігації"
 
 msgid "Cancel"
 msgstr "Скасувати"
@@ -67,9 +64,6 @@ msgstr "Завантажити PO-файл"
 msgid "Download PO file and input translations offline"
 msgstr "Завантажити PO-файл і ввести переклад офлайн"
 
-msgid "Draft"
-msgstr "Чернетка"
-
 msgid "Edit"
 msgstr "Редагувати"
 
@@ -97,9 +91,6 @@ msgstr "Вилучення інформації про зображення"
 msgid "Fetching page information..."
 msgstr "Виручення інформації про сторінку"
 
-msgid "Live"
-msgstr "Наживо"
-
 msgid "Lock"
 msgstr "Блокувати"
 
@@ -111,12 +102,6 @@ msgstr "Попередній перегляд"
 
 msgid "Publish in "
 msgstr "Опублікувати в"
-
-msgid "Published"
-msgstr "Опубліковано"
-
-msgid "Published on "
-msgstr "Опублікувати на"
 
 msgid "Publishing..."
 msgstr "Публікація..."

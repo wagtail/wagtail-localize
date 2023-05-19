@@ -5,11 +5,12 @@
 # Rob Moorman <rob@moori.nl>, 2021
 # Loic Teixeira, 2021
 # Thijs Kramer <thijskramer@gmail.com>, 2022
+# Storm Heg <storm@stormbase.digital>, 2023
 #
 msgid ""
 msgstr ""
-"Last-Translator: Thijs Kramer <thijskramer@gmail.com>, 2022\n"
-"Language-Team: Dutch (https://www.transifex.com/torchbox/teams/8009/nl/)\n"
+"Last-Translator: Storm Heg <storm@stormbase.digital>, 2023\n"
+"Language-Team: Dutch (https://app.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -18,10 +19,7 @@ msgid "[DELETED]"
 msgstr "[VERWIJDERD]"
 
 msgid "Apply editor lock"
-msgstr "Pas bewerkingsblokkade toe"
-
-msgid "Breadcrumb"
-msgstr "Broodkruimel"
+msgstr "Bewerkingsvergrendeling inschakelen"
 
 msgid "Cancel"
 msgstr "Annuleren"
@@ -65,9 +63,6 @@ msgstr "Download PO-bestand"
 msgid "Download PO file and input translations offline"
 msgstr "Download PO-bestand en voer offline vertalingen in"
 
-msgid "Draft"
-msgstr "Concept"
-
 msgid "Edit"
 msgstr "Bewerk"
 
@@ -95,9 +90,6 @@ msgstr "Bezig met ophalen van afbeeldingsgegevens..."
 msgid "Fetching page information..."
 msgstr "Bezig met ophalen van paginagegevens..."
 
-msgid "Live"
-msgstr "Openbaar"
-
 msgid "Lock"
 msgstr "Vergrendel"
 
@@ -109,12 +101,6 @@ msgstr "Voorvertoning"
 
 msgid "Publish in "
 msgstr "Publiceer in"
-
-msgid "Published"
-msgstr "Gepubliceerd"
-
-msgid "Published on "
-msgstr "Gepubliceerd op"
 
 msgid "Publishing..."
 msgstr "Bezig met publiceren..."
@@ -157,7 +143,7 @@ msgid "Unlock"
 msgstr "Ontgrendelen"
 
 msgid "Unpublish"
-msgstr "Depubliceren"
+msgstr "Publicatie intrekken"
 
 msgid "Upload PO file"
 msgstr "Upload PO-bestand"

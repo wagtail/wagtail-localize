@@ -7,16 +7,13 @@
 msgid ""
 msgstr ""
 "Last-Translator: Kyu Choi, 2022\n"
-"Language-Team: Korean (https://www.transifex.com/torchbox/teams/8009/ko/)\n"
+"Language-Team: Korean (https://app.transifex.com/torchbox/teams/8009/ko/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Apply editor lock"
 msgstr "편집자 잠금 적용"
-
-msgid "Breadcrumb"
-msgstr "브레드크럼"
 
 msgid "Cancel"
 msgstr "취소"
@@ -36,9 +33,6 @@ msgstr "이미지 선택"
 msgid "Delete"
 msgstr "삭제"
 
-msgid "Draft"
-msgstr "초안"
-
 msgid "Edit"
 msgstr "수정"
 
@@ -54,17 +48,11 @@ msgstr "이 이미지 수정"
 msgid "Edit this page"
 msgstr "페이지 변경"
 
-msgid "Live"
-msgstr "라이브"
-
 msgid "Lock"
 msgstr "잠금"
 
 msgid "Preview"
 msgstr "미리보기"
-
-msgid "Published"
-msgstr "출시된"
 
 msgid "Publishing..."
 msgstr "게시 중..."

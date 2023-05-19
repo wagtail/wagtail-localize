@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Andrej Marsetič, 2023\n"
-"Language-Team: Slovenian (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sl\n"
@@ -19,9 +19,6 @@ msgstr "[IZBRISANO]"
 
 msgid "Apply editor lock"
 msgstr "Uporabi zaklepanje urejevalnika"
-
-msgid "Breadcrumb"
-msgstr "Drobtina"
 
 msgid "Cancel"
 msgstr "Prekliči"
@@ -65,9 +62,6 @@ msgstr "Prenesi PO datoteko"
 msgid "Download PO file and input translations offline"
 msgstr "Prenesite datoteko PO in vnesite prevode brez povezave"
 
-msgid "Draft"
-msgstr "Osnutek"
-
 msgid "Edit"
 msgstr "Uredi"
 
@@ -95,9 +89,6 @@ msgstr "Pridobivanje informacij o sliki ..."
 msgid "Fetching page information..."
 msgstr "Pridobivanje informacij o strani ..."
 
-msgid "Live"
-msgstr "V živo"
-
 msgid "Lock"
 msgstr "Zakleni"
 
@@ -108,13 +99,7 @@ msgid "Preview"
 msgstr "Predogled"
 
 msgid "Publish in "
-msgstr "Objavi v"
-
-msgid "Published"
-msgstr "Objavljeno"
-
-msgid "Published on "
-msgstr "Objavljeno dne"
+msgstr "Objavi v "
 
 msgid "Publishing..."
 msgstr "Objava..."

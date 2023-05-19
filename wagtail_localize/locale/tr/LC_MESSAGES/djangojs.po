@@ -9,16 +9,13 @@
 msgid ""
 msgstr ""
 "Last-Translator: Py Data Geek <pydatageek@gmail.com>, 2021\n"
-"Language-Team: Turkish (https://www.transifex.com/torchbox/teams/8009/tr/)\n"
+"Language-Team: Turkish (https://app.transifex.com/torchbox/teams/8009/tr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgid "Apply editor lock"
 msgstr "Editör kilidini kaldır"
-
-msgid "Breadcrumb"
-msgstr "İçerik haritası"
 
 msgid "Change image"
 msgstr "Resmi değiştir"
@@ -35,9 +32,6 @@ msgstr "Bir resim seç"
 msgid "Delete"
 msgstr "Sil"
 
-msgid "Draft"
-msgstr "Taslak"
-
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -52,9 +46,6 @@ msgstr "Resmi düzenle"
 
 msgid "Edit this page"
 msgstr "Sayfayı düzenle"
-
-msgid "Live"
-msgstr "Yayında"
 
 msgid "Lock"
 msgstr "Kilitle"

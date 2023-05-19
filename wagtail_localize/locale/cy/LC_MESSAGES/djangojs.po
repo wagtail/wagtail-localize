@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Philip Crisp, 2022\n"
-"Language-Team: Welsh (https://www.transifex.com/torchbox/teams/8009/cy/)\n"
+"Language-Team: Welsh (https://app.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != "
@@ -17,9 +17,6 @@ msgstr "[WEDI'I DILEU]"
 
 msgid "Apply editor lock"
 msgstr "Cymhwyso clo golygydd"
-
-msgid "Breadcrumb"
-msgstr "Briwsion Bara"
 
 msgid "Cancel"
 msgstr "Canslo"
@@ -63,9 +60,6 @@ msgstr "Lawrlwythwch ffeil PO"
 msgid "Download PO file and input translations offline"
 msgstr "Dadlwythwch ffeil PO a mewnbynnu cyfieithiadau all-lein"
 
-msgid "Draft"
-msgstr "Drafft"
-
 msgid "Edit"
 msgstr "Golygu"
 
@@ -93,9 +87,6 @@ msgstr "Wrthi'n nôl gwybodaeth llun..."
 msgid "Fetching page information..."
 msgstr "Wrthi'n nôl gwybodaeth tudalen..."
 
-msgid "Live"
-msgstr "Yn fyw"
-
 msgid "Lock"
 msgstr "Clo"
 
@@ -107,12 +98,6 @@ msgstr "Rhagolwg"
 
 msgid "Publish in "
 msgstr "Cyhoeddi yn "
-
-msgid "Published"
-msgstr "Wedi cyhoeddi"
-
-msgid "Published on "
-msgstr "Cyhoeddwyd ar "
 
 msgid "Publishing..."
 msgstr "Wrthi'n cyhoeddi..."

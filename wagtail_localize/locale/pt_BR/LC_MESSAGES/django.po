@@ -6,14 +6,14 @@
 # Iuri L. Machado, 2021
 # Luiz Boaretto <lboaretto@gmail.com>, 2022
 # Rodrigo de Almeida Sottomaior Macedo <rmsolucoeseminformatica@protonmail.com>, 2022
+# Fabio Santos <f4bio.sa@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 21:00+0000\n"
-"Last-Translator: Rodrigo de Almeida Sottomaior Macedo "
-"<rmsolucoeseminformatica@protonmail.com>, 2022\n"
-"Language-Team: Portuguese (Brazil) (https://www.transifex.com/torchbox/"
+"POT-Creation-Date: 2023-02-23 14:15+0000\n"
+"Last-Translator: Fabio Santos <f4bio.sa@gmail.com>, 2023\n"
+"Language-Team: Portuguese (Brazil) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pt_BR\n"
@@ -116,8 +116,28 @@ msgstr "Id não reconhecido encontrado na tag <a>: {}"
 msgid "Enable"
 msgstr "Habilitar"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Converter alias para %(title)s"
+
+msgid "Convert to alias"
+msgstr "Converter em alias"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Tem certeza de que deseja converter esta página em um alias? Isso "
+"substituirá o conteúdo da página pelo conteúdo de "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Sim, converta"
+
+msgid "No, leave it as a page"
+msgstr "Não, deixe como uma página"
 
 #, python-format
 msgid ""
@@ -174,6 +194,9 @@ msgid ""
 msgstr ""
 "A última sincronização foi a %(last_sync_date)s. Você irá sincronizar o "
 "seguinte:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "A página '{}' foi convertida em um alias."
 
 msgid "Content"
 msgstr "Conteúdo"
@@ -295,3 +318,6 @@ msgstr "Sincronizar traduções de '%(title)s'"
 
 msgid "Convert to alias page"
 msgstr "Converter em página de atalho"
+
+msgid "Convert page to alias"
+msgstr "Converter página em alias"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Loic Teixeira, 2022\n"
-"Language-Team: French (https://www.transifex.com/torchbox/teams/8009/fr/)\n"
+"Language-Team: French (https://app.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
 "Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
@@ -17,9 +17,6 @@ msgstr "[SUPPRIMÉ(E)]"
 
 msgid "Apply editor lock"
 msgstr "Ajouter un verrou éditeur"
-
-msgid "Breadcrumb"
-msgstr "Fil d'Ariane"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -63,9 +60,6 @@ msgstr "Télécharger un fichier PO"
 msgid "Download PO file and input translations offline"
 msgstr "Télécharger un fichier PO et effectuer les traductions hors-ligne"
 
-msgid "Draft"
-msgstr "Brouillon"
-
 msgid "Edit"
 msgstr "Modifier"
 
@@ -93,9 +87,6 @@ msgstr "Récupération des informations de l'image en cours."
 msgid "Fetching page information..."
 msgstr "Récupération des informations de la page en cours."
 
-msgid "Live"
-msgstr "Publié(e)"
-
 msgid "Lock"
 msgstr "Verrouiller"
 
@@ -107,12 +98,6 @@ msgstr "Prévisualiser"
 
 msgid "Publish in "
 msgstr "Publier dans"
-
-msgid "Published"
-msgstr "Publié(e)"
-
-msgid "Published on "
-msgstr "Publié(e) le"
 
 msgid "Publishing..."
 msgstr "Publication..."

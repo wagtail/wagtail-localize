@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2022\n"
-"Language-Team: Hungarian (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Hungarian (https://app.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: hu\n"
@@ -16,9 +16,6 @@ msgstr "[TÖRÖLT]"
 
 msgid "Apply editor lock"
 msgstr "Szerkesztési zárolás"
-
-msgid "Breadcrumb"
-msgstr "Morzsamenü"
 
 msgid "Cancel"
 msgstr "Mégsem"
@@ -62,9 +59,6 @@ msgstr "PO fájl letöltése"
 msgid "Download PO file and input translations offline"
 msgstr "PO fájl letöltése, és a fordítások kitöltése külön"
 
-msgid "Draft"
-msgstr "Vázlat"
-
 msgid "Edit"
 msgstr "Szerkesztés"
 
@@ -92,9 +86,6 @@ msgstr "Kép információinak lekérése..."
 msgid "Fetching page information..."
 msgstr "Oldal információinak lekérése"
 
-msgid "Live"
-msgstr "Élő"
-
 msgid "Lock"
 msgstr "Lezár"
 
@@ -106,12 +97,6 @@ msgstr "Előnézet"
 
 msgid "Publish in "
 msgstr "Közzététel: "
-
-msgid "Published"
-msgstr "Élő"
-
-msgid "Published on "
-msgstr "Közzététel ideje: "
 
 msgid "Publishing..."
 msgstr "Közzététel..."

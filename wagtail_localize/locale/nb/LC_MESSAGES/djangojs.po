@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Stein Strindhaug <stein.strindhaug@gmail.com>, 2021\n"
-"Language-Team: Norwegian Bokmål (https://www.transifex.com/torchbox/"
+"Language-Team: Norwegian Bokmål (https://app.transifex.com/torchbox/"
 "teams/8009/nb/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nb\n"
@@ -16,9 +16,6 @@ msgstr ""
 
 msgid "Apply editor lock"
 msgstr "Slå på redigeringslås"
-
-msgid "Breadcrumb"
-msgstr "Brødsmuler"
 
 msgid "Change image"
 msgstr "Velg et annet bilde"
@@ -35,9 +32,6 @@ msgstr "Velg et bilde"
 msgid "Delete"
 msgstr "Slett"
 
-msgid "Draft"
-msgstr "Kladd"
-
 msgid "Edit"
 msgstr "Rediger"
 
@@ -52,9 +46,6 @@ msgstr "Rediger dette bildet"
 
 msgid "Edit this page"
 msgstr "Redigér denne siden"
-
-msgid "Live"
-msgstr "Publisert"
 
 msgid "Lock"
 msgstr "Lås"

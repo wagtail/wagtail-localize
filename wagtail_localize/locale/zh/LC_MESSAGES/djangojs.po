@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: shengsheng gz <gzshengsheng@139.com>, 2021\n"
-"Language-Team: Chinese (https://www.transifex.com/torchbox/teams/8009/zh/)\n"
+"Language-Team: Chinese (https://app.transifex.com/torchbox/teams/8009/zh/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -25,9 +25,6 @@ msgstr "选择一个图片"
 
 msgid "Delete"
 msgstr "删除"
-
-msgid "Draft"
-msgstr "草稿"
 
 msgid "Edit"
 msgstr "编辑"

@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: M. Febrian Ramadhana <febrian@ramadhana.me>, 2021\n"
-"Language-Team: Indonesian (Indonesia) (https://www.transifex.com/torchbox/"
+"Language-Team: Indonesian (Indonesia) (https://app.transifex.com/torchbox/"
 "teams/8009/id_ID/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: id_ID\n"
@@ -33,9 +33,6 @@ msgstr "Pilih sebuah gambar"
 msgid "Delete"
 msgstr "Hapus"
 
-msgid "Draft"
-msgstr "Konsep"
-
 msgid "Edit"
 msgstr "Ubah"
 
@@ -50,9 +47,6 @@ msgstr "Ubah gambar ini"
 
 msgid "Edit this page"
 msgstr "Ubah halaman ini"
-
-msgid "Live"
-msgstr "Terpublikasi"
 
 msgid "Lock"
 msgstr "Kunci"

@@ -3,7 +3,6 @@
 # Tetsuya Morimoto <tetsuya.morimoto@gmail.com>, 2021
 # Daigo Shitara <stain.witness@gmail.com>, 2021
 # 石田秀 <ishidashu@gmail.com>, 2021
-# 山本 卓也 <takuya.miraidenshi@gmail.com>, 2021
 # Yudai Kobayashi <yudai.kobayashi.miraidenshi@gmail.com>, 2021
 # shuhei hirota, 2021
 # kojikojikojikoji, 2021
@@ -11,16 +10,13 @@
 msgid ""
 msgstr ""
 "Last-Translator: kojikojikojikoji, 2021\n"
-"Language-Team: Japanese (https://www.transifex.com/torchbox/teams/8009/ja/)\n"
+"Language-Team: Japanese (https://app.transifex.com/torchbox/teams/8009/ja/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Apply editor lock"
 msgstr "エディターロック機能を適用する"
-
-msgid "Breadcrumb"
-msgstr "パンくず"
 
 msgid "Cancel"
 msgstr "キャンセル"
@@ -43,9 +39,6 @@ msgstr "画像を選択"
 msgid "Delete"
 msgstr "削除"
 
-msgid "Draft"
-msgstr "下書き"
-
 msgid "Edit"
 msgstr "編集"
 
@@ -60,9 +53,6 @@ msgstr "画像を編集"
 
 msgid "Edit this page"
 msgstr "ページを編集"
-
-msgid "Live"
-msgstr "公開"
 
 msgid "Lock"
 msgstr "ロックする"

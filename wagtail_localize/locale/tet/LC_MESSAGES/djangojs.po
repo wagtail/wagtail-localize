@@ -8,14 +8,11 @@
 msgid ""
 msgstr ""
 "Last-Translator: Mariano de Deus <dedeus_mariano@yahoo.com>, 2021\n"
-"Language-Team: Tetum (Tetun) (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Tetum (Tetun) (https://app.transifex.com/torchbox/teams/8009/"
 "tet/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tet\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-msgid "Breadcrumb"
-msgstr "Hatudu dalan korta"
 
 msgid "Change image"
 msgstr "Troka imajen"
@@ -28,9 +25,6 @@ msgstr "Hili imagen ida"
 
 msgid "Delete"
 msgstr "Hamoos"
-
-msgid "Draft"
-msgstr "Esbosu"
 
 msgid "Edit"
 msgstr "Hadia"
@@ -46,9 +40,6 @@ msgstr "Hadia imajen ne'e"
 
 msgid "Edit this page"
 msgstr "Hadia pajina nee"
-
-msgid "Live"
-msgstr "Ativu"
 
 msgid "Lock"
 msgstr "Xavi"

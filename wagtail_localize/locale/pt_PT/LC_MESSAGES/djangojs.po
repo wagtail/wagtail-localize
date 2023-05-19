@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Tiago Henriques <trinosauro@gmail.com>, 2022\n"
-"Language-Team: Portuguese (Portugal) (https://www.transifex.com/torchbox/"
+"Language-Team: Portuguese (Portugal) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pt_PT\n"
@@ -18,9 +18,6 @@ msgstr "[APAGADO]"
 
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueio de editor"
-
-msgid "Breadcrumb"
-msgstr "Percurso"
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -64,9 +61,6 @@ msgstr "Descarregar ficheiro PO"
 msgid "Download PO file and input translations offline"
 msgstr "Descarregar ficheiro PO e introduzir traduções em offline"
 
-msgid "Draft"
-msgstr "Rascunho"
-
 msgid "Edit"
 msgstr "Alterar"
 
@@ -94,9 +88,6 @@ msgstr "A obter informação da imagem..."
 msgid "Fetching page information..."
 msgstr "A obter informação da página..."
 
-msgid "Live"
-msgstr "Publicado"
-
 msgid "Lock"
 msgstr "Bloquear"
 
@@ -108,12 +99,6 @@ msgstr "Visualizar"
 
 msgid "Publish in "
 msgstr "Publicar em"
-
-msgid "Published"
-msgstr "Publicado"
-
-msgid "Published on "
-msgstr "Publicado em"
 
 msgid "Publishing..."
 msgstr "A publicar..."

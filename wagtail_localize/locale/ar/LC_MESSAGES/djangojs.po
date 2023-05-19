@@ -4,12 +4,11 @@
 # Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2021
 # Ahmed Miske Sidi Med <boutien321@gmail.com>, 2021
 # abdulaziz alfuhigi <abajall@gmail.com>, 2021
-# Younes Oumakhou, 2022
 #
 msgid ""
 msgstr ""
-"Last-Translator: Younes Oumakhou, 2022\n"
-"Language-Team: Arabic (https://www.transifex.com/torchbox/teams/8009/ar/)\n"
+"Last-Translator: abdulaziz alfuhigi <abajall@gmail.com>, 2021\n"
+"Language-Team: Arabic (https://app.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
@@ -30,9 +29,6 @@ msgstr "اختر صورة"
 msgid "Delete"
 msgstr "حذف"
 
-msgid "Draft"
-msgstr "مسودة"
-
 msgid "Edit"
 msgstr "تحرير"
 
@@ -48,17 +44,11 @@ msgstr "حرر هذه الصورة"
 msgid "Edit this page"
 msgstr "حرر هذه الصفحة"
 
-msgid "Live"
-msgstr "مباشر"
-
 msgid "Lock"
 msgstr "قفل"
 
 msgid "Preview"
 msgstr "نظر مقدم"
-
-msgid "Published"
-msgstr "تم نشره"
 
 msgid "Publishing..."
 msgstr "يتم النشر..."

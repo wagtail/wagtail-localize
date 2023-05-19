@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: visual, 2022\n"
-"Language-Team: Mongolian (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Mongolian (https://app.transifex.com/torchbox/teams/8009/"
 "mn/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: mn\n"
@@ -28,9 +28,6 @@ msgstr "Зургаа сонгоно уу"
 msgid "Delete"
 msgstr "Устгах"
 
-msgid "Draft"
-msgstr "Ноорог"
-
 msgid "Edit"
 msgstr "Засах"
 
@@ -45,9 +42,6 @@ msgstr "Энэ зургийг засах"
 
 msgid "Edit this page"
 msgstr "Энэ хуудсыг засах"
-
-msgid "Live"
-msgstr "Шууд"
 
 msgid "Lock"
 msgstr "Түгжих"

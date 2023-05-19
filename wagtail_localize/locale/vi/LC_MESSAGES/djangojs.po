@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Vu Pham, 2022\n"
-"Language-Team: Vietnamese (https://www.transifex.com/torchbox/teams/8009/"
+"Language-Team: Vietnamese (https://app.transifex.com/torchbox/teams/8009/"
 "vi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: vi\n"
@@ -49,9 +49,6 @@ msgstr "Chọn một hình ảnh"
 msgid "Delete"
 msgstr "Xoá"
 
-msgid "Draft"
-msgstr "Bản nháp"
-
 msgid "Edit"
 msgstr "Biên tập"
 
@@ -66,12 +63,6 @@ msgstr "Khóa"
 
 msgid "Preview"
 msgstr "Xem trước"
-
-msgid "Published"
-msgstr "Đã xuất bản"
-
-msgid "Published on "
-msgstr "Xuất bản vào"
 
 msgid "Publishing..."
 msgstr "Đang xuất bản..."

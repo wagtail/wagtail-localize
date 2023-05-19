@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2022\n"
-"Language-Team: Swedish (https://www.transifex.com/torchbox/teams/8009/sv/)\n"
+"Language-Team: Swedish (https://app.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,9 +17,6 @@ msgstr "[RADERAD]"
 
 msgid "Apply editor lock"
 msgstr "Tillämpa redaktörslås"
-
-msgid "Breadcrumb"
-msgstr "Sökvägsnavigering"
 
 msgid "Cancel"
 msgstr "Avbryt"
@@ -63,9 +60,6 @@ msgstr "Ladda ner PO fil"
 msgid "Download PO file and input translations offline"
 msgstr "Ladda ner PO fil och uppdatera översättningar offline"
 
-msgid "Draft"
-msgstr "Utkast"
-
 msgid "Edit"
 msgstr "Redigera"
 
@@ -93,9 +87,6 @@ msgstr "Hämtar bildinformation"
 msgid "Fetching page information..."
 msgstr "Hämtar sidoinformation"
 
-msgid "Live"
-msgstr "Publicerad"
-
 msgid "Lock"
 msgstr "Lås"
 
@@ -107,12 +98,6 @@ msgstr "Förhandsgranska"
 
 msgid "Publish in "
 msgstr "Publicera på"
-
-msgid "Published"
-msgstr "Publicerad"
-
-msgid "Published on "
-msgstr "Publicera på "
 
 msgid "Publishing..."
 msgstr "Publicerar..."

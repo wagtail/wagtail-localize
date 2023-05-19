@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Chih Wang <ihcgno@icloud.com>, 2021\n"
-"Language-Team: Chinese Traditional (https://www.transifex.com/torchbox/"
+"Language-Team: Chinese Traditional (https://app.transifex.com/torchbox/"
 "teams/8009/zh-Hant/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh-Hant\n"
@@ -35,9 +35,6 @@ msgstr "選擇一個圖片"
 msgid "Delete"
 msgstr "刪除"
 
-msgid "Draft"
-msgstr "草稿"
-
 msgid "Edit"
 msgstr "編輯"
 
@@ -53,17 +50,11 @@ msgstr "編輯此圖片"
 msgid "Edit this page"
 msgstr "編輯此頁面"
 
-msgid "Live"
-msgstr "上線"
-
 msgid "Lock"
 msgstr "鎖定"
 
 msgid "Preview"
 msgstr "預覽"
-
-msgid "Published"
-msgstr "已發佈"
 
 msgid "Save"
 msgstr "儲存"
