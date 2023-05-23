@@ -103,7 +103,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     if (perms.canUnpublish) {
         actions.push(
             <a className="button action-secondary" href={links.unpublishUrl}>
-                <Icon name="download-alt" />
+                <Icon name="download" />
                 {gettext('Unpublish')}
             </a>
         );
@@ -124,7 +124,9 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     name="action"
                     value="publish"
                     className="button button-longrunning "
-                    data-clicked-text={gettext('Publishing...')}
+                    data-controller="w-progress"
+                    data-action="w-progress#activate"
+                    data-w-progress-active-value={gettext('Publishing...')}
                 >
                     <Icon
                         name="upload"

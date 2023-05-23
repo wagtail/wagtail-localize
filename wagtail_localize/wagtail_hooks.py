@@ -257,7 +257,7 @@ def before_edit_page(request, page):
 class RestartTranslationPageActionMenuItem(PageActionMenuItem):
     label = gettext_lazy("Start Synced translation")
     name = "localize-restart-translation"
-    icon_name = "undo"
+    icon_name = "rotate"
     classname = "action-secondary"
 
     def is_shown(self, context):
@@ -344,7 +344,7 @@ def before_edit_snippet(request, instance):
 class RestartTranslationSnippetActionMenuItem(SnippetActionMenuItem):
     label = gettext_lazy("Start Synced translation")
     name = "localize-restart-translation"
-    icon_name = "undo"
+    icon_name = "rotate"
     classname = "action-secondary"
 
     def is_shown(self, context):
