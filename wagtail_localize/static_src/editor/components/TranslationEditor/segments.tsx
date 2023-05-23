@@ -463,7 +463,7 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
                     {translation.isErrored ? (
                         <Icon name="warning" className="icon--red" />
                     ) : (
-                        <Icon name="tick" className="icon--green" />
+                        <Icon name="check" className="icon--green" />
                     )}
                 </>
             );
@@ -564,7 +564,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 {override.isErrored ? (
                     <Icon name="warning" className="icon--red" />
                 ) : (
-                    <Icon name="tick" className="icon--green" />
+                    <Icon name="check" className="icon--green" />
                 )}
             </>
         );
@@ -575,7 +575,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                     '%s',
                     sourceLocale.displayName
                 )}{' '}
-                <Icon name="tick" className="icon--green" />
+                <Icon name="check" className="icon--green" />
             </>
         );
     }
@@ -827,13 +827,13 @@ const EditorRelatedObjectSegment: FunctionComponent<
                     {gettext('segments translated')}
                     {segment.translationProgress.translatedSegments ==
                         segment.translationProgress.totalSegments && (
-                        <Icon name="tick" className="icon--green" />
+                        <Icon name="check" className="icon--green" />
                     )}
                 </>
             );
         } else {
-            // Segment translated without Wagtail localize. Just show a tick
-            message = <Icon name="tick" className="icon--green" />;
+            // Segment translated without Wagtail localize. Just show a check
+            message = <Icon name="check" className="icon--green" />;
         }
     } else {
         // Not translated
