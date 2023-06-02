@@ -45,12 +45,12 @@ testing = [
     "pre-commit>=2.21.0,<3.0"
 ]
 documentation = [
-    "mkdocs==1.1.2",
-    "mkdocs-material==6.2.8",
-    "mkdocs-mermaid2-plugin==0.5.1",
-    "mkdocstrings==0.14.0",
-    "mkdocs-include-markdown-plugin==2.8.0",
-    "pygments==2.11.2"
+    "mkdocs==1.4.3",
+    "mkdocs-material>=9.1,<10",
+    "mkdocstrings[python]==0.22.0",
+    "mkdocs-autorefs>=0.4.0,<0.5",
+    "mkdocs-include-markdown-plugin>=4.0.4,<5",
+    "pygments>=2.15,<2.16",
 ]
 google = [
     "google-cloud-translate>=3.0.0"
