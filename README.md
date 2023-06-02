@@ -18,8 +18,8 @@ Wagtail Localize is a translation plugin for the [Wagtail CMS](https://wagtail.o
 
 Wagtail Localize requires the following:
 
-- Python (3.7, 3.8, 3.9, 3.10, 3.11)
-- Django (3.2, 4.0, 4.1, 4.2)
+- Python (3.8, 3.9, 3.10, 3.11)
+- Django (3.2, 4.1, 4.2)
 - Wagtail (4.1, 4.2, 5.0) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
 
 ## Installation
