@@ -1,34 +1,6 @@
 version: 2
 
 jobs:
-  flake8:
-    docker:
-      - image: circleci/python:3.8
-    steps:
-      - checkout
-      - run: pip install flake8==4.0.1
-      - run: flake8 wagtail_localize
-
-  prettier:
-    docker:
-      - image: circleci/node:14
-    steps:
-      - checkout:
-
-      - type: cache-restore
-        keys:
-          - node-modules-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          - node-modules-{{ .Branch }}-
-          - node-modules-main-
-
-      - run: npm install
-      - run: npm run lint
-
-      - type: cache-save
-        key: node-modules-{{ .Branch }}-{{ checksum "package-lock.json" }}
-        paths:
-          - 'node_modules'
-
   test:
     docker:
       - image: circleci/python:3.8
@@ -71,8 +43,6 @@ workflows:
   version: 2
   test:
     jobs:
-      - flake8
-      - prettier
       - test
 
   nightly:
