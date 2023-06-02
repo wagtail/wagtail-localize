@@ -124,6 +124,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     name="action"
                     value="publish"
                     className="button button-longrunning "
+                    data-clicked-text={gettext('Publishing...')}
                     data-controller="w-progress"
                     data-action="w-progress#activate"
                     data-w-progress-active-value={gettext('Publishing...')}
