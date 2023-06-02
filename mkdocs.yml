@@ -9,6 +9,10 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - content.code.copy
+  logo: _static/favicon.png
+  favicon: _static/favicon.png
+
 markdown_extensions:
   - admonition
   - pymdownx.highlight:
