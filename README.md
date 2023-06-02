@@ -105,7 +105,7 @@ To run the test app interactively, use `tox -e interactive`, visit `http://127.0
 
 ## Support
 
-For support, please use [GitHub Discussions](https://github.com/wagtail/wagtail-localize/discussions) or ask a question on the `#multi-language` channel on [Wagtail's Slack instance](`https://wagtail.org/slack/`).
+For support, please use [GitHub Discussions](https://github.com/wagtail/wagtail-localize/discussions) or ask a question on the `#multi-language` channel on [Wagtail's Slack instance](https://wagtail.org/slack/).
 
 ## Thanks
 
