@@ -34,6 +34,7 @@ jobs:
     strategy:
       matrix:
         python: ['3.8', '3.9', '3.10', '3.11']
+        database: ['sqlite']
 
     steps:
       - uses: actions/checkout@v3
@@ -47,6 +48,8 @@ jobs:
           python -m pip install tox tox-gh-actions
       - name: Test with tox
         run: tox
+        env:
+          DATABASE: ${{ matrix.database }}
 
   test-postgres:
     runs-on: ubuntu-latest

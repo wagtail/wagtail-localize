@@ -9,30 +9,32 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - content.code.copy
+  logo: _static/favicon.png
+  favicon: _static/favicon.png
+
 markdown_extensions:
   - admonition
-  - codehilite
+  - pymdownx.highlight:
+      pygments_lang_class: true
   - pymdownx.superfences:
-      # Allows us to use mermaid and codehilite together
-      # https://stackoverflow.com/questions/61638740/exclude-mermaid-code-blocks-for-highlighting-with-codehilite-mkdocs
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_div_format
-  - pymdownx.tabbed
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
 extra_css:
   - stylesheets/mkdocstrings.css
 plugins:
   - search
-  - mermaid2:
-      version: 8.6.4
+  - autorefs
   - mkdocstrings:
       handlers:
         python:
-          selection:
-            filters:
-              - '!^_' # exlude all members starting with _
-              - '^__init__$' # but always include __init__ modules and methods
+          options:
+            show_root_toc_entry: false
+            show_signature_annotations: true
           setup_commands:
             - import os
             - import django

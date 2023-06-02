@@ -1,6 +1,12 @@
 /* Indentation. */
 div.doc-contents:not(.first) {
     padding-left: 25px;
-    border-left: 4px solid rgba(230, 230, 230);
-    margin-bottom: 80px;
+    border-left: 0.2rem solid var(--md-typeset-table-color);
+}
+
+/* Prevent selection of prompt and output from Python console code blocks */
+.language-pycon .gp,
+.language-pycon .go {
+    /* Generic.Prompt, Generic.Output */
+    user-select: none;
 }
