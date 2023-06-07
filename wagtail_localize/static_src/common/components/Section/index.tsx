@@ -5,7 +5,10 @@ const Title = styled.div`
     box-sizing: border-box;
     height: 40px;
     -webkit-font-smoothing: auto;
-    background-color: var(--w-color-surface-header, var(--w-color-secondary-50));
+    background-color: var(
+        --w-color-surface-header,
+        var(--w-color-secondary-50)
+    );
     color: var(--w-color-text-label, var(--w-color-secondary));
     padding: 1em 0 1em 1.5em;
     font-size: 0.95em;

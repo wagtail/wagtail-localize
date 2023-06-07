@@ -247,7 +247,8 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({
 };
 
 export const BlockLabel = styled.h3`
-    border: 1px solid var(--w-color-border-furniture, var(--w-color-secondary-100));
+    border: 1px solid
+        var(--w-color-border-furniture, var(--w-color-secondary-100));
     padding-left: 11px;
     padding-right: 11px;
     padding-top: 7px;
@@ -330,13 +331,20 @@ const ActionButton = styled.button`
     font-size: 0.8em;
     font-weight: bold;
     color: var(--w-color-text-button, var(--w-color-secondary));
-    background-color: var(--w-color-surface-button-default, var(--w-color-secondary-50));
-    border: 1px solid var(--w-color-surface-button-default, var(--w-color-secondary-100));
+    background-color: var(
+        --w-color-surface-button-default,
+        var(--w-color-secondary-50)
+    );
+    border: 1px solid
+        var(--w-color-surface-button-default, var(--w-color-secondary-100));
     border-radius: 2px;
     padding: 5px 10px;
 
     &:hover {
-        background-color: var(--w-color-surface-button-hover, var(--w-color-secondary-75));
+        background-color: var(
+            --w-color-surface-button-hover,
+            var(--w-color-secondary-75)
+        );
     }
 `;
 
