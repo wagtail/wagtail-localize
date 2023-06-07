@@ -247,8 +247,7 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({
 };
 
 export const BlockLabel = styled.h3`
-    color: var(--w-color-secondary-100);
-    border: 1px solid #f5f5f5;
+    border: 1px solid var(--w-color-border-furniture);
     padding-left: 11px;
     padding-right: 11px;
     padding-top: 7px;
@@ -260,8 +259,8 @@ export const BlockLabel = styled.h3`
 
 const BlockSegments = styled.ul`
     list-style-type: none;
-    border: 1px solid #eeeeee;
-    background-color: #f1f1f1;
+    border: 1px solid var(--w-color-border-field-default);
+    background-color: var(--w-color-surface-field);
     padding: 0;
     margin: 0;
 
@@ -297,7 +296,7 @@ const BlockSegments = styled.ul`
 const SegmentFieldLabel = styled.h4`
     margin: 0;
     padding: 15px 20px;
-    background-color: var(--w-color-secondary-50);
+    background-color: var(--w-color-surface-field);
     font-style: normal;
     font-weight: bold;
     padding-left: 20px;
@@ -308,7 +307,7 @@ const SegmentSource = styled.p`
     font-style: italic;
 
     &.title {
-        color: var(--w-color-grey-600);
+        // color: var(--w-color-grey-600);
         font-size: 1.875rem;
         font-weight: 800;
         line-height: 1.3;
@@ -331,14 +330,14 @@ const SegmentValue = styled.div`
 const ActionButton = styled.button`
     font-size: 0.8em;
     font-weight: bold;
-    color: var(--w-color-secondary);
-    background-color: var(--w-color-secondary-50);
-    border: 2px solid var(--w-color-secondary-100);
+    color: var(--w-color-text-button);
+    background-color: var(--w-color-surface-button-default);
+    border: 1px solid var(--w-color-surface-button-default);
     border-radius: 2px;
     padding: 5px 10px;
 
     &:hover {
-        background-color: var(--w-color-secondary-75);
+        background-color: var(--w-color-surface-button-hover);
     }
 `;
 
