@@ -247,7 +247,8 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({
 };
 
 export const BlockLabel = styled.h3`
-    border: 1px solid var(--w-color-border-furniture);
+    border: 1px solid
+        var(--w-color-border-furniture, var(--w-color-secondary-100));
     padding-left: 11px;
     padding-right: 11px;
     padding-top: 7px;
@@ -259,8 +260,8 @@ export const BlockLabel = styled.h3`
 
 const BlockSegments = styled.ul`
     list-style-type: none;
-    border: 1px solid var(--w-color-border-field-default);
-    background-color: var(--w-color-surface-field);
+    border: 1px solid var(--w-color-border-field-default, #eeeeee);
+    background-color: var(--w-color-surface-field, #f1f1f1);
     padding: 0;
     margin: 0;
 
@@ -296,7 +297,7 @@ const BlockSegments = styled.ul`
 const SegmentFieldLabel = styled.h4`
     margin: 0;
     padding: 15px 20px;
-    background-color: var(--w-color-surface-field);
+    background-color: var(--w-color-surface-field, var(--w-color-secondary-50));
     font-style: normal;
     font-weight: bold;
     padding-left: 20px;
@@ -307,7 +308,6 @@ const SegmentSource = styled.p`
     font-style: italic;
 
     &.title {
-        // color: var(--w-color-grey-600);
         font-size: 1.875rem;
         font-weight: 800;
         line-height: 1.3;
@@ -330,14 +330,21 @@ const SegmentValue = styled.div`
 const ActionButton = styled.button`
     font-size: 0.8em;
     font-weight: bold;
-    color: var(--w-color-text-button);
-    background-color: var(--w-color-surface-button-default);
-    border: 1px solid var(--w-color-surface-button-default);
+    color: var(--w-color-text-button, var(--w-color-secondary));
+    background-color: var(
+        --w-color-surface-button-default,
+        var(--w-color-secondary-50)
+    );
+    border: 1px solid
+        var(--w-color-surface-button-default, var(--w-color-secondary-100));
     border-radius: 2px;
     padding: 5px 10px;
 
     &:hover {
-        background-color: var(--w-color-surface-button-hover);
+        background-color: var(
+            --w-color-surface-button-hover,
+            var(--w-color-secondary-75)
+        );
     }
 `;
 
