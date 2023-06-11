@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.1] - 2023-06-11
+
+### Added
+
+- [Support for Django 4.2](https://github.com/wagtail/wagtail-localize/pull/692) @kmtracey
+- [Official Wagtail 5.0 support](https://github.com/wagtail/wagtail-localize/pull/699) @nickmoreton, @zerolab
+
+### Changed
+
+- [Updated prettier version and delegated linting to pre-commit](https://github.com/wagtail/wagtail-localize/pull/694) @PeteCoward
+- [Updated documentation dependencies and fix build errors](https://github.com/wagtail/wagtail-localize/pull/700) @zerolab
+- [Updated colour declarations for dark-mode compatibility](https://github.com/wagtail/wagtail-localize/pull/701) @spikennm, @zerolab
+
+### Removed
+
+- [Python 3.7, pre Wagtail 4.1 logic](https://github.com/wagtail/wagtail-localize/pull/699) @nickmoreton, @zerolab
+
 ## [1.5] - 2023-02-23
 
 ### Changed
