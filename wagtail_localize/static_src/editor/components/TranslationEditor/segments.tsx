@@ -249,6 +249,11 @@ const SingleLineTextArea: FunctionComponent<SingleLineTextAreaProps> = ({
 export const BlockLabel = styled.h3`
     border: 1px solid
         var(--w-color-border-furniture, var(--w-color-secondary-100));
+    border-bottom: none;
+    color: var(
+        --w-color-surface-alert-information,
+        var(--w-color-secondary-100)
+    );
     padding-left: 11px;
     padding-right: 11px;
     padding-top: 7px;
@@ -260,16 +265,18 @@ export const BlockLabel = styled.h3`
 
 const BlockSegments = styled.ul`
     list-style-type: none;
-    border: 1px solid var(--w-color-border-field-default, #eeeeee);
-    background-color: var(--w-color-surface-field, #f1f1f1);
+    border: 1px solid var(--w-color-border-furniture, var(--w-color-grey-100));
+    background-color: var(--w-color-surface-header, var(--w-color-grey-50));
     padding: 0;
     margin: 0;
 
     > li {
         &.errored {
-            background-color: #fee7e8;
+            background-color: var(--w-color-critical-50, #fee7e8);
+            color: var(--w-color-text-error, var(--w-color-grey-600));
             // !important required to override the border-bottom rule just below
             border: 1px solid var(--w-color-critical-100) !important;
+            border-left-width: 5px !important;
         }
 
         &.incomplete {
@@ -283,7 +290,7 @@ const BlockSegments = styled.ul`
         }
 
         &:not(:last-child) {
-            border-bottom: 1px solid #eaeaea;
+            border-bottom: 1px solid var(--w-color-border-furniture, #eeeeee);
         }
 
         &:after {
@@ -297,7 +304,11 @@ const BlockSegments = styled.ul`
 const SegmentFieldLabel = styled.h4`
     margin: 0;
     padding: 15px 20px;
-    background-color: var(--w-color-surface-field, var(--w-color-secondary-50));
+    background-color: var(
+        --w-color-surface-panel-information,
+        var(--w-color-secondary-50)
+    );
+    color: var(--w-text-surface-panel-information, var(--w-color-secondary));
     font-style: normal;
     font-weight: bold;
     padding-left: 20px;

@@ -6,10 +6,10 @@ const Title = styled.div`
     height: 40px;
     -webkit-font-smoothing: auto;
     background-color: var(
-        --w-color-surface-header,
+        --w-color-surface-panel-information,
         var(--w-color-secondary-50)
     );
-    color: var(--w-color-text-label, var(--w-color-secondary));
+    color: var(--w-text-surface-panel-information, var(--w-color-secondary));
     padding: 1em 0 1em 1.5em;
     font-size: 0.95em;
     margin: 0;
