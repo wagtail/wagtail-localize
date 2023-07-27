@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
@@ -75,14 +76,28 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        self.assertContains(
-            response,
-            (
-                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
-                'aria-label="" class="u-link is-live ">Translate this page</a>'
-            ),
-            html=True,
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertContains(
+                response,
+                (
+                    f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
+                    'aria-label="" class="">'
+                    '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
+                    '<use href="#icon-wagtail-localize-language"></use></svg>'
+                    "Translate this page"
+                    "</a>"
+                ),
+                html=True,
+            )
+        else:
+            self.assertContains(
+                response,
+                (
+                    f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
+                    'aria-label="" class="u-link is-live ">Translate this page</a>'
+                ),
+                html=True,
+            )
 
     def test_hides_if_page_already_translated(self):
         self.en_blog_index.copy_for_translation(self.fr_locale)

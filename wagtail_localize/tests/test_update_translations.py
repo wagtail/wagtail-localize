@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
@@ -79,14 +80,26 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        self.assertContains(
-            response,
-            (
-                f'<a href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
-                'aria-label="" class="u-link is-live ">Sync translated pages</a>'
-            ),
-            html=True,
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertContains(
+                response,
+                (
+                    f'<a href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
+                    'aria-label="" class="">'
+                    '<svg class="icon icon-resubmit icon" aria-hidden="true"><use href="#icon-resubmit"></use></svg>'
+                    "Sync translated pages</a>"
+                ),
+                html=True,
+            )
+        else:
+            self.assertContains(
+                response,
+                (
+                    f'<a href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
+                    'aria-label="" class="u-link is-live ">Sync translated pages</a>'
+                ),
+                html=True,
+            )
 
     def test_hides_if_page_hasnt_got_translations(self):
         self.source.delete()
