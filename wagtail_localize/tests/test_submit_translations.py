@@ -1,7 +1,10 @@
+from unittest.mock import patch
+
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
@@ -235,7 +238,8 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 404)
 
-    def test_post_submit_page_translation(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_post_submit_page_translation(self, _mock_on_commit):
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_page_translation",
@@ -276,7 +280,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         translated_page = self.en_blog_index.get_translation(self.fr_locale)
         self.assertFalse(translated_page.live)
 
-    def test_post_submit_page_translation_submits_linked_snippets(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_post_submit_page_translation_submits_linked_snippets(
+        self, _mock_on_commit
+    ):
         self.en_blog_index.test_snippet = TestSnippet.objects.create(
             field="My test snippet"
         )
@@ -356,7 +363,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # Check multiple translations were created
         self.assertEqual(Translation.objects.count(), 3)
 
-    def test_post_submit_page_translation_with_untranslated_parent(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_post_submit_page_translation_with_untranslated_parent(
+        self, _mock_on_commit
+    ):
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_page_translation",
@@ -387,7 +397,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         # Just check the translation was created under its parent
         self.assertEqual(translated_page.get_parent(), translated_parent_page.page_ptr)
 
-    def test_post_submit_page_translation_with_untranslated_grandparent(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_post_submit_page_translation_with_untranslated_grandparent(
+        self, _mock_on_commit
+    ):
         # This is the same as the previous test, except it's done with a new locale so the homepage doesn't exist yet.
         # This should create a translation request that contains the homepage, blog index and the blog post that was requested.
         es_locale = Locale.objects.create(language_code="es")
@@ -459,7 +472,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
         assert_permission_denied(self, response)
 
-    def test_post_submit_page_translation_reactivates_deleted_translation(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_post_submit_page_translation_reactivates_deleted_translation(
+        self, _mock_on_commit
+    ):
         # Create a disabled translation record
         # This simulates the case where the page was previously translated into that locale but later deleted
         source, created = TranslationSource.get_or_create_from_instance(
@@ -494,8 +510,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
             response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
 
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
     def test_post_submit_page_translation_doesnt_reactivate_deactivated_translation(
-        self,
+        self, _mock_on_commit
     ):
         # Like the previous test, this creates a disabled translation record, but this
         # time, the translation has not been deleted. It should not reactivate in this case
@@ -531,7 +548,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertTrue(translated_page.live)
 
     @override_settings(WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE="simple")
-    def test_post_submit_page_translation_with_global_disabled_mode(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_post_submit_page_translation_with_global_disabled_mode(
+        self, _mock_on_commit
+    ):
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_page_translation",
@@ -597,7 +617,10 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         translation = Translation.objects.get()
         self.assertTrue(translation.enabled)
 
-    def test_post_submit_page_translation_from_page_with_privacy_settings(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_post_submit_page_translation_from_page_with_privacy_settings(
+        self, _mock_on_commit
+    ):
         view_restriction = PageViewRestriction.objects.create(
             restriction_type="login", page=self.en_blog_index
         )

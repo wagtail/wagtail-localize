@@ -2,6 +2,8 @@ import json
 import tempfile
 import uuid
 
+from unittest.mock import patch
+
 import polib
 
 from django.contrib.admin.utils import quote
@@ -10,6 +12,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -149,7 +152,10 @@ class EditTranslationTestData(WagtailTestUtils):
             source=self.page_source,
             target_locale=self.fr_locale,
         )
-        self.page_translation.save_target()
+
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            self.page_translation.save_target()
+
         self.fr_page = self.page.get_translation(self.fr_locale)
         self.fr_home_page = self.home_page.get_translation(self.fr_locale)
 
