@@ -794,7 +794,7 @@ class TranslationSource(models.Model):
                     self.sync_view_restrictions(original, translation)
 
                     if publish:
-                        page_revision.publish()
+                        transaction.on_commit(page_revision.publish)
 
                 else:
                     # Note: we don't need to run full_clean for Pages as Wagtail does that in Page.save()
