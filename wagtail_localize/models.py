@@ -8,7 +8,7 @@ from django.contrib.admin.utils import quote
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import models, transaction
+from django.db import OperationalError, models, transaction
 from django.db.migrations.recorder import MigrationRecorder
 from django.db.models import (
     Case,
@@ -126,17 +126,21 @@ def get_edit_url(instance):
         )
 
 
-def get_schema_version(app_label):
+def get_schema_version(app_label: str) -> str:
     """
     Returns the name of the last applied migration for the given app label.
     """
-    migration = (
-        MigrationRecorder.Migration.objects.filter(app=app_label)
-        .order_by("applied")
-        .last()
-    )
-    if migration:
-        return migration.name
+    try:
+        if migration := (
+            MigrationRecorder.Migration.objects.filter(app=app_label)
+            .order_by("applied")
+            .last()
+        ):
+            return migration.name
+    except OperationalError:
+        ...
+
+    return ""
 
 
 class TranslatableObjectManager(models.Manager):
@@ -378,7 +382,7 @@ class TranslationSource(models.Model):
                 "locale": instance.locale,
                 "object_repr": str(instance)[:200],
                 "content_json": content_json,
-                "schema_version": get_schema_version(instance._meta.app_label) or "",
+                "schema_version": get_schema_version(instance._meta.app_label),
                 "last_updated_at": timezone.now(),
             },
         )
@@ -436,7 +440,7 @@ class TranslationSource(models.Model):
                 "locale": instance.locale,
                 "object_repr": str(instance)[:200],
                 "content_json": content_json,
-                "schema_version": get_schema_version(instance._meta.app_label) or "",
+                "schema_version": get_schema_version(instance._meta.app_label),
                 "last_updated_at": timezone.now(),
             },
         )
@@ -460,7 +464,7 @@ class TranslationSource(models.Model):
             serializable_data = get_serializable_data_for_fields(instance)
             self.content_json = json.dumps(serializable_data, cls=DjangoJSONEncoder)
 
-        self.schema_version = get_schema_version(instance._meta.app_label) or ""
+        self.schema_version = get_schema_version(instance._meta.app_label)
         self.object_repr = str(instance)[:200]
         self.last_updated_at = timezone.now()
 
