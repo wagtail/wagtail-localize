@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.2] - 2023-09-07
+
+### Changed
+
+- [Be more defensive with fetching schema version from Django migration records](https://github.com/wagtail/wagtail-localize/pull/712) @zerolab
+
 ## [1.5.1] - 2023-06-11
 
 ### Added
@@ -238,7 +244,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.5.1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/wagtail/wagtail-localize/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/wagtail/wagtail-localize/compare/v1.5...v1.5.1
 [1.5]: https://github.com/wagtail/wagtail-localize/compare/v1.4...v1.5
 [1.4]: https://github.com/wagtail/wagtail-localize/compare/v1.3.3...v1.4
