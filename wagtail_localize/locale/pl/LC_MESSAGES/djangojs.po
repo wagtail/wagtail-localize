@@ -2,10 +2,11 @@
 # Translators:
 # Łukasz Bołdys (Lukasz Boldys), 2021
 # Miłosz Miśkiewicz, 2023
+# Krzysztof Jeziorny <github@jeziorny.net>, 2023
 #
 msgid ""
 msgstr ""
-"Last-Translator: Miłosz Miśkiewicz, 2023\n"
+"Last-Translator: Krzysztof Jeziorny <github@jeziorny.net>, 2023\n"
 "Language-Team: Polish (https://app.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -120,6 +121,9 @@ msgstr "segmenty przetłumaczone"
 
 msgid "Server error"
 msgstr "Błąd serwera"
+
+msgid "Stop Synced translation"
+msgstr "Zatrzymaj zsynchronizowane tłumaczenie"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Istnieją niezapisane fragmenty. Zapisz lub anuluj je przed wyjściem."

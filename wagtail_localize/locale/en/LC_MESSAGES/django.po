@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-11 10:34+0000\n"
+"POT-Creation-Date: 2023-09-07 08:37+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -63,46 +63,46 @@ msgid ""
 "{locales}"
 msgstr ""
 
-#: models.py:1141
+#: models.py:1145
 msgid "Up to date"
 msgstr ""
 
-#: models.py:1143
+#: models.py:1147
 msgid "Waiting for translations"
 msgstr ""
 
-#: models.py:1602
+#: models.py:1606
 msgid "Manual"
 msgstr ""
 
-#: models.py:1603
+#: models.py:1607
 msgid "Machine"
 msgstr ""
 
-#: models.py:1728
+#: models.py:1732
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr ""
 
-#: models.py:1733
+#: models.py:1737
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr ""
 
-#: models.py:1738
+#: models.py:1742
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr ""
 
-#: models.py:2245
+#: models.py:2249
 msgid "This locale cannot be synced into itself."
 msgstr ""
 
-#: models.py:2250
+#: models.py:2254
 msgid "Synchronise content from another locale"
 msgstr ""
 
-#: models.py:2252
+#: models.py:2256
 msgid ""
 "Choose a locale to synchronise content from. Any existing and future content "
 "authored in the selected locale will be automatically copied to this one."
