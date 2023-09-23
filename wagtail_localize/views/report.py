@@ -8,6 +8,7 @@ from django_filters.fields import ModelChoiceField
 from modelcluster.fields import ParentalKey
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.views.reports import ReportView
+from wagtail.coreutils import get_content_languages
 from wagtail.models import get_translatable_models
 
 from wagtail_localize.models import Translation
@@ -98,9 +99,17 @@ class ContentTypeModelChoiceFilter(django_filters.ModelChoiceFilter):
         )
 
 
-class LocaleFilter(django_filters.CharFilter):
+def _get_locale_choices():
+    choices = [
+        (language_code, display_name)
+        for language_code, display_name in get_content_languages().items()
+    ]
+    return choices
+
+
+class LocaleFilter(django_filters.ChoiceFilter):
     def filter(self, qs, value):
-        if value in EMPTY_VALUES:
+        if not value or value == self.null_value:
             return qs
 
         return qs.filter(**{self.field_name + "__language_code": value})
@@ -111,8 +120,19 @@ class TranslationsReportFilterSet(WagtailFilterSet):
         field_name="source__specific_content_type", label=gettext_lazy("Content type")
     )
     source_title = SourceTitleFilter(label=gettext_lazy("Source title"))
-    source_locale = LocaleFilter(field_name="source__locale")
-    target_locale = LocaleFilter()
+    source_locale = LocaleFilter(
+        field_name="source__locale",
+        choices=_get_locale_choices,
+        empty_label=None,
+        null_label="All",
+        null_value="all",
+    )
+    target_locale = LocaleFilter(
+        choices=_get_locale_choices,
+        empty_label=None,
+        null_label="All",
+        null_value="all",
+    )
 
     class Meta:
         model = Translation
