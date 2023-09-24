@@ -100,11 +100,7 @@ class ContentTypeModelChoiceFilter(django_filters.ModelChoiceFilter):
 
 
 def _get_locale_choices():
-    choices = [
-        (language_code, display_name)
-        for language_code, display_name in get_content_languages().items()
-    ]
-    return choices
+    return list(get_content_languages().items())
 
 
 class LocaleFilter(django_filters.ChoiceFilter):
@@ -124,13 +120,13 @@ class TranslationsReportFilterSet(WagtailFilterSet):
         field_name="source__locale",
         choices=_get_locale_choices,
         empty_label=None,
-        null_label="All",
+        null_label=gettext_lazy("All"),
         null_value="all",
     )
     target_locale = LocaleFilter(
         choices=_get_locale_choices,
         empty_label=None,
-        null_label="All",
+        null_label=gettext_lazy("All"),
         null_value="all",
     )
 
