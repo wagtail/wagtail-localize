@@ -1,7 +1,10 @@
+from unittest.mock import patch
+
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
@@ -236,26 +239,27 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 404)
 
     def test_post_submit_page_translation(self):
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_index.id],
-            ),
-            {"locales": [self.fr_locale.id]},
-        )
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            response = self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_index.id],
+                ),
+                {"locales": [self.fr_locale.id]},
+            )
 
-        translation = Translation.objects.get()
-        self.assertEqual(translation.source.locale, self.en_locale)
-        self.assertEqual(translation.target_locale, self.fr_locale)
-        self.assertTrue(translation.created_at)
+            translation = Translation.objects.get()
+            self.assertEqual(translation.source.locale, self.en_locale)
+            self.assertEqual(translation.target_locale, self.fr_locale)
+            self.assertTrue(translation.created_at)
 
-        # The translated page should've been created and published
-        translated_page = self.en_blog_index.get_translation(self.fr_locale)
-        self.assertTrue(translated_page.live)
+            # The translated page should've been created and published
+            translated_page = self.en_blog_index.get_translation(self.fr_locale)
+            self.assertTrue(translated_page.live)
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
-        )
+            self.assertRedirects(
+                response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+            )
 
     @override_settings(WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE=False)
     def test_post_submit_page_translation_draft(self):
@@ -277,43 +281,50 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertFalse(translated_page.live)
 
     def test_post_submit_page_translation_submits_linked_snippets(self):
-        self.en_blog_index.test_snippet = TestSnippet.objects.create(
-            field="My test snippet"
-        )
-        self.en_blog_index.save()
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            self.en_blog_index.test_snippet = TestSnippet.objects.create(
+                field="My test snippet"
+            )
+            self.en_blog_index.save()
 
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_index.id],
-            ),
-            {"locales": [self.fr_locale.id]},
-        )
+            response = self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_index.id],
+                ),
+                {"locales": [self.fr_locale.id]},
+            )
 
-        page_translation = Translation.objects.get(
-            source__specific_content_type=ContentType.objects.get_for_model(TestPage)
-        )
-        self.assertEqual(page_translation.source.locale, self.en_locale)
-        self.assertEqual(page_translation.target_locale, self.fr_locale)
-        self.assertTrue(page_translation.created_at)
+            page_translation = Translation.objects.get(
+                source__specific_content_type=ContentType.objects.get_for_model(
+                    TestPage
+                )
+            )
+            self.assertEqual(page_translation.source.locale, self.en_locale)
+            self.assertEqual(page_translation.target_locale, self.fr_locale)
+            self.assertTrue(page_translation.created_at)
 
-        # The translated page should've been created and published
-        translated_page = self.en_blog_index.get_translation(self.fr_locale)
-        self.assertTrue(translated_page.live)
+            # The translated page should've been created and published
+            translated_page = self.en_blog_index.get_translation(self.fr_locale)
+            self.assertTrue(translated_page.live)
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
-        )
+            self.assertRedirects(
+                response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+            )
 
-        snippet_translation = Translation.objects.get(
-            source__specific_content_type=ContentType.objects.get_for_model(TestSnippet)
-        )
-        self.assertEqual(snippet_translation.source.locale, self.en_locale)
-        self.assertEqual(snippet_translation.target_locale, self.fr_locale)
-        self.assertTrue(snippet_translation.created_at)
+            snippet_translation = Translation.objects.get(
+                source__specific_content_type=ContentType.objects.get_for_model(
+                    TestSnippet
+                )
+            )
+            self.assertEqual(snippet_translation.source.locale, self.en_locale)
+            self.assertEqual(snippet_translation.target_locale, self.fr_locale)
+            self.assertTrue(snippet_translation.created_at)
 
-        # The translated snippet should've been created
-        self.assertTrue(self.en_blog_index.test_snippet.has_translation(self.fr_locale))
+            # The translated snippet should've been created
+            self.assertTrue(
+                self.en_blog_index.test_snippet.has_translation(self.fr_locale)
+            )
 
     def test_post_submit_page_translation_into_multiple_locales(self):
         response = self.client.post(
@@ -357,81 +368,91 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertEqual(Translation.objects.count(), 3)
 
     def test_post_submit_page_translation_with_untranslated_parent(self):
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_post.id],
-            ),
-            {"locales": [self.fr_locale.id]},
-        )
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            response = self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_post.id],
+                ),
+                {"locales": [self.fr_locale.id]},
+            )
 
-        # One translation should be created
-        fr_translation = Translation.objects.get()
-        self.assertEqual(fr_translation.source.locale, self.en_locale)
-        self.assertEqual(fr_translation.target_locale, self.fr_locale)
-        self.assertTrue(fr_translation.created_at)
+            # One translation should be created
+            fr_translation = Translation.objects.get()
+            self.assertEqual(fr_translation.source.locale, self.en_locale)
+            self.assertEqual(fr_translation.target_locale, self.fr_locale)
+            self.assertTrue(fr_translation.created_at)
 
-        # The translated page should've been created and published
-        translated_page = self.en_blog_post.get_translation(self.fr_locale)
-        self.assertTrue(translated_page.live)
+            # The translated page should've been created and published
+            translated_page = self.en_blog_post.get_translation(self.fr_locale)
+            self.assertTrue(translated_page.live)
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
-        )
+            self.assertRedirects(
+                response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+            )
 
-        # The parent should've been created as an alias page
-        translated_parent_page = self.en_blog_index.get_translation(self.fr_locale)
-        self.assertTrue(translated_parent_page.live)
-        self.assertEqual(translated_parent_page.alias_of, self.en_blog_index.page_ptr)
+            # The parent should've been created as an alias page
+            translated_parent_page = self.en_blog_index.get_translation(self.fr_locale)
+            self.assertTrue(translated_parent_page.live)
+            self.assertEqual(
+                translated_parent_page.alias_of, self.en_blog_index.page_ptr
+            )
 
-        # Just check the translation was created under its parent
-        self.assertEqual(translated_page.get_parent(), translated_parent_page.page_ptr)
+            # Just check the translation was created under its parent
+            self.assertEqual(
+                translated_page.get_parent(), translated_parent_page.page_ptr
+            )
 
     def test_post_submit_page_translation_with_untranslated_grandparent(self):
-        # This is the same as the previous test, except it's done with a new locale so the homepage doesn't exist yet.
-        # This should create a translation request that contains the homepage, blog index and the blog post that was requested.
-        es_locale = Locale.objects.create(language_code="es")
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            # This is the same as the previous test, except it's done with a new locale so the homepage doesn't exist yet.
+            # This should create a translation request that contains the homepage, blog index and the blog post that was requested.
+            es_locale = Locale.objects.create(language_code="es")
 
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_post.id],
-            ),
-            {"locales": [es_locale.id]},
-        )
+            response = self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_post.id],
+                ),
+                {"locales": [es_locale.id]},
+            )
 
-        # One translation should be created
-        fr_translation = Translation.objects.get()
-        self.assertEqual(fr_translation.source.locale, self.en_locale)
-        self.assertEqual(fr_translation.target_locale, es_locale)
-        self.assertTrue(fr_translation.created_at)
+            # One translation should be created
+            fr_translation = Translation.objects.get()
+            self.assertEqual(fr_translation.source.locale, self.en_locale)
+            self.assertEqual(fr_translation.target_locale, es_locale)
+            self.assertTrue(fr_translation.created_at)
 
-        # The translated page should've been created and published
-        translated_page = self.en_blog_post.get_translation(es_locale)
-        self.assertTrue(translated_page.live)
+            # The translated page should've been created and published
+            translated_page = self.en_blog_post.get_translation(es_locale)
+            self.assertTrue(translated_page.live)
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
-        )
+            self.assertRedirects(
+                response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+            )
 
-        # The parent should've been created as an alias page
-        translated_parent_page = self.en_blog_index.get_translation(es_locale)
-        self.assertTrue(translated_parent_page.live)
-        self.assertEqual(translated_parent_page.alias_of, self.en_blog_index.page_ptr)
+            # The parent should've been created as an alias page
+            translated_parent_page = self.en_blog_index.get_translation(es_locale)
+            self.assertTrue(translated_parent_page.live)
+            self.assertEqual(
+                translated_parent_page.alias_of, self.en_blog_index.page_ptr
+            )
 
-        # The grandparent should've been created as an alias page
-        translated_grandparent_page = self.en_homepage.get_translation(es_locale)
-        self.assertTrue(translated_grandparent_page.live)
-        self.assertEqual(translated_grandparent_page.alias_of, self.en_homepage)
+            # The grandparent should've been created as an alias page
+            translated_grandparent_page = self.en_homepage.get_translation(es_locale)
+            self.assertTrue(translated_grandparent_page.live)
+            self.assertEqual(translated_grandparent_page.alias_of, self.en_homepage)
 
-        # Just check the translations were created in the right place
-        self.assertEqual(translated_page.get_parent(), translated_parent_page.page_ptr)
-        self.assertEqual(
-            translated_parent_page.get_parent(), translated_grandparent_page
-        )
-        self.assertEqual(
-            translated_grandparent_page.get_parent(), Page.objects.get(depth=1)
-        )
+            # Just check the translations were created in the right place
+            self.assertEqual(
+                translated_page.get_parent(), translated_parent_page.page_ptr
+            )
+            self.assertEqual(
+                translated_parent_page.get_parent(), translated_grandparent_page
+            )
+            self.assertEqual(
+                translated_grandparent_page.get_parent(), Page.objects.get(depth=1)
+            )
 
     def test_post_submit_page_translation_with_missing_locale(self):
         response = self.client.post(
@@ -460,93 +481,96 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         assert_permission_denied(self, response)
 
     def test_post_submit_page_translation_reactivates_deleted_translation(self):
-        # Create a disabled translation record
-        # This simulates the case where the page was previously translated into that locale but later deleted
-        source, created = TranslationSource.get_or_create_from_instance(
-            self.en_blog_index
-        )
-        translation = Translation.objects.create(
-            source=source,
-            target_locale=self.fr_locale,
-            enabled=False,
-        )
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            # Create a disabled translation record
+            # This simulates the case where the page was previously translated into that locale but later deleted
+            source, created = TranslationSource.get_or_create_from_instance(
+                self.en_blog_index
+            )
+            translation = Translation.objects.create(
+                source=source,
+                target_locale=self.fr_locale,
+                enabled=False,
+            )
 
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_index.id],
-            ),
-            {"locales": [self.fr_locale.id]},
-        )
+            response = self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_index.id],
+                ),
+                {"locales": [self.fr_locale.id]},
+            )
 
-        # Check that the translation was reactivated
-        # Note, .get() here tests that another translation record wasn't created
-        translation = Translation.objects.get()
-        self.assertEqual(translation.source, source)
-        self.assertEqual(translation.target_locale, self.fr_locale)
-        self.assertTrue(translation.enabled)
+            # Check that the translation was reactivated
+            # Note, .get() here tests that another translation record wasn't created
+            translation = Translation.objects.get()
+            self.assertEqual(translation.source, source)
+            self.assertEqual(translation.target_locale, self.fr_locale)
+            self.assertTrue(translation.enabled)
 
-        # The translated page should've been created and published
-        translated_page = self.en_blog_index.get_translation(self.fr_locale)
-        self.assertTrue(translated_page.live)
+            # The translated page should've been created and published
+            translated_page = self.en_blog_index.get_translation(self.fr_locale)
+            self.assertTrue(translated_page.live)
 
-        self.assertRedirects(
-            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
-        )
+            self.assertRedirects(
+                response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+            )
 
     def test_post_submit_page_translation_doesnt_reactivate_deactivated_translation(
         self,
     ):
-        # Like the previous test, this creates a disabled translation record, but this
-        # time, the translation has not been deleted. It should not reactivate in this case
-        source, created = TranslationSource.get_or_create_from_instance(
-            self.en_blog_index
-        )
-        translation = Translation.objects.create(
-            source=source,
-            target_locale=self.fr_locale,
-        )
-        translation.save_target()
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            # Like the previous test, this creates a disabled translation record, but this
+            # time, the translation has not been deleted. It should not reactivate in this case
+            source, created = TranslationSource.get_or_create_from_instance(
+                self.en_blog_index
+            )
+            translation = Translation.objects.create(
+                source=source,
+                target_locale=self.fr_locale,
+            )
+            translation.save_target()
 
-        translation.enabled = False
-        translation.save(update_fields=["enabled"])
+            translation.enabled = False
+            translation.save(update_fields=["enabled"])
 
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_index.id],
-            ),
-            {"locales": [self.fr_locale.id]},
-        )
+            response = self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_index.id],
+                ),
+                {"locales": [self.fr_locale.id]},
+            )
 
-        # Form error
-        self.assertEqual(response.status_code, 200)
+            # Form error
+            self.assertEqual(response.status_code, 200)
 
-        # Note, .get() here tests that another translation record wasn't created
-        translation = Translation.objects.get()
-        self.assertFalse(translation.enabled)
+            # Note, .get() here tests that another translation record wasn't created
+            translation = Translation.objects.get()
+            self.assertFalse(translation.enabled)
 
-        # The translated page should've been created and published
-        translated_page = self.en_blog_index.get_translation(self.fr_locale)
-        self.assertTrue(translated_page.live)
+            # The translated page should've been created and published
+            translated_page = self.en_blog_index.get_translation(self.fr_locale)
+            self.assertTrue(translated_page.live)
 
     @override_settings(WAGTAIL_LOCALIZE_DEFAULT_TRANSLATION_MODE="simple")
     def test_post_submit_page_translation_with_global_disabled_mode(self):
-        response = self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_index.id],
-            ),
-            {"locales": [self.fr_locale.id]},
-        )
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            response = self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_index.id],
+                ),
+                {"locales": [self.fr_locale.id]},
+            )
 
-        translated_page = self.en_blog_index.get_translation(self.fr_locale)
-        self.assertRedirects(
-            response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
-        )
+            translated_page = self.en_blog_index.get_translation(self.fr_locale)
+            self.assertRedirects(
+                response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
+            )
 
-        translation = Translation.objects.get()
-        self.assertFalse(translation.enabled)
+            translation = Translation.objects.get()
+            self.assertFalse(translation.enabled)
 
     def test_post_submit_page_translation_with_disabled_mode_per_page_type(self):
         custom_page = make_test_page(
@@ -598,25 +622,26 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         self.assertTrue(translation.enabled)
 
     def test_post_submit_page_translation_from_page_with_privacy_settings(self):
-        view_restriction = PageViewRestriction.objects.create(
-            restriction_type="login", page=self.en_blog_index
-        )
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            view_restriction = PageViewRestriction.objects.create(
+                restriction_type="login", page=self.en_blog_index
+            )
 
-        self.client.post(
-            reverse(
-                "wagtail_localize:submit_page_translation",
-                args=[self.en_blog_index.id],
-            ),
-            {"locales": [self.fr_locale.id]},
-        )
+            self.client.post(
+                reverse(
+                    "wagtail_localize:submit_page_translation",
+                    args=[self.en_blog_index.id],
+                ),
+                {"locales": [self.fr_locale.id]},
+            )
 
-        # The translated page should've been created and published, and have a view restriction
-        translated_page = self.en_blog_index.get_translation(self.fr_locale)
-        self.assertTrue(translated_page.live)
-        self.assertTrue(translated_page.view_restrictions.exists())
-        self.assertTrue(
-            translated_page.view_restrictions.first().pk, view_restriction.pk
-        )
+            # The translated page should've been created and published, and have a view restriction
+            translated_page = self.en_blog_index.get_translation(self.fr_locale)
+            self.assertTrue(translated_page.live)
+            self.assertTrue(translated_page.view_restrictions.exists())
+            self.assertTrue(
+                translated_page.view_restrictions.first().pk, view_restriction.pk
+            )
 
     def test_post_submit_page_translation_from_draft_source_still_draft(self):
         custom_page = make_test_page(
