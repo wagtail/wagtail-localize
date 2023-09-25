@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 14:15+0000\n"
+"POT-Creation-Date: 2023-06-11 10:34+0000\n"
 "Last-Translator: Andrej Marsetič, 2023\n"
 "Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
@@ -25,6 +25,10 @@ msgstr "Lažni prevajalec"
 
 msgid "Translate"
 msgstr "Prevedi"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Sinhroniziraj preveden %(model_name)s"
 
 msgid "Saving…"
 msgstr "Shranjevanje ..."
@@ -139,6 +143,10 @@ msgstr "Prevedi to stran"
 #, python-format
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Prevod od %(instance)s v%(locale)s"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Urejanje %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Pošlji"

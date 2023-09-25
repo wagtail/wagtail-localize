@@ -4,12 +4,14 @@
 # Łukasz Bołdys (Lukasz Boldys), 2021
 # Dominik Lech, 2022
 # Miłosz Miśkiewicz, 2023
+# Kacper Podpora <podpora@kacper.link>, 2023
+# Krzysztof Jeziorny <github@jeziorny.net>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 14:15+0000\n"
-"Last-Translator: Miłosz Miśkiewicz, 2023\n"
+"POT-Creation-Date: 2023-06-11 10:34+0000\n"
+"Last-Translator: Krzysztof Jeziorny <github@jeziorny.net>, 2023\n"
 "Language-Team: Polish (https://app.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -51,6 +53,14 @@ msgstr "Pobierz CSV"
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr "Przetłumacz {model_name}"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"{model_name} \"{object}\" został pomyślnie przesłany do tłumaczenia na język "
+"{locales}."
 
 msgid "Up to date"
 msgstr "Aktualny"
@@ -117,6 +127,16 @@ msgstr "Konwertuj na alias %(title)s"
 msgid "Convert to alias"
 msgstr "Konwertuj na alias"
 
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Czy na pewno chcesz przekonwertować tę stronę na alias? Spowoduje to "
+"zastąpienie treści strony zawartością "
+"\"%(source_page_title)s\" (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Tak, konwertuj"
 
@@ -139,6 +159,10 @@ msgstr "Przetłumacz tę stronę"
 #, python-format
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Tłumaczenie %(instance)s w %(locale)s"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Edycja %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Wyślij"
@@ -187,8 +211,33 @@ msgid "Content"
 msgstr "Treść"
 
 #, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Znaleziono nowe błędy walidacji podczas publikowania \"{object}\" w "
+"{locale}. Napraw je lub kliknij opublikuj ponownie, aby na razie zignorować "
+"te tłumaczenia."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"Opublikowano \"{object}\" w {locale} z brakującymi tłumaczeniami — patrz "
+"poniżej."
+
+#, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "Opublikowano '{object}' w {locale}."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"Model danych dla \"{model_name}\" został zmieniony od czasu ostatniej "
+"synchronizacji tłumaczenia. Jeśli ostatnio dodano jakieś nowe pola, mogą one "
+"nie być widoczne do następnej synchronizacji tłumaczenia."
 
 msgid "Translation has been stopped."
 msgstr "Tłumaczenie zostało zatrzymane."
@@ -198,6 +247,11 @@ msgstr "Tłumaczenie zostało zrestartowane."
 
 msgid "Please upload a valid PO file."
 msgstr "Prześlij poprawny plik PO."
+
+msgid "Cannot import PO file that was created for a different translation."
+msgstr ""
+"Nie można zaimportować pliku PO, który został utworzony dla innego "
+"tłumaczenia."
 
 msgid "Successfully imported translations from PO File."
 msgstr "Pomyślnie zaimportowano tłumaczenia z pliku PO."
@@ -223,14 +277,36 @@ msgstr "Lokalizacje"
 msgid "All child pages will be created."
 msgstr "Wszystkie strony podrzędne zostaną utworzone."
 
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Dołącz poddrzewo ({} strona)"
+msgstr[1] "Dołącz poddrzewo ({} strony)"
+msgstr[2] "Dołącz poddrzewo ({} stron)"
+msgstr[3] "Dołącz poddrzewo ({} stron)"
+
 msgid "{} locales"
 msgstr "{} lokalizacje"
 
 msgid "Translate page"
 msgstr "Przetłumacz stronę"
 
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"Strona \"{page_title}\" została pomyślnie przesłana do tłumaczenia na język "
+"{locales}."
+
 msgid "Publish immediately"
 msgstr "Opublikuj teraz"
+
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"Spowoduje to zastosowanie zmian i natychmiastową publikację, zanim pojawią "
+"się nowe tłumaczenia."
 
 msgid "Update existing translations"
 msgstr "Zaktualizuj istniejące tłumaczenia"
@@ -247,7 +323,7 @@ msgid "Translate '%(title)s'"
 msgstr "Przetłumacz '%(title)s'"
 
 msgid "Sync translated snippets"
-msgstr "Zsynchronizuj przetłumaczone snippety"
+msgstr "Zsynchronizuj przetłumaczone skrawki"
 
 #, python-format
 msgid "Sync translations of '%(title)s'"
@@ -258,3 +334,14 @@ msgstr "Konwertuj na alias strony"
 
 msgid "Convert page to alias"
 msgstr "Konwertuj stroną na alias"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Przekonwertowano stronę \"%(title)s\" na alias strony źródłowej tłumaczenia "
+"\"%(source_title)s\""
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Przekonwertowano stronę na alias strony źródłowej tłumaczenia"

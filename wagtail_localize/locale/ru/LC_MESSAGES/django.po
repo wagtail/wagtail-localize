@@ -3,15 +3,16 @@
 # Eugene <eugene.mechanism@gmail.com>, 2021
 # Alexey Trofimov <funkindy@gmail.com>, 2021
 # sergeybe <sergeybe@gmail.com>, 2022
-# Sergey Mazanov <mvver@outlook.com>, 2022
+# 2a01ec1f91c141c338f53ad8cc23abc6_8deca2d, 2022
 # Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022
 # Влад <integration.into.society@gmail.com>, 2022
+# Andrei Satsevich, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 14:15+0000\n"
-"Last-Translator: Влад <integration.into.society@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-06-11 10:34+0000\n"
+"Last-Translator: Andrei Satsevich, 2023\n"
 "Language-Team: Russian (https://app.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -325,3 +326,14 @@ msgstr "Преобразовать в псевдоним страницы"
 
 msgid "Convert page to alias"
 msgstr "Преобразовать страницу в псевдоним"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Преобразование страницы '%(title)s' в псевдоним перевода исходной страницы "
+"'%(source_title)s'"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Преобразование страницы в псевдоним перевода исходной страницы"

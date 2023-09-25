@@ -1,11 +1,11 @@
 #
 # Translators:
 # Luka Matijević <lumatijev@gmail.com>, 2021
-# Dino Aljević <dino8890@protonmail.com>, 2022
+# Dino Aljević <dino8890@protonmail.com>, 2023
 #
 msgid ""
 msgstr ""
-"Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2022\n"
+"Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2023\n"
 "Language-Team: Croatian (Croatia) (https://app.transifex.com/torchbox/"
 "teams/8009/hr_HR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -54,6 +54,9 @@ msgstr "Pregled"
 
 msgid "Save"
 msgstr "Spremi"
+
+msgid "Saving..."
+msgstr "Spremanje..."
 
 msgid "Translate"
 msgstr "Prevedi"

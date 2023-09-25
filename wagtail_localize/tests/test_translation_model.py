@@ -3,7 +3,9 @@ from unittest.mock import patch
 
 import polib
 
-from django.db import transaction
+from django.conf import settings
+from django.db import OperationalError, transaction
+from django.db.migrations.recorder import MigrationRecorder
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from wagtail.models import Locale, Page
@@ -25,6 +27,7 @@ from wagtail_localize.models import (
     TranslationSource,
     UnknownContext,
     UnknownString,
+    get_schema_version,
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
@@ -1111,3 +1114,30 @@ class TestTranslationSourceViewRestrictions(TestCase):
 
         with self.assertRaises(NoViewRestrictionsError):
             source.sync_view_restrictions(snippet, snippet)
+
+
+class TestHelpers(TestCase):
+    def test_get_schema_version_with_no_migrations(self):
+        self.assertEqual(get_schema_version("test.TestSnippet"), "")
+
+    def test_get_schema_version_with_a_migration(self):
+        self.assertEqual(get_schema_version("test.TestSnippet"), "")
+        MigrationRecorder.Migration.objects.create(
+            app="test.TestSnippet",
+            name="0001_initial",
+        )
+        self.assertEqual(get_schema_version("test.TestSnippet"), "0001_initial")
+
+    @mock.patch("wagtail_localize.models.MigrationRecorder.Migration.objects.filter")
+    def test_get_schema_version_returns_empty_string_on_operational_error(
+        self, mocked_filter
+    ):
+        mocked_filter.side_effect = OperationalError
+
+        self.assertEqual(get_schema_version("test.TestSnippet"), "")
+
+    def test_get_schema_version_with_TEST_MIGRATE_false(self):
+        databases = settings.DATABASES.copy()
+        databases["TEST"] = {"MIGRATE": False}
+        with override_settings(DATABASES=databases):
+            self.assertEqual(get_schema_version("test.TestSnippet"), "")
