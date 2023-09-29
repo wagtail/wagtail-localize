@@ -92,87 +92,90 @@ STREAM_DATA = [
 
 class EditTranslationTestData(WagtailTestUtils):
     def setUp(self):
-        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
-            self.login()
-            self.user = get_user_model().objects.get()
+        self.login()
+        self.user = get_user_model().objects.get()
 
-            # Convert the user into an editor
-            self.moderators_group = Group.objects.get(name="Moderators")
-            for permission in Permission.objects.filter(
-                content_type=ContentType.objects.get_for_model(TestSnippet)
-            ):
-                self.moderators_group.permissions.add(permission)
-            for permission in Permission.objects.filter(
-                content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)
-            ):
-                self.moderators_group.permissions.add(permission)
-            self.user.is_superuser = False
-            self.user.groups.add(self.moderators_group)
-            self.user.save()
+        # Convert the user into an editor
+        self.moderators_group = Group.objects.get(name="Moderators")
+        for permission in Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(TestSnippet)
+        ):
+            self.moderators_group.permissions.add(permission)
+        for permission in Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)
+        ):
+            self.moderators_group.permissions.add(permission)
+        self.user.is_superuser = False
+        self.user.groups.add(self.moderators_group)
+        self.user.save()
 
-            # Create page
-            self.snippet = TestSnippet.objects.create(field="Test snippet")
-            self.home_page = Page.objects.get(depth=2)
-            self.page = self.home_page.add_child(
-                instance=TestPage(
-                    title="The title",
-                    slug="test",
-                    test_charfield="A char field",
-                    test_textfield="A text field",
-                    test_emailfield="email@example.com",
-                    test_synchronized_emailfield="email@example.com",
-                    test_slugfield="a-slug-field",
-                    test_urlfield="https://www.example.com",
-                    test_richtextfield=RICH_TEXT_DATA,
-                    test_streamfield=StreamValue(
-                        TestPage.test_streamfield.field.stream_block,
-                        STREAM_DATA,
-                        is_lazy=True,
-                    ),
-                    test_snippet=self.snippet,
-                )
+        # Create page
+        self.snippet = TestSnippet.objects.create(field="Test snippet")
+        self.home_page = Page.objects.get(depth=2)
+        self.page = self.home_page.add_child(
+            instance=TestPage(
+                title="The title",
+                slug="test",
+                test_charfield="A char field",
+                test_textfield="A text field",
+                test_emailfield="email@example.com",
+                test_synchronized_emailfield="email@example.com",
+                test_slugfield="a-slug-field",
+                test_urlfield="https://www.example.com",
+                test_richtextfield=RICH_TEXT_DATA,
+                test_streamfield=StreamValue(
+                    TestPage.test_streamfield.field.stream_block,
+                    STREAM_DATA,
+                    is_lazy=True,
+                ),
+                test_snippet=self.snippet,
             )
+        )
 
-            # Create translations
-            self.fr_locale = Locale.objects.create(language_code="fr")
+        # Create translations
+        self.fr_locale = Locale.objects.create(language_code="fr")
 
-            (
-                self.snippet_source,
-                created,
-            ) = TranslationSource.get_or_create_from_instance(self.snippet)
-            self.snippet_translation = Translation.objects.create(
-                source=self.snippet_source,
-                target_locale=self.fr_locale,
-            )
-            self.snippet_translation.save_target()
-            self.fr_snippet = self.snippet.get_translation(self.fr_locale)
+        (
+            self.snippet_source,
+            created,
+        ) = TranslationSource.get_or_create_from_instance(self.snippet)
+        self.snippet_translation = Translation.objects.create(
+            source=self.snippet_source,
+            target_locale=self.fr_locale,
+        )
+        self.snippet_translation.save_target()
+        self.fr_snippet = self.snippet.get_translation(self.fr_locale)
 
-            self.page_source, created = TranslationSource.get_or_create_from_instance(
-                self.page
-            )
-            self.page_translation = Translation.objects.create(
-                source=self.page_source,
-                target_locale=self.fr_locale,
-            )
-            self.page_translation.save_target()
-            self.fr_page = self.page.get_translation(self.fr_locale)
-            self.fr_home_page = self.home_page.get_translation(self.fr_locale)
+        self.page_source, created = TranslationSource.get_or_create_from_instance(
+            self.page
+        )
+        self.page_translation = Translation.objects.create(
+            source=self.page_source,
+            target_locale=self.fr_locale,
+        )
+        self.page_translation.save_target()
+        self.fr_page = self.page.get_translation(self.fr_locale)
+        self.fr_home_page = self.home_page.get_translation(self.fr_locale)
 
-            # Create a segment override
-            self.overridable_segment = OverridableSegment.objects.get(
-                source=self.page_source, context__path="test_synchronized_emailfield"
-            )
-            self.segment_override = SegmentOverride.objects.create(
-                locale=self.fr_locale,
-                context=self.overridable_segment.context,
-                data_json='"overridden@example.com"',
-            )
+        # Create a segment override
+        self.overridable_segment = OverridableSegment.objects.get(
+            source=self.page_source, context__path="test_synchronized_emailfield"
+        )
+        self.segment_override = SegmentOverride.objects.create(
+            locale=self.fr_locale,
+            context=self.overridable_segment.context,
+            data_json='"overridden@example.com"',
+        )
 
-            # Delete translation logs that were created in set up
-            TranslationLog.objects.all().delete()
+        # Delete translation logs that were created in set up
+        TranslationLog.objects.all().delete()
 
 
 class TestGetEditTranslationView(EditTranslationTestData, TestCase):
+    def setUp(self):
+        with patch.object(transaction, "on_commit", side_effect=lambda func: func()):
+            super().setUp()
+
     def test_edit_page_translation(self):
         response = self.client.get(
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
