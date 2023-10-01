@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-11 10:34+0000\n"
+"POT-Creation-Date: 2023-09-07 08:37+0000\n"
 "Last-Translator: Andrei Satsevich, 2023\n"
 "Language-Team: Russian (https://app.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

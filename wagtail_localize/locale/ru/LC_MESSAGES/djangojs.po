@@ -1,6 +1,6 @@
 #
 # Translators:
-# Sergey Mazanov <mvver@outlook.com>, 2021
+# 2a01ec1f91c141c338f53ad8cc23abc6_8deca2d, 2021
 # Mikalai Radchuk <radchuk.m@gmail.com>, 2021
 # Влад <integration.into.society@gmail.com>, 2022
 #
