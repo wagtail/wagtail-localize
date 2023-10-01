@@ -133,7 +133,7 @@ class BaseComponentManager:
         return iter(self.components)
 
 
-@functools.lru_cache()
+@functools.lru_cache
 def get_translation_component_edit_handler(model):
     if hasattr(model, "edit_handler"):
         # use the edit handler specified on the class

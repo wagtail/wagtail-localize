@@ -32,9 +32,8 @@ from rest_framework.response import Response
 from wagtail import blocks
 from wagtail.admin import messages
 from wagtail.admin.navigation import get_explorable_root_page
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.admin.panels import PanelGroup as BaseCompositeEditHandler
-from wagtail.admin.panels import TabbedInterface
 from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
@@ -282,8 +281,8 @@ def get_segment_location_info(
     # Work out which tab the segment is on from edit handler
     try:
         tab = cautious_slugify(tab_helper.get_field_tab(field.name))
-    except KeyError:
-        raise FieldHasNoEditPanelError
+    except KeyError as err:
+        raise FieldHasNoEditPanelError from err
 
     order = tab_helper.get_field_order(field.name)
 
@@ -300,20 +299,14 @@ def get_segment_location_info(
                     widget_overrides[field.name], "target_models"
                 ):
                     allowed_page_types = [
-                        "{app}.{model}".format(
-                            app=model._meta.app_label,
-                            model=model._meta.model_name,
-                        )
+                        f"{model._meta.app_label}.{model._meta.model_name}"
                         for model in widget_overrides[field.name].target_models
                     ]
                 else:
                     from wagtail.admin.forms.models import registry
 
                     allowed_page_types = [
-                        "{app}.{model}".format(
-                            app=model._meta.app_label,
-                            model=model._meta.model_name,
-                        )
+                        f"{model._meta.app_label}.{model._meta.model_name}"
                         for model in registry.foreign_key_lookup(field)[
                             "widget"
                         ].target_models
@@ -331,8 +324,7 @@ def get_segment_location_info(
 
             elif issubclass(field.related_model, tuple(get_snippet_models())):
                 chooser_url = reverse(
-                    "wagtailsnippetchoosers_%s_%s:choose"
-                    % (
+                    "wagtailsnippetchoosers_{}_{}:choose".format(
                         field.related_model._meta.app_label,
                         field.related_model._meta.model_name,
                     )
@@ -363,9 +355,7 @@ def get_segment_location_info(
             return {
                 "type": "page_chooser",
                 "allowed_page_types": [
-                    "{app}.{model}".format(
-                        app=model._meta.app_label, model=model._meta.model_name
-                    )
+                    f"{model._meta.app_label}.{model._meta.model_name}"
                     # Note: Unlike PageChooserPanel, the block doesn't automatically fall back to [Page]
                     for model in block.target_models or [Page]
                 ],
@@ -379,8 +369,7 @@ def get_segment_location_info(
 
         elif isinstance(block, SnippetChooserBlock):
             chooser_url = reverse(
-                "wagtailsnippetchoosers_%s_%s:choose"
-                % (
+                "wagtailsnippetchoosers_{}_{}:choose".format(
                     block.target_model._meta.app_label,
                     block.target_model._meta.model_name,
                 )
@@ -1104,10 +1093,7 @@ def restart_translation(request, translation, instance):
         )
     elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return redirect(
-            "{app_label}_{model_name}_modeladmin_edit".format(
-                app_label=instance._meta.app_label,
-                model_name=instance._meta.model_name,
-            ),
+            f"{instance._meta.app_label}_{instance._meta.model_name}_modeladmin_edit",
             instance_pk=quote(instance.pk),
         )
 

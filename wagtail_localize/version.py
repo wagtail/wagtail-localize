@@ -35,7 +35,11 @@ def get_complete_version(version=None):
     if version is None:
         from wagtail_localize.version import VERSION as version
     else:
-        assert len(version) == 5
-        assert version[3] in ("dev", "alpha", "beta", "rc", "final")
+        if len(version) != 5:
+            raise ValueError("wagtail_localize version number must be a 5-tuple")
+        if version[3] not in ("dev", "alpha", "beta", "rc", "final"):
+            raise ValueError(
+                "wagtail_localize version status must be one of: dev, alpha, beta, rc, or final"
+            )
 
     return version

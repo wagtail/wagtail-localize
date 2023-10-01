@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("wagtailcore", "0057_page_locale_fields_notnull"),
         ("wagtail_localize", "0004_one_source_per_objectlocale"),

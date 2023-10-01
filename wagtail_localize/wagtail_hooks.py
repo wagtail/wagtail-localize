@@ -18,7 +18,7 @@ from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
 from wagtail.snippets.widgets import SnippetListingButton
 
 # Import synctree so it can register its signal handler
-from . import synctree  # noqa
+from . import synctree  # noqa: F401
 from .models import Translation, TranslationSource
 from .views import (
     convert,

@@ -50,10 +50,9 @@ class TranslatableModelAdmin(ModelAdmin):
         app_label = self.opts.app_label.lower()
         model_name = self.opts.model_name.lower()
         return [
-            "wagtail_localize/modeladmin/%s/%s/translatable_%s.html"
-            % (app_label, model_name, action),
-            "wagtail_localize/modeladmin/{}/translatable_{}.html".format(
-                app_label, action
+            "wagtail_localize/modeladmin/{}/{}/translatable_{}.html".format(
+                app_label, model_name, action
             ),
-            "wagtail_localize/modeladmin/translatable_{}.html".format(action),
+            f"wagtail_localize/modeladmin/{app_label}/translatable_{action}.html",
+            f"wagtail_localize/modeladmin/translatable_{action}.html",
         ]

@@ -36,7 +36,6 @@ def get_translation_buttons(obj, user, next_url=None, classname=""):
     if issubclass(model, TranslatableMixin) and user.has_perm(
         "wagtail_localize.submit_translation"
     ):
-
         # If there's at least one locale that we haven't translated into yet, show "Translate" button
         if isinstance(obj, Page):
             has_locale_to_translate_to = Locale.objects.exclude(

@@ -547,7 +547,7 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
 
         # change the restriction for the source
         self.en_blog_post.view_restrictions.all().update(
-            restriction_type="password", password="test"
+            restriction_type="password", password="test"  # noqa: S106
         )
         self.client.post(
             reverse(

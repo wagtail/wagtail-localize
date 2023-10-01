@@ -156,8 +156,11 @@ class StreamFieldSegmentsWriter:
                 return segment.render_text()
 
         elif isinstance(block_type, blocks.RichTextBlock):
-            format, template, strings = organise_template_segments(segments)
-            assert format == "html"
+            segment_format, template, strings = organise_template_segments(segments)
+            if segment_format != "html":
+                raise ValueError(
+                    f"RichTextBlock can only contain HTML segments. Found {segment_format}"
+                )
             return RichText(restore_strings(template, strings))
 
         elif isinstance(block_type, blocks.ChooserBlock):
@@ -269,8 +272,13 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
             setattr(translated_obj, field_name, data)
 
         elif isinstance(field, RichTextField):
-            format, template, strings = organise_template_segments(field_segments)
-            assert format == "html"
+            segment_format, template, strings = organise_template_segments(
+                field_segments
+            )
+            if segment_format != "html":
+                raise ValueError(
+                    f"RichTextField can only contain HTML segments. Found {segment_format}"
+                )
             html = restore_strings(template, strings)
             setattr(translated_obj, field_name, html)
 

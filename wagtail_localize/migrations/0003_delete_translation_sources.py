@@ -23,7 +23,6 @@ def delete_translation_sources(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("wagtail_localize", "0002_translation"),
     ]
