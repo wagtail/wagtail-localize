@@ -32,6 +32,7 @@ from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import (
     TestPage,
+    TestParentalSnippet,
     TestSnippet,
     TestUUIDModel,
     TestUUIDSnippet,
@@ -713,6 +714,22 @@ class TestSaveTarget(TestCase):
 
         translated_snippet = snippet.get_translation(self.fr_locale)
         self.assertEqual(translated_snippet.field.charfield, "Some Test")
+
+    def test_parental_many_to_many(self):
+        foreign_key_target = TestUUIDModel.objects.create(charfield="Some Test")
+        snippet = TestParentalSnippet.objects.create()
+        snippet.field = [foreign_key_target]
+
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        translation.save_target()
+
+        translated_snippet = snippet.get_translation(self.fr_locale)
+        self.assertEqual(list(translated_snippet.field.all()), [foreign_key_target])
 
 
 @override_settings(WAGTAILLOCALIZE_DISABLE_ON_DELETE=True)
