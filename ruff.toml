@@ -1,0 +1,34 @@
+target-version = "py38"
+
+exclude = ["dist","build","venv",".venv",".tox",".git", "__pycache__", "node_modules", "LC_MESSAGES", "locale"]
+
+select = [
+    "B",   # flake8-bugbear
+    "BLE", # flake8-blind-except
+    "C4",  # flake8-comprehensions
+    "DJ",  # flake8-django
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "PGH", # pygrep-hooks
+    "RUF100",  # unused noqa
+    "S",   # flake8-bandit
+    "T20",  # flake8-print
+    "UP",   # pyupgrade
+    "W",    # pycodestyle warnings
+    "YTT",   # flake8-2020
+]
+
+fixable = ["C4", "E", "F", "I", "UP"]
+
+# E501: Line too long
+ignore = ["E501","B028"]
+
+[per-file-ignores]
+"tests/**.py" = ["DJ008"]
+"**/report_nightly_build_failure.py" = ["T201"]
+
+[isort]
+known-first-party = ["wagtail_localize"]
+lines-between-types = 1
+lines-after-imports = 2
