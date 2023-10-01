@@ -2,10 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.6] - 2023-10-01
+
+### Fixed
+
+- [`'DeferringManyRelatedManager' object is not iterable` error when declaring `ParentalManyToManyField` as `SynchronizedField`](https://github.com/wagtail/wagtail-localize/pull/564) @houl
+
+### Changed
+
+- [`TranslationSource.create_or_update_translation` will publish a translation revision post transaction commit](https://github.com/wagtail/wagtail-localize/pull/711) @Abdul-Dridi
+- [The locale filter in the translations report is now a selector based on the defined languages](https://github.com/wagtail/wagtail-localize/pull/716) @jhonatan-lopes
 
 ## [1.5.2] - 2023-09-07
 
@@ -244,7 +255,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.5.2...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.6...HEAD
+[1.6]: https://github.com/wagtail/wagtail-localize/compare/v1.5.2...v1.6
 [1.5.2]: https://github.com/wagtail/wagtail-localize/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/wagtail/wagtail-localize/compare/v1.5...v1.5.1
 [1.5]: https://github.com/wagtail/wagtail-localize/compare/v1.4...v1.5
