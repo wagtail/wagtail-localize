@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -187,7 +187,7 @@ msgid "Go back"
 msgstr ""
 
 #: templates/wagtail_localize/admin/translations_report.html:10
-#: views/report.py:111
+#: views/report.py:116
 msgid "Content type"
 msgstr ""
 
@@ -285,11 +285,15 @@ msgstr ""
 msgid "There isn't anything left to translate."
 msgstr ""
 
-#: views/report.py:113
+#: views/report.py:118
 msgid "Source title"
 msgstr ""
 
-#: views/report.py:124 wagtail_hooks.py:378
+#: views/report.py:123 views/report.py:129
+msgid "All"
+msgstr ""
+
+#: views/report.py:140 wagtail_hooks.py:378
 msgid "Translations"
 msgstr ""
 
