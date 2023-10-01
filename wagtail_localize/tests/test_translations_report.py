@@ -135,6 +135,17 @@ class TestTranslationReport(TestCase, WagtailTestUtils):
         self.assertNotIn(self.blog_index_translation, response.context["object_list"])
         self.assertNotIn(self.blog_post_translation, response.context["object_list"])
 
+    def test_filter_by_source_locale_all_options(self):
+        response = self.client.get(
+            reverse("wagtail_localize:translations_report") + "?source_locale=all"
+        )
+
+        self.assertIn(self.snippet_translation, response.context["object_list"])
+        self.assertIn(self.homepage_translation, response.context["object_list"])
+        self.assertIn(self.de_homepage_translation, response.context["object_list"])
+        self.assertIn(self.blog_index_translation, response.context["object_list"])
+        self.assertIn(self.blog_post_translation, response.context["object_list"])
+
     def test_filter_by_target_locale(self):
         response = self.client.get(
             reverse("wagtail_localize:translations_report") + "?target_locale=de"
@@ -145,3 +156,39 @@ class TestTranslationReport(TestCase, WagtailTestUtils):
         self.assertIn(self.de_homepage_translation, response.context["object_list"])
         self.assertNotIn(self.blog_index_translation, response.context["object_list"])
         self.assertNotIn(self.blog_post_translation, response.context["object_list"])
+
+    def test_filter_by_target_locale_all_options(self):
+        response = self.client.get(
+            reverse("wagtail_localize:translations_report") + "?target_locale=all"
+        )
+
+        self.assertIn(self.snippet_translation, response.context["object_list"])
+        self.assertIn(self.homepage_translation, response.context["object_list"])
+        self.assertIn(self.de_homepage_translation, response.context["object_list"])
+        self.assertIn(self.blog_index_translation, response.context["object_list"])
+        self.assertIn(self.blog_post_translation, response.context["object_list"])
+
+    def test_locale_filters_get_proper_choices(self):
+        response = self.client.get(reverse("wagtail_localize:translations_report"))
+
+        self.assertEqual(
+            list(response.context["filters"].form.fields["source_locale"].choices),
+            [
+                ("all", "All"),
+                ("en", "English"),
+                ("fr", "French"),
+                ("de", "German"),
+                ("es", "Spanish"),
+            ],
+        )
+
+        self.assertEqual(
+            list(response.context["filters"].form.fields["target_locale"].choices),
+            [
+                ("all", "All"),
+                ("en", "English"),
+                ("fr", "French"),
+                ("de", "German"),
+                ("es", "Spanish"),
+            ],
+        )
