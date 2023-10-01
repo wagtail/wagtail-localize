@@ -17,7 +17,7 @@ from .forms import LocaleForm
 from .utils import get_locale_usage
 
 
-@functools.lru_cache()
+@functools.lru_cache
 def get_locale_component_edit_handler(model):
     if hasattr(model, "edit_handler"):
         # use the edit handler specified on the class

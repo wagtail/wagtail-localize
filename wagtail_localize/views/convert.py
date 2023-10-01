@@ -27,8 +27,8 @@ def convert_to_alias(request, page_id):
         )
 
         source_page = translation_source.get_source_instance()
-    except (Page.DoesNotExist, TranslationSource.DoesNotExist):
-        raise Http404
+    except (Page.DoesNotExist, TranslationSource.DoesNotExist) as err:
+        raise Http404 from err
 
     # prevent self-aliasing
     if source_page.id == page_id:

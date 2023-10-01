@@ -118,10 +118,7 @@ def get_edit_url(instance):
 
     elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
         return reverse(
-            "{app_label}_{model_name}_modeladmin_edit".format(
-                app_label=instance._meta.app_label,
-                model_name=instance._meta.model_name,
-            ),
+            f"{instance._meta.app_label}_{instance._meta.model_name}_modeladmin_edit",
             args=[quote(instance.pk)],
         )
 
@@ -183,6 +180,12 @@ class TranslatableObject(models.Model):
 
     objects = TranslatableObjectManager()
 
+    class Meta:
+        unique_together = [("content_type", "translation_key")]
+
+    def __str__(self):
+        return f"TranslatableObject: {self.translation_key}, {self.content_type_id}"
+
     def has_translation(self, locale):
         """
         Returns True if there is an instance of this object in the given Locale.
@@ -229,9 +232,6 @@ class TranslatableObject(models.Model):
             return self.get_instance(locale)
         except self.content_type.model_class().DoesNotExist:
             pass
-
-    class Meta:
-        unique_together = [("content_type", "translation_key")]
 
 
 class SourceDeletedError(Exception):
@@ -329,6 +329,9 @@ class TranslationSource(models.Model):
         unique_together = [
             ("object", "locale"),
         ]
+
+    def __str__(self):
+        return f"TranslationSource: {self.object_id}, {self.specific_content_type_id}, {self.locale}"
 
     @classmethod
     def get_or_create_from_instance(cls, instance):
@@ -521,8 +524,8 @@ class TranslationSource(models.Model):
         """
         try:
             instance = self.get_source_instance()
-        except models.ObjectDoesNotExist:
-            raise SourceDeletedError
+        except models.ObjectDoesNotExist as err:
+            raise SourceDeletedError from err
 
         if isinstance(instance, Page):
             # see https://github.com/wagtail/wagtail/pull/8024
@@ -1072,6 +1075,9 @@ class Translation(models.Model):
             ("source", "target_locale"),
         ]
 
+    def __str__(self):
+        return f"Translation: {self.uuid}, {self.source_id}, {self.target_locale_id}, (enabled: {self.enabled})"
+
     def get_target_instance(self):
         """
         Fetches the translated instance from the database.
@@ -1366,6 +1372,9 @@ class TranslationLog(models.Model):
         related_name="+",
     )
 
+    def __str__(self):
+        return f"TranslationLog: {self.source_id}, {self.locale_id}, {self.page_revision_id} "
+
     def get_instance(self):
         """
         Gets the instance of the translated object, if it still exists.
@@ -1397,6 +1406,18 @@ class String(models.Model):
 
     data_hash = models.UUIDField()
     data = models.TextField()
+
+    class Meta:
+        unique_together = [("locale", "data_hash")]
+
+    def __str__(self):
+        return f"String: {self.locale_id}, {self.data_hash}"
+
+    def save(self, *args, **kwargs):
+        if self.data and self.data_hash is None:
+            self.data_hash = self._get_data_hash(self.data)
+
+        return super().save(*args, **kwargs)
 
     @classmethod
     def _get_data_hash(cls, data):
@@ -1440,15 +1461,6 @@ class String(models.Model):
         """
         return StringValue(self.data)
 
-    def save(self, *args, **kwargs):
-        if self.data and self.data_hash is None:
-            self.data_hash = self._get_data_hash(self.data)
-
-        return super().save(*args, **kwargs)
-
-    class Meta:
-        unique_together = [("locale", "data_hash")]
-
 
 class TranslationContext(models.Model):
     """
@@ -1476,6 +1488,15 @@ class TranslationContext(models.Model):
             ("object", "path_id"),
         ]
 
+    def __str__(self):
+        return f"TranslationContext: {self.object_id}, {self.path_id}, {self.path}, {self.field_path}"
+
+    def save(self, *args, **kwargs):
+        if self.path and self.path_id is None:
+            self.path_id = self._get_path_id(self.path)
+
+        return super().save(*args, **kwargs)
+
     @classmethod
     def _get_path_id(cls, path):
         """
@@ -1488,12 +1509,6 @@ class TranslationContext(models.Model):
             UUID: The UUID hash.
         """
         return uuid.uuid5(uuid.UUID("fcab004a-2b50-11ea-978f-2e728ce88125"), path)
-
-    def save(self, *args, **kwargs):
-        if self.path and self.path_id is None:
-            self.path_id = self._get_path_id(self.path)
-
-        return super().save(*args, **kwargs)
 
     def get_field_path(self, instance):
         """
@@ -1641,6 +1656,26 @@ class StringTranslation(models.Model):
     class Meta:
         unique_together = [("locale", "translation_of", "context")]
 
+    def __str__(self):
+        return f"StringTranslation: {self.translation_of_id}, {self.locale_id}, {self.context_id}, {self.translation_type}"
+
+    def save(self, *args, **kwargs):
+        update_fields = kwargs.get("update_fields")
+        super().save(*args, **kwargs)
+
+        # Set has_error if the string is invalid.
+        # Since we allow translations to be made by external tools, we need to allow invalid
+        # HTML in the database so that it can be fixed in Wagtail. However, we do want to know
+        # if any strings are invalid so we don't use them on a page.
+        updating_data = update_fields is None or "data" in update_fields
+        if updating_data and not self.has_error:
+            try:
+                StringValue.from_translated_html(self.data)
+                validate_translation_links(self.translation_of.data, self.data)
+            except ValueError:
+                self.has_error = True
+                self.save(update_fields=["has_error"])
+
     @classmethod
     def from_text(cls, translation_of, locale, context, data):
         """
@@ -1664,24 +1699,6 @@ class StringTranslation(models.Model):
         )
 
         return segment
-
-    def save(self, *args, **kwargs):
-        update_fields = kwargs.get("update_fields")
-        super().save(*args, **kwargs)
-
-        # Set has_error if the string is invalid.
-        # Since we allow translations to be made by external tools, we need to allow invalid
-        # HTML in the database so that it can be fixed in Wagtail. However, we do want to know
-        # if any strings are invalid so we don't use them on a page.
-        updating_data = update_fields is None or "data" in update_fields
-        if updating_data and not self.has_error:
-
-            try:
-                StringValue.from_translated_html(self.data)
-                validate_translation_links(self.translation_of.data, self.data)
-            except ValueError:
-                self.has_error = True
-                self.save(update_fields=["has_error"])
 
     def set_field_error(self, error):
         """
@@ -1786,6 +1803,9 @@ class Template(models.Model):
     template_format = models.CharField(max_length=100)
     string_count = models.PositiveIntegerField()
 
+    def __str__(self):
+        return f"Template: {self.uuid}, {self.template_format}, {self.string_count}"
+
     @classmethod
     def from_value(cls, template_value):
         """
@@ -1858,6 +1878,9 @@ class SegmentOverride(models.Model):
     has_error = models.BooleanField(default=False)
 
     field_error = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"SegmentOverride: {self.locale_id}, {self.context_id}"
 
     @property
     def data(self):
@@ -2277,6 +2300,9 @@ class LocaleSynchronization(models.Model):
     )
 
     base_form_class = LocaleSynchronizationModelForm
+
+    def __str__(self):
+        return f"LocaleSynchronization: {self.locale_id}, {self.sync_from_id}"
 
     def sync_trees(self, *, page_index=None):
         from .synctree import synchronize_tree

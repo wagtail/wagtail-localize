@@ -69,12 +69,18 @@ class TestUUIDModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     charfield = models.CharField(max_length=10, blank=True)
 
+    def __str__(self):
+        return f"TestUUIDModel: {self.id}"
+
 
 @register_snippet
 class TestUUIDSnippet(TranslatableMixin, models.Model):
     field = models.ForeignKey(TestUUIDModel, on_delete=models.CASCADE)
 
     translatable_fields = [SynchronizedField("field")]
+
+    def __str__(self):
+        return f"TestUUIDModel: {self.field_id}"
 
 
 @register_snippet
@@ -90,6 +96,9 @@ class TestParentalSnippet(TranslatableMixin, ClusterableModel):
 @register_snippet
 class NonTranslatableSnippet(models.Model):
     field = models.TextField()
+
+    def __str__(self):
+        return self.field
 
 
 class TestStructBlock(blocks.StructBlock):
@@ -245,7 +254,7 @@ class TestCustomField(models.TextField):
 
 
 class TestPage(Page):
-    test_charfield = models.CharField(
+    test_charfield = models.CharField(  # noqa: DJ001
         gettext_lazy("char field"), max_length=255, blank=True, null=True, default=""
     )
     test_textfield = models.TextField(blank=True)
@@ -403,6 +412,9 @@ class TestModel(TranslatableMixin):
 class NonTranslatableModel(models.Model):
     title = models.CharField(max_length=255, blank=True)
 
+    def __str__(self):
+        return self.title
+
 
 class InheritedTestModel(TestModel):
     class Meta:
@@ -500,6 +512,9 @@ class NonTranslatableChildObject(Orderable):
     )
     field = models.TextField()
 
+    def __str__(self):
+        return f"NonTranslatableChildObject ({self.pk}: {self.page_id}"
+
 
 class TestModelWithInvalidForeignKey(TranslatableMixin, models.Model):
     fk = models.ForeignKey("wagtailcore.Site", on_delete=models.CASCADE)
@@ -509,6 +524,11 @@ class TestModelWithInvalidForeignKey(TranslatableMixin, models.Model):
     translatable_fields = [
         TranslatableField("fk"),
     ]
+
+    def __str__(self):
+        return (
+            f"TestModelWithInvalidForeignKey ({self.pk}: {self.fk_id}, {self.locale_id}"
+        )
 
 
 class PageWithCustomEditHandler(Page):
@@ -544,6 +564,9 @@ class PageWithCustomEditHandlerChildObject(TranslatableMixin, Orderable):
     class Meta(TranslatableMixin.Meta, Orderable.Meta):
         pass
 
+    def __str__(self):
+        return f"PageWithCustomEditHandlerChildObject ({self.pk}: {self.page_id}"
+
 
 @register_translation_component(
     heading="Custom translation view component",
@@ -556,6 +579,9 @@ class CustomTranslationData(models.Model):
         TranslationSource, on_delete=models.CASCADE, editable=False
     )
     custom_text_field = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"CustomTranslationData ({self.pk}: {self.translation_source_id})"
 
     @classmethod
     def get_or_create_from_source_and_translation_data(
@@ -575,6 +601,9 @@ class CustomTranslationData(models.Model):
 )
 class CustomButSimpleTranslationData(models.Model):
     notes = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"CustomButSimpleTranslationData ({self.pk})"
 
 
 class SubNavigationLink(Orderable, TranslatableMixin):
@@ -631,7 +660,7 @@ class NavigationLink(ClusterableModel, Orderable, TranslatableMixin):
 
 @register_snippet
 class Header(ClusterableModel, TranslatableMixin):
-    name = models.CharField(max_length=100, null=True)
+    name = models.CharField(max_length=100, blank=True)
 
     panels = [
         FieldPanel("name"),

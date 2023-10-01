@@ -44,7 +44,7 @@ class TestCloudTranslateTranslator(TestCase):
     def test_no_credentials_option_initialisation(self, translationsserviceclient_init):
         translator = get_machine_translator()
         self.assertIsInstance(translator, GoogleCloudTranslator)
-        translator.client
+        translator.client  # noqa: B018
         translationsserviceclient_init.assert_called_once_with()
 
     @mock.patch(
@@ -61,7 +61,7 @@ class TestCloudTranslateTranslator(TestCase):
     ):
         translator = get_machine_translator()
         self.assertIsInstance(translator, GoogleCloudTranslator)
-        translator.client
+        translator.client  # noqa: B018
         from_service_account_info.assert_called_once_with(
             SETTINGS_WITH_CREDENTIALS["OPTIONS"]["CREDENTIALS"]
         )
@@ -83,7 +83,7 @@ class TestCloudTranslateTranslator(TestCase):
     ):
         translator = get_machine_translator()
         self.assertIsInstance(translator, GoogleCloudTranslator)
-        translator.client
+        translator.client  # noqa: B018
         from_service_account_file.assert_called_once_with(
             SETTINGS_WITH_CREDENTIALS_PATH["OPTIONS"]["CREDENTIALS_PATH"]
         )

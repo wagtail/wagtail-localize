@@ -418,7 +418,10 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         )
         self.page.save_revision().publish()
 
-        (new_page, created,) = source_with_changed_content.create_or_update_translation(
+        (
+            new_page,
+            created,
+        ) = source_with_changed_content.create_or_update_translation(
             self.dest_locale,
             fallback=True,
         )

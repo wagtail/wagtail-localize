@@ -152,9 +152,7 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
         )
         self.assertContains(
             response,
-            "Translation of TestModel object ({}) into French".format(
-                self.en_modeladmin.pk
-            ),
+            f"Translation of TestModel object ({self.en_modeladmin.pk}) into French",
         )
 
     def test_inspect_view(self):

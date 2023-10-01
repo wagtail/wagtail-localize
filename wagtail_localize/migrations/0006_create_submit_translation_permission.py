@@ -41,7 +41,6 @@ def remove_submit_translation_permission(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("wagtail_localize", "0005_remove_translationsource_object"),
     ]

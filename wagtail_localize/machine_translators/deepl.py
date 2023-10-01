@@ -22,7 +22,6 @@ class DeepLTranslator(BaseMachineTranslator):
         return "https://api.deepl.com/v2/translate"
 
     def translate(self, source_locale, target_locale, strings):
-
         response = requests.post(
             self.get_api_endpoint(),
             {
@@ -34,6 +33,7 @@ class DeepLTranslator(BaseMachineTranslator):
                     target_locale.language_code, is_target=True
                 ),
             },
+            timeout=30,
         )
 
         return {

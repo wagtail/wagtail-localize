@@ -183,8 +183,8 @@ class SubmitModelAdminTranslationView(SubmitTranslationView):
     def get_object(self):
         try:
             model = apps.get_model(self.kwargs["app_label"], self.kwargs["model_name"])
-        except LookupError:
-            raise Http404
+        except LookupError as err:
+            raise Http404 from err
         if not issubclass(model, TranslatableMixin):
             raise Http404
         return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
@@ -196,8 +196,8 @@ class SubmitModelAdminTranslationView(SubmitTranslationView):
                 "{app_label}_{model_name}_modeladmin_edit".format(**self.kwargs),
                 args=[pk],
             )
-        except NoReverseMatch:
-            raise Http404
+        except NoReverseMatch as err:
+            raise Http404 from err
 
     def get_success_message(self, locales):
         return _(

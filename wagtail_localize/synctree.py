@@ -1,8 +1,13 @@
+import logging
+
 from collections import defaultdict
 
 from django.utils.functional import cached_property
 from wagtail import hooks
 from wagtail.models import Locale, Page
+
+
+logger = logging.getLogger(__name__)
 
 
 class PageIndex:
@@ -124,7 +129,7 @@ class PageIndex:
         _walk(None)
 
         if remaining_pages:
-            print(f"Warning: {len(remaining_pages)} orphaned pages!")
+            logger.warning(f"{len(remaining_pages)} orphaned pages!")
 
         return PageIndex(new_pages)
 
