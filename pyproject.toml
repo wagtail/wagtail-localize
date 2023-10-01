@@ -39,8 +39,8 @@ dependencies = [
 
 [project.optional-dependencies]
 testing = [
-    "dj-database-url==0.5.0",
-    "freezegun==1.1.0",
+    "dj-database-url>=2.1.0,<3",
+    "freezegun>=1.2,<2",
     "django-rq>=2.5,<3.0",
     "google-cloud-translate>=3.0.0",
     "pre-commit>=3.4,<4"
