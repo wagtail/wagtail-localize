@@ -53,7 +53,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install tox tox-gh-actions
       - name: Test with tox
-        run: tox
+        run: tox -- -v1
 
   test-postgres:
     runs-on: ubuntu-latest
@@ -94,8 +94,7 @@ jobs:
           python -m pip install tox tox-gh-actions
       - name: Test with tox
         id: test-with-tox
-        run: |
-          tox
+        run: tox -- -v1
         env:
           DB_NAME: postgres
           DB_USER: postgres
