@@ -19,3 +19,4 @@ __pycache__/
 .fleet
 
 .DS_Store
+.ruff_cache
