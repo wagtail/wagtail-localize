@@ -882,6 +882,33 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
             ),
         )
 
+    @override_settings(WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE=False)
+    def test_post_submit_snippet_translation_draft(self):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_snippet_translation",
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        translation = Translation.objects.get()
+        self.assertEqual(translation.source.locale, self.en_locale)
+        self.assertEqual(translation.target_locale, self.fr_locale)
+        self.assertTrue(translation.created_at)
+
+        # The translated snippet should've been created
+        translated_snippet = self.en_snippet.get_translation(self.fr_locale)
+        self.assertEqual(translated_snippet.field, "Test snippet")
+
+        self.assertRedirects(
+            response,
+            reverse(
+                f"wagtailsnippets_{translated_snippet._meta.app_label}_{translated_snippet._meta.model_name}:edit",
+                args=[quote(translated_snippet.pk)],
+            ),
+        )
+
     def test_post_submit_snippet_translation_into_multiple_locales(self):
         response = self.client.post(
             reverse(
