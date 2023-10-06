@@ -75,8 +75,12 @@ class TranslationCreator:
             # Determine whether to publish the translation.
             if getattr(settings, "WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE", True):
                 publish = getattr(instance, "live", True)
-            else:
+            elif isinstance(instance, Page):
                 publish = False
+            else:
+                # we cannot save drafts for non-Page models, so set this to True
+                # To-Do: add support for models using DraftStateMixin
+                publish = True
 
             try:
                 translation.save_target(user=self.user, publish=publish)

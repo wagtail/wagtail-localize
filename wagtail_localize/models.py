@@ -738,6 +738,7 @@ class TranslationSource(models.Model):
         created = False
 
         # Only pages can be saved as draft
+        # To-Do: add support for models using DraftStateMixin
         if not publish and not isinstance(original, Page):
             raise CannotSaveDraftError
 
