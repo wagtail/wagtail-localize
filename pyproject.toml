@@ -80,6 +80,7 @@ exclude = [
     "*.ini",
     "*.yml",
     "netlify.toml",
+    "ruff.toml",
     "testmanage.py",
 ]
 include = [
