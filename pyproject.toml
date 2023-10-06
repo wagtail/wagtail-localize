@@ -52,6 +52,8 @@ documentation = [
     "mkdocs-autorefs>=0.4.0,<0.5",
     "mkdocs-include-markdown-plugin>=4.0.4,<5",
     "pygments>=2.15,<2.16",
+    "Jinja2<3",  # drop when mkdocs is updated to support Jinja2 3+
+    "markupsafe==2.0.1",  # drop when mkdocs is updated
 ]
 google = [
     "google-cloud-translate>=3.0.0"
