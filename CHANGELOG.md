@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- [`'DeferringManyRelatedManager' object is not iterable` error when declaring `ParentalManyToManyField` as `SynchronizedField`](https://github.com/wagtail/wagtail-localize/pull/564) @houl
+- [`'DeferringManyRelatedManager' object is not iterable` error when declaring `ParentalManyToManyField` as `SynchronizedField`](https://github.com/wagtail/wagtail-localize/pull/564) @hpoul
+- [non-Page model translation when `WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE = False`](https://github.com/wagtail/wagtail-localize/pull/726) @zerolab
 
 ### Changed
 
