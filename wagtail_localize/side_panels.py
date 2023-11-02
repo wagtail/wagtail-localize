@@ -1,5 +1,11 @@
 from django.urls import reverse
-from wagtail.admin.ui.side_panels import PageStatusSidePanel, PreviewSidePanel
+from wagtail import VERSION as WAGTAIL_VERSION
+
+if WAGTAIL_VERSION >= (5, 2):
+    from wagtail.admin.ui.side_panels import PageStatusSidePanel, PreviewSidePanel
+else:
+    from wagtail.admin.ui.side_panels import PagePreviewSidePanel as PreviewSidePanel, PageSidePanels as PageStatusSidePanel
+
 from wagtail.models import PreviewableMixin
 
 
