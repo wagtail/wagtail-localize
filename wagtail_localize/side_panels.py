@@ -1,9 +1,9 @@
 from django.urls import reverse
-from wagtail.admin.ui.side_panels import PagePreviewSidePanel, PageSidePanels
+from wagtail.admin.ui.side_panels import PageStatusSidePanel, PreviewSidePanel
 from wagtail.models import PreviewableMixin
 
 
-class LocalizedPreviewSidePanel(PagePreviewSidePanel):
+class LocalizedPreviewSidePanel(PreviewSidePanel):
     def __init__(self, object, request, translation):
         super().__init__(object, request)
         self.translation = translation
@@ -37,7 +37,7 @@ class LocalizedPreviewSidePanel(PagePreviewSidePanel):
         return context
 
 
-class LocalizedPageSidePanels(PageSidePanels):
+class LocalizedPageSidePanels(PageStatusSidePanel):
     def __init__(self, request, page, translation):
         super().__init__(
             request,
