@@ -80,12 +80,24 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        if WAGTAIL_VERSION >= (5, 1):
+        if WAGTAIL_VERSION >= (5, 2):
+            self.assertContains(
+                response,
+                (
+                    f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/">'
+                    '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
+                    '<use href="#icon-wagtail-localize-language"></use></svg>'
+                    "Translate this page"
+                    "</a>"
+                ),
+                html=True,
+            )
+        elif WAGTAIL_VERSION >= (5, 1):
             self.assertContains(
                 response,
                 (
                     f'<a href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fpages%2F{self.en_homepage.id}%2F" '
-                    'aria-label="" class="">'
+                    'aria-label="" class="button-secondary button-small button">'
                     '<svg class="icon icon-resubmit icon" aria-hidden="true"><use href="#icon-resubmit"></use></svg>'
                     "Sync translated pages</a>"
                 ),
@@ -158,12 +170,29 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailsnippets_wagtail_localize_test_testsnippet:list")
         )
 
-        self.assertContains(
-            response,
-            (
-                f'href="/admin/localize/update/{self.source.id}/?next=%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F" title="Sync translated snippets">Sync translated snippets</a>'
-            ),
-        )
+        next = "%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"
+        if WAGTAIL_VERSION >= (5, 2):
+            self.assertContains(
+                response,
+                (
+                    f'<a href="/admin/localize/update/{self.source.id}/?next={next}" '
+                    f'aria-label="Sync translations of &#x27;{self.en_snippet}&#x27;">'
+                    f'<svg class="icon icon-resubmit icon" aria-hidden="true"><use href="#icon-resubmit"></use></svg>'
+                    f"Sync translated snippets</a>"
+                ),
+                html=True,
+            )
+        else:
+            self.assertContains(
+                response,
+                (
+                    f'<a href="/admin/localize/update/{self.source.id}/?next={next}" '
+                    f'aria-label="Sync translations of &#x27;{self.en_snippet}&#x27;" '
+                    f'title="Sync translated snippets" class="button button-secondary button-small">'
+                    f"Sync translated snippets</a>"
+                ),
+                html=True,
+            )
 
     def test_hides_if_snippet_hasnt_got_translations(self):
         self.source.delete()

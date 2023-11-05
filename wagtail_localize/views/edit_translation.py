@@ -607,7 +607,13 @@ def edit_translation(request, translation, instance):
     if isinstance(instance, Page):
         # find the closest common ancestor of the pages that this user has direct explore permission
         # (i.e. add/edit/publish/lock) over; this will be the root of the breadcrumb
-        cca = get_explorable_root_page(request.user)
+        if WAGTAIL_VERSION >= (5, 1):
+            from wagtail.permission_policies.pages import PagePermissionPolicy
+
+            cca = PagePermissionPolicy().explorable_root_instance(request.user)
+        else:
+            cca = get_explorable_root_page(request.user)
+
         if cca:
             breadcrumb = [
                 {

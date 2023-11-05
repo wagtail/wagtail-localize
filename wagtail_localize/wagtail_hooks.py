@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
@@ -8,6 +10,7 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
 from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
@@ -133,10 +136,19 @@ def register_submit_translation_permission():
     )
 
 
-def page_listing_more_buttons(page, page_perms, next_url=None):
-    if not page.is_root() and page_perms.user.has_perm(
-        "wagtail_localize.submit_translation"
-    ):
+if WAGTAIL_VERSION >= (5, 0):
+
+    class PageButton(wagtailadmin_widgets.ListingButton):
+        ...
+
+else:
+
+    class PageButton(wagtailadmin_widgets.Button):
+        ...
+
+
+def _page_listing_more_buttons(page: Page, user, next_url: str | None = None):
+    if not page.is_root() and user.has_perm("wagtail_localize.submit_translation"):
         # If there's at least one locale that we haven't translated into yet, show "Translate this page" button
         has_locale_to_translate_to = Locale.objects.exclude(
             id__in=page.get_translations(inclusive=True)
@@ -147,7 +159,7 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
         if has_locale_to_translate_to:
             url = reverse("wagtail_localize:submit_page_translation", args=[page.id])
 
-            yield wagtailadmin_widgets.Button(
+            yield PageButton(
                 _("Translate this page"),
                 url,
                 priority=60,
@@ -161,9 +173,21 @@ def page_listing_more_buttons(page, page_perms, next_url=None):
             if next_url is not None:
                 url += "?" + urlencode({"next": next_url})
 
-            yield wagtailadmin_widgets.Button(
+            yield PageButton(
                 _("Sync translated pages"), url, priority=60, icon_name="resubmit"
             )
+
+
+if WAGTAIL_VERSION >= (5, 2):
+
+    def page_listing_more_buttons(page, user, view_name=None, next_url=None):
+        return _page_listing_more_buttons(page, user, next_url)
+
+else:
+
+    def page_listing_more_buttons(page, page_perms, next_url=None):
+        user = page_perms.user
+        return _page_listing_more_buttons(page, user, next_url=next_url)
 
 
 hooks.register("register_page_header_buttons", page_listing_more_buttons)
@@ -196,6 +220,7 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
                 attrs={
                     "aria-label": _("Translate '%(title)s'") % {"title": str(snippet)}
                 },
+                icon_name="wagtail-localize-language",
                 priority=100,
             )
 
@@ -213,6 +238,7 @@ def register_snippet_listing_buttons(snippet, user, next_url=None):
                     "aria-label": _("Sync translations of '%(title)s'")
                     % {"title": str(snippet)}
                 },
+                icon_name="resubmit",
                 priority=106,
             )
 
