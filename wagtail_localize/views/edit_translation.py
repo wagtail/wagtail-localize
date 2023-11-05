@@ -1007,30 +1007,64 @@ def edit_translation(request, translation, instance):
 
     if WAGTAIL_VERSION >= (5, 2):
         from wagtail.admin.ui.components import MediaContainer
-        from wagtail.admin.ui.side_panels import PageStatusSidePanel
 
-        side_panels = [
-            PageStatusSidePanel(
-                instance,
-                request,
-                show_schedule_publishing_toggle=False,
-                live_object=instance,
-                scheduled_object=instance.get_scheduled_revision_as_object(),
-                locale=translation.target_locale,
-                translations=[
-                    {
-                        "locale": _translation.locale,
-                        "url": reverse(
-                            "wagtailadmin_pages:edit", args=[_translation.id]
-                        ),
-                    }
-                    for _translation in instance.get_translations()
-                    .only("id", "locale", "depth")
-                    .select_related("locale")
-                    if _translation.permissions_for_user(request.user).can_edit()
-                ],
-            ),
-        ]
+        side_panels = []
+        if is_page:
+            from wagtail.admin.ui.side_panels import PageStatusSidePanel
+
+            side_panels = [
+                PageStatusSidePanel(
+                    instance,
+                    request,
+                    show_schedule_publishing_toggle=False,
+                    live_object=instance,
+                    scheduled_object=instance.get_scheduled_revision_as_object(),
+                    locale=translation.target_locale,
+                    translations=[
+                        {
+                            "locale": _translation.locale,
+                            "url": reverse(
+                                "wagtailadmin_pages:edit", args=[_translation.id]
+                            ),
+                        }
+                        for _translation in instance.get_translations()
+                        .only("id", "locale")
+                        .select_related("locale")
+                        if _translation.permissions_for_user(request.user).can_edit()
+                    ],
+                )
+            ]
+        elif hasattr(instance, "snippet_viewset"):
+            from wagtail.admin.ui.side_panels import StatusSidePanel
+            from wagtail.log_actions import registry as log_registry
+
+            viewset = instance.snippet_viewset
+            usage_url = None
+            if usage_url_name := viewset.get_url_name("usage"):
+                usage_url = reverse(usage_url_name, args=[instance.pk])
+            side_panels = [
+                StatusSidePanel(
+                    instance,
+                    request,
+                    locale=translation.target_locale,
+                    translations=[
+                        {
+                            "locale": _translation.locale,
+                            "url": reverse(
+                                viewset.get_url_name("edit"), args=[_translation.id]
+                            ),
+                        }
+                        for _translation in instance.get_translations()
+                        .only("id", "locale")
+                        .select_related("locale")
+                    ],
+                    usage_url=usage_url,
+                    last_updated_info=log_registry.get_logs_for_instance(
+                        instance
+                    ).first(),
+                )
+            ]
+
         context["media"] = MediaContainer(side_panels).media
     else:
         from wagtail.admin.ui.side_panels import PageSidePanels
