@@ -15,6 +15,14 @@ import os
 import dj_database_url
 
 
+try:
+    import wagtail_modeladmin  # noqa: F401
+except ImportError:
+    HAS_MODELADMIN_PACKAGE = False
+else:
+    HAS_MODELADMIN_PACKAGE = True
+
+
 # Build paths inside the project like this: os.path.join(PROJECT_DIR, ...)
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -49,7 +57,7 @@ INSTALLED_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail.api.v2",
-    "wagtail.contrib.modeladmin",
+    "wagtail_modeladmin" if HAS_MODELADMIN_PACKAGE else "wagtail.contrib.modeladmin",
     "wagtail.contrib.routable_page",
     "wagtail.sites",
     "wagtail",

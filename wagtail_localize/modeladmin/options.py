@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.models import TranslatableMixin
 
 from .helpers import TranslatableButtonHelper, TranslatablePageButtonHelper
@@ -13,6 +12,12 @@ from .views import (
     TranslatableIndexView,
     TranslatableInspectView,
 )
+
+
+try:
+    from wagtail_modeladmin.options import ModelAdmin
+except ImportError:
+    from wagtail.contrib.modeladmin.options import ModelAdmin
 
 
 class TranslatableModelAdmin(ModelAdmin):
