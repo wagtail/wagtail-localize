@@ -1098,7 +1098,12 @@ def edit_translation(request, translation, instance):
 
     context["side_panels"] = side_panels
 
-    return render(request, "wagtail_localize/admin/edit_translation.html", context)
+    if WAGTAIL_VERSION >= (5, 1):
+        template = "wagtail_localize/admin/edit_translation.html"
+    else:
+        template = "wagtail_localize/admin/edit_translation_legacy.html"
+
+    return render(request, template, context)
 
 
 def user_can_edit_instance(user, instance):

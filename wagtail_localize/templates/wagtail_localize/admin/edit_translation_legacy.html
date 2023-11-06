@@ -17,8 +17,7 @@
         </div>
         {% include "wagtailadmin/shared/header.html" with title=instance icon="snippet" merged=1 only %}
     {% endif %}
-
-    <header class="w-flex w-flex-col sm:w-flex-row w-items-center w-justify-between w-bg-surface-header w-border-b w-border-border-furniture w-px-0 w-py-0 w-mb-0 w-relative w-top-0 w-min-h-slim-header">
+    <header class="w-flex w-flex-col sm:w-flex-row w-items-center w-justify-between w-bg-surface-header w-px-0 w-py-0 w-mb-0 w-relative w-top-0 w-min-h-slim-header">
         <div class="w-pl-slim-header sm:w-pl-5 w-min-h-slim-header sm:w-pr-2 w-w-full w-flex-1 w-overflow-x-auto w-box-border">
             <div class="w-flex w-flex-1 w-items-center w-overflow-hidden w-p-4 header-meta--locales">
                 {% if source_translation.editUrl %}
@@ -29,13 +28,36 @@
                 <svg aria-hidden="true" class="icon icon-arrow-right w-w-4 w-h-4">
                     <use href="#icon-arrow-right"></use>
                 </svg>
-                {{ target_locale.get_display_name }}
                 {% if translations %}
-                    {% dropdown toggle_icon="dots-horizontal" toggle_aria_label=_("Translations") %}
-                        {% for label, url in translations %}
-                            <a href="{{ url }}">{{ label }}</a>
-                        {% endfor %}
-                    {% enddropdown %}
+                    <div class="c-dropdown t-inverted" data-dropdown="" style="display: inline-block">
+                        <a
+                            href="javascript:void(0)"
+                            class="c-dropdown__button u-btn-current button button-small button-nobg text-notransform"
+                        >
+                            {{ target_locale.get_display_name }}
+                            <div
+                                data-dropdown-toggle=""
+                                class="o-icon c-dropdown__toggle c-dropdown__togle--icon [ icon ]"
+                                style="padding-left: 5px;"
+                            >
+                                {% icon name="arrow-down" %}
+                                {% icon name="arrow-up" %}
+                            </div>
+                        </a>
+                        <div class="t-dark">
+                            <ul class="c-dropdown__menu u-toggle  u-arrow u-arrow--tl u-background">
+                                {% for label, url in translations %}
+                                    <li class="c-dropdown__item ">
+                                        <a href="{{ url }}" aria-label="" class="u-link is-live">
+                                            {{ label }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    {{ target_locale.get_display_name }}
                 {% endif %}
             </div>
         </div>
