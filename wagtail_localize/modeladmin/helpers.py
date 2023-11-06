@@ -3,11 +3,17 @@ from urllib.parse import urlencode
 from django.contrib.admin.utils import quote
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from wagtail.contrib.modeladmin.helpers import ButtonHelper, PageButtonHelper
-from wagtail.contrib.modeladmin.views import InspectView
 from wagtail.models import Locale, Page, TranslatableMixin
 
 from wagtail_localize.models import TranslationSource
+
+
+try:
+    from wagtail_modeladmin.helpers import ButtonHelper, PageButtonHelper
+    from wagtail_modeladmin.views import InspectView
+except ImportError:
+    from wagtail.contrib.modeladmin.helpers import ButtonHelper, PageButtonHelper
+    from wagtail.contrib.modeladmin.views import InspectView
 
 
 class TranslatableButtonHelper(ButtonHelper):
