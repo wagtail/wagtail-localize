@@ -25,6 +25,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.panels import FieldPanel
 from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
@@ -179,9 +180,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -514,9 +520,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -579,9 +590,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -639,9 +655,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -715,9 +736,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -797,9 +823,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -884,9 +915,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -973,9 +1009,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -1065,9 +1106,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -1140,9 +1186,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -1175,9 +1226,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         props = json.loads(response.context["props"])
 
@@ -1356,9 +1412,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[fr_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -1458,9 +1519,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             TestPage.preview_modes = previous_preview_modes
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -1579,9 +1645,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
@@ -1745,9 +1816,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtailadmin_pages:edit", args=[de_page.id])
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "wagtail_localize/admin/edit_translation.html"
-        )
+        if WAGTAIL_VERSION >= (5, 1):
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation.html"
+            )
+        else:
+            self.assertTemplateUsed(
+                response, "wagtail_localize/admin/edit_translation_legacy.html"
+            )
 
         # Check props
         props = json.loads(response.context["props"])
