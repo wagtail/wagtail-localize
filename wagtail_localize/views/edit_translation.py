@@ -890,12 +890,37 @@ def edit_translation(request, translation, instance):
     else:
         add_convert_to_alias_url = False
 
+    translations = instance.get_translations().select_related("locale")
+    props_translations = [
+        {
+            "title": str(translated_instance),
+            "locale": {
+                "code": translated_instance.locale.language_code,
+                "displayName": translated_instance.locale.get_display_name(),
+            },
+            "editUrl": get_edit_url(translated_instance),
+        }
+        for translated_instance in translations
+    ]
     context = {
         "translation": translation,
         "instance": instance,
         "is_page": is_page,
         "page_perms": page_perms,
         "model_opts": instance._meta,
+        "source_translation": [
+            _translation
+            for _translation in props_translations
+            if _translation["locale"]["code"] == translation.source.locale.language_code
+        ][0],
+        "translations": [
+            (_translation["locale"]["displayName"], _translation["editUrl"])
+            for _translation in props_translations
+            if _translation["locale"]["code"] != translation.source.locale.language_code
+        ],
+        "source_locale": translation.source.locale,
+        "target_locale": translation.target_locale,
+        "has_dropdown_tag": WAGTAIL_VERSION >= (5, 1),
         # These props are passed directly to the TranslationEditor react component
         "props": json.dumps(
             {
@@ -923,19 +948,7 @@ def edit_translation(request, translation, instance):
                     "code": translation.target_locale.language_code,
                     "displayName": translation.target_locale.get_display_name(),
                 },
-                "translations": [
-                    {
-                        "title": str(translated_instance),
-                        "locale": {
-                            "code": translated_instance.locale.language_code,
-                            "displayName": translated_instance.locale.get_display_name(),
-                        },
-                        "editUrl": get_edit_url(translated_instance),
-                    }
-                    for translated_instance in instance.get_translations().select_related(
-                        "locale"
-                    )
-                ],
+                "translations": props_translations,
                 "perms": {
                     "canPublish": can_publish,
                     "canUnpublish": can_unpublish,
@@ -1033,9 +1046,7 @@ def edit_translation(request, translation, instance):
                                 "wagtailadmin_pages:edit", args=[_translation.id]
                             ),
                         }
-                        for _translation in instance.get_translations()
-                        .only("id", "locale")
-                        .select_related("locale")
+                        for _translation in translations
                         if _translation.permissions_for_user(request.user).can_edit()
                     ],
                 )
@@ -1060,9 +1071,7 @@ def edit_translation(request, translation, instance):
                                 viewset.get_url_name("edit"), args=[_translation.id]
                             ),
                         }
-                        for _translation in instance.get_translations()
-                        .only("id", "locale")
-                        .select_related("locale")
+                        for _translation in translations
                     ],
                     usage_url=usage_url,
                     last_updated_info=log_registry.get_logs_for_instance(
