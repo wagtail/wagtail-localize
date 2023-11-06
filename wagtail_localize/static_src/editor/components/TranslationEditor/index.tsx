@@ -4,7 +4,6 @@ import Section from '../../../common/components/Section';
 import { Tabs, TabContent } from '../../../common/components/Tabs';
 
 import { EditorState, reducer } from './reducer';
-import EditorHeader from './header';
 import EditorFooter from './footer';
 import EditorSegmentList from './segments';
 import EditorToolbox from './toolbox';
@@ -314,7 +313,6 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
 
     return (
         <>
-            <EditorHeader {...props} {...state} />
             {tabs}
             <EditorFooter {...props} />
         </>
