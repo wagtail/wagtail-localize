@@ -6,11 +6,13 @@ from .base import BaseMachineTranslator
 
 
 def language_code(code, is_target=False):
-    # DeepL supports targeting Brazillian Portuguese but doesn't have this for other languages
-    if is_target and code in ["pt-pt", "pt-br"]:
-        return code
+    # DeepL supports targeting Brazilian Portuguese and requires to specifically request American or British English.
+    # @see https://www.deepl.com/en/docs-api/translate-text/translate-text
+    upper_code = code.upper()
+    if is_target and upper_code in ["PT-PT", "PT-BR", "EN-US", "EN-GB"]:
+        return upper_code
 
-    return code.split("-")[0].upper()
+    return upper_code.split("-")[0]
 
 
 class DeepLTranslator(BaseMachineTranslator):
