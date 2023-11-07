@@ -31,7 +31,7 @@ msgstr ""
 msgid "Change page"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:215
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:214
 #: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:159
 #: wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:181
 msgid "Changed"
@@ -161,7 +161,7 @@ msgstr ""
 msgid "Stop Synced translation"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:232
+#: wagtail_localize/static_src/editor/components/TranslationEditor/index.tsx:231
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
 

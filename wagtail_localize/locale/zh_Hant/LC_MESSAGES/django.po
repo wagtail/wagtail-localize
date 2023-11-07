@@ -1,13 +1,13 @@
 #
 # Translators:
 # Yeh Yen-Ke <yyken@outlook.com>, 2022
-# Chih Wang <ihcgno@icloud.com>, 2022
+# Chih Wang <ihcgno@icloud.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Chih Wang <ihcgno@icloud.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Chih Wang <ihcgno@icloud.com>, 2023\n"
 "Language-Team: Chinese Traditional (https://app.transifex.com/torchbox/"
 "teams/8009/zh-Hant/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -46,6 +46,9 @@ msgstr "狀態"
 
 msgid "Content"
 msgstr "內容"
+
+msgid "All"
+msgstr "全部"
 
 msgid "Select all"
 msgstr "全選"

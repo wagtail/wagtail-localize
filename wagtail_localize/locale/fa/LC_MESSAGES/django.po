@@ -2,14 +2,14 @@
 # Translators:
 # pyzenberg <pyzenberg@gmail.com>, 2022
 # Mostafa Heidarian <tabvar@gmail.com>, 2022
-# Ehsan jahanbakhsh <man207ej@gmail.com>, 2022
 # Amir Mahmoodi, 2023
+# Ehsan jahanbakhsh <man207ej@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Amir Mahmoodi, 2023\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Ehsan jahanbakhsh <man207ej@gmail.com>, 2023\n"
 "Language-Team: Persian (https://app.transifex.com/torchbox/teams/8009/fa/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fa\n"
@@ -38,6 +38,9 @@ msgstr "وضعیت"
 
 msgid "Content"
 msgstr "محتوا"
+
+msgid "All"
+msgstr "همه"
 
 msgid "Select all"
 msgstr "انتخاب همه"

@@ -3,12 +3,13 @@
 # 2ba49a64a97dc0c30b67cbb6522d98c8_d0a1309 <5628a6f4d3ab86b48aef276247790766_814>, 2021
 # lior abazon <abazon@v15.org.il>, 2022
 # Adi Ron <adi@bnop.co>, 2022
+# Gilad Levi <gilad.x@blobim.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Adi Ron <adi@bnop.co>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Gilad Levi <gilad.x@blobim.com>, 2023\n"
 "Language-Team: Hebrew (Israel) (https://app.transifex.com/torchbox/"
 "teams/8009/he_IL/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,3 +37,6 @@ msgstr "מצב"
 
 msgid "Content"
 msgstr "תוכן"
+
+msgid "All"
+msgstr "הכל"

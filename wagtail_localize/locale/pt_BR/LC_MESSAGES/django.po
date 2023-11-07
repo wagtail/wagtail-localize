@@ -4,15 +4,15 @@
 # Claudemiro Alves Feitosa Neto <dimiro1@gmail.com>, 2021
 # Éder Brito <britoederr@gmail.com>, 2021
 # Iuri L. Machado, 2021
-# Luiz Boaretto <lboaretto@gmail.com>, 2022
 # Rodrigo de Almeida Sottomaior Macedo <rmsolucoeseminformatica@protonmail.com>, 2022
 # Fabio Santos <f4bio.sa@gmail.com>, 2023
+# Luiz Boaretto <lboaretto@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Fabio Santos <f4bio.sa@gmail.com>, 2023\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2023\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -253,6 +253,9 @@ msgstr "Não há mais nada a ser traduzido."
 
 msgid "Source title"
 msgstr "Título fonte"
+
+msgid "All"
+msgstr "Todos"
 
 msgid "Translations"
 msgstr "Traduções"

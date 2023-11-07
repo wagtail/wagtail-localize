@@ -4,14 +4,14 @@
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
 # Rob Moorman <rob@moori.nl>, 2022
 # Thijs Kramer <thijskramer@gmail.com>, 2022
-# Loic Teixeira, 2022
 # Storm Heg <storm@stormbase.digital>, 2022
+# Loic Teixeira, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Storm Heg <storm@stormbase.digital>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Loic Teixeira, 2023\n"
 "Language-Team: Dutch (https://app.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -262,6 +262,9 @@ msgstr "Er is niets meer te vertalen."
 
 msgid "Source title"
 msgstr "Bron titel"
+
+msgid "All"
+msgstr "Alle"
 
 msgid "Translations"
 msgstr "Vertalingen"

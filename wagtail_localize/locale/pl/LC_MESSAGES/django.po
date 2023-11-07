@@ -3,15 +3,15 @@
 # Mateusz <undefined5102@gmail.com>, 2021
 # Łukasz Bołdys (Lukasz Boldys), 2021
 # Dominik Lech, 2022
-# Miłosz Miśkiewicz, 2023
 # Kacper Podpora <podpora@kacper.link>, 2023
 # Krzysztof Jeziorny <github@jeziorny.net>, 2023
+# Miłosz Miśkiewicz, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Krzysztof Jeziorny <github@jeziorny.net>, 2023\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Miłosz Miśkiewicz, 2023\n"
 "Language-Team: Polish (https://app.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -264,6 +264,9 @@ msgstr "Nie pozostało nic do przetłumaczenia."
 
 msgid "Source title"
 msgstr "Tytuł źródłowy"
+
+msgid "All"
+msgstr "Wszystkie"
 
 msgid "Translations"
 msgstr "Tłumaczenia"

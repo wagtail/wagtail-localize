@@ -3,15 +3,15 @@
 # hanfeng <appweb.cn@gmail.com>, 2021
 # Favo Yang <favoyang@gmail.com>, 2021
 # 汇民 王 <whuim@qq.com>, 2022
-# Yin Guanhao <sopium@mysterious.site>, 2022
 # Vincent Zhao <zhaopu2008@gmail.com>, 2022
 # Ford Guo <agile.guo@gmail.com>, 2023
+# Yin Guanhao <sopium@mysterious.site>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Ford Guo <agile.guo@gmail.com>, 2023\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Yin Guanhao <sopium@mysterious.site>, 2023\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -228,6 +228,9 @@ msgstr "无任何需要翻译的."
 
 msgid "Source title"
 msgstr "原标题"
+
+msgid "All"
+msgstr "所有"
 
 msgid "Translations"
 msgstr "翻译"

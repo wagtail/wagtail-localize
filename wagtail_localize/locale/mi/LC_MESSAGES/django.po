@@ -1,13 +1,13 @@
 #
 # Translators:
 # Dan Braghis, 2022
-# Awatea Randall <awatea@octave.nz>, 2022
+# Awatea Randall <awatea@octave.nz>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Awatea Randall <awatea@octave.nz>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Awatea Randall <awatea@octave.nz>, 2023\n"
 "Language-Team: Maori (https://app.transifex.com/torchbox/teams/8009/mi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: mi\n"
@@ -49,6 +49,9 @@ msgstr "Rārangi take"
 
 msgid "Translation has been restarted."
 msgstr "Kua tīmata anō hei whakamāoritia"
+
+msgid "All"
+msgstr "Katoa"
 
 msgid "Locales"
 msgstr "Rohe"

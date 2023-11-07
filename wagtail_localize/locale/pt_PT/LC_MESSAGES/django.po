@@ -2,14 +2,14 @@
 # Translators:
 # Jose Lourenco <jose@lourenco.ws>, 2021
 # Diogo Silva <diogo_silva30@hotmail.com>, 2021
-# Luís Tiago Favas <traducoes@favas.eu>, 2022
 # Tiago Henriques <trinosauro@gmail.com>, 2022
+# Luís Tiago Favas <traducoes@favas.eu>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Tiago Henriques <trinosauro@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Luís Tiago Favas <traducoes@favas.eu>, 2023\n"
 "Language-Team: Portuguese (Portugal) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -252,6 +252,9 @@ msgstr "Não resta mais nada por traduzir."
 
 msgid "Source title"
 msgstr "Título da origem"
+
+msgid "All"
+msgstr "Todos"
 
 msgid "Translations"
 msgstr "Traduções"

@@ -1,17 +1,17 @@
 #
 # Translators:
 # George Giannoulopoulos <vdotoree@yahoo.gr>, 2021
-# fekioh, 2022
 # 79353a696ad19dc202b261b3067b7640_bec941e, 2022
 # Nick Mavrakis <mavrakis.n@gmail.com>, 2022
 # Yiannis Inglessis <negtheone@gmail.com>, 2022
 # Matt Westcott <matthew@torchbox.com>, 2022
+# fekioh, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Matt Westcott <matthew@torchbox.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: fekioh, 2023\n"
 "Language-Team: Greek (https://app.transifex.com/torchbox/teams/8009/el/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: el\n"
@@ -37,6 +37,9 @@ msgstr "Κατάσταση"
 
 msgid "Content"
 msgstr "Περιεχομενο"
+
+msgid "All"
+msgstr "Όλα"
 
 msgid "Select all"
 msgstr "Επιλογή όλων"

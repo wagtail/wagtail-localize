@@ -1,13 +1,13 @@
 #
 # Translators:
-# Dan Braghis, 2022
 # Alex Morega, 2023
+# Dan Braghis, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Alex Morega, 2023\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Dan Braghis, 2023\n"
 "Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
@@ -252,6 +252,9 @@ msgstr "Nu mai este nimic de tradus."
 
 msgid "Source title"
 msgstr "Titlu sursă"
+
+msgid "All"
+msgstr "Toate"
 
 msgid "Translations"
 msgstr "Traduceri"

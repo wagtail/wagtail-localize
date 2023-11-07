@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
 "Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2023\n"
 "Language-Team: Croatian (Croatia) (https://app.transifex.com/torchbox/"
 "teams/8009/hr_HR/)\n"
@@ -56,6 +56,9 @@ msgstr "Status"
 
 msgid "Content"
 msgstr "Sadržaj"
+
+msgid "All"
+msgstr "Sve"
 
 msgid "Select all"
 msgstr "Odaberi sve"

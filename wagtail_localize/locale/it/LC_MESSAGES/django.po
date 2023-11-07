@@ -2,12 +2,13 @@
 # Translators:
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2022
 # Marco Badan <marco.badan@gmail.com>, 2022
+# Marco Lerco <marcolerco@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Marco Lerco <marcolerco@gmail.com>, 2023\n"
 "Language-Team: Italian (https://app.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
@@ -249,6 +250,9 @@ msgstr "Non è rimasto nulla da tradurre."
 
 msgid "Source title"
 msgstr "File sorgente"
+
+msgid "All"
+msgstr "Tutto"
 
 msgid "Translations"
 msgstr "Traduzioni"

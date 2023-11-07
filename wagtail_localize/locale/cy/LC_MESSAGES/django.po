@@ -1,14 +1,14 @@
 #
 # Translators:
 # Philip Crisp, 2022
-# Adam Hughes <adamhughes31@gmail.com>, 2022
 # Matt Westcott <matthew@torchbox.com>, 2022
+# Adam Hughes <adamhughes31@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Matt Westcott <matthew@torchbox.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Adam Hughes <adamhughes31@gmail.com>, 2023\n"
 "Language-Team: Welsh (https://app.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
@@ -250,6 +250,9 @@ msgstr "Nid oes unrhyw beth ar ôl i'w gyfieithu."
 
 msgid "Source title"
 msgstr "Teitl ffynhonnell"
+
+msgid "All"
+msgstr "I gyd"
 
 msgid "Translations"
 msgstr "Cyfieithiadau"

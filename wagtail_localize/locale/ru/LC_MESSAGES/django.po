@@ -2,17 +2,17 @@
 # Translators:
 # Eugene <eugene.mechanism@gmail.com>, 2021
 # Alexey Trofimov <funkindy@gmail.com>, 2021
-# sergeybe <sergeybe@gmail.com>, 2022
 # 2a01ec1f91c141c338f53ad8cc23abc6_8deca2d, 2022
 # Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022
 # Влад <integration.into.society@gmail.com>, 2022
 # Andrei Satsevich, 2023
+# sergeybe <sergeybe@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Andrei Satsevich, 2023\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: sergeybe <sergeybe@gmail.com>, 2023\n"
 "Language-Team: Russian (https://app.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -258,6 +258,9 @@ msgstr "Для перевода ничего не осталось."
 
 msgid "Source title"
 msgstr "Название источника"
+
+msgid "All"
+msgstr "Все"
 
 msgid "Translations"
 msgstr "Переводы"

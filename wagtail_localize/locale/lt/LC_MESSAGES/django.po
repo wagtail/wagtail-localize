@@ -1,13 +1,13 @@
 #
 # Translators:
-# Naglis Jonaitis, 2022
 # Matas Dailyda <matas@dailyda.com>, 2022
+# Naglis Jonaitis, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Matas Dailyda <matas@dailyda.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Naglis Jonaitis, 2023\n"
 "Language-Team: Lithuanian (https://app.transifex.com/torchbox/teams/8009/"
 "lt/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -165,6 +165,9 @@ msgstr "Sėkmingai išversta naudojant {}."
 
 msgid "There isn't anything left to translate."
 msgstr "Viskas išversta."
+
+msgid "All"
+msgstr "Visi"
 
 msgid "Translations"
 msgstr "Vertimai"

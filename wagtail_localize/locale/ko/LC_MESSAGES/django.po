@@ -3,13 +3,13 @@
 # Jihan Chung <jihanchung20@gmail.com>, 2021
 # Kyu Choi, 2022
 # Dan Braghis, 2022
-# Kyungil Choi <hanpama@gmail.com>, 2022
+# Kyungil Choi <hanpama@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Kyungil Choi <hanpama@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Kyungil Choi <hanpama@gmail.com>, 2023\n"
 "Language-Team: Korean (https://app.transifex.com/torchbox/teams/8009/ko/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ko\n"
@@ -60,6 +60,9 @@ msgstr "상태"
 
 msgid "Content"
 msgstr "콘텐츠"
+
+msgid "All"
+msgstr "모두"
 
 msgid "Select all"
 msgstr "모두 선택"

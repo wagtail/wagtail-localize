@@ -1,12 +1,13 @@
 #
 # Translators:
 # Mads Kronborg <madskronborg99@gmail.com>, 2022
+# Benjamin Bach <benjaoming@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Mads Kronborg <madskronborg99@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Benjamin Bach <benjaoming@gmail.com>, 2023\n"
 "Language-Team: Danish (https://app.transifex.com/torchbox/teams/8009/da/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: da\n"
@@ -26,3 +27,6 @@ msgstr "Status"
 
 msgid "Content"
 msgstr "Indhold"
+
+msgid "All"
+msgstr "Alle"

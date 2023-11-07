@@ -4,12 +4,13 @@
 # Anastasiia La, 2021
 # d55ee35323c0c760f088259cd23b1b6d_9e8a7d1 <5459f3ae99ecdd5ed0be0220acd46004_1019581>, 2022
 # Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2022
+# Vladyslav Herasymenko <drimacus182@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Vladyslav Herasymenko <drimacus182@gmail.com>, 2023\n"
 "Language-Team: Ukrainian (https://app.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -226,6 +227,9 @@ msgstr "Немає нічого перекладати."
 
 msgid "Source title"
 msgstr "Заголовок джерела"
+
+msgid "All"
+msgstr "Усі"
 
 msgid "Translations"
 msgstr "Переклади"

@@ -1,14 +1,14 @@
 #
 # Translators:
-# Amós Oviedo <amos.oviedo@gmail.com>, 2022
 # Matt Westcott <matthew@torchbox.com>, 2022
 # X Bello <xbello@gmail.com>, 2022
+# Amós Oviedo <amos.oviedo@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: X Bello <xbello@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2023\n"
 "Language-Team: Galician (https://app.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: gl\n"
@@ -256,6 +256,9 @@ msgstr "Non queda máis nada por traducir."
 
 msgid "Source title"
 msgstr "Título de orixe"
+
+msgid "All"
+msgstr "Todos"
 
 msgid "Translations"
 msgstr "Traduccións"

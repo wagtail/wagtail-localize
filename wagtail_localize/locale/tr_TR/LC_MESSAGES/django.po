@@ -1,15 +1,15 @@
 #
 # Translators:
 # Ragıp Ünal <ragip@ragipunal.com>, 2021
-# Halim Turan <halim_turan_61@hotmail.com>, 2022
 # José Luis <alagunajs@gmail.com>, 2022
 # Py Data Geek <pydatageek@gmail.com>, 2022
+# Halim Turan <halim_turan_61@hotmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 08:37+0000\n"
-"Last-Translator: Py Data Geek <pydatageek@gmail.com>, 2022\n"
+"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"Last-Translator: Halim Turan <halim_turan_61@hotmail.com>, 2023\n"
 "Language-Team: Turkish (Turkey) (https://app.transifex.com/torchbox/"
 "teams/8009/tr_TR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -39,3 +39,6 @@ msgstr "Durum"
 
 msgid "Content"
 msgstr "İçerik"
+
+msgid "All"
+msgstr "Hepsi"
