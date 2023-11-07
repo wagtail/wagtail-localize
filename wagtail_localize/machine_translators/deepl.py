@@ -6,8 +6,8 @@ from .base import BaseMachineTranslator
 
 
 def language_code(code, is_target=False):
-    # DeepL supports targeting Brazillian Portuguese but doesn't have this for other languages
-    if is_target and code in ["pt-pt", "pt-br"]:
+    # DeepL supports targeting Brazillian Portuguese and requieres to specifically request American or British English.
+    if is_target and code in ["pt-pt", "pt-br", "en-us", "en-gb"]:
         return code
 
     return code.split("-")[0].upper()
