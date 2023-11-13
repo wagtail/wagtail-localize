@@ -32,7 +32,6 @@ from rest_framework.response import Response
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.admin import messages
-from wagtail.admin.navigation import get_explorable_root_page
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.admin.panels import PanelGroup as BaseCompositeEditHandler
 from wagtail.admin.panels import get_edit_handler as get_snippet_edit_handler
@@ -612,6 +611,8 @@ def edit_translation(request, translation, instance):
 
             cca = PagePermissionPolicy().explorable_root_instance(request.user)
         else:
+            from wagtail.admin.navigation import get_explorable_root_page
+
             cca = get_explorable_root_page(request.user)
 
         if cca:
