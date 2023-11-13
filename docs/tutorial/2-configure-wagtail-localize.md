@@ -35,7 +35,7 @@ Find the "Internationalisation" section, and add the `WAGTAIL_I18N_ENABLED` sett
 ```python
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = True  # only if using Django < 4.0
 
 # Add this
 WAGTAIL_I18N_ENABLED = True
