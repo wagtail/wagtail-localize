@@ -9,6 +9,7 @@ from wagtail.admin.views import generic
 from wagtail.admin.viewsets.model import ModelViewSet
 from wagtail.models import Locale
 from wagtail.permissions import locale_permission_policy
+from wagtail.utils.version import get_main_version
 
 from wagtail_localize.components import BaseComponentManager
 
@@ -80,6 +81,7 @@ class IndexView(generic.IndexView):
 
     def get_context_data(self):
         context = super().get_context_data()
+        context["wagtail_version"] = get_main_version()
 
         for locale in context["locales"]:
             locale.num_pages, locale.num_others = get_locale_usage(locale)

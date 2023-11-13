@@ -2069,9 +2069,14 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertFalse(TranslationLog.objects.exists())
 
     def test_cant_publish_page_translation_without_perms(self):
-        self.moderators_group.page_permissions.filter(
-            permission_type="publish"
-        ).delete()
+        if WAGTAIL_VERSION >= (5, 2):
+            self.moderators_group.page_permissions.filter(
+                permission__codename="publish_page"
+            ).delete()
+        else:
+            self.moderators_group.page_permissions.filter(
+                permission_type="publish"
+            ).delete()
         response = self.client.post(
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id]),
             {

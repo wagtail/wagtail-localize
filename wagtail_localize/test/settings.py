@@ -22,7 +22,7 @@ try:
     import wagtail_modeladmin  # noqa: F401
 except ImportError:
     try:
-        import wagtail.contrib.wagtailadmin  # noqa: F401
+        import wagtail.contrib.modeladmin  # noqa: F401
     except ImportError:
         ...
     else:
