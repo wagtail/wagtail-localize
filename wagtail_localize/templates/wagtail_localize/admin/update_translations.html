@@ -50,7 +50,7 @@
                                 <p class="help">{{ field.help_text }}</p>
                             </li>
                         {% else %}
-                            {% include "wagtailadmin/shared/field_as_li.html" %}
+                            <li>{% include "wagtailadmin/shared/field.html" %}</li>
                         {% endif %}
                     {% endfor %}
                 {% endblock %}
