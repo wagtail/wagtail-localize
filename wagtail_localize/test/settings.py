@@ -14,13 +14,21 @@ import os
 
 import dj_database_url
 
+from django import VERSION as DJANGO_VERSION
 
+
+modeladmin_app = ""
 try:
     import wagtail_modeladmin  # noqa: F401
 except ImportError:
-    HAS_MODELADMIN_PACKAGE = False
+    try:
+        import wagtail.contrib.wagtailadmin  # noqa: F401
+    except ImportError:
+        ...
+    else:
+        modeladmin_app = "wagtail.contrib.modeladmin"
 else:
-    HAS_MODELADMIN_PACKAGE = True
+    modeladmin_app = "wagtail_modeladmin"
 
 
 # Build paths inside the project like this: os.path.join(PROJECT_DIR, ...)
@@ -57,7 +65,6 @@ INSTALLED_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail.api.v2",
-    "wagtail_modeladmin" if HAS_MODELADMIN_PACKAGE else "wagtail.contrib.modeladmin",
     "wagtail.contrib.routable_page",
     "wagtail.sites",
     "wagtail",
@@ -71,6 +78,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
 ]
+
+if modeladmin_app:
+    INSTALLED_APPS += [modeladmin_app]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -148,7 +158,8 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_L10N = True
+if DJANGO_VERSION < (4, 0):
+    USE_L10N = True
 
 USE_TZ = True
 
