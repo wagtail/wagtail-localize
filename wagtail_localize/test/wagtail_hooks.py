@@ -1,8 +1,15 @@
-from wagtail.contrib.modeladmin.options import (
-    ModelAdmin,
-    ModelAdminGroup,
-    modeladmin_register,
-)
+try:
+    from wagtail_modeladmin.options import (
+        ModelAdmin,
+        ModelAdminGroup,
+        modeladmin_register,
+    )
+except ImportError:
+    from wagtail.contrib.modeladmin.options import (
+        ModelAdmin,
+        ModelAdminGroup,
+        modeladmin_register,
+    )
 
 from wagtail_localize.modeladmin.options import TranslatableModelAdmin
 
