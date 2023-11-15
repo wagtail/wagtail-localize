@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7] - 2023-11-15
+
+### Added
+
+- Provisional support for Wagtail 6 ([#742](<(https://github.com/wagtail/wagtail-localize/pull/742)>) @zerolab
+
+### Changed
+
+- Updated target language code for [DeepL](https://www.deepl.com/en/docs-api/translate-text/translate-text) ([#739](https://github.com/wagtail/wagtail-localize/pull/739)) @unreadableusername
+
 ## [1.7rc1] - 2023-11-07
 
 ### Added
@@ -267,7 +277,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.7rc1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.7...HEAD
+[1.7]: https://github.com/wagtail/wagtail-localize/compare/v1.7rc1...v1.7
 [1.7rc1]: https://github.com/wagtail/wagtail-localize/compare/v1.6...v1.7rc1
 [1.6]: https://github.com/wagtail/wagtail-localize/compare/v1.5.2...v1.6
 [1.5.2]: https://github.com/wagtail/wagtail-localize/compare/v1.5.1...v1.5.2
