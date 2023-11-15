@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Valter Maasalo <vmaasalo@gmail.com>, 2023\n"
 "Language-Team: Finnish (https://app.transifex.com/torchbox/teams/8009/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -69,6 +69,9 @@ msgstr "Kyllä, muunna se"
 msgid "Translate this page"
 msgstr "Käännä tämä sivu"
 
+msgid "Translations"
+msgstr "Käännökset"
+
 msgid "Submit"
 msgstr "Lähetä"
 
@@ -113,9 +116,6 @@ msgstr "Mitään käännettävää ei ole enää jäljellä."
 
 msgid "All"
 msgstr "Kaikki"
-
-msgid "Translations"
-msgstr "Käännökset"
 
 msgid "Select all"
 msgstr "Valitse kaikki"

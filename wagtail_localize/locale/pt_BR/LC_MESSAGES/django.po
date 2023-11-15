@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2023\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
@@ -156,6 +156,9 @@ msgstr "Traduzir esta página"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Traduzido do %(instance)s para %(locale)s "
 
+msgid "Translations"
+msgstr "Traduções"
+
 msgid "Submit"
 msgstr "Enviar"
 
@@ -256,9 +259,6 @@ msgstr "Título fonte"
 
 msgid "All"
 msgstr "Todos"
-
-msgid "Translations"
-msgstr "Traduções"
 
 msgid "Select all"
 msgstr "Selecionar todos"

@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Miłosz Miśkiewicz, 2023\n"
 "Language-Team: Polish (https://app.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -160,6 +160,9 @@ msgstr "Przetłumacz tę stronę"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Tłumaczenie %(instance)s w %(locale)s"
 
+msgid "Translations"
+msgstr "Tłumaczenia"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Edycja %(object_type)s %(title)s"
@@ -267,9 +270,6 @@ msgstr "Tytuł źródłowy"
 
 msgid "All"
 msgstr "Wszystkie"
-
-msgid "Translations"
-msgstr "Tłumaczenia"
 
 msgid "Select all"
 msgstr "Zaznacz wszystkie"

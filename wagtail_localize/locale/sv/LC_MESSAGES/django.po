@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2023\n"
 "Language-Team: Swedish (https://app.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -154,6 +154,9 @@ msgstr "Översätt den här sidan"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Översättning av %(instance)s till %(locale)s"
 
+msgid "Translations"
+msgstr "Översättningar"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Editerar %(object_type)s %(title)s"
@@ -259,9 +262,6 @@ msgstr "Källtitel"
 
 msgid "All"
 msgstr "Alla"
-
-msgid "Translations"
-msgstr "Översättningar"
 
 msgid "Select all"
 msgstr "Markera allt"

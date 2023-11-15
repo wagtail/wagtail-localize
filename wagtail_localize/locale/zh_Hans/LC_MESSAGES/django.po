@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Yin Guanhao <sopium@mysterious.site>, 2023\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
@@ -141,6 +141,9 @@ msgstr "翻译此页"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "由%(instance)s翻译到%(locale)s"
 
+msgid "Translations"
+msgstr "翻译"
+
 msgid "Submit"
 msgstr "提交"
 
@@ -231,9 +234,6 @@ msgstr "原标题"
 
 msgid "All"
 msgstr "所有"
-
-msgid "Translations"
-msgstr "翻译"
 
 msgid "Select all"
 msgstr "全选"

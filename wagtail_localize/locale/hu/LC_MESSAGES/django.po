@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2023\n"
 "Language-Team: Hungarian (https://app.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
@@ -156,6 +156,9 @@ msgstr "Oldal lefordítása"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "%(instance)s fordítása %(locale)s nyelvre"
 
+msgid "Translations"
+msgstr "Fordítások"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "%(title)s %(object_type)s szerkesztése"
@@ -261,9 +264,6 @@ msgstr "Forrás címe"
 
 msgid "All"
 msgstr "Összes"
-
-msgid "Translations"
-msgstr "Fordítások"
 
 msgid "Select all"
 msgstr "Összes kijelölése"

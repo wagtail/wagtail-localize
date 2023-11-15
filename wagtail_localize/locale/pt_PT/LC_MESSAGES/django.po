@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Luís Tiago Favas <traducoes@favas.eu>, 2023\n"
 "Language-Team: Portuguese (Portugal) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
@@ -154,6 +154,9 @@ msgstr "Traduzir esta página"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Tradução de %(instance)s para %(locale)s "
 
+msgid "Translations"
+msgstr "Traduções"
+
 msgid "Submit"
 msgstr "Enviar"
 
@@ -255,9 +258,6 @@ msgstr "Título da origem"
 
 msgid "All"
 msgstr "Todos"
-
-msgid "Translations"
-msgstr "Traduções"
 
 msgid "Select all"
 msgstr "Selecionar tudo"

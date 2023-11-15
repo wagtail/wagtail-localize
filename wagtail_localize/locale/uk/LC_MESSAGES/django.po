@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Vladyslav Herasymenko <drimacus182@gmail.com>, 2023\n"
 "Language-Team: Ukrainian (https://app.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
@@ -133,6 +133,9 @@ msgstr "Перекладіть цю сторінку"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Переклад %(instance)s в %(locale)s"
 
+msgid "Translations"
+msgstr "Переклади"
+
 msgid "Submit"
 msgstr "Застосувати"
 
@@ -230,9 +233,6 @@ msgstr "Заголовок джерела"
 
 msgid "All"
 msgstr "Усі"
-
-msgid "Translations"
-msgstr "Переклади"
 
 msgid "Select all"
 msgstr "Обрати все"

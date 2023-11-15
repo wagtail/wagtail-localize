@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 09:12+0000\n"
+"POT-Creation-Date: 2023-11-15 20:26+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -234,28 +234,28 @@ msgstr ""
 msgid "Page '{}' has been converted into an alias."
 msgstr ""
 
-#: views/edit_translation.py:160
+#: views/edit_translation.py:159
 msgid "Content"
 msgstr ""
 
-#: views/edit_translation.py:546
+#: views/edit_translation.py:545
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
 "Please fix them or click publish again to ignore these translations for now."
 msgstr ""
 
-#: views/edit_translation.py:574
+#: views/edit_translation.py:573
 #, python-brace-format
 msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 
-#: views/edit_translation.py:584
+#: views/edit_translation.py:583
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr ""
 
-#: views/edit_translation.py:868
+#: views/edit_translation.py:869
 #, python-brace-format
 msgid ""
 "The data model for '{model_name}' has been changed since the last "
@@ -263,31 +263,31 @@ msgid ""
 "be visible until the next translation sync."
 msgstr ""
 
-#: views/edit_translation.py:1161
+#: views/edit_translation.py:1162
 msgid "Translation has been stopped."
 msgstr ""
 
-#: views/edit_translation.py:1172
+#: views/edit_translation.py:1173
 msgid "Translation has been restarted."
 msgstr ""
 
-#: views/edit_translation.py:1342
+#: views/edit_translation.py:1343
 msgid "Please upload a valid PO file."
 msgstr ""
 
-#: views/edit_translation.py:1351
+#: views/edit_translation.py:1352
 msgid "Cannot import PO file that was created for a different translation."
 msgstr ""
 
-#: views/edit_translation.py:1359
+#: views/edit_translation.py:1360
 msgid "Successfully imported translations from PO File."
 msgstr ""
 
-#: views/edit_translation.py:1434
+#: views/edit_translation.py:1435
 msgid "Successfully translated with {}."
 msgstr ""
 
-#: views/edit_translation.py:1438
+#: views/edit_translation.py:1439
 msgid "There isn't anything left to translate."
 msgstr ""
 

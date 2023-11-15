@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Dan Braghis, 2023\n"
 "Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -153,6 +153,9 @@ msgstr "Traduceți această pagină"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Traducerea %(instance)s în %(locale)s"
 
+msgid "Translations"
+msgstr "Traduceri"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Editare %(object_type)s %(title)s"
@@ -255,9 +258,6 @@ msgstr "Titlu sursă"
 
 msgid "All"
 msgstr "Toate"
-
-msgid "Translations"
-msgstr "Traduceri"
 
 msgid "Select all"
 msgstr "Selectează toate"

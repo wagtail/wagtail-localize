@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Naglis Jonaitis, 2023\n"
 "Language-Team: Lithuanian (https://app.transifex.com/torchbox/teams/8009/"
 "lt/)\n"
@@ -94,6 +94,9 @@ msgstr "Įjungti"
 msgid "Translate this page"
 msgstr "Versti šį puslapį"
 
+msgid "Translations"
+msgstr "Vertimai"
+
 msgid "Submit"
 msgstr "Pateikti"
 
@@ -168,9 +171,6 @@ msgstr "Viskas išversta."
 
 msgid "All"
 msgstr "Visi"
-
-msgid "Translations"
-msgstr "Vertimai"
 
 msgid "Select all"
 msgstr "Pažymėti visas"

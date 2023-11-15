@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: sergeybe <sergeybe@gmail.com>, 2023\n"
 "Language-Team: Russian (https://app.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -158,6 +158,9 @@ msgstr "Перевести эту страницу"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Перевод с %(instance)s на %(locale)s"
 
+msgid "Translations"
+msgstr "Переводы"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Редактировать %(object_type)s %(title)s"
@@ -261,9 +264,6 @@ msgstr "Название источника"
 
 msgid "All"
 msgstr "Все"
-
-msgid "Translations"
-msgstr "Переводы"
 
 msgid "Select all"
 msgstr "Выбрать все"

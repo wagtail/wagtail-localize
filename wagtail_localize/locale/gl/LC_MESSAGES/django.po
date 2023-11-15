@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2023\n"
 "Language-Team: Galician (https://app.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -154,6 +154,9 @@ msgstr "Traducir esta páxina"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Traducción de %(instance)s a %(locale)s"
 
+msgid "Translations"
+msgstr "Traduccións"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Editando %(object_type)s %(title)s"
@@ -259,9 +262,6 @@ msgstr "Título de orixe"
 
 msgid "All"
 msgstr "Todos"
-
-msgid "Translations"
-msgstr "Traduccións"
 
 msgid "Select all"
 msgstr "Seleccionar todo"

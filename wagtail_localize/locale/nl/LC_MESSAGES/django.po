@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Loic Teixeira, 2023\n"
 "Language-Team: Dutch (https://app.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -158,6 +158,9 @@ msgstr "Vertaal deze pagina"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Vertaling van %(instance)snaar %(locale)s"
 
+msgid "Translations"
+msgstr "Vertalingen"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Wijzigen: %(object_type)s%(title)s"
@@ -265,9 +268,6 @@ msgstr "Bron titel"
 
 msgid "All"
 msgstr "Alle"
-
-msgid "Translations"
-msgstr "Vertalingen"
 
 msgid "Select all"
 msgstr "Selecteer alles"

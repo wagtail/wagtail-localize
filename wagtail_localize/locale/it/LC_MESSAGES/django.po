@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Marco Lerco <marcolerco@gmail.com>, 2023\n"
 "Language-Team: Italian (https://app.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -152,6 +152,9 @@ msgstr "Traduci questa pagina"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Traduzione di %(instance)s in %(locale)s"
 
+msgid "Translations"
+msgstr "Traduzioni"
+
 msgid "Submit"
 msgstr "Invia"
 
@@ -253,9 +256,6 @@ msgstr "File sorgente"
 
 msgid "All"
 msgstr "Tutto"
-
-msgid "Translations"
-msgstr "Traduzioni"
 
 msgid "Select all"
 msgstr "Seleziona tutti"

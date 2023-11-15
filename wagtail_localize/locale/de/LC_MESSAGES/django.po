@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Oliver Engel <codeangel@posteo.de>, 2023\n"
 "Language-Team: German (https://app.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -159,6 +159,9 @@ msgstr "Diese Seite übersetzen"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Übersetzung von %(instance)s in %(locale)s"
 
+msgid "Translations"
+msgstr "Übersetzung"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Bearbeite %(object_type)s %(title)s"
@@ -267,9 +270,6 @@ msgstr "Titel der Quelle"
 
 msgid "All"
 msgstr "Alle"
-
-msgid "Translations"
-msgstr "Übersetzung"
 
 msgid "Select all"
 msgstr "Alles auswählen"

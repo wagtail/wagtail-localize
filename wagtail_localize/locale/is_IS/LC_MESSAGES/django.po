@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
+"POT-Creation-Date: 2023-11-07 09:12+0000\n"
 "Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2023\n"
 "Language-Team: Icelandic (Iceland) (https://app.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
@@ -151,6 +151,9 @@ msgstr "Þýða þessa síðu"
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Þýðing á %(instance)s í %(locale)s"
 
+msgid "Translations"
+msgstr "Þýðingar"
+
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
 msgstr "Breyti %(object_type)s %(title)s"
@@ -253,9 +256,6 @@ msgstr "Titill upprunasíðu"
 
 msgid "All"
 msgstr "Allar"
-
-msgid "Translations"
-msgstr "Þýðingar"
 
 msgid "Select all"
 msgstr "Velja allt"

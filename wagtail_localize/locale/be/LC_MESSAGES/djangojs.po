@@ -54,6 +54,9 @@ msgstr "Выдаліць блакаванне рэдактара"
 msgid "Save"
 msgstr "Захаваць"
 
+msgid "Translate"
+msgstr "Перавесці"
+
 msgid "Unlock"
 msgstr "Разблакаваць"
 
