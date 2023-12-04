@@ -410,6 +410,47 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.fr_blog_post.refresh_from_db()
         self.assertEqual(self.fr_blog_post.test_charfield, "")
         self.assertEqual(self.fr_blog_post.test_richtextfield, "")
+    
+    def test_post_update_page_translation_with_publish_translations_and_cleared_foreignkey(
+        self,
+    ):
+        # Premable: First publish and translate with a test_snippet value
+        self.en_blog_post.test_snippet = self.en_snippet
+        self.en_blog_post.save_revision().publish()
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {"publish_translations": "on"},
+        )
+
+        # Sanity check: Both versions of page point to localise snippet instance
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.en_blog_post.test_snippet, self.en_snippet)
+        self.assertEqual(self.fr_blog_post.test_snippet, self.fr_snippet)
+
+
+        # Now update page by clearing the test_snippet foreign key
+        self.en_blog_post.test_snippet = None
+        self.en_blog_post.save_revision().publish()
+
+        # ... and retranslate
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {"publish_translations": "on"},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        # The FR version's test_snippet field should also be cleared
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_snippet, None)
 
     def test_post_update_snippet_translation(self):
         self.en_snippet.field = "Edited snippet"
