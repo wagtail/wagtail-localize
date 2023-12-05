@@ -410,7 +410,7 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.fr_blog_post.refresh_from_db()
         self.assertEqual(self.fr_blog_post.test_charfield, "")
         self.assertEqual(self.fr_blog_post.test_richtextfield, "")
-    
+
     def test_post_update_page_translation_with_publish_translations_and_cleared_foreignkey(
         self,
     ):
@@ -429,7 +429,6 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.fr_blog_post.refresh_from_db()
         self.assertEqual(self.en_blog_post.test_snippet, self.en_snippet)
         self.assertEqual(self.fr_blog_post.test_snippet, self.fr_snippet)
-
 
         # Now update page by clearing the test_snippet foreign key
         self.en_blog_post.test_snippet = None
