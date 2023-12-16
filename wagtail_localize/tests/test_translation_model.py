@@ -35,6 +35,7 @@ from wagtail_localize.test.models import (
     TestPage,
     TestParentalSnippet,
     TestSnippet,
+    TestSnippetNoDraft,
     TestUUIDModel,
     TestUUIDSnippet,
 )
@@ -681,7 +682,7 @@ class TestSaveTarget(TestCase):
         self.assertEqual(translated_snippet.field, "Contenu de test")
 
     def test_save_target_cant_save_snippet_as_draft(self):
-        snippet = TestSnippet.objects.create(field="Test content")
+        snippet = TestSnippetNoDraft.objects.create(field="Test content")
         source, created = TranslationSource.get_or_create_from_instance(snippet)
         translation = Translation.objects.create(
             source=source,

@@ -16,7 +16,13 @@ from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.models import Orderable, Page, TranslatableMixin
+from wagtail.models import (
+    DraftStateMixin,
+    Orderable,
+    Page,
+    RevisionMixin,
+    TranslatableMixin,
+)
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import register_snippet
 
@@ -27,7 +33,7 @@ from wagtail_localize.segments import StringSegmentValue
 
 
 @register_snippet
-class TestSnippet(TranslatableMixin, ClusterableModel):
+class TestSnippet(TranslatableMixin, DraftStateMixin, RevisionMixin, ClusterableModel):
     field = models.TextField(gettext_lazy("field"))
     # To test field level validation of snippets
     small_charfield = models.CharField(max_length=10, blank=True)
@@ -42,6 +48,23 @@ class TestSnippet(TranslatableMixin, ClusterableModel):
         FieldPanel("field"),
         FieldPanel("small_charfield"),
         InlinePanel("test_snippet_orderable"),
+    ]
+
+
+@register_snippet
+class TestSnippetNoDraft(TranslatableMixin, ClusterableModel):
+    field = models.TextField(gettext_lazy("field"))
+    # To test field level validation of snippets
+    small_charfield = models.CharField(max_length=10, blank=True)
+
+    translatable_fields = [
+        TranslatableField("field"),
+        TranslatableField("small_charfield"),
+    ]
+
+    panels = [
+        FieldPanel("field"),
+        FieldPanel("small_charfield"),
     ]
 
 

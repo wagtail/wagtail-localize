@@ -41,6 +41,7 @@ from wagtail.blocks.list_block import ListValue
 from wagtail.coreutils import find_available_slug
 from wagtail.fields import StreamField
 from wagtail.models import (
+    DraftStateMixin,
     Page,
     PageLogEntry,
     TranslatableMixin,
@@ -727,7 +728,7 @@ class TranslationSource(models.Model):
 
         Raises:
             SourceDeletedError: if the source object has been deleted.
-            CannotSaveDraftError: if the `publish` parameter was set to `False` when translating a non-page object.
+            CannotSaveDraftError: if the `publish` parameter was set to `False` when translating a non-DraftStateMixin object.
             MissingTranslationError: if a translation is missing and `fallback `is not `True`.
             MissingRelatedObjectError: if a related object is not translated and `fallback `is not `True`.
 
@@ -737,9 +738,8 @@ class TranslationSource(models.Model):
         original = self.as_instance()
         created = False
 
-        # Only pages can be saved as draft
-        # To-Do: add support for models using DraftStateMixin
-        if not publish and not isinstance(original, Page):
+        # Only models with DraftStateMixin can be saved as a draft
+        if not publish and not isinstance(original, DraftStateMixin):
             raise CannotSaveDraftError
 
         try:
@@ -804,8 +804,19 @@ class TranslationSource(models.Model):
                     if publish:
                         transaction.on_commit(page_revision.publish)
 
+                elif isinstance(translation, DraftStateMixin):
+                    # We copied another instance which may be live, so we make sure this one matches the desired state
+                    translation.live = publish
+                    translation.save()
+
+                    # Create a new revision of the Snippet
+                    page_revision = translation.save_revision(user=user)
+
+                    if publish:
+                        transaction.on_commit(page_revision.publish)
+
                 else:
-                    # Note: we don't need to run full_clean for Pages as Wagtail does that in Page.save()
+                    # Note: we don't need to run full_clean for DraftStateMixin objects as Wagtail does that in Page.save()
                     translation.full_clean()
 
                     translation.save()

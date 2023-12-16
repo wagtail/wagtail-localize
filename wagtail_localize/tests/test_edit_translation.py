@@ -31,7 +31,7 @@ from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
 from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
-from wagtail.models import Locale, Page
+from wagtail.models import Locale, Page, Revision
 from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_localize.models import (
@@ -2128,7 +2128,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         log = TranslationLog.objects.get()
         self.assertEqual(log.source, self.snippet_source)
         self.assertEqual(log.locale, self.fr_locale)
-        self.assertIsNone(log.page_revision)
+        self.assertIsInstance(log.page_revision, Revision)
 
     def test_cant_publish_snippet_translation_without_perms(self):
         self.moderators_group.permissions.filter(
