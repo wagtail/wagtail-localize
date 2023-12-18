@@ -89,7 +89,7 @@ class TestLibreTranslator(TestCase):
     def test_can_translate(self):
         self.assertIsInstance(self.translator, LibreTranslator)
 
-        french_locale = Locale.objects.get(language_code="fr")
+        french_locale = Locale.objects.create(language_code="fr")
 
         self.assertTrue(
             self.translator.can_translate(self.english_locale, self.french_locale)
