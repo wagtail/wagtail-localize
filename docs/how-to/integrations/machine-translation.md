@@ -132,8 +132,9 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 
 Website: [https://libretranslate.com/](https://libretranslate.com/)
 
-Note that You will need a subscription to get an API key. Or you can host your own instance.
-More details are available on the github page [https://github.com/LibreTranslate/LibreTranslate](https://github.com/LibreTranslate/LibreTranslate).
+!!! note
+
+    You will need a subscription to get an API key. Alternatively, you can host your own instance. See more details at [https://github.com/LibreTranslate/LibreTranslate](https://github.com/LibreTranslate/LibreTranslate).
 
 ```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
