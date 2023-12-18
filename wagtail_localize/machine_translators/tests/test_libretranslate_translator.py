@@ -1,8 +1,11 @@
+from unittest import mock
+
 from django.test import TestCase, override_settings
 from wagtail.models import Locale
 
 from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.machine_translators.libretranslate import LibreTranslator
+from wagtail_localize.strings import StringValue
 
 
 LIBRETRANSLATE_SETTINGS_ENDPOINT = {
@@ -28,47 +31,60 @@ class TestLibreTranslator(TestCase):
         api_endpoint = self.translator.get_api_endpoint()
         self.assertEqual(api_endpoint, "https://libretranslate.org")
 
-    # This probably requires a request to use the API but the test works against my local instance
-    # def test_translate_text(self):
-    #     self.assertIsInstance(self.translator, LibreTranslator)
+    @mock.patch(
+        "wagtail_localize.machine_translators.libretranslate.LibreTranslator.translate",
+        return_value={
+            StringValue("Hello world!"): StringValue("Bonjour le monde!"),
+            StringValue("This is a sentence. This is another sentence."): StringValue(
+                "Ceci est une phrase. Ceci est une autre phrase."
+            ),
+        },
+    )
+    def test_translate_text(self, mock_translate):
+        self.assertIsInstance(self.translator, LibreTranslator)
 
-    #     translations = self.translator.translate(
-    #         self.english_locale,
-    #         self.french_locale,
-    #         {
-    #             StringValue("Hello world!"),
-    #             StringValue("This is a sentence. This is another sentence."),
-    #         },
-    #     )
+        translations = self.translator.translate(
+            self.english_locale,
+            self.french_locale,
+            {
+                StringValue("Hello world!"),
+                StringValue("This is a sentence. This is another sentence."),
+            },
+        )
 
-    #     self.assertEqual(
-    #         translations,
-    #         {
-    #             StringValue("Hello world!"): StringValue("Bonjour !"),
-    #             StringValue(
-    #                 "This is a sentence. This is another sentence."
-    #             ): StringValue("C'est une phrase. C'est une autre phrase."),
-    #         },
-    #     )
+        self.assertEqual(
+            translations,
+            {
+                StringValue("Hello world!"): StringValue("Bonjour le monde!"),
+                StringValue(
+                    "This is a sentence. This is another sentence."
+                ): StringValue("Ceci est une phrase. Ceci est une autre phrase."),
+            },
+        )
 
-    # This has been commented out because after a while the public API started
-    # to return different results for the same input.
-    # This probably requires a request to use the API but the test works against my local instance
-    # def test_translate_html(self):
-    #     self.assertIsInstance(self.translator, LibreTranslator)
+    @mock.patch(
+        "wagtail_localize.machine_translators.libretranslate.LibreTranslator.translate",
+        return_value={
+            StringValue('<a id="a1">Hello !</a>. <b>This is a test</b>.'): StringValue(
+                """<a id="a1">Bonjour !</a>. <b>C'est un test</b>."""
+            ),
+        },
+    )
+    def test_translate_html(self, mock_translate):
+        self.assertIsInstance(self.translator, LibreTranslator)
 
-    #     string, attrs = StringValue.from_source_html(
-    #         '<a href="https://en.wikipedia.org/wiki/World">Hello !</a>. <b>This is a test</b>.'
-    #     )
+        string, attrs = StringValue.from_source_html(
+            '<a href="https://en.wikipedia.org/wiki/World">Hello !</a>. <b>This is a test</b>.'
+        )
 
-    #     translations = self.translator.translate(
-    #         self.english_locale, self.french_locale, [string]
-    #     )
+        translations = self.translator.translate(
+            self.english_locale, self.french_locale, [string]
+        )
 
-    #     self.assertEqual(
-    #         translations[string].render_html(attrs),
-    #         "Bonjour ! C'est un test enregistré/b.",
-    #     )
+        self.assertEqual(
+            translations[string].render_html(attrs),
+            """<a href="https://en.wikipedia.org/wiki/World">Bonjour !</a>. <b>C'est un test</b>.""",
+        )
 
     def test_can_translate(self):
         self.assertIsInstance(self.translator, LibreTranslator)
