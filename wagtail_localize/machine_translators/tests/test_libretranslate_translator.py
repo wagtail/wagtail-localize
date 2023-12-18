@@ -20,7 +20,7 @@ class TestLibreTranslator(TestCase):
     )
     def setUp(self):
         self.english_locale = Locale.objects.get()
-        self.french_locale = Locale.objects.create(language_code="fr")
+        self.french_locale = Locale.objects.create(language_code="fr-fr")
         self.translator = get_machine_translator()
 
     def test_api_endpoint(self):

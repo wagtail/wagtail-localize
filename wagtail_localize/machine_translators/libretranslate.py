@@ -9,6 +9,9 @@ from wagtail_localize.strings import StringValue
 class LibreTranslator(BaseMachineTranslator):
     """
     A machine translator that uses the LibreTranslate API.
+
+    API Documentation:
+        https://libretranslate.com/docs/
     """
 
     display_name = "LibreTranslate"

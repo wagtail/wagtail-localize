@@ -141,7 +141,8 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
     "CLASS": "wagtail_localize.machine_translators.libretranslate.LibreTranslator",
     "OPTIONS": {
         "LIBRETRANSLATE_URL": "https://libretranslate.org",  # or your self-hosted instance URL
-        "API_KEY": "<Your LibreTranslate api key here>",  # Optional on self-hosted instance by providing a random string
+        # For self-hosted instances without API key setup, use a random string as the API key.
+        "API_KEY": "<Your LibreTranslate api key here>",
     },
 }
 ```
