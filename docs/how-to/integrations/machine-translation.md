@@ -128,6 +128,23 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 }
 ```
 
+## LibreTranslate
+
+Website: [https://libretranslate.com/](https://libretranslate.com/)
+
+Note that You will need a subscription to get an API key. Or you can host your own instance.
+More details are available on the github page [https://github.com/LibreTranslate/LibreTranslate](https://github.com/LibreTranslate/LibreTranslate).
+
+```python
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    "CLASS": "wagtail_localize.machine_translators.libretranslate.LibreTranslator",
+    "OPTIONS": {
+        "LIBRETRANSLATE_URL": "https://libretranslate.org",
+        "API_KEY": "<Your LibreTranslate api key here>",  # Optional on self-hosted instance by providing a random string
+    },
+}
+```
+
 ## Dummy
 
 The dummy translator exists primarily for testing Wagtail Localize and it only reverses the strings that are passed to
