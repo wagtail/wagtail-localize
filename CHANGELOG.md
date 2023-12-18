@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [LibreTranslate](https://libretranslate.com/) machine translator support ([#753](https://github.com/wagtail/wagtail-localize/pull/753)) @drivard
+
 ## [1.7] - 2023-11-15
 
 ### Added
