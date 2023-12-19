@@ -31,6 +31,15 @@ class TestLibreTranslator(TestCase):
         api_endpoint = self.translator.get_api_endpoint()
         self.assertEqual(api_endpoint, "https://libretranslate.org")
 
+    def test_language_code(self):
+        self.assertEqual(
+            self.translator.language_code(self.english_locale.language_code), "en"
+        )
+        self.assertEqual(
+            self.translator.language_code(self.french_locale.language_code), "fr"
+        )
+        self.assertEqual(self.translator.language_code("foo-bar-baz"), "foo")
+
     @mock.patch(
         "wagtail_localize.machine_translators.libretranslate.LibreTranslator.translate",
         return_value={
