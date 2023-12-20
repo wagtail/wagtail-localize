@@ -81,10 +81,10 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response,
-            "form",
-            "language_code",
+        form = response.context["form"]
+        self.assertIn("language_code", form.errors)
+        self.assertEqual(
+            form.errors["language_code"],
             ["Select a valid choice. en is not one of the available choices."],
         )
 
@@ -99,10 +99,10 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response,
-            "form",
-            "language_code",
+        form = response.context["form"]
+        self.assertIn("language_code", form.errors)
+        self.assertEqual(
+            form.errors["language_code"],
             ["Select a valid choice. ja is not one of the available choices."],
         )
 
@@ -117,8 +117,10 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response, "component_form", "sync_from", ["This field is required."]
+        component_form = response.context["component_form"]
+        self.assertIn("sync_from", component_form.errors)
+        self.assertEqual(
+            component_form.errors["sync_from"], ["This field is required."]
         )
 
         # Check that the locale was not created
@@ -157,8 +159,10 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response, "component_form", "sync_from", ["This field is required."]
+        component_form = response.context["component_form"]
+        self.assertIn("sync_from", component_form.errors)
+        self.assertEqual(
+            component_form.errors["sync_from"], ["This field is required."]
         )
 
         # Check that the locale was not created
@@ -250,10 +254,10 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response,
-            "form",
-            "language_code",
+        form = response.context["form"]
+        self.assertIn("language_code", form.errors)
+        self.assertEqual(
+            form.errors["language_code"],
             ["Select a valid choice. en is not one of the available choices."],
         )
 
@@ -268,10 +272,10 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response,
-            "form",
-            "language_code",
+        form = response.context["form"]
+        self.assertIn("language_code", form.errors)
+        self.assertEqual(
+            form.errors["language_code"],
             ["Select a valid choice. ja is not one of the available choices."],
         )
 
@@ -286,8 +290,10 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response, "component_form", "sync_from", ["This field is required."]
+        component_form = response.context["component_form"]
+        self.assertIn("sync_from", component_form.errors)
+        self.assertEqual(
+            component_form.errors["sync_from"], ["This field is required."]
         )
 
     def test_sync_from_not_required_when_disabled(self):
@@ -321,8 +327,10 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response, "component_form", "sync_from", ["This field is required."]
+        component_form = response.context["component_form"]
+        self.assertIn("sync_from", component_form.errors)
+        self.assertEqual(
+            component_form.errors["sync_from"], ["This field is required."]
         )
 
     def test_sync_from_cannot_be_the_same_as_locale(self):
@@ -336,10 +344,10 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
 
         # Should return the form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response,
-            "component_form",
-            "sync_from",
+        component_form = response.context["component_form"]
+        self.assertIn("sync_from", component_form.errors)
+        self.assertEqual(
+            component_form.errors["sync_from"],
             ["This locale cannot be synced into itself."],
         )
 
