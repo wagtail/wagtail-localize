@@ -1,9 +1,0 @@
-[build]
-publish = "site"
-ignore = "git diff --quiet HEAD^ HEAD {readme.md,mkdocs.yml,netlify.toml,docs/,*.py}"
-command = """
-pip install django~=3.2
-pip install flit
-flit install --deps production --extras documentation,testing
-mkdocs build -d site
-"""
