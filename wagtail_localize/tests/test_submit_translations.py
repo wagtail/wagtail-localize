@@ -479,7 +479,9 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Translation.objects.exists())
-        self.assertFormError(response, "form", "locales", ["This field is required."])
+        form = response.context["form"]
+        self.assertIn("locales", form.errors)
+        self.assertEqual(form.errors["locales"], ["This field is required."])
 
     def test_post_submit_page_translation_without_permissions(self):
         strip_user_perms()
@@ -984,7 +986,9 @@ class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Translation.objects.exists())
-        self.assertFormError(response, "form", "locales", ["This field is required."])
+        form = response.context["form"]
+        self.assertIn("locales", form.errors)
+        self.assertEqual(form.errors["locales"], ["This field is required."])
 
     def test_post_submit_snippet_translation_without_permissions(self):
         strip_user_perms()
