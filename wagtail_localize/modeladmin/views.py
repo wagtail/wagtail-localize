@@ -1,3 +1,4 @@
+from django import VERSION as DJANGO_VERSION
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import unquote
@@ -78,7 +79,11 @@ class TranslatableIndexView(TranslatableViewMixin, IndexView):
         filters = super().get_filters(request)
         # Update the 'lookup_params' part of the filters tuple to filter objects
         # using the currently active locale
-        filters[2]["locale"] = self.locale.id
+        if DJANGO_VERSION >= (5, 0):
+            # modeladmin IndexView needs an iterable in build_q_object_from_lookup_parameters
+            filters[2]["locale"] = [self.locale.id]
+        else:
+            filters[2]["locale"] = self.locale.id
         return filters
 
     def get_context_data(self, **kwargs):
