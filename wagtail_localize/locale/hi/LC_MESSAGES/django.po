@@ -1,0 +1,19 @@
+#
+# Translators:
+# Anshika Vashistha, 2023
+#
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-15 20:26+0000\n"
+"Last-Translator: Anshika Vashistha, 2023\n"
+"Language-Team: Hindi (https://app.transifex.com/torchbox/teams/8009/hi/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: hi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Saving…"
+msgstr "Saving…"
+
+msgid "Save"
+msgstr "Save"

@@ -4,10 +4,11 @@
 # Robin Skahjem-Eriksen <robinds@student.matnat.uio.no>, 2021
 # Ole Kristian Losvik <ole@losol.no>, 2021
 # Stein Strindhaug <stein.strindhaug@gmail.com>, 2021
+# Jonathan D, 2023
 #
 msgid ""
 msgstr ""
-"Last-Translator: Stein Strindhaug <stein.strindhaug@gmail.com>, 2021\n"
+"Last-Translator: Jonathan D, 2023\n"
 "Language-Team: Norwegian Bokmål (https://app.transifex.com/torchbox/"
 "teams/8009/nb/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,6 +17,9 @@ msgstr ""
 
 msgid "Apply editor lock"
 msgstr "Slå på redigeringslås"
+
+msgid "Cancel"
+msgstr "Avbryt"
 
 msgid "Change image"
 msgstr "Velg et annet bilde"

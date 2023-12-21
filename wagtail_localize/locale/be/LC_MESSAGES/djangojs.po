@@ -15,11 +15,32 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
+msgid "[DELETED]"
+msgstr "[ВЫДАЛЕНЫ]"
+
 msgid "Apply editor lock"
 msgstr "Заблакаваць рэдактар"
 
 msgid "Cancel"
 msgstr "Адмена"
+
+msgid "Change %s"
+msgstr "Змяніць %s"
+
+msgid "Change document"
+msgstr "Змяніць дакумент"
+
+msgid "Change image"
+msgstr "Змяніць малюнак"
+
+msgid "Change page"
+msgstr "Змяніць старонку"
+
+msgid "Changed"
+msgstr "Зменены"
+
+msgid "Choose a %s"
+msgstr "Выбраць %s"
 
 msgid "Choose a document"
 msgstr "Абраць дакумент"
@@ -27,8 +48,20 @@ msgstr "Абраць дакумент"
 msgid "Choose a page"
 msgstr "Выбраць старонку"
 
+msgid "Choose an image"
+msgstr "Выбраць малюнак"
+
+msgid "Convert to alias page"
+msgstr "Пераўтварыць у старонку псеўданіма"
+
 msgid "Delete"
 msgstr "Выдаліць"
+
+msgid "Download PO file"
+msgstr "Загрузіць PO файл"
+
+msgid "Download PO file and input translations offline"
+msgstr "Загрузіць PO файл і увесці пераклады ў аўтаномным рэжыме"
 
 msgid "Edit"
 msgstr "Рэдагаваць"
@@ -39,26 +72,85 @@ msgstr "Рэдактаваць гэта %s"
 msgid "Edit this document"
 msgstr "Рэдагаваць гэты дакумент"
 
+msgid "Edit this image"
+msgstr "Адрэдагаваць гэты малюнак"
+
 msgid "Edit this page"
 msgstr "Змяніць гэтую старонку"
+
+msgid "Fetching %s information..."
+msgstr "Выбарка %s інфармацыі..."
+
+msgid "Fetching document information..."
+msgstr "Выбарка інфармацыі аб дакуменце..."
+
+msgid "Fetching image information..."
+msgstr "Выбарка інфармацыі аб малюнку..."
+
+msgid "Fetching page information..."
+msgstr "Выбарка інфармацыі аб старонке..."
 
 msgid "Lock"
 msgstr "Заблакаваць"
 
+msgid "Not translated"
+msgstr "Не перакладзена"
+
 msgid "Preview"
 msgstr "Папярэдні прагляд"
+
+msgid "Publish in "
+msgstr "Публікаваць у"
+
+msgid "Publishing..."
+msgstr "Публікацыя..."
 
 msgid "Remove editor lock"
 msgstr "Выдаліць блакаванне рэдактара"
 
+msgid "Revert to %s version"
+msgstr "Вярнуцца да %s версіі"
+
 msgid "Save"
 msgstr "Захаваць"
 
+msgid "Saving..."
+msgstr "Захаванне..."
+
+msgid "segments translated"
+msgstr "перакладзеныя сегменты"
+
+msgid "Server error"
+msgstr "Памылка сервера"
+
+msgid "Stop Synced translation"
+msgstr "Спыніць сінхранізаваны пераклад"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr ""
+"Ёсць незахаваныя фрагменты. Калі ласка, захавайце або адмяніце іх перад "
+"выхадам."
+
 msgid "Translate"
 msgstr "Перавесці"
+
+msgid "Translate all missing strings with "
+msgstr "Перакласці ўсе прапушчаныя радкі з дапамогай"
+
+msgid "Translate with "
+msgstr "Перакласці з дапамогай"
 
 msgid "Unlock"
 msgstr "Разблакаваць"
 
 msgid "Unpublish"
 msgstr "Адмяніць публікацыю"
+
+msgid "Upload PO file"
+msgstr "Загрузіць PO файл"
+
+msgid "Upload translated PO file to submit translations"
+msgstr "Загрузіць перакладзены PO-файл для адпраўкі перакладаў"
+
+msgid "Uses %s version"
+msgstr "Выкарыстоўвае %s версію"

@@ -3,12 +3,13 @@
 # Eirik Krogstad <eirikkr@gmail.com>, 2021
 # Stein Strindhaug <stein.strindhaug@gmail.com>, 2022
 # Ole Kristian Losvik <ole@losol.no>, 2023
+# Jonathan D, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-01 16:47+0000\n"
-"Last-Translator: Ole Kristian Losvik <ole@losol.no>, 2023\n"
+"POT-Creation-Date: 2023-11-15 20:26+0000\n"
+"Last-Translator: Jonathan D, 2023\n"
 "Language-Team: Norwegian Bokmål (https://app.transifex.com/torchbox/"
 "teams/8009/nb/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,6 +31,9 @@ msgstr "Last ned XLSX"
 msgid "Download CSV"
 msgstr "Last ned CSV"
 
+msgid "Go back"
+msgstr "Gå tilbake"
+
 msgid "Content type"
 msgstr "Innholdstype"
 
@@ -41,3 +45,6 @@ msgstr "Innhold"
 
 msgid "All"
 msgstr "Alle"
+
+msgid "Select all"
+msgstr "Velg alle"

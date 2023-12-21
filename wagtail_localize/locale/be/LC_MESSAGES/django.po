@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 09:12+0000\n"
+"POT-Creation-Date: 2023-11-15 20:26+0000\n"
 "Last-Translator: Andrei Satsevich, 2023\n"
 "Language-Team: Belarusian (https://app.transifex.com/torchbox/teams/8009/"
 "be/)\n"
@@ -41,8 +41,52 @@ msgstr "Спампаваць CSV"
 msgid "Translate {model_name}"
 msgstr "Перавесці  {model_name}"
 
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr "{model_name} '{object} ' паспяхова адпраўлены на пераклад у {locales}"
+
+msgid "This locale cannot be synced into itself."
+msgstr "Гэта лакаль не можа быць сінхранізавана сама з сабой."
+
+msgid "Synchronise content from another locale"
+msgstr "Сінхранізацыя змесціва з іншай лакалі"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"Выберыце лакаль для сінхранізацыі змесціва. Усе існуючыя і будучыя "
+"матэрыялы, створаныя ў абранай лакалі, будуць аўтаматычна скапіраваны ў "
+"гэтую лакаль."
+
 msgid "Enable"
 msgstr "Уключан"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Вы ўпэўнены, што хочаце пераўтварыць гэтую старонку ў псеўданім? Гэта "
+"перазапіша змесціва старонкі змесцівам "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"page</a>."
+msgstr ""
+"Гэта старонка яшчэ не перакладзена. Гэта люстраное адлюстраванне<a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"старонкі </a>."
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "Пераклад %(instance)sу %(locale)s"
 
 msgid "Status"
 msgstr "Статус"
@@ -50,8 +94,38 @@ msgstr "Статус"
 msgid "Content"
 msgstr "Змест"
 
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"Пры публікацыі '{object} ' у {locale} былі выяўлены новыя памылкі праверкі. "
+"Калі ласка, выпраўце іх або націсніце апублікаваць яшчэ раз, каб пакуль "
+"ігнараваць гэтыя пераклады."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"Апублікавана '{object} ' у {locale} з адсутнымі перакладамі - глядзіце ніжэй."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "Апублікавана '{object}' у  {locale}."
+
 msgid "All"
 msgstr "Усе"
 
 msgid "Locales"
 msgstr "Лакалізацыі "
+
+msgid "{} locales"
+msgstr "{} лакалізацыі "
+
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr "Старонка '{page_title} ' паспяхова адпраўлена на пераклад у {locales}"
+
+msgid "Convert to alias page"
+msgstr "Пераўтварыць у старонку псеўданіма"

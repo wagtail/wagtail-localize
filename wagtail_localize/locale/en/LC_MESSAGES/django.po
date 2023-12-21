@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-15 20:26+0000\n"
+"POT-Creation-Date: 2023-12-21 15:03+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -51,12 +51,12 @@ msgstr ""
 msgid "Download CSV"
 msgstr ""
 
-#: modeladmin/views.py:192 views/submit_translations.py:208
+#: modeladmin/views.py:197 views/submit_translations.py:208
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr ""
 
-#: modeladmin/views.py:217 views/submit_translations.py:237
+#: modeladmin/views.py:222 views/submit_translations.py:237
 #, python-brace-format
 msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
