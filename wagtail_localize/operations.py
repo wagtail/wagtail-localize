@@ -50,7 +50,7 @@ class TranslationCreator:
                 )
 
         # Support disabling the out of the box translation mode.
-        # The value set on the model takes precendence over the global setting.
+        # The value set on the model takes precedence over the global setting.
         if hasattr(instance, "localize_default_translation_mode"):
             translation_mode = instance.localize_default_translation_mode
         else:
@@ -61,9 +61,13 @@ class TranslationCreator:
 
         # Set up translation records
         for target_locale in self.target_locales:
+            # Skip if target_locale is the same as source locale
+            if target_locale == source.locale:
+                continue
+
             # Create translation if it doesn't exist yet, re-enable if translation was disabled
             # Note that the form won't show this locale as an option if the translation existed
-            # in this langauge, so this shouldn't overwrite any unmanaged translations.
+            # in this language, so this shouldn't overwrite any unmanaged translations.
             translation, created = Translation.objects.update_or_create(
                 source=source,
                 target_locale=target_locale,
