@@ -533,6 +533,40 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
+    def test_structblockwithoverrides(self):
+        block_id = uuid.uuid4()
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_structblockwithoverrides",
+            {"field_a": "Test content", "field_b": "Non-translatable content"},
+        )
+
+        segments = extract_segments(page)
+
+        self.assertEqual(
+            segments,
+            [
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}.field_a",
+                    "Test content",
+                )
+            ],
+        )
+
+    def test_structblockignoreall(self):
+        block_id = uuid.uuid4()
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_structblockignoreall",
+            {
+                "field_a": "Non-translatable content",
+                "field_b": "Non-translatable content",
+            },
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(segments, [])
+
     def test_customblockwithoutextractmethod(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
