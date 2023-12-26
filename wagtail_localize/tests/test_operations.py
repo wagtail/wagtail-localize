@@ -53,17 +53,6 @@ class TranslationOperationsTest(TestCase):
             user=self.user, target_locales=self.target_locales
         )
 
-        # Check if TranslationSource already exists
-        source, created = TranslationSource.objects.get_or_create(
-            object_id=self.page.translation_key,
-            specific_content_type=ContentType.objects.get_for_model(TestPage),
-            locale=self.page.locale,
-        )
-
-        # If not created, prepare the source
-        if created:
-            prepare_source(source)
-
     def test_create_translations_skips_duplicate(self):
         # Call create_translations() to check that only one translation has been created
         self.translation_creator.create_translations(self.page)
