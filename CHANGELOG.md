@@ -90,7 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Improve authentication options for GoogleCloudTranslator (https://github.com/wagtail/wagtail-localize/pull/645) @ababic
-  See https://www.wagtail-localize.org/how-to/integrations/machine-translation/ for further details.
+  See https://wagtail-localize.org/how-to/integrations/machine-translation/ for further details.
 - Add setting to skip publication when live pages are submitted for translation (https://github.com/wagtail/wagtail-localize/pull/656) @mattlinares
   The setting is `WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE`, defaulting to `True`.
 

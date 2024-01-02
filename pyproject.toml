@@ -60,9 +60,9 @@ google = [
 ]
 
 [project.urls]
-Home = "https://www.wagtail-localize.org"
+Home = "https://wagtail-localize.org"
 Source = "https://github.com/wagtail/wagtail-localize"
-Documentation = "https://www.wagtail-localize.org"
+Documentation = "https://wagtail-localize.org"
 
 [tool.flit.module]
 name = "wagtail_localize"

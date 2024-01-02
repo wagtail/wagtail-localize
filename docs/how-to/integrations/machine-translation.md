@@ -171,7 +171,7 @@ class CustomTranslator(BaseMachineTranslator):
     def translate(self, source_locale, target_locale, strings):
         # Translate something
         # source_locale and target_locale are both Locale objects.
-        # strings are a list of StringValue instances (see https://www.wagtail-localize.org/ref/strings/#wagtail_localize.strings.StringValue)
+        # strings are a list of StringValue instances (see https://wagtail-localize.org/latest/ref/strings/#wagtail_localize.strings.StringValue)
 
         # This function must return a dict with source StringValue's as the keys and translations as the values.
 
