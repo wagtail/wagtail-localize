@@ -123,14 +123,12 @@ class StreamFieldSegmentExtractor:
     def handle_struct_block(self, struct_block, raw_value=None):
         segments = []
 
-        override_translatable_blocks = getattr(
-            struct_block.block, "override_translatable_blocks", None
-        )
+        translatable_blocks = getattr(struct_block.block, "translatable_blocks", None)
 
         for field_name, block_value in struct_block.items():
             if (
-                override_translatable_blocks is not None
-                and field_name not in override_translatable_blocks
+                translatable_blocks is not None
+                and field_name not in translatable_blocks
             ):
                 continue
 
