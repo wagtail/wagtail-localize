@@ -167,14 +167,14 @@ class TestStructBlockOverride(blocks.StructBlock):
     field_a = blocks.TextBlock()
     field_b = blocks.TextBlock()
 
-    override_translatable_blocks = ["field_a"]
+    translatable_blocks = ["field_a"]
 
 
 class TestStructBlockIgnoreAll(blocks.StructBlock):
     field_a = blocks.TextBlock()
     field_b = blocks.TextBlock()
 
-    override_translatable_blocks = []
+    translatable_blocks = []
 
 
 class TestNestedChooserStructBlock(blocks.StructBlock):
