@@ -91,8 +91,11 @@ class IndexView(generic.IndexView):
 
 class CreateView(generic.CreateView):
     page_title = gettext_lazy("Add locale")
-    success_message = gettext_lazy("Locale '{0}' created.")
     template_name = "wagtaillocales/create.html"
+
+    @property
+    def success_message(self):
+        return gettext_lazy("Locale '{0}' created.").format(str(self.object))
 
     def get_components(self):
         return ComponentManager.from_request(self.request)
@@ -125,12 +128,15 @@ class CreateView(generic.CreateView):
 
 
 class EditView(generic.EditView):
-    success_message = gettext_lazy("Locale '{0}' updated.")
     error_message = gettext_lazy("The locale could not be saved due to errors.")
     delete_item_label = gettext_lazy("Delete locale")
     context_object_name = "locale"
     template_name = "wagtaillocales/edit.html"
     queryset = Locale.all_objects.all()
+
+    @property
+    def success_message(self):
+        return gettext_lazy("Locale '{0}' updated.").format(str(self.object))
 
     def get_components(self):
         return ComponentManager.from_request(
@@ -165,7 +171,6 @@ class EditView(generic.EditView):
 
 
 class DeleteView(generic.DeleteView):
-    success_message = gettext_lazy("Locale '{0}' deleted.")
     cannot_delete_message = gettext_lazy(
         "This locale cannot be deleted because there are pages and/or other objects using it."
     )
@@ -173,6 +178,10 @@ class DeleteView(generic.DeleteView):
     confirmation_message = gettext_lazy("Are you sure you want to delete this locale?")
     template_name = "wagtaillocales/confirm_delete.html"
     queryset = Locale.all_objects.all()
+
+    @property
+    def success_message(self):
+        return gettext_lazy("Locale '{0}' deleted.").format(str(self.object))
 
     def can_delete(self, locale):
         return get_locale_usage(locale) == (0, 0)
