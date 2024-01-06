@@ -51,20 +51,15 @@ class TestSnippet(TranslatableMixin, DraftStateMixin, RevisionMixin, Clusterable
     ]
 
 
-@register_snippet
-class TestSnippetNoDraft(TranslatableMixin, ClusterableModel):
-    field = models.TextField(gettext_lazy("field"))
-    # To test field level validation of snippets
-    small_charfield = models.CharField(max_length=10, blank=True)
+class TestNoDraftModel(TranslatableMixin):
+    field = models.CharField(max_length=10, blank=True)
 
     translatable_fields = [
         TranslatableField("field"),
-        TranslatableField("small_charfield"),
     ]
 
     panels = [
         FieldPanel("field"),
-        FieldPanel("small_charfield"),
     ]
 
 
