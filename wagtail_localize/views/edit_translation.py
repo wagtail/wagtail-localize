@@ -43,7 +43,7 @@ from wagtail.documents.models import AbstractDocument
 from wagtail.fields import StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import AbstractImage
-from wagtail.models import Page, TranslatableMixin
+from wagtail.models import DraftStateMixin, Page, TranslatableMixin
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
@@ -479,7 +479,7 @@ def get_segment_location_info(
         }
 
 
-def edit_translation(request, translation, instance):
+def edit_translation(request, translation: Translation, instance):
     if isinstance(instance, Page):
         # Page
         # Note: Edit permission is already checked by the edit page view
@@ -507,6 +507,36 @@ def edit_translation(request, translation, instance):
         can_lock = page_perms.can_lock()
         can_unlock = page_perms.can_unlock()
         can_delete = page_perms.can_delete()
+    elif isinstance(instance, DraftStateMixin):
+        # Draftable Snippet
+        # Note: Edit permission is already checked by the edit snippet view
+        page_perms = None
+
+        is_page = False
+        is_live = bool(instance.live_revision)
+        is_locked = False
+        last_published_at = instance.live_revision.created_at if is_live else None
+        last_published_by = instance.live_revision.user if is_live else None
+        live_url = None
+
+        # Native publish permissions for snippets were only added in Wagtail 4.2
+        # https://github.com/wagtail/wagtail/commit/1f143cf8ca5b65c91a77cfb7aa625c82d10cc2f3
+        if WAGTAIL_VERSION >= (4, 2):
+            can_publish = (
+                request.user.has_perm(
+                    get_permission_name("publish", instance.__class__)
+                )
+                or request.user.is_superuser
+            )
+        else:
+            can_publish = True
+
+        can_unpublish = False  # Snippets can't be unpublished
+        can_lock = False
+        can_unlock = False
+        can_delete = request.user.has_perm(
+            get_permission_name("delete", instance.__class__)
+        )
     else:
         # Snippet
         # Note: Edit permission is already checked by the edit snippet view
@@ -531,9 +561,19 @@ def edit_translation(request, translation, instance):
 
     if request.method == "POST":
         if request.POST.get("action") == "publish":
-            if isinstance(instance, Page):
-                if not page_perms.can_publish():
-                    raise PermissionDenied
+            if isinstance(instance, DraftStateMixin):
+                if isinstance(instance, Page):
+                    if not page_perms.can_publish():
+                        raise PermissionDenied
+
+                elif WAGTAIL_VERSION >= (4, 2):
+                    if (
+                        not request.user.has_perm(
+                            get_permission_name("publish", instance.__class__)
+                        )
+                        and not request.user.is_superuser
+                    ):
+                        raise PermissionDenied
 
             try:
                 translation.save_target(user=request.user, publish=True)
@@ -785,7 +825,9 @@ def edit_translation(request, translation, instance):
         else:
             return {
                 "title": str(instance),
-                "isLive": True,
+                "isLive": instance.live
+                if isinstance(instance, DraftStateMixin)
+                else True,
                 "editUrl": get_edit_url(instance),
                 "createTranslationRequestUrl": get_submit_translation_url(instance),
             }
@@ -805,7 +847,9 @@ def edit_translation(request, translation, instance):
         else:
             return {
                 "title": str(instance),
-                "isLive": True,
+                "isLive": instance.live
+                if isinstance(instance, DraftStateMixin)
+                else True,
                 "editUrl": get_edit_url(instance),
             }
 

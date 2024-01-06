@@ -8,7 +8,7 @@ from django.db import OperationalError, transaction
 from django.db.migrations.recorder import MigrationRecorder
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from wagtail.models import Locale, Page
+from wagtail.models import Locale, Page, Revision
 
 from wagtail_localize.models import (
     CannotSaveDraftError,
@@ -32,10 +32,10 @@ from wagtail_localize.models import (
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import (
+    TestNoDraftModel,
     TestPage,
     TestParentalSnippet,
     TestSnippet,
-    TestSnippetNoDraft,
     TestUUIDModel,
     TestUUIDSnippet,
 )
@@ -681,9 +681,9 @@ class TestSaveTarget(TestCase):
         translated_snippet = snippet.get_translation(self.fr_locale)
         self.assertEqual(translated_snippet.field, "Contenu de test")
 
-    def test_save_target_cant_save_snippet_as_draft(self):
-        snippet = TestSnippetNoDraft.objects.create(field="Test content")
-        source, created = TranslationSource.get_or_create_from_instance(snippet)
+    def test_save_target_cant_save_non_draftable_as_draft(self):
+        snippet = TestNoDraftModel.objects.create(field="Test content")
+        source, _ = TranslationSource.get_or_create_from_instance(snippet)
         translation = Translation.objects.create(
             source=source,
             target_locale=self.fr_locale,
@@ -699,6 +699,71 @@ class TestSaveTarget(TestCase):
 
         with self.assertRaises(CannotSaveDraftError):
             translation.save_target(publish=False)
+
+    def test_save_target_can_save_draftable_as_draft(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+        source, _ = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        translation.save_target(publish=False)
+
+        self.assertFalse(snippet.get_translation(self.fr_locale).live)
+
+    def test_save_target_can_update_draftable_as_draft(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+        source, _ = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        translation.save_target(publish=False)
+
+        field_context = TranslationContext.objects.get(path="field")
+        StringTranslation.objects.create(
+            translation_of=self.test_content_string,
+            context=field_context,
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        translation.save_target(publish=False)
+
+        self.assertFalse(snippet.get_translation(self.fr_locale).live)
+        self.assertEqual(
+            snippet.get_translation(self.fr_locale).field, "Contenu de test"
+        )
+
+    def test_save_target_can_publish_draftable(self):
+        snippet = TestSnippet.objects.create(field="Test content")
+        source, _ = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        field_context = TranslationContext.objects.get(path="field")
+        StringTranslation.objects.create(
+            translation_of=self.test_content_string,
+            context=field_context,
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        translation.save_target()
+
+        french_snippet = snippet.get_translation(self.fr_locale)
+
+        self.assertTrue(french_snippet.live)
+        self.assertEqual(french_snippet.field, "Contenu de test")
+
+        log = TranslationLog.objects.get()
+        self.assertEqual(log.source, source)
+        self.assertEqual(log.locale, self.fr_locale)
+        self.assertIsInstance(log.revision, Revision)
 
     def test_uuid_snippet_save_target(self):
         foreign_key_target = TestUUIDModel.objects.create(charfield="Some Test")

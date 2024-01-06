@@ -1660,11 +1660,15 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(
             props["object"]["title"], f"TestSnippet object ({self.fr_snippet.id})"
         )
-        self.assertTrue(props["object"]["isLive"])
+        self.assertFalse(
+            props["object"]["isLive"]
+        )  # Draftable snippet is saved as draft
+        self.assertIsNone(
+            props["object"]["lastPublishedDate"]
+        )  # and so it won't have a last published date initially
         self.assertFalse(props["object"]["isLocked"])
 
-        # Snippets don't have last published, live URL, breadcrumb, or tabs
-        self.assertIsNone(props["object"]["lastPublishedDate"])
+        # Snippets don't have live URL, breadcrumb, or tabs
         self.assertIsNone(props["object"]["liveUrl"])
         self.assertEqual(props["breadcrumb"], [])
         self.assertEqual(props["tabs"], [{"label": "Content", "slug": "content"}])
@@ -1890,7 +1894,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         log = TranslationLog.objects.get()
         self.assertEqual(log.source, self.page_source)
         self.assertEqual(log.locale, self.fr_locale)
-        self.assertEqual(log.page_revision, latest_revision)
+        self.assertEqual(log.revision, latest_revision)
 
     def test_publish_page_translation_with_missing_translations(self):
         # Same as the above test except we only fill in one field. We should be given a warning but the publish should be published.
@@ -1932,7 +1936,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         log = TranslationLog.objects.get()
         self.assertEqual(log.source, self.page_source)
         self.assertEqual(log.locale, self.fr_locale)
-        self.assertEqual(log.page_revision, latest_revision)
+        self.assertEqual(log.revision, latest_revision)
 
     def test_publish_page_translation_with_new_field_error(self):
         translation = StringTranslation.objects.create(
@@ -2027,7 +2031,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         log = TranslationLog.objects.get()
         self.assertEqual(log.source, self.page_source)
         self.assertEqual(log.locale, self.fr_locale)
-        self.assertEqual(log.page_revision, self.fr_page.get_latest_revision())
+        self.assertEqual(log.revision, self.fr_page.get_latest_revision())
 
     def test_publish_page_translation_with_invalid_segment_override(self):
         # Set the email address override to something invalid
@@ -2128,7 +2132,7 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         log = TranslationLog.objects.get()
         self.assertEqual(log.source, self.snippet_source)
         self.assertEqual(log.locale, self.fr_locale)
-        self.assertIsInstance(log.page_revision, Revision)
+        self.assertIsInstance(log.revision, Revision)
 
     def test_cant_publish_snippet_translation_without_perms(self):
         self.moderators_group.permissions.filter(
