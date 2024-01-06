@@ -93,6 +93,10 @@ class CreateView(generic.CreateView):
     page_title = gettext_lazy("Add locale")
     template_name = "wagtaillocales/create.html"
 
+    @property
+    def success_message(self):
+        return gettext_lazy("Locale '{0}' created.").format(str(self.object))
+
     def get_components(self):
         return ComponentManager.from_request(self.request)
 
@@ -110,10 +114,6 @@ class CreateView(generic.CreateView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-    @property
-    def success_message(self):
-        return gettext_lazy("Locale '{0}' created.").format(str(self.object))
 
     @transaction.atomic
     def form_valid(self, form):
@@ -134,6 +134,10 @@ class EditView(generic.EditView):
     template_name = "wagtaillocales/edit.html"
     queryset = Locale.all_objects.all()
 
+    @property
+    def success_message(self):
+        return gettext_lazy("Locale '{0}' updated.").format(str(self.object))
+
     def get_components(self):
         return ComponentManager.from_request(
             self.request, source_object_instance=self.object
@@ -153,10 +157,6 @@ class EditView(generic.EditView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-    @property
-    def success_message(self):
-        return gettext_lazy("Locale '{0}' updated.").format(str(self.object))
 
     @transaction.atomic
     def form_valid(self, form):
@@ -179,6 +179,10 @@ class DeleteView(generic.DeleteView):
     template_name = "wagtaillocales/confirm_delete.html"
     queryset = Locale.all_objects.all()
 
+    @property
+    def success_message(self):
+        return gettext_lazy("Locale '{0}' deleted.").format(str(self.object))
+
     def can_delete(self, locale):
         return get_locale_usage(locale) == (0, 0)
 
@@ -193,10 +197,6 @@ class DeleteView(generic.DeleteView):
         else:
             messages.error(self.request, self.cannot_delete_message)
             return super().get(self.request)
-
-    @property
-    def success_message(self):
-        return gettext_lazy("Locale '{0}' deleted.").format(str(self.object))
 
 
 class LocaleViewSet(ModelViewSet):
