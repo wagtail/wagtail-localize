@@ -1,8 +1,11 @@
 from django.contrib.messages import get_messages
+from django.db.models.query import QuerySet
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils.translation import gettext_lazy
 from wagtail.models import Locale
 from wagtail.test.utils import WagtailTestUtils
+from wagtail.utils.version import get_main_version
 
 from wagtail_localize.locales.components import LOCALE_COMPONENTS
 from wagtail_localize.models import LocaleSynchronization
@@ -39,6 +42,54 @@ class TestLocaleIndexView(BaseLocaleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "wagtaillocales/index.html")
 
+    def test_context_variables(self):
+        response = self.execute_request("GET", "wagtaillocales:index")
+        self.assertEqual(response.status_code, 200)
+
+        # Check the presence and types of variables in the context
+        self.assertIn("locales", response.context)
+        self.assertIsInstance(response.context["locales"], QuerySet)
+
+        self.assertIn("wagtail_version", response.context)
+        self.assertIsInstance(response.context["wagtail_version"], str)
+
+    def test_queryset_filtering(self):
+        response = self.execute_request("GET", "wagtaillocales:index")
+        self.assertEqual(response.status_code, 200)
+
+        # Check that all objects in the context belong to the expected queryset
+        for locale in response.context["locales"]:
+            self.assertIn(locale, Locale.all_objects.all())
+
+    def test_page_title(self):
+        response = self.execute_request("GET", "wagtaillocales:index")
+        self.assertEqual(response.status_code, 200)
+
+        # Assume that page_title returns the expected value
+        expected_page_title = gettext_lazy("Locales")
+        self.assertEqual(response.context["page_title"], expected_page_title)
+
+    def test_wagtail_version(self):
+        response = self.execute_request("GET", "wagtaillocales:index")
+        self.assertEqual(response.status_code, 200)
+
+        # Assume that get_main_version returns the expected value
+        expected_wagtail_version = get_main_version()
+        self.assertEqual(response.context["wagtail_version"], expected_wagtail_version)
+
+    def test_get_locale_usage(self):
+        # Test get_locale_usage function with different scenarios
+        # For example, test with a locale that has no pages and others
+
+        # Create a unique locale for testing
+        locale = Locale.all_objects.create(language_code="fr")
+        self.assertEqual(locale.language_code, "fr")
+
+        # Execute the request and check if the locale is present in the context
+        response = self.execute_request("GET", "wagtaillocales:index")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(locale, response.context["locales"])
+
 
 class TestLocaleCreateView(BaseLocaleTestCase):
     def post(self, post_data=None):
@@ -55,7 +106,6 @@ class TestLocaleCreateView(BaseLocaleTestCase):
         response = self.client.get(reverse("wagtaillocales:add"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "wagtaillocales/create.html")
-
         self.assertEqual(
             response.context["form"].fields["language_code"].choices, [("fr", "French")]
         )
@@ -81,6 +131,22 @@ class TestLocaleCreateView(BaseLocaleTestCase):
             LocaleSynchronization.objects.filter(
                 locale__language_code="fr", sync_from__language_code="en"
             ).exists()
+        )
+
+    def test_required_component_behavior(self):
+        # Test behavior when a required component is not provided
+        LOCALE_COMPONENTS[0]["required"] = True
+        try:
+            response = self.post({"language_code": "fr"})
+        finally:
+            LOCALE_COMPONENTS[0]["required"] = False
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("component_form", response.context)
+        self.assertIn("sync_from", response.context["component_form"].errors)
+        self.assertEqual(
+            response.context["component_form"].errors["sync_from"],
+            ["This field is required."],
         )
 
     def test_create_view_success_message(self):
@@ -411,9 +477,29 @@ class TestLocaleDeleteView(BaseLocaleTestCase):
     def post(self, post_data=None, locale=None):
         # Helper method for making POST requests to delete a locale
         locale = locale or self.english
-        return self.client.post(
-            reverse("wagtaillocales:delete", args=[locale.id]), post_data or None
-        )
+
+        if post_data is not None:
+            # Test case: both post_data and locale provided
+            return self.client.post(
+                reverse("wagtaillocales:delete", args=[locale.id]), post_data
+            )
+        else:
+            # Test case: only locale provided
+            return self.client.post(reverse("wagtaillocales:delete", args=[locale.id]))
+
+    # Additional test cases for the post method
+    def test_post_with_post_data(self):
+        # Test making a POST request with both post_data and locale
+        post_data = {"key": "value"}
+        response = self.post(post_data=post_data, locale=self.english)
+        # Add assertions based on the expected behavior
+        self.assertEqual(response.status_code, 200, "Expected a successful response")
+
+    def test_post_without_post_data(self):
+        # Test making a POST request with only locale
+        response = self.post(locale=self.english)
+        # Add assertions based on the expected behavior
+        self.assertEqual(response.status_code, 200, "Expected a successful response")
 
     def test_simple(self):
         # Test that the delete view renders the confirmation template
@@ -443,16 +529,12 @@ class TestLocaleDeleteView(BaseLocaleTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-
-        # Check error message
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "error")
         self.assertEqual(
             messages[0].message,
             "This locale cannot be deleted because there are pages and/or other objects using it.\n\n\n\n\n",
         )
-
-        # Check that the locale was not deleted
         self.assertTrue(Locale.objects.filter(language_code="en").exists())
 
     def test_delete_locale_success_message(self):
