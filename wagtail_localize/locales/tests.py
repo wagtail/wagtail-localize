@@ -9,38 +9,50 @@ from wagtail_localize.models import LocaleSynchronization
 
 
 @override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
-class TestLocaleIndexView(TestCase, WagtailTestUtils):
+class BaseLocaleTestCase(TestCase, WagtailTestUtils):
     def setUp(self):
+        # Set up the test environment
         self.login()
+        self.english = Locale.objects.get()
 
-    def get(self, params=None):
-        return self.client.get(reverse("wagtaillocales:index"), params or {})
+    def execute_request(self, method, view_name, *args, **kwargs):
+        # Helper method to execute HTTP requests
+        url = reverse(view_name, args=args)
+        params = kwargs.get("params", {})
+        post_data = kwargs.get("post_data", {})
 
+        if method == "GET":
+            return self.client.get(url, params)
+        elif method == "POST":
+            return self.client.post(url, post_data)
+
+    def get(self, view_name, params=None, **kwargs):
+        # Helper method to execute GET requests
+        url = reverse(view_name, kwargs=params)
+        return self.client.get(url, **kwargs)
+
+
+class TestLocaleIndexView(BaseLocaleTestCase):
     def test_simple(self):
-        response = self.get()
+        # Test if the index view renders successfully
+        response = self.execute_request("GET", "wagtaillocales:index")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "wagtaillocales/index.html")
 
 
-@override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
-class TestLocaleCreateView(TestCase, WagtailTestUtils):
-    def setUp(self):
-        self.login()
-        self.english = Locale.objects.get()
-
-    def get(self, params=None):
-        return self.client.get(reverse("wagtaillocales:add"), params or {})
-
+class TestLocaleCreateView(BaseLocaleTestCase):
     def post(self, post_data=None):
+        # Helper method for making POST requests to create a locale
         return self.client.post(reverse("wagtaillocales:add"), post_data or {})
 
     def test_default_language(self):
-        # we should have loaded with a single locale
+        # Ensure the default language is set up correctly
         self.assertEqual(self.english.language_code, "en")
         self.assertEqual(self.english.get_display_name(), "English")
 
     def test_simple(self):
-        response = self.get()
+        # Test if the create view renders successfully with correct choices
+        response = self.client.get(reverse("wagtaillocales:add"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "wagtaillocales/create.html")
 
@@ -49,13 +61,14 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
         )
 
     def test_create(self):
-        response = self.post(
-            {
-                "language_code": "fr",
-                "component-wagtail_localize_localesynchronization-enabled": "on",
-                "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
-            }
-        )
+        # Test creating a new locale with synchronization
+        post_data = {
+            "language_code": "fr",
+            "component-wagtail_localize_localesynchronization-enabled": "on",
+            "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+        }
+
+        response = self.client.post(reverse("wagtaillocales:add"), post_data)
 
         # Should redirect back to index
         self.assertRedirects(response, reverse("wagtaillocales:index"))
@@ -70,7 +83,21 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
             ).exists()
         )
 
+    def test_create_view_success_message(self):
+        # Send a POST request to the create locale view
+        response = self.post({"language_code": "fr"})
+
+        # Check that the response status code is a redirect (302)
+        self.assertEqual(response.status_code, 302)
+
+        # Follow the redirect to the new page
+        redirected_response = self.client.get(response.url, follow=True)
+
+        # Now, check that the redirected response contains the expected success message
+        self.assertContains(redirected_response, "Locale &#x27;French&#x27; created.")
+
     def test_duplicate_not_allowed(self):
+        # Test creating a locale with a duplicate language code
         response = self.post(
             {
                 "language_code": "en",
@@ -89,6 +116,7 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
         )
 
     def test_language_code_must_be_in_settings(self):
+        # Test creating a locale with an invalid language code
         response = self.post(
             {
                 "language_code": "ja",
@@ -107,6 +135,7 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
         )
 
     def test_sync_from_required_when_enabled(self):
+        # Test creating a locale with synchronization enabled and missing sync_from
         response = self.post(
             {
                 "language_code": "fr",
@@ -127,6 +156,7 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
         self.assertFalse(Locale.objects.filter(language_code="fr").exists())
 
     def test_sync_from_not_required_when_disabled(self):
+        # Test creating a locale with synchronization disabled
         response = self.post(
             {
                 "language_code": "fr",
@@ -145,6 +175,7 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
         self.assertFalse(LocaleSynchronization.objects.exists())
 
     def test_sync_from_required_when_component_required(self):
+        # Test creating a locale with synchronization component required
         LOCALE_COMPONENTS[0]["required"] = True
         try:
             response = self.post(
@@ -169,19 +200,9 @@ class TestLocaleCreateView(TestCase, WagtailTestUtils):
         self.assertFalse(Locale.objects.filter(language_code="fr").exists())
 
 
-@override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
-class TestLocaleEditView(TestCase, WagtailTestUtils):
-    def setUp(self):
-        self.login()
-        self.english = Locale.objects.get()
-
-    def get(self, params=None, locale=None):
-        locale = locale or self.english
-        return self.client.get(
-            reverse("wagtaillocales:edit", args=[locale.id]), params or {}
-        )
-
+class TestLocaleEditView(BaseLocaleTestCase):
     def post(self, post_data=None, locale=None):
+        # Helper method for making POST requests to edit a locale
         post_data = post_data or {}
         locale = locale or self.english
         post_data.setdefault("language_code", locale.language_code)
@@ -190,10 +211,14 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
     def test_simple(self):
-        response = self.get()
+        # Test rendering the edit view with simple data
+        response = self.client.get(
+            reverse("wagtaillocales:edit", args=[self.english.id])
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "wagtaillocales/edit.html")
 
+        # Check choices in the form, including the current value
         self.assertEqual(
             response.context["form"].fields["language_code"].choices,
             [
@@ -206,13 +231,15 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
     def test_invalid_language(self):
+        # Test editing with an invalid language code
         invalid = Locale.objects.create(language_code="foo")
 
-        response = self.get(locale=invalid)
+        response = self.get(view_name="wagtaillocales:edit", params={"pk": invalid.pk})
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "wagtaillocales/edit.html")
 
+        # Check choices in the form, showing a default if invalid
         self.assertEqual(
             response.context["form"].fields["language_code"].choices,
             [
@@ -225,6 +252,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
     def test_edit(self):
+        # Test editing a locale with synchronization
         response = self.post(
             {
                 "language_code": "fr",
@@ -240,7 +268,25 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         self.english.refresh_from_db()
         self.assertEqual(self.english.language_code, "fr")
 
+    def test_edit_view_success_message(self):
+        # Test displaying a success message after editing a locale
+        french_locale = Locale.objects.create(language_code="fr")
+
+        response = self.client.post(
+            reverse("wagtaillocales:edit", args=[french_locale.id]),
+            {"language_code": "fr"},  # Change this to the actual language code
+            follow=True,  # Follow redirects in the initial response
+        )
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the redirected response contains the expected success message
+        expected_success_message = "Locale &#x27;French&#x27; updated."  # Change this based on your expectations
+        self.assertContains(response, expected_success_message)
+
     def test_edit_duplicate_not_allowed(self):
+        # Test editing a locale with a duplicate language code
         french = Locale.objects.create(language_code="fr")
 
         response = self.post(
@@ -262,6 +308,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
     def test_edit_language_code_must_be_in_settings(self):
+        # Test editing a locale with an invalid language code
         response = self.post(
             {
                 "language_code": "ja",
@@ -280,6 +327,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
     def test_sync_from_required_when_enabled(self):
+        # Test editing a locale with synchronization enabled and missing sync_from
         response = self.post(
             {
                 "language_code": "fr",
@@ -297,6 +345,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
     def test_sync_from_not_required_when_disabled(self):
+        # Test editing a locale with synchronization disabled
         response = self.post(
             {
                 "language_code": "fr",
@@ -313,6 +362,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         self.assertEqual(self.english.language_code, "fr")
 
     def test_sync_from_required_when_component_required(self):
+        # Test editing a locale with synchronization component required
         LOCALE_COMPONENTS[0]["required"] = True
         try:
             response = self.post(
@@ -334,6 +384,7 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
     def test_sync_from_cannot_be_the_same_as_locale(self):
+        # Test editing a locale with synchronization where sync_from is the same as the locale
         response = self.post(
             {
                 "language_code": "en",
@@ -352,42 +403,44 @@ class TestLocaleEditView(TestCase, WagtailTestUtils):
         )
 
 
-@override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
-class TestLocaleDeleteView(TestCase, WagtailTestUtils):
-    def setUp(self):
-        self.login()
-        self.english = Locale.objects.get()
-
-    def get(self, params=None, locale=None):
-        locale = locale or self.english
-        return self.client.get(
-            reverse("wagtaillocales:delete", args=[locale.id]), params or {}
-        )
+class TestLocaleDeleteView(BaseLocaleTestCase):
+    def follow_redirect(self, response):
+        # Helper method to follow redirects in the response
+        return self.client.get(response.url, follow=True)
 
     def post(self, post_data=None, locale=None):
+        # Helper method for making POST requests to delete a locale
         locale = locale or self.english
         return self.client.post(
             reverse("wagtaillocales:delete", args=[locale.id]), post_data or None
         )
 
     def test_simple(self):
-        response = self.get()
+        # Test that the delete view renders the confirmation template
+        response = self.execute_request("GET", "wagtaillocales:delete", self.english.id)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "wagtailadmin/generic/confirm_delete.html")
 
     def test_delete_locale(self):
+        # Test deleting a locale
         french = Locale.objects.create(language_code="fr")
 
-        response = self.post(locale=french)
+        response = self.execute_request("POST", "wagtaillocales:delete", french.id)
 
-        # Should redirect back to index
-        self.assertRedirects(response, reverse("wagtaillocales:index"))
+        # Follow the redirect to the new page
+        redirected_response = self.follow_redirect(response)
+
+        # Check if the redirected response was successful (HTTP 200 - OK)
+        self.assertEqual(redirected_response.status_code, 200)
 
         # Check that the locale was deleted
         self.assertFalse(Locale.objects.filter(language_code="fr").exists())
 
     def test_cannot_delete_locales_with_pages(self):
-        response = self.post()
+        # Test attempting to delete a locale with associated pages
+        response = self.execute_request(
+            "POST", "wagtaillocales:delete", self.english.id
+        )
 
         self.assertEqual(response.status_code, 200)
 
@@ -401,3 +454,18 @@ class TestLocaleDeleteView(TestCase, WagtailTestUtils):
 
         # Check that the locale was not deleted
         self.assertTrue(Locale.objects.filter(language_code="en").exists())
+
+    def test_delete_locale_success_message(self):
+        # Test success message after deleting a locale
+        french = Locale.objects.create(language_code="fr")
+
+        response = self.execute_request("POST", "wagtaillocales:delete", french.id)
+        # Check if the delete request was successful (HTTP 302 - Found)
+        self.assertEqual(response.status_code, 302)
+
+        # Follow the redirect to the new page
+        redirected_response = self.follow_redirect(response)
+
+        # Check that the redirected response contains the expected success message
+        expected_message = "Locale &#x27;French&#x27; deleted."
+        self.assertContains(redirected_response, expected_message)
