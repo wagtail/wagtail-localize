@@ -56,7 +56,7 @@ class MyPage(Page):
 
 ## Saving new translations as drafts
 
-Live draft-able models (i.e. subclasses of `Page`, and models which inherit `DraftStateMixin` and `RevisionMixin`)
+Live versions of models that support drafts (i.e. subclasses of `Page`, and models which inherit `DraftStateMixin` and `RevisionMixin`)
 which are submitted for translation are made live immediately by default.
 
 If you would like to ensure that live instances which are newly submitted for translation remain as drafts for manual
