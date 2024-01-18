@@ -33,7 +33,7 @@ class TranslationCreator:
             return
         self.seen_objects.add(instance.translation_key)
 
-        source, created = TranslationSource.get_or_create_from_instance(instance)
+        source, _ = TranslationSource.get_or_create_from_instance(instance)
 
         # Add related objects
         # Must be before translation records or those translation records won't be able to create
@@ -75,11 +75,9 @@ class TranslationCreator:
             # Determine whether to publish the translation.
             if getattr(settings, "WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE", True):
                 publish = getattr(instance, "live", True)
-            elif isinstance(instance, DraftStateMixin):
-                publish = False
             else:
                 # If the model can't be saved as a draft, then we have to publish it
-                publish = True
+                publish = not isinstance(instance, DraftStateMixin)
 
             try:
                 translation.save_target(user=self.user, publish=publish)
