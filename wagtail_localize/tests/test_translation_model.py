@@ -8,7 +8,7 @@ from django.db import OperationalError, transaction
 from django.db.migrations.recorder import MigrationRecorder
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from wagtail.models import Locale, Page, Revision
+from wagtail.models import Locale, Page
 
 from wagtail_localize.models import (
     CannotSaveDraftError,
@@ -615,6 +615,10 @@ class TestSaveTarget(TestCase):
 
         self.assertTrue(translated_page.live)
 
+        log = TranslationLog.objects.get()
+        self.assertEqual(log.source, self.source)
+        self.assertEqual(log.revision, translated_page.live_revision)
+
     def test_save_target_as_draft(self):
         self.translation.save_target(publish=False)
 
@@ -737,7 +741,8 @@ class TestSaveTarget(TestCase):
             snippet.get_translation(self.fr_locale).field, "Contenu de test"
         )
 
-    def test_save_target_can_publish_draftable(self):
+    @patch.object(transaction, "on_commit", side_effect=lambda func: func())
+    def test_save_target_can_publish_draftable(self, _mock_on_commit):
         snippet = TestSnippet.objects.create(field="Test content")
         source, _ = TranslationSource.get_or_create_from_instance(snippet)
         translation = Translation.objects.create(
@@ -763,7 +768,7 @@ class TestSaveTarget(TestCase):
         log = TranslationLog.objects.get()
         self.assertEqual(log.source, source)
         self.assertEqual(log.locale, self.fr_locale)
-        self.assertIsInstance(log.revision, Revision)
+        self.assertEqual(log.revision, french_snippet.live_revision)
 
     def test_uuid_snippet_save_target(self):
         foreign_key_target = TestUUIDModel.objects.create(charfield="Some Test")
