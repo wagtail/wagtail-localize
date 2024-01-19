@@ -33,7 +33,7 @@ class TranslationCreator:
             return
         self.seen_objects.add(instance.translation_key)
 
-        source, _ = TranslationSource.get_or_create_from_instance(instance)
+        source, created = TranslationSource.get_or_create_from_instance(instance)
 
         # Add related objects
         # Must be before translation records or those translation records won't be able to create
