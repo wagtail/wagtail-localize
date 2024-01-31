@@ -31,7 +31,10 @@ jobs:
 
       - run: pip install flit
       - run: flit install --deps production --extras testing
-      - run: pip install wagtail_modeladmin ./wagtail
+      - run: |
+          pip install \
+          git+https://github.com/wagtail-nest/wagtail-modeladmin.git@main#egg=wagtail-modeladmin \
+          ./wagtail
 
       - run: python testmanage.py test
 
