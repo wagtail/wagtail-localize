@@ -23,6 +23,7 @@ class TestPageAdmin(TranslatableModelAdmin):
 class TestModelAdmin(TranslatableModelAdmin):
     model = TestModel
     inspect_view_enabled = True
+    list_export = ["title", "test_charfield", "test_textfield", "test_emailfield"]
 
 
 class NonTranslatableModelAdmin(ModelAdmin):
