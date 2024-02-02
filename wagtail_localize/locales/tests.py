@@ -18,67 +18,74 @@ class BaseLocaleTestCase(TestCase, WagtailTestUtils):
         self.login()
         self.english = Locale.objects.get()
 
-    def execute_request(self, method, view_name, *args, **kwargs):
+    def execute_request(
+        self, method, view_name, *args, params=None, post_data=None, **kwargs
+    ):
         # Helper method to execute HTTP requests
         url = reverse(view_name, args=args)
-        params = kwargs.get("params", {})
-        post_data = kwargs.get("post_data", {})
+        params = params or {}
+        post_data = post_data or {}
 
         if method == "GET":
-            return self.client.get(url, params)
+            return self.client.get(url, params, **kwargs)
         elif method == "POST":
-            return self.client.post(url, post_data)
+            return self.client.post(url, post_data, **kwargs)
 
-    def get(self, view_name, params=None, **kwargs):
-        # Helper method to execute GET requests
-        url = reverse(view_name, kwargs=params)
-        return self.client.get(url, **kwargs)
+    def assert_successful_response(self, response):
+        # Helper method to assert a successful response (status code 200)
+        self.assertEqual(response.status_code, 200)
+
+    def assert_context_variables(self, response, variable_name, variable_type):
+        # Helper method to assert the presence and type of context variables
+        self.assertIn(variable_name, response.context)
+        self.assertIsInstance(response.context[variable_name], variable_type)
+
+    def assert_redirect_to_index(self, response):
+        # Helper method to assert redirection to the index page
+        self.assertRedirects(response, reverse("wagtaillocales:index"))
 
 
 class TestLocaleIndexView(BaseLocaleTestCase):
     def test_simple(self):
         # Test if the index view renders successfully
         response = self.execute_request("GET", "wagtaillocales:index")
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         self.assertTemplateUsed(response, "wagtaillocales/index.html")
 
     def test_context_variables(self):
+        # Test if the context variables are present and have the expected types
         response = self.execute_request("GET", "wagtaillocales:index")
-        self.assertEqual(response.status_code, 200)
-
-        # Check the presence and types of variables in the context
-        self.assertIn("locales", response.context)
-        self.assertIsInstance(response.context["locales"], QuerySet)
-
-        self.assertIn("wagtail_version", response.context)
-        self.assertIsInstance(response.context["wagtail_version"], str)
+        self.assert_successful_response(response)
+        self.assert_context_variables(response, "locales", QuerySet)
+        self.assert_context_variables(response, "wagtail_version", str)
 
     def test_queryset_filtering(self):
+        # Test if the queryset is filtered as expected
         response = self.execute_request("GET", "wagtaillocales:index")
-        self.assertEqual(response.status_code, 200)
-
-        # Check that all objects in the context belong to the expected queryset
-        for locale in response.context["locales"]:
-            self.assertIn(locale, Locale.all_objects.all())
+        self.assert_successful_response(response)
+        self.assertTrue(
+            all(
+                locale in Locale.all_objects.all()
+                for locale in response.context["locales"]
+            )
+        )
 
     def test_page_title(self):
+        # Test if the page title is set correctly
         response = self.execute_request("GET", "wagtaillocales:index")
-        self.assertEqual(response.status_code, 200)
-
-        # Assume that page_title returns the expected value
+        self.assert_successful_response(response)
         expected_page_title = gettext_lazy("Locales")
         self.assertEqual(response.context["page_title"], expected_page_title)
 
     def test_wagtail_version(self):
+        # Test if the Wagtail version is set correctly
         response = self.execute_request("GET", "wagtaillocales:index")
-        self.assertEqual(response.status_code, 200)
-
-        # Assume that get_main_version returns the expected value
+        self.assert_successful_response(response)
         expected_wagtail_version = get_main_version()
         self.assertEqual(response.context["wagtail_version"], expected_wagtail_version)
 
     def test_get_locale_usage(self):
-        # Test get_locale_usage function with different scenarios
+        # Test the get_locale_usage function with different scenarios
         # For example, test with a locale that has no pages and others
 
         # Create a unique locale for testing
@@ -87,7 +94,7 @@ class TestLocaleIndexView(BaseLocaleTestCase):
 
         # Execute the request and check if the locale is present in the context
         response = self.execute_request("GET", "wagtaillocales:index")
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         self.assertIn(locale, response.context["locales"])
 
 
@@ -104,7 +111,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
     def test_simple(self):
         # Test if the create view renders successfully with correct choices
         response = self.client.get(reverse("wagtaillocales:add"))
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         self.assertTemplateUsed(response, "wagtaillocales/create.html")
         self.assertEqual(
             response.context["form"].fields["language_code"].choices, [("fr", "French")]
@@ -118,9 +125,10 @@ class TestLocaleCreateView(BaseLocaleTestCase):
             "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
         }
 
-        response = self.client.post(reverse("wagtaillocales:add"), post_data)
+        response = self.post(post_data)
 
         # Should redirect back to index
+        self.assert_redirect_to_index(response)
         self.assertRedirects(response, reverse("wagtaillocales:index"))
 
         # Check that the locale was created
@@ -141,7 +149,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
         finally:
             LOCALE_COMPONENTS[0]["required"] = False
 
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         self.assertIn("component_form", response.context)
         self.assertIn("sync_from", response.context["component_form"].errors)
         self.assertEqual(
@@ -173,7 +181,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
         )
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         form = response.context["form"]
         self.assertIn("language_code", form.errors)
         self.assertEqual(
@@ -192,7 +200,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
         )
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         form = response.context["form"]
         self.assertIn("language_code", form.errors)
         self.assertEqual(
@@ -211,7 +219,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
         )
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         component_form = response.context["component_form"]
         self.assertIn("sync_from", component_form.errors)
         self.assertEqual(
@@ -255,7 +263,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
             LOCALE_COMPONENTS[0]["required"] = False
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         component_form = response.context["component_form"]
         self.assertIn("sync_from", component_form.errors)
         self.assertEqual(
@@ -281,7 +289,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         response = self.client.get(
             reverse("wagtaillocales:edit", args=[self.english.id])
         )
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         self.assertTemplateUsed(response, "wagtaillocales/edit.html")
 
         # Check choices in the form, including the current value
@@ -300,10 +308,10 @@ class TestLocaleEditView(BaseLocaleTestCase):
         # Test editing with an invalid language code
         invalid = Locale.objects.create(language_code="foo")
 
-        response = self.get(view_name="wagtaillocales:edit", params={"pk": invalid.pk})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "wagtaillocales/edit.html")
+        response = self.client.get(
+            reverse("wagtaillocales:edit", kwargs={"pk": invalid.pk})
+        )
+        self.assert_successful_response(response)
 
         # Check choices in the form, showing a default if invalid
         self.assertEqual(
@@ -328,6 +336,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         )
 
         # Should redirect back to index
+        self.assert_redirect_to_index(response)
         self.assertRedirects(response, reverse("wagtaillocales:index"))
 
         # Check that the locale was edited
@@ -345,7 +354,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         )
 
         # Check that the response status code is 200 (OK)
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
 
         # Check that the redirected response contains the expected success message
         expected_success_message = "Locale &#x27;French&#x27; updated."  # Change this based on your expectations
@@ -365,7 +374,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         )
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         form = response.context["form"]
         self.assertIn("language_code", form.errors)
         self.assertEqual(
@@ -384,7 +393,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         )
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         form = response.context["form"]
         self.assertIn("language_code", form.errors)
         self.assertEqual(
@@ -403,7 +412,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         )
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         component_form = response.context["component_form"]
         self.assertIn("sync_from", component_form.errors)
         self.assertEqual(
@@ -421,7 +430,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         )
 
         # Should redirect back to index
-        self.assertRedirects(response, reverse("wagtaillocales:index"))
+        self.assert_redirect_to_index(response)
 
         # Check that the locale was edited
         self.english.refresh_from_db()
@@ -442,7 +451,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
             LOCALE_COMPONENTS[0]["required"] = False
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         component_form = response.context["component_form"]
         self.assertIn("sync_from", component_form.errors)
         self.assertEqual(
@@ -460,7 +469,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
         )
 
         # Should return the form with errors
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         component_form = response.context["component_form"]
         self.assertIn("sync_from", component_form.errors)
         self.assertEqual(
@@ -493,18 +502,18 @@ class TestLocaleDeleteView(BaseLocaleTestCase):
         post_data = {"key": "value"}
         response = self.post(post_data=post_data, locale=self.english)
         # Add assertions based on the expected behavior
-        self.assertEqual(response.status_code, 200, "Expected a successful response")
+        self.assert_successful_response(response)
 
     def test_post_without_post_data(self):
         # Test making a POST request with only locale
         response = self.post(locale=self.english)
         # Add assertions based on the expected behavior
-        self.assertEqual(response.status_code, 200, "Expected a successful response")
+        self.assert_successful_response(response)
 
     def test_simple(self):
         # Test that the delete view renders the confirmation template
         response = self.execute_request("GET", "wagtaillocales:delete", self.english.id)
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
         self.assertTemplateUsed(response, "wagtailadmin/generic/confirm_delete.html")
 
     def test_delete_locale(self):
@@ -512,15 +521,14 @@ class TestLocaleDeleteView(BaseLocaleTestCase):
         french = Locale.objects.create(language_code="fr")
 
         response = self.execute_request("POST", "wagtaillocales:delete", french.id)
-
-        # Follow the redirect to the new page
         redirected_response = self.follow_redirect(response)
 
-        # Check if the redirected response was successful (HTTP 200 - OK)
-        self.assertEqual(redirected_response.status_code, 200)
+        # Check if the redirected response was successful (HTTP 302 - Found)
+        self.assert_successful_response(redirected_response)
 
         # Check that the locale was deleted
         self.assertFalse(Locale.objects.filter(language_code="fr").exists())
+        self.assertRedirects(response, reverse("wagtaillocales:index"))
 
     def test_cannot_delete_locales_with_pages(self):
         # Test attempting to delete a locale with associated pages
@@ -528,7 +536,8 @@ class TestLocaleDeleteView(BaseLocaleTestCase):
             "POST", "wagtaillocales:delete", self.english.id
         )
 
-        self.assertEqual(response.status_code, 200)
+        self.assert_successful_response(response)
+
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].level_tag, "error")
         self.assertEqual(
@@ -542,11 +551,10 @@ class TestLocaleDeleteView(BaseLocaleTestCase):
         french = Locale.objects.create(language_code="fr")
 
         response = self.execute_request("POST", "wagtaillocales:delete", french.id)
-        # Check if the delete request was successful (HTTP 302 - Found)
-        self.assertEqual(response.status_code, 302)
-
-        # Follow the redirect to the new page
         redirected_response = self.follow_redirect(response)
+
+        # Check if the delete request was successful (HTTP 302 - Found)
+        self.assert_successful_response(redirected_response)
 
         # Check that the redirected response contains the expected success message
         expected_message = "Locale &#x27;French&#x27; deleted."
