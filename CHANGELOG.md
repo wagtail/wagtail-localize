@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8] - 2024-02-10
+
+### Added
+
+- Add tests with success messages for locale creation, editing, and deletion ([#763](https://github.com/wagtail/wagtail-localize/pull/)) @ACK1D
+
+### Fixed
+
+- Prevent translation object duplicates via TranslationCreator ([#756](https://github.com/wagtail/wagtail-localize/pull/756)) @ACK1D
+- Fix the Locale create/edit/delete success messages ([#762](https://github.com/wagtail/wagtail-localize/pull/762)) @ACK1D
+- Page alias using wrong page id for "translate this page" in actions menu ([#775](https://github.com/wagtail/wagtail-localize/pull/755)) @zerolab
+
 ## [1.8beta1] - 2023-12-21
 
 ### Added
@@ -289,7 +301,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.7...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.8...HEAD
+[1.8]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8
 [1.8beta1]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8-beta.1
 [1.7]: https://github.com/wagtail/wagtail-localize/compare/v1.7rc1...v1.7
 [1.7rc1]: https://github.com/wagtail/wagtail-localize/compare/v1.6...v1.7rc1
