@@ -60,30 +60,34 @@ def strip_user_perms():
         ("es", "Spanish"),
     ],
 )
-class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
+class TestTranslatePageListingButton(WagtailTestUtils, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.en_locale = Locale.objects.get()
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+        cls.de_locale = Locale.objects.create(language_code="de")
+
+        cls.en_homepage = Page.objects.get(depth=2)
+        cls.fr_homepage = cls.en_homepage.copy_for_translation(cls.fr_locale)
+        cls.de_homepage = cls.en_homepage.copy_for_translation(cls.de_locale)
+
+        cls.en_blog_index = make_test_page(cls.en_homepage, title="Blog", slug="blog")
+
     def setUp(self):
         self.login()
 
-        self.en_locale = Locale.objects.get()
-        self.fr_locale = Locale.objects.create(language_code="fr")
-        self.de_locale = Locale.objects.create(language_code="de")
-
-        self.en_homepage = Page.objects.get(depth=2)
-        self.fr_homepage = self.en_homepage.copy_for_translation(self.fr_locale)
-        self.de_homepage = self.en_homepage.copy_for_translation(self.de_locale)
-
-        self.en_blog_index = make_test_page(self.en_homepage, title="Blog", slug="blog")
-
-    def test(self):
+    def _test_submit_for_translation_more_action(
+        self, parent_page_id, expected_page_id
+    ):
         response = self.client.get(
-            reverse("wagtailadmin_explore", args=[self.en_homepage.id])
+            reverse("wagtailadmin_explore", args=[parent_page_id])
         )
 
         if WAGTAIL_VERSION >= (5, 2):
             self.assertContains(
                 response,
                 (
-                    f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/">'
+                    f'<a href="/admin/localize/submit/page/{expected_page_id}/">'
                     '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
                     '<use href="#icon-wagtail-localize-language"></use></svg>'
                     "Translate this page"
@@ -95,7 +99,7 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
             self.assertContains(
                 response,
                 (
-                    f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
+                    f'<a href="/admin/localize/submit/page/{expected_page_id}/" '
                     'aria-label="" class="button button-small button-secondary">'
                     '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
                     '<use href="#icon-wagtail-localize-language"></use></svg>'
@@ -108,7 +112,7 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
             self.assertContains(
                 response,
                 (
-                    f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
+                    f'<a href="/admin/localize/submit/page/{expected_page_id}/" '
                     'aria-label="" class="u-link is-live button-secondary button-small button">'
                     "Translate this page</a>"
                 ),
@@ -118,11 +122,31 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
             self.assertContains(
                 response,
                 (
-                    f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/" '
+                    f'<a href="/admin/localize/submit/page/{expected_page_id}/" '
                     'aria-label="" class="u-link is-live ">Translate this page</a>'
                 ),
                 html=True,
             )
+
+        return response
+
+    def test_submit_translation_link(self):
+        self._test_submit_for_translation_more_action(
+            self.en_homepage.pk, self.en_blog_index.pk
+        )
+
+    def test_submit_translation_shows_parent_id_for_alias_pages(self):
+        alias_page = self.en_blog_index.create_alias(
+            parent=self.fr_homepage,
+            update_slug="the-page-alias",
+        )
+        response = self._test_submit_for_translation_more_action(
+            self.fr_homepage.pk, self.en_blog_index.pk
+        )
+
+        self.assertNotContains(
+            response, f"/admin/localize/submit/page/{alias_page.pk}/"
+        )
 
     def test_hides_if_page_already_translated(self):
         self.en_blog_index.copy_for_translation(self.fr_locale)
@@ -158,25 +182,27 @@ class TestTranslatePageListingButton(TestCase, WagtailTestUtils):
         ("es", "Spanish"),
     ],
 )
-class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
+class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.en_locale = Locale.objects.get()
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+        cls.de_locale = Locale.objects.create(language_code="de")
+
+        cls.en_homepage = Page.objects.get(depth=2)
+        cls.fr_homepage = cls.en_homepage.copy_for_translation(cls.fr_locale)
+        cls.de_homepage = cls.en_homepage.copy_for_translation(cls.de_locale)
+
+        cls.en_blog_index = make_test_page(cls.en_homepage, title="Blog", slug="blog")
+        cls.en_blog_post = make_test_page(
+            cls.en_blog_index, title="Blog post", slug="blog-post"
+        )
+        cls.en_blog_post_child = make_test_page(
+            cls.en_blog_post, title="A deep page", slug="deep-page"
+        )
+
     def setUp(self):
         self.login()
-
-        self.en_locale = Locale.objects.get()
-        self.fr_locale = Locale.objects.create(language_code="fr")
-        self.de_locale = Locale.objects.create(language_code="de")
-
-        self.en_homepage = Page.objects.get(depth=2)
-        self.fr_homepage = self.en_homepage.copy_for_translation(self.fr_locale)
-        self.de_homepage = self.en_homepage.copy_for_translation(self.de_locale)
-
-        self.en_blog_index = make_test_page(self.en_homepage, title="Blog", slug="blog")
-        self.en_blog_post = make_test_page(
-            self.en_blog_index, title="Blog post", slug="blog-post"
-        )
-        self.en_blog_post_child = make_test_page(
-            self.en_blog_post, title="A deep page", slug="deep-page"
-        )
 
     def test_get_submit_page_translation(self):
         response = self.client.get(
@@ -703,19 +729,21 @@ class TestSubmitPageTranslation(TestCase, WagtailTestUtils):
         ("es", "Spanish"),
     ],
 )
-class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
+class TestTranslateSnippetListingButton(WagtailTestUtils, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.en_locale = Locale.objects.get()
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+        cls.de_locale = Locale.objects.create(language_code="de")
+
+        cls.en_snippet = TestSnippet.objects.create(field="Test snippet")
+        cls.fr_snippet = cls.en_snippet.copy_for_translation(cls.fr_locale)
+        cls.fr_snippet.save()
+
+        cls.not_translatable_snippet = NonTranslatableSnippet.objects.create()
+
     def setUp(self):
         self.login()
-
-        self.en_locale = Locale.objects.get()
-        self.fr_locale = Locale.objects.create(language_code="fr")
-        self.de_locale = Locale.objects.create(language_code="de")
-
-        self.en_snippet = TestSnippet.objects.create(field="Test snippet")
-        self.fr_snippet = self.en_snippet.copy_for_translation(self.fr_locale)
-        self.fr_snippet.save()
-
-        self.not_translatable_snippet = NonTranslatableSnippet.objects.create()
 
     def test(self):
         response = self.client.get(
@@ -787,17 +815,19 @@ class TestTranslateSnippetListingButton(TestCase, WagtailTestUtils):
         ("es", "Spanish"),
     ],
 )
-class TestSubmitSnippetTranslation(TestCase, WagtailTestUtils):
+class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.en_locale = Locale.objects.get()
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+        cls.de_locale = Locale.objects.create(language_code="de")
+
+        cls.en_snippet = TestSnippet.objects.create(field="Test snippet")
+
+        cls.not_translatable_snippet = NonTranslatableSnippet.objects.create()
+
     def setUp(self):
         self.login()
-
-        self.en_locale = Locale.objects.get()
-        self.fr_locale = Locale.objects.create(language_code="fr")
-        self.de_locale = Locale.objects.create(language_code="de")
-
-        self.en_snippet = TestSnippet.objects.create(field="Test snippet")
-
-        self.not_translatable_snippet = NonTranslatableSnippet.objects.create()
 
     def test_get_submit_snippet_translation(self):
         response = self.client.get(

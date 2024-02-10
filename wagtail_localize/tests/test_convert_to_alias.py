@@ -8,13 +8,14 @@ from wagtail_localize.test.models import TestPage
 from wagtail_localize.wagtail_hooks import ConvertToAliasPageActionMenuItem
 
 
-class ConvertToAliasTestData(WagtailTestUtils):
-    def setUp(self):
-        self.en_locale = Locale.objects.get(language_code="en")
-        self.fr_locale = Locale.objects.create(language_code="fr")
+class ConvertToAliasTestBase(WagtailTestUtils, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.en_locale = Locale.objects.get(language_code="en")
+        cls.fr_locale = Locale.objects.create(language_code="fr")
 
-        self.home_page = Page.objects.get(depth=2)
-        self.page = self.home_page.add_child(
+        cls.home_page = Page.objects.get(depth=2)
+        cls.page = cls.home_page.add_child(
             instance=TestPage(
                 title="The title",
                 slug="the-page",
@@ -22,15 +23,16 @@ class ConvertToAliasTestData(WagtailTestUtils):
         )
 
         LocaleSynchronization.objects.create(
-            locale=self.fr_locale,
-            sync_from=self.en_locale,
+            locale=cls.fr_locale,
+            sync_from=cls.en_locale,
         )
-        self.fr_page = self.page.get_translation(self.fr_locale)
+        cls.fr_page = cls.page.get_translation(cls.fr_locale)
 
+    def setUp(self):
         self.login()
 
 
-class ConvertToAliasTest(ConvertToAliasTestData, TestCase):
+class ConvertToAliasTest(ConvertToAliasTestBase):
     def _page_action_is_shown(self, page, view="edit"):
         menu_item = ConvertToAliasPageActionMenuItem()
         context = {"view": view, "page": page}
@@ -114,7 +116,7 @@ class ConvertToAliasTest(ConvertToAliasTestData, TestCase):
         self.assertTrue(self._page_action_is_shown(de_page))
 
 
-class ConvertToAliasViewTest(ConvertToAliasTestData, TestCase):
+class ConvertToAliasViewTest(ConvertToAliasTestBase):
     def setUp(self):
         super().setUp()
         # submit for translation, thus no longer an alias
