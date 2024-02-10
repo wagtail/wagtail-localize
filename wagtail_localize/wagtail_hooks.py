@@ -157,7 +157,11 @@ def _page_listing_more_buttons(page: Page, user, next_url: str | None = None):
         ).exists()
 
         if has_locale_to_translate_to:
-            url = reverse("wagtail_localize:submit_page_translation", args=[page.id])
+            # note: if this is an alias page, we want to use the parent page id
+            url = reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[page.alias_of_id or page.id],
+            )
 
             yield PageButton(
                 _("Translate this page"),
