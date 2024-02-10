@@ -7,7 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
@@ -83,50 +82,17 @@ class TestTranslatePageListingButton(WagtailTestUtils, TestCase):
             reverse("wagtailadmin_explore", args=[parent_page_id])
         )
 
-        if WAGTAIL_VERSION >= (5, 2):
-            self.assertContains(
-                response,
-                (
-                    f'<a href="/admin/localize/submit/page/{expected_page_id}/">'
-                    '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
-                    '<use href="#icon-wagtail-localize-language"></use></svg>'
-                    "Translate this page"
-                    "</a>"
-                ),
-                html=True,
-            )
-        elif WAGTAIL_VERSION >= (5, 1):
-            self.assertContains(
-                response,
-                (
-                    f'<a href="/admin/localize/submit/page/{expected_page_id}/" '
-                    'aria-label="" class="button button-small button-secondary">'
-                    '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
-                    '<use href="#icon-wagtail-localize-language"></use></svg>'
-                    "Translate this page"
-                    "</a>"
-                ),
-                html=True,
-            )
-        elif WAGTAIL_VERSION >= (5, 0):
-            self.assertContains(
-                response,
-                (
-                    f'<a href="/admin/localize/submit/page/{expected_page_id}/" '
-                    'aria-label="" class="u-link is-live button-secondary button-small button">'
-                    "Translate this page</a>"
-                ),
-                html=True,
-            )
-        else:
-            self.assertContains(
-                response,
-                (
-                    f'<a href="/admin/localize/submit/page/{expected_page_id}/" '
-                    'aria-label="" class="u-link is-live ">Translate this page</a>'
-                ),
-                html=True,
-            )
+        self.assertContains(
+            response,
+            (
+                f'<a href="/admin/localize/submit/page/{expected_page_id}/">'
+                '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
+                '<use href="#icon-wagtail-localize-language"></use></svg>'
+                "Translate this page"
+                "</a>"
+            ),
+            html=True,
+        )
 
         return response
 
@@ -750,27 +716,16 @@ class TestTranslateSnippetListingButton(WagtailTestUtils, TestCase):
             reverse("wagtailsnippets_wagtail_localize_test_testsnippet:list")
         )
 
-        if WAGTAIL_VERSION >= (5, 2):
-            self.assertContains(
-                response,
-                (
-                    f'<a href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/" '
-                    f'aria-label="Translate &#x27;{self.en_snippet}&#x27;">'
-                    f'<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true"><use href="#icon-wagtail-localize-language"></use></svg>'
-                    f"Translate</a>"
-                ),
-                html=True,
-            )
-        else:
-            self.assertContains(
-                response,
-                (
-                    f'<a href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/" '
-                    f'aria-label="Translate &#x27;{self.en_snippet}&#x27;" title="Translate" '
-                    f'class="button button-secondary button-small">Translate</a>'
-                ),
-                html=True,
-            )
+        self.assertContains(
+            response,
+            (
+                f'<a href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/" '
+                f'aria-label="Translate &#x27;{self.en_snippet}&#x27;">'
+                f'<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true"><use href="#icon-wagtail-localize-language"></use></svg>'
+                f"Translate</a>"
+            ),
+            html=True,
+        )
 
     def test_hides_if_snippet_already_translated(self):
         de_snippet = self.en_snippet.copy_for_translation(self.de_locale)
