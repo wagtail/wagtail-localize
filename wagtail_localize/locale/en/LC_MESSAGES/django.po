@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-21 15:03+0000\n"
+"POT-Creation-Date: 2024-02-10 12:47+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -17,7 +17,7 @@ msgid "Dummy translator"
 msgstr ""
 
 #: modeladmin/helpers.py:66 modeladmin/helpers.py:68
-#: views/submit_translations.py:74 wagtail_hooks.py:218
+#: views/submit_translations.py:74 wagtail_hooks.py:222
 msgid "Translate"
 msgstr ""
 
@@ -35,7 +35,7 @@ msgid "Save"
 msgstr ""
 
 #: modeladmin/templates/wagtail_localize/modeladmin/translatable_edit.html:22
-#: wagtail_hooks.py:284 wagtail_hooks.py:371
+#: wagtail_hooks.py:288 wagtail_hooks.py:375
 msgid "Start Synced translation"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgid ""
 msgstr ""
 
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:163
+#: wagtail_hooks.py:167
 msgid "Translate this page"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgid "Translation of %(instance)s into %(locale)s"
 msgstr ""
 
 #: templates/wagtail_localize/admin/edit_translation.html:34
-#: views/report.py:140 wagtail_hooks.py:404
+#: views/report.py:140 wagtail_hooks.py:408
 msgid "Translations"
 msgstr ""
 
@@ -351,39 +351,39 @@ msgstr ""
 msgid "Successfully updated translations for '{object}'"
 msgstr ""
 
-#: wagtail_hooks.py:177
+#: wagtail_hooks.py:181
 msgid "Sync translated pages"
 msgstr ""
 
-#: wagtail_hooks.py:221
+#: wagtail_hooks.py:225
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:235
+#: wagtail_hooks.py:239
 msgid "Sync translated snippets"
 msgstr ""
 
-#: wagtail_hooks.py:238
+#: wagtail_hooks.py:242
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:307
+#: wagtail_hooks.py:311
 msgid "Convert to alias page"
 msgstr ""
 
-#: wagtail_hooks.py:415
+#: wagtail_hooks.py:419
 msgid "Convert page to alias"
 msgstr ""
 
-#: wagtail_hooks.py:420
+#: wagtail_hooks.py:424
 #, python-format
 msgid ""
 "Converted page '%(title)s' to an alias of the translation source page "
 "'%(source_title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:426
+#: wagtail_hooks.py:430
 msgid "Converted page to an alias of the translation source page"
 msgstr ""

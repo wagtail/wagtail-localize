@@ -132,7 +132,7 @@ msgstr ""
 "выхадам."
 
 msgid "Translate"
-msgstr "Перавесці"
+msgstr "Перакласці"
 
 msgid "Translate all missing strings with "
 msgstr "Перакласці ўсе прапушчаныя радкі з дапамогай"

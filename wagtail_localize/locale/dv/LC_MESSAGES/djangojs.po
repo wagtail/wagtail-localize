@@ -1,0 +1,65 @@
+#
+# Translators:
+# Fauzaan Gasim, 2024
+#
+msgid ""
+msgstr ""
+"Last-Translator: Fauzaan Gasim, 2024\n"
+"Language-Team: Divehi (https://app.transifex.com/torchbox/teams/8009/dv/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: dv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Cancel"
+msgstr "ކެންސަލްކުރޭ"
+
+msgid "Change image"
+msgstr "އިމޭޖް ބަދަލު ކުރޭ"
+
+msgid "Choose a document"
+msgstr "ޑޮކިއުމަންޓެއް ނަގާ"
+
+msgid "Choose a page"
+msgstr "ސަފްހާއެއް ނަގާ"
+
+msgid "Choose an image"
+msgstr "އިމޭޖެއް ނަގާ"
+
+msgid "Convert to alias page"
+msgstr "އެލިއާސް ސަފްހާއަކަށް ބަދަލުކުރޭ"
+
+msgid "Delete"
+msgstr "ޑިލީޓްކުރެވޭ"
+
+msgid "Edit"
+msgstr "އެޑިޓް"
+
+msgid "Edit this document"
+msgstr "މި ޑޮކިއުމަންޓް އެޑިޓްކުރޭ"
+
+msgid "Edit this image"
+msgstr "މި އިމޭޖް އެޑިޓްކުރޭ"
+
+msgid "Edit this page"
+msgstr "މި ސަފްހާ އެޑިޓްކުރޭ"
+
+msgid "Lock"
+msgstr "ތަޅުލާ"
+
+msgid "Preview"
+msgstr "ޕްރިވިއު"
+
+msgid "Save"
+msgstr "ސޭވްކުރޭ"
+
+msgid "Saving..."
+msgstr "ސޭވްކުރަނީ"
+
+msgid "Translate"
+msgstr "ތަރުޖަމާ ކުރޭ"
+
+msgid "Unlock"
+msgstr "ތަޅު ހުޅުވާ"
+
+msgid "Unpublish"
+msgstr "އަންޕަބްލިޝް ކޮށްލާ"

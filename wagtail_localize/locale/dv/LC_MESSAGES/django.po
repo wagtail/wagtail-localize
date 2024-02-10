@@ -1,0 +1,77 @@
+#
+# Translators:
+# Fauzaan Gasim, 2024
+#
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-21 15:03+0000\n"
+"Last-Translator: Fauzaan Gasim, 2024\n"
+"Language-Team: Divehi (https://app.transifex.com/torchbox/teams/8009/dv/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: dv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Disable"
+msgstr "ޑިޒޭބަލް"
+
+msgid "Translate"
+msgstr "ތަރުޖަމާ ކުރޭ"
+
+msgid "Saving…"
+msgstr "ސޭވްކުރަނީ"
+
+msgid "Save"
+msgstr "ސޭވްކުރޭ"
+
+msgid "Delete"
+msgstr "ޑިލީޓްކުރެވޭ"
+
+msgid "Download XLSX"
+msgstr "XLSX ޑައުންލޯޑް ކޮށްލާ"
+
+msgid "Download CSV"
+msgstr "CSVޑައުންލޯޑް ކޮށްލާ"
+
+msgid "Enable"
+msgstr "އެނޭބަލް"
+
+msgid "Yes, convert it"
+msgstr "ލައްބަ. ބަދަލުކޮށްލާ"
+
+msgid "Translate this page"
+msgstr "މި ޞަފްޙާ ތަރުޖަމާ ކުރޭ"
+
+msgid "Submit"
+msgstr "ހުށައަޅާ"
+
+msgid "Go back"
+msgstr "ފަހަތައް ދޭ"
+
+msgid "Status"
+msgstr "ހާލަތު"
+
+msgid "Content"
+msgstr "މައިގަނޑު ކޮންޓެންޓް"
+
+msgid "All"
+msgstr "ހުރިހާ"
+
+msgid "Select all"
+msgstr "ހުރިހާއެއްޗެއް ސެލެކްޓް ކޮށްލާ"
+
+msgid "Locales"
+msgstr "Locales"
+
+msgid "All child pages will be created."
+msgstr "ހުރިހާ ޗައިލްޑް ޕޭޖްތަކެއް ވެސް ހެދޭނެ"
+
+msgid "Translate page"
+msgstr "ސަފްހާ ތަރުޖަމާ ކުރޭ"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr " '%(title)s' ތަރުޖަމާ ކުރޭ"
+
+msgid "Convert to alias page"
+msgstr "އެލިއާސް ސަފްހާއަކަށް ބަދަލުކުރޭ"
