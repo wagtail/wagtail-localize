@@ -47,6 +47,18 @@ module.exports = {
                         'wagtail-localize-component-form.css'
                     ),
                 },
+                {
+                    from: path.resolve(
+                        __dirname,
+                        'wagtail_localize/static_src/editor',
+                        'main.css'
+                    ),
+                    to: path.resolve(
+                        __dirname,
+                        'wagtail_localize/static/wagtail_localize/css',
+                        'wagtail-localize-editor-form.css'
+                    ),
+                },
             ],
         }),
     ],

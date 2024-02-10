@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import gettext from 'gettext';
 
 import Icon from '../../../common/components/Icon';
-import ActionMenu from '../../../common/components/ActionMenu';
+import ActionMenu from '../../../common/components/LegacyActionMenu';
 
 import { EditorProps } from '.';
 
@@ -21,12 +21,8 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
 
             <button
                 type="submit"
-                className="button button-longrunning action-secondary"
-                data-controller="w-progress"
-                data-action="w-progress#activate"
-                data-w-progress-active-value={gettext(
-                    'Stopping Synced translation'
-                )}
+                className="button action-secondary"
+                aria-label={gettext('Stop Synced translation')}
             >
                 <Icon name="cross" />
                 {gettext('Stop Synced translation')}
@@ -41,12 +37,8 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
 
                 <button
                     type="submit"
-                    className="button button-longrunning action-secondary"
-                    data-controller="w-progress"
-                    data-action="w-progress#activate"
-                    data-w-progress-active-value={gettext(
-                        'Converting to alias page'
-                    )}
+                    className="button action-secondary"
+                    aria-label={gettext('Convert to alias page')}
                 >
                     <Icon name="wagtail-localize-convert" />
                     {gettext('Convert to alias page')}
@@ -76,12 +68,8 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
 
                 <button
                     type="submit"
-                    className="button button-longrunning action-secondary"
-                    data-controller="w-progress"
-                    data-action="w-progress#activate"
-                    data-w-progress-active-value={gettext(
-                        'Applying editor lock'
-                    )}
+                    className="button action-secondary"
+                    aria-label={gettext('Apply editor lock')}
                 >
                     <Icon name="lock" />
                     {gettext('Lock')}
@@ -102,12 +90,8 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
 
                 <button
                     type="submit"
-                    className="button button-longrunning action-secondary"
-                    data-controller="w-progress"
-                    data-action="w-progress#activate"
-                    data-w-progress-active-value={gettext(
-                        'Removing editor lock'
-                    )}
+                    className="button action-secondary"
+                    aria-label={gettext('Remove editor lock')}
                 >
                     <Icon name="lock-open" />
                     {gettext('Unlock')}
@@ -139,7 +123,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     type="submit"
                     name="action"
                     value="publish"
-                    className="button button-longrunning"
+                    className="button button-longrunning "
                     data-clicked-text={gettext('Publishing...')}
                     data-controller="w-progress"
                     data-action="w-progress#activate"
@@ -160,12 +144,16 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
     const defaultAction = actions.pop();
 
     return (
-        <footer className="footer w-grid md:w-grid-flow-col">
-            <ActionMenu
-                defaultAction={defaultAction}
-                actions={actions}
-                previewModes={previewModes}
-            />
+        <footer className="footer">
+            <ul>
+                <li className="footer__container">
+                    <ActionMenu
+                        defaultAction={defaultAction}
+                        actions={actions}
+                        previewModes={previewModes}
+                    />
+                </li>
+            </ul>
         </footer>
     );
 };

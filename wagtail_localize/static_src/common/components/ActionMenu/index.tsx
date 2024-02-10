@@ -78,96 +78,137 @@ const ActionMenu: FunctionComponent<ActionMenuProps> = ({
     actions,
     previewModes,
 }) => {
-    const wrappedActions = actions.map((action) => <li>{action}</li>);
-
     return (
-        <nav aria-label="Actions">
-            <ul>
-                <li className="actions actions--primary">
-                    <div className="dropdown dropup dropdown-button match-width ">
-                        {defaultAction}
+        <nav
+            className="actions actions--primary footer__container"
+            aria-label={gettext('Actions')}
+        >
+            <div className="w-dropdown-button">
+                <button
+                    type="submit"
+                    className="button action-save button-longrunning "
+                    data-controller="w-progress"
+                    data-action="w-progress#activate"
+                    data-w-progress-active-value="Saving…"
+                >
+                    <svg
+                        className="icon icon-draft button-longrunning__icon"
+                        aria-hidden="true"
+                    >
+                        <use href="#icon-draft"></use>
+                    </svg>
+                    <svg className="icon icon-spinner icon" aria-hidden="true">
+                        <use href="#icon-spinner"></use>
+                    </svg>
+                    <em data-w-progress-target="label">{defaultAction}</em>
+                </button>
 
-                        <div className="dropdown-toggle">
+                <div
+                    data-controller="w-dropdown"
+                    className="w-dropdown w-dropdown--dropdown-button"
+                    data-w-dropdown-theme-value="dropdown-button"
+                    data-w-dropdown-offset-value="[0, 0]"
+                >
+                    <button
+                        type="button"
+                        className="w-dropdown__toggle button"
+                        data-w-dropdown-target="toggle"
+                    >
+                        <span className="w-sr-only">More actions</span>
+                        <svg
+                            className="icon icon-arrow-up w-dropdown__toggle-icon"
+                            aria-hidden="true"
+                        >
+                            <use href="#icon-arrow-up"></use>
+                        </svg>
+                    </button>
+
+                    <div
+                        data-w-dropdown-target="content"
+                        className="w-dropdown__content"
+                        hidden
+                    >
+                        {actions}
+                    </div>
+                </div>
+            </div>
+
+            {/* Single-mode preview */}
+            {previewModes && previewModes.length == 1 && (
+                <div className="w-dropdown-button">
+                    <a
+                        className="button button--icon"
+                        href={previewModes[0].url}
+                        target="_blank"
+                    >
+                        <svg
+                            className="icon icon-view"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <use href="#icon-view"></use>
+                        </svg>
+                        {gettext('Preview')}
+                    </a>
+                </div>
+            )}
+            {/* Multi-mode preview */}
+            {previewModes && previewModes.length > 1 && (
+                <div className="w-dropdown-button">
+                    <a
+                        className="button button--icon"
+                        href={previewModes[0].url}
+                        target="_blank"
+                    >
+                        <svg
+                            className="icon icon-view"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <use href="#icon-view"></use>
+                        </svg>
+                        {gettext('Preview')}
+                    </a>
+                    <div
+                        data-controller="w-dropdown"
+                        className="w-dropdown w-dropdown--dropdown-button"
+                        data-w-dropdown-theme-value="dropdown-button"
+                        data-w-dropdown-offset-value="[0, 0]"
+                    >
+                        <button
+                            type="button"
+                            className="w-dropdown__toggle button"
+                            data-w-dropdown-target="toggle"
+                        >
+                            <span className="w-sr-only">More actions</span>
                             <svg
-                                className="icon icon-arrow-up icon"
+                                className="icon icon-arrow-up w-dropdown__toggle-icon"
                                 aria-hidden="true"
-                                focusable="false"
                             >
                                 <use href="#icon-arrow-up"></use>
                             </svg>
-                        </div>
-                        <ul>{wrappedActions}</ul>
-                    </div>
-                </li>
+                        </button>
 
-                {/* Single-mode preview */}
-                {previewModes && previewModes.length == 1 && (
-                    <li className="preview dropdown">
-                        <a
-                            className="button button--icon"
-                            href={previewModes[0].url}
-                            target="_blank"
+                        <div
+                            data-w-dropdown-target="content"
+                            className="w-dropdown__content"
+                            hidden
                         >
-                            <svg
-                                className="icon icon-view icon"
-                                aria-hidden="true"
-                                focusable="false"
-                            >
-                                <use href="#icon-view"></use>
-                            </svg>
-                            {gettext('Preview')}
-                        </a>
-                    </li>
-                )}
-
-                {/* Multi-mode preview */}
-                {previewModes && previewModes.length > 1 && (
-                    <li className="preview">
-                        <div className="dropdown dropup dropdown-button match-width">
-                            <a
-                                className="button button--icon"
-                                href={previewModes[0].url}
-                                target="_blank"
-                            >
-                                <svg
-                                    className="icon icon-view icon"
-                                    aria-hidden="true"
-                                    focusable="false"
-                                >
-                                    <use href="#icon-view"></use>
-                                </svg>
-                                {gettext('Preview')}
-                            </a>
-
-                            <div className="dropdown-toggle">
-                                <svg
-                                    className="icon icon-arrow-up icon"
-                                    aria-hidden="true"
-                                    focusable="false"
-                                >
-                                    <use href="#icon-arrow-up"></use>
-                                </svg>
-                            </div>
-
-                            <ul>
-                                {previewModes.map(({ label, url }) => {
-                                    return (
-                                        <li>
-                                            <a
-                                                className="button"
-                                                href={url}
-                                                target="_blank"
-                                            >
-                                                {label}
-                                            </a>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
+                            {previewModes.map(({ label, url }) => {
+                                return (
+                                    <a
+                                        className="button"
+                                        href={url}
+                                        target="_blank"
+                                    >
+                                        {label}
+                                    </a>
+                                );
+                            })}
                         </div>
-                    </li>
-                )}
-            </ul>
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };
