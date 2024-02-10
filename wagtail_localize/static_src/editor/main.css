@@ -1,0 +1,42 @@
+.w-dropdown__content form .button {
+    width: 100%;
+}
+
+.js-translation-editor
+    .footer
+    .actions--primary
+    .w-dropdown-button:first-child {
+    min-width: 210px;
+}
+
+.js-translation-editor
+    .footer
+    .actions--primary
+    .w-dropdown-button
+    + .w-dropdown-button {
+    margin-top: 0.5em;
+}
+
+@media screen and (min-width: 50em) {
+    .js-translation-editor .footer .actions--primary {
+        display: flex;
+        min-width: 310px;
+        width: auto;
+    }
+
+    .js-translation-editor
+        .footer
+        .actions--primary
+        .w-dropdown-button:first-child {
+        min-width: 310px;
+    }
+
+    .js-translation-editor
+        .footer
+        .actions--primary
+        .w-dropdown-button
+        + .w-dropdown-button {
+        margin-top: 0;
+        margin-left: 1em;
+    }
+}

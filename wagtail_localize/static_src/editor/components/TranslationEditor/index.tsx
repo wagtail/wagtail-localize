@@ -5,6 +5,7 @@ import { Tabs, TabContent } from '../../../common/components/Tabs';
 
 import { EditorState, reducer } from './reducer';
 import EditorFooter from './footer';
+import LegacyEditorFooter from './legacy-footer';
 import EditorSegmentList from './segments';
 import EditorToolbox from './toolbox';
 import gettext from 'gettext';
@@ -187,6 +188,7 @@ export interface EditorProps {
     segments: Segment[];
     initialStringTranslations: StringTranslationAPI[];
     initialOverrides: SegmentOverrideAPI[];
+    hasLegacyActionMenu: boolean;
 }
 
 const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
@@ -311,12 +313,21 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
         );
     }
 
-    return (
-        <>
-            {tabs}
-            <EditorFooter {...props} />
-        </>
-    );
+    if (props.hasLegacyActionMenu) {
+        return (
+            <>
+                {tabs}
+                <LegacyEditorFooter {...props} />
+            </>
+        );
+    } else {
+        return (
+            <>
+                {tabs}
+                <EditorFooter {...props} />
+            </>
+        );
+    }
 };
 
 export default TranslationEditor;
