@@ -14,6 +14,7 @@ jobs:
 
       - run: pip install flit
       - run: flit install --deps production --extras testing
+      - run: pip install "wagtail_modeladmin<2.0"
 
       - type: cache-save
         key: pip-{{ .Branch }}-{{ epoch }}
