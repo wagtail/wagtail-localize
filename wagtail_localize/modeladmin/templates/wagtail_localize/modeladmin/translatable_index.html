@@ -2,17 +2,13 @@
 {% load i18n modeladmin_tags wagtailadmin_tags %}
 
 {% block header_extra %}
-  <div class="right header-right">
-    <div class="col">
-      {% include 'wagtailadmin/shared/locale_selector.html' with class='c-dropdown--large' %}
-    </div>
+    {% if not translations %}<div class="button button-secondary">{% endif %}
+        {% include 'wagtailadmin/shared/locale_selector.html' with class='c-dropdown--large' theme="large" %}
+    {% if not translations %}</div>{% endif %}
     {% if user_can_create %}
-      <div class="actionbutton col">
-        {% include 'wagtail_localize/modeladmin/includes/button.html' with button=view.button_helper.add_button %}
-      </div>
+        {% include 'wagtail_localize/modeladmin/includes/button.html' with button=view.button_helper.add_button icon="plus" %}
     {% endif %}
     {% if view.list_export %}
         {% include view.export_buttons_template_name %}
     {% endif %}
-  </div>
 {% endblock %}

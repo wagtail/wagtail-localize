@@ -1,1 +1,2 @@
-<a{% if button.url %} href="{{ button.url }}{% if locale %}?locale={{ locale.language_code }}{% endif %}"{% endif %} class="{{ button.classname }}" title="{{ button.title }}"{% if button.target %} target="{{ button.target }}"{% endif %}{% if button.rel %} rel="{{ button.rel }}"{% endif %}>{{ button.label }}</a>
+{% load wagtailadmin_tags %}
+<a{% if button.url %} href="{{ button.url }}{% if locale %}?locale={{ locale.language_code }}{% endif %}"{% endif %} class="{{ button.classname }}" title="{{ button.title }}"{% if button.target %} target="{{ button.target }}"{% endif %}{% if button.rel %} rel="{{ button.rel }}"{% endif %}>{% if icon %}<span class="icon-wrapper">{% icon name=icon %}</span> {% endif %}{{ button.label }}</a>
