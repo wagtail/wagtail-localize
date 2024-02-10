@@ -28,13 +28,17 @@ def translate_html(html):
             if isinstance(child, NavigableString):
                 # Translate navigable strings
                 child.string.replace_with(translate_string(child.string))
-
             else:
                 walk(child)
 
     # Reverse the children
     if isinstance(soup, Tag):
-        soup.contents.reverse()
+        # reverse the children
+        reversed_contents = soup.contents[::-1]
+
+        soup = BeautifulSoup("", "html.parser")
+        for content in reversed_contents:
+            soup.append(content)
 
     walk(soup)
 
