@@ -1,6 +1,6 @@
 {
   "name": "wagtail-localize-admin",
-  "version": "1.5.0",
+  "version": "1.8.0",
   "description": "",
   "main": "src/main.ts",
   "scripts": {
