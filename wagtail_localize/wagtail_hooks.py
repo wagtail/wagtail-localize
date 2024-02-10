@@ -10,11 +10,10 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
-from wagtail.admin import widgets as wagtailadmin_widgets
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.widgets import ListingButton
 from wagtail.log_actions import LogFormatter
 from wagtail.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
@@ -136,18 +135,7 @@ def register_submit_translation_permission():
     )
 
 
-if WAGTAIL_VERSION >= (5, 0):
-
-    class PageButton(wagtailadmin_widgets.ListingButton):
-        ...
-
-else:
-
-    class PageButton(wagtailadmin_widgets.Button):
-        ...
-
-
-def _page_listing_more_buttons(page: Page, user, next_url: str | None = None):
+def page_listing_more_buttons(page: Page, user, view_name=None, next_url=None):
     if not page.is_root() and user.has_perm("wagtail_localize.submit_translation"):
         # If there's at least one locale that we haven't translated into yet, show "Translate this page" button
         has_locale_to_translate_to = Locale.objects.exclude(
@@ -163,7 +151,7 @@ def _page_listing_more_buttons(page: Page, user, next_url: str | None = None):
                 args=[page.alias_of_id or page.id],
             )
 
-            yield PageButton(
+            yield ListingButton(
                 _("Translate this page"),
                 url,
                 priority=60,
@@ -177,21 +165,9 @@ def _page_listing_more_buttons(page: Page, user, next_url: str | None = None):
             if next_url is not None:
                 url += "?" + urlencode({"next": next_url})
 
-            yield PageButton(
+            yield ListingButton(
                 _("Sync translated pages"), url, priority=60, icon_name="resubmit"
             )
-
-
-if WAGTAIL_VERSION >= (5, 2):
-
-    def page_listing_more_buttons(page, user, view_name=None, next_url=None):
-        return _page_listing_more_buttons(page, user, next_url)
-
-else:
-
-    def page_listing_more_buttons(page, page_perms, next_url=None):
-        user = page_perms.user
-        return _page_listing_more_buttons(page, user, next_url=next_url)
 
 
 hooks.register("register_page_header_buttons", page_listing_more_buttons)

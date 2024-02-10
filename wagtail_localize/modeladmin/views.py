@@ -11,32 +11,19 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from wagtail.models import Locale, TranslatableMixin
 from wagtail.utils.version import get_main_version
+from wagtail_modeladmin.views import (
+    ChooseParentView,
+    CreateView,
+    DeleteView,
+    EditView,
+    HistoryView,
+    IndexView,
+    InspectView,
+)
 
 from wagtail_localize.models import Translation
 from wagtail_localize.views import edit_translation
 from wagtail_localize.views.submit_translations import SubmitTranslationView
-
-
-try:
-    from wagtail_modeladmin.views import (
-        ChooseParentView,
-        CreateView,
-        DeleteView,
-        EditView,
-        HistoryView,
-        IndexView,
-        InspectView,
-    )
-except ImportError:
-    from wagtail.contrib.modeladmin.views import (
-        ChooseParentView,
-        CreateView,
-        DeleteView,
-        EditView,
-        HistoryView,
-        IndexView,
-        InspectView,
-    )
 
 
 class TranslatableViewMixin:

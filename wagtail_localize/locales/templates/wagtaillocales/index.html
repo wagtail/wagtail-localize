@@ -29,11 +29,7 @@
                                     <a href="{% url 'wagtaillocales:edit' locale.id %}">{{ locale }}</a>
                                     {% if not locale.language_code_is_valid %}
                                         {% trans "This locale's language code is not supported" as error %}
-                                        {% if wagtail_version >= "5.1" %}
                                           {% include "wagtaillocales/_icon.html" with error=error only %}
-                                        {% else %}
-                                            {% include "wagtaillocales/_icon_legacy.html" with error=error only %}
-                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </td>
