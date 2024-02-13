@@ -5,7 +5,6 @@
 [![Version](https://img.shields.io/pypi/v/wagtail-localize.svg?style=flat)](https://pypi.python.org/pypi/wagtail-localize/)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg?style=flat)](https://opensource.org/licenses/BSD-3-Clause)
 [![codecov](https://img.shields.io/codecov/c/github/wagtail/wagtail-localize?style=flat)](https://codecov.io/gh/wagtail/wagtail-localize)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/wagtail/wagtail-localize.svg?logo=lgtm&logoWidth=18&style=flat)](https://lgtm.com/projects/g/wagtail/wagtail-localize/context:python)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat)](https://github.com/psf/black)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white&style=flat)](https://github.com/pre-commit/pre-commit)
 
