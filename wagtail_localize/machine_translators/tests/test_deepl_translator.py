@@ -1,7 +1,10 @@
+from unittest.mock import Mock, patch
+
 from django.test import TestCase, override_settings
 
 from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.machine_translators.deepl import DeepLTranslator, language_code
+from wagtail_localize.strings import StringValue
 
 
 DEEPL_SETTINGS_FREE_ENDPOINT = {
@@ -12,6 +15,14 @@ DEEPL_SETTINGS_FREE_ENDPOINT = {
 DEEPL_SETTINGS_PAID_ENDPOINT = {
     "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
     "OPTIONS": {"AUTH_KEY": "asd-23-ssd-243-adsf-dummy-auth-key:bla"},
+}
+
+DEEPL_SETTINGS_WITH_FORMALITY = {
+    "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
+    "OPTIONS": {
+        "AUTH_KEY": "asd-23-ssd-243-adsf-dummy-auth-key:bla",
+        "FORMALITY": "prefer_less",
+    },
 }
 
 
@@ -29,6 +40,35 @@ class TestDeeplTranslator(TestCase):
         self.assertIsInstance(translator, DeepLTranslator)
         paid_api_endpoint = translator.get_api_endpoint()
         self.assertEqual(paid_api_endpoint, "https://api.deepl.com/v2/translate")
+
+    @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR=DEEPL_SETTINGS_WITH_FORMALITY)
+    @patch("requests.post")
+    def test_translate_with_formality_option(self, mock_post):
+        translator = get_machine_translator()
+        source_locale = Mock(language_code="en")
+        target_locale = Mock(language_code="de")
+        strings = [StringValue("Test string")]
+
+        translator.translate(source_locale, target_locale, strings)
+
+        mock_post.assert_called_once()
+        called_args, called_kwargs = mock_post.call_args
+        self.assertIn("formality", called_args[1])
+        self.assertEqual(called_args[1]["formality"], "prefer_less")
+
+    @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR=DEEPL_SETTINGS_PAID_ENDPOINT)
+    @patch("requests.post")
+    def test_translate_without_formality_option(self, mock_post):
+        translator = get_machine_translator()
+        source_locale = Mock(language_code="en")
+        target_locale = Mock(language_code="de")
+        strings = [StringValue("Test string")]
+
+        translator.translate(source_locale, target_locale, strings)
+
+        mock_post.assert_called_once()
+        called_args, called_kwargs = mock_post.call_args
+        self.assertNotIn("formality", called_args[1])
 
     def test_language_code_as_source(self):
         mapping = {

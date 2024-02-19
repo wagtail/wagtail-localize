@@ -24,17 +24,20 @@ class DeepLTranslator(BaseMachineTranslator):
         return "https://api.deepl.com/v2/translate"
 
     def translate(self, source_locale, target_locale, strings):
+        args = {
+            "auth_key": self.options["AUTH_KEY"],
+            "text": [string.data for string in strings],
+            "tag_handling": "xml",
+            "source_lang": language_code(source_locale.language_code),
+            "target_lang": language_code(target_locale.language_code, is_target=True),
+        }
+
+        if self.options.get("FORMALITY"):
+            args["formality"] = self.options["FORMALITY"]
+
         response = requests.post(
             self.get_api_endpoint(),
-            {
-                "auth_key": self.options["AUTH_KEY"],
-                "text": [string.data for string in strings],
-                "tag_handling": "xml",
-                "source_lang": language_code(source_locale.language_code),
-                "target_lang": language_code(
-                    target_locale.language_code, is_target=True
-                ),
-            },
+            args,
             timeout=30,
         )
 

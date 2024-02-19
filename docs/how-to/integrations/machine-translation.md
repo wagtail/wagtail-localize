@@ -124,6 +124,8 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
     "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
     "OPTIONS": {
         "AUTH_KEY": "<Your DeepL key here>",
+        # Optional DeepL API option
+        "FORMALITY": "<Your DeepL formality preference here>",
     },
 }
 ```
