@@ -87,7 +87,7 @@ the currently active language which can be found with `Locale.get_active()`.
 
 To implement this, open up `search/views.py` in your favourite editor, then modify the following lines:
 
-- Change the import line `from wagtail.models import Page` to `from wagtail.models import Page, Locale`
-- Change the query `Page.objects.live().search(search_query)` to `Page.objects.live().filter(locale=Locale.get_active()).search(search_query)`
+-   Change the import line `from wagtail.models import Page` to `from wagtail.models import Page, Locale`
+-   Change the query `Page.objects.live().search(search_query)` to `Page.objects.live().filter(locale=Locale.get_active()).search(search_query)`
 
 Refresh the search page in the browser, the results should now be filtered.

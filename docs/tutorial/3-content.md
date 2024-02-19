@@ -113,10 +113,10 @@ the following screenshot, and publish it.
 Then navigate to the new blog index page, click "Add child page" then click "Blog post page". Fill it in how you like,
 but make sure that you cover the following:
 
-- Upload an image and add it to the "Image" field
-- Create a "Blog Category" and select it in the "Category" field
-- Add an item in the paragraph block, with some text and a couple of list items. Use some inline formatting
-  (bold, italic, etc) and add a link
+-   Upload an image and add it to the "Image" field
+-   Create a "Blog Category" and select it in the "Category" field
+-   Add an item in the paragraph block, with some text and a couple of list items. Use some inline formatting
+    (bold, italic, etc) and add a link
 
 ![Blog post page being edited in Wagtail](/_static/tutorial/wagtail-edit-source.png)
 

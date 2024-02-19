@@ -351,9 +351,11 @@ def extract_strings(html):
             return
 
         value = "".join(
-            element.output_ready()
-            if isinstance(element, NavigableString)
-            else str(element)
+            (
+                element.output_ready()
+                if isinstance(element, NavigableString)
+                else str(element)
+            )
             for element in elements
         )
 

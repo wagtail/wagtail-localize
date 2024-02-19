@@ -87,8 +87,8 @@ Open `tutorial/urls.py` in your text editor. You'll see that there are two group
 
 The patterns that need to be made translatable are:
 
-- `path('search/', search_views.search, name='search'),`
-- `path("", include(wagtail_urls)),`
+-   `path('search/', search_views.search, name='search'),`
+-   `path("", include(wagtail_urls)),`
 
 To make these translatable, move the 'search/' pattern into the second block, above the `wagtail_urls` pattern. Then,
 replace the square brakets around that block with

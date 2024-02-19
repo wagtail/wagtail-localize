@@ -1,128 +1,128 @@
 name: Localize CI
 
 on:
-  push:
-    branches:
-      - main
-      - 'stable/**'
+    push:
+        branches:
+            - main
+            - 'stable/**'
 
-  pull_request:
+    pull_request:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 env:
-  FORCE_COLOR: '1' # Make tools pretty.
-  TOX_TESTENV_PASSENV: FORCE_COLOR
-  PIP_DISABLE_PIP_VERSION_CHECK: '1'
-  PIP_NO_PYTHON_VERSION_WARNING: '1'
-  PYTHON_LATEST: '3.11'
+    FORCE_COLOR: '1' # Make tools pretty.
+    TOX_TESTENV_PASSENV: FORCE_COLOR
+    PIP_DISABLE_PIP_VERSION_CHECK: '1'
+    PIP_NO_PYTHON_VERSION_WARNING: '1'
+    PYTHON_LATEST: '3.11'
 
 permissions:
-  contents: read # to fetch code (actions/checkout)
+    contents: read # to fetch code (actions/checkout)
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{env.PYTHON_LATEST}}
-      - uses: pre-commit/action@v3.0.0
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - uses: actions/setup-python@v4
+              with:
+                  python-version: ${{env.PYTHON_LATEST}}
+            - uses: pre-commit/action@v3.0.0
 
-  test-sqlite:
-    runs-on: ubuntu-latest
-    needs: lint
-    strategy:
-      matrix:
-        python: ['3.8', '3.9', '3.10', '3.11', '3.12']
-        database: ['sqlite']
+    test-sqlite:
+        runs-on: ubuntu-latest
+        needs: lint
+        strategy:
+            matrix:
+                python: ['3.8', '3.9', '3.10', '3.11', '3.12']
+                database: ['sqlite']
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install tox tox-gh-actions
-      - name: Test with tox
-        run: tox -- -v1
-        env:
-          DATABASE: sqlite
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Python ${{ matrix.python }}
+              uses: actions/setup-python@v4
+              with:
+                  python-version: ${{ matrix.python }}
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  python -m pip install tox tox-gh-actions
+            - name: Test with tox
+              run: tox -- -v1
+              env:
+                  DATABASE: sqlite
 
-  test-postgres:
-    runs-on: ubuntu-latest
-    needs: lint
-    strategy:
-      matrix:
-        python: ['3.8', '3.9', '3.10', '3.11', '3.12']
-        database: ['postgres']
+    test-postgres:
+        runs-on: ubuntu-latest
+        needs: lint
+        strategy:
+            matrix:
+                python: ['3.8', '3.9', '3.10', '3.11', '3.12']
+                database: ['postgres']
 
-    services:
-      postgres:
-        image: bitnami/postgresql:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-          POSTGRESQL_PASSWORD: postgres
-          POSTGRESQL_FSYNC: 'off'
-          POSTGRESQL_DATA_DIR: /dev/shm/pgdata
-        ports:
-          - 5432:5432
-        options: --health-cmd "pg_isready -d postgres -U postgres -p 5432" --health-interval 10s --health-timeout 5s --health-retries 5
+        services:
+            postgres:
+                image: bitnami/postgresql:15
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: postgres
+                    POSTGRESQL_PASSWORD: postgres
+                    POSTGRESQL_FSYNC: 'off'
+                    POSTGRESQL_DATA_DIR: /dev/shm/pgdata
+                ports:
+                    - 5432:5432
+                options: --health-cmd "pg_isready -d postgres -U postgres -p 5432" --health-interval 10s --health-timeout 5s --health-retries 5
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Set up Python
-        id: setup-python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python }}
+            - name: Set up Python
+              id: setup-python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: ${{ matrix.python }}
 
-      - name: Install dependencies
-        id: install-dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install tox tox-gh-actions
-      - name: Test with tox
-        id: test-with-tox
-        run: tox -- -v1
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
-          DATABASE: postgres
+            - name: Install dependencies
+              id: install-dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  python -m pip install tox tox-gh-actions
+            - name: Test with tox
+              id: test-with-tox
+              run: tox -- -v1
+              env:
+                  DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+                  DATABASE: postgres
 
-  coverage:
-    runs-on: ubuntu-latest
-    needs: lint
-    strategy:
-      matrix:
-        python: ['3.8']
+    coverage:
+        runs-on: ubuntu-latest
+        needs: lint
+        strategy:
+            matrix:
+                python: ['3.8']
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python }}
-      - name: Install dependencies
-        run: |
-          pip install flit
-          flit install --deps production --extras testing
-          pip install coverage==5.4
-      - name: Test
-        run: |
-          coverage run testmanage.py test
-      - name: 'Upload coverage to Codecov'
-        uses: codecov/codecov-action@v3
-        with:
-          fail_ci_if_error: true
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Python ${{ matrix.python }}
+              uses: actions/setup-python@v4
+              with:
+                  python-version: ${{ matrix.python }}
+            - name: Install dependencies
+              run: |
+                  pip install flit
+                  flit install --deps production --extras testing
+                  pip install coverage==5.4
+            - name: Test
+              run: |
+                  coverage run testmanage.py test
+            - name: 'Upload coverage to Codecov'
+              uses: codecov/codecov-action@v3
+              with:
+                  fail_ci_if_error: true

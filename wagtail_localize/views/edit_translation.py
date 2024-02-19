@@ -444,9 +444,9 @@ def get_segment_location_info(
             "blockId": content_path_components[1],
             "fieldHelpText": "",
             "subField": block_field,
-            "widget": widget_from_block(block_type, content_components)
-            if widget
-            else None,
+            "widget": (
+                widget_from_block(block_type, content_components) if widget else None
+            ),
         }
 
     elif (
@@ -462,9 +462,11 @@ def get_segment_location_info(
             "order": order,
             "blockId": content_path_components[1],
             "fieldHelpText": getattr(child_field, "help_text", ""),
-            "subField": capfirst(child_field.verbose_name)
-            if hasattr(child_field, "verbose_name")
-            else None,
+            "subField": (
+                capfirst(child_field.verbose_name)
+                if hasattr(child_field, "verbose_name")
+                else None
+            ),
             "widget": widget_from_field(child_field) if widget else None,
         }
 
@@ -616,9 +618,11 @@ def edit_translation(request, translation, instance):
                     "id": page.id,
                     "isRoot": page.is_root(),
                     "title": page.title,
-                    "exploreUrl": reverse("wagtailadmin_explore_root")
-                    if page.is_root()
-                    else reverse("wagtailadmin_explore", args=[page.id]),
+                    "exploreUrl": (
+                        reverse("wagtailadmin_explore_root")
+                        if page.is_root()
+                        else reverse("wagtailadmin_explore", args=[page.id])
+                    ),
                 }
                 for page in instance.get_ancestors(inclusive=False).descendant_of(
                     cca, inclusive=True
@@ -927,12 +931,16 @@ def edit_translation(request, translation, instance):
                     "titleSegmentId": title_segment_id,
                     "isLive": is_live,
                     "isLocked": is_locked,
-                    "lastPublishedDate": last_published_at.strftime(DATE_FORMAT)
-                    if last_published_at is not None
-                    else None,
-                    "lastPublishedBy": UserSerializer(last_published_by).data
-                    if last_published_by is not None
-                    else None,
+                    "lastPublishedDate": (
+                        last_published_at.strftime(DATE_FORMAT)
+                        if last_published_at is not None
+                        else None
+                    ),
+                    "lastPublishedBy": (
+                        UserSerializer(last_published_by).data
+                        if last_published_by is not None
+                        else None
+                    ),
                     "liveUrl": live_url,
                 },
                 "breadcrumb": breadcrumb,
@@ -960,41 +968,45 @@ def edit_translation(request, translation, instance):
                     "uploadPofile": reverse(
                         "wagtail_localize:upload_pofile", args=[translation.id]
                     ),
-                    "unpublishUrl": reverse(
-                        "wagtailadmin_pages:unpublish", args=[instance.id]
-                    )
-                    if isinstance(instance, Page)
-                    else None,
-                    "lockUrl": reverse("wagtailadmin_pages:lock", args=[instance.id])
-                    if isinstance(instance, Page)
-                    else None,
-                    "unlockUrl": reverse(
-                        "wagtailadmin_pages:unlock", args=[instance.id]
-                    )
-                    if isinstance(instance, Page)
-                    else None,
+                    "unpublishUrl": (
+                        reverse("wagtailadmin_pages:unpublish", args=[instance.id])
+                        if isinstance(instance, Page)
+                        else None
+                    ),
+                    "lockUrl": (
+                        reverse("wagtailadmin_pages:lock", args=[instance.id])
+                        if isinstance(instance, Page)
+                        else None
+                    ),
+                    "unlockUrl": (
+                        reverse("wagtailadmin_pages:unlock", args=[instance.id])
+                        if isinstance(instance, Page)
+                        else None
+                    ),
                     "deleteUrl": get_delete_url(instance),
                     "stopTranslationUrl": reverse(
                         "wagtail_localize:stop_translation", args=[translation.id]
                     ),
-                    "convertToAliasUrl": reverse(
-                        "wagtail_localize:convert_to_alias", args=[instance.id]
-                    )
-                    if add_convert_to_alias_url
-                    else None,
+                    "convertToAliasUrl": (
+                        reverse("wagtail_localize:convert_to_alias", args=[instance.id])
+                        if add_convert_to_alias_url
+                        else None
+                    ),
                 },
                 "previewModes": [
                     {
                         "mode": mode,
                         "label": label,
-                        "url": reverse(
-                            "wagtail_localize:preview_translation",
-                            args=[translation.id],
-                        )
-                        if mode == instance.default_preview_mode
-                        else reverse(
-                            "wagtail_localize:preview_translation",
-                            args=[translation.id, mode],
+                        "url": (
+                            reverse(
+                                "wagtail_localize:preview_translation",
+                                args=[translation.id],
+                            )
+                            if mode == instance.default_preview_mode
+                            else reverse(
+                                "wagtail_localize:preview_translation",
+                                args=[translation.id, mode],
+                            )
                         ),
                     }
                     for mode, label in (

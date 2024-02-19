@@ -2,8 +2,8 @@
 
 Content paths are used by Wagtail Localize to reference a field within a page or snippet. They are needed for two purposes:
 
-- They are generated whenever Wagtail Localize extracts segments from an object to provide an address for inserting the translations later on
-- They are used in the `msgctxt` field in PO files to allow the same source string to be translated differently for different fields
+-   They are generated whenever Wagtail Localize extracts segments from an object to provide an address for inserting the translations later on
+-   They are used in the `msgctxt` field in PO files to allow the same source string to be translated differently for different fields
 
 This document describes how content paths are generated.
 
