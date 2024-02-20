@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9alpha1] - 2024-02-20
+
+### Added formal Wagtail 6.0 support ([#776](https://github.com/wagtail/wagtail-localize/pull/776)) @laymonage and @zerolab
+
 ## [1.8] - 2024-02-10
 
 ### Added
@@ -301,7 +305,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.8...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.1...HEAD
+[1.9alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.8...v1.9-alpha.1
 [1.8]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8
 [1.8beta1]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8-beta.1
 [1.7]: https://github.com/wagtail/wagtail-localize/compare/v1.7rc1...v1.7
