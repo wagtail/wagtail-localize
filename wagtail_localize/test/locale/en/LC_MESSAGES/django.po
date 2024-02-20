@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 09:12+0000\n"
+"POT-Creation-Date: 2024-02-20 16:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,14 +30,14 @@ msgstr ""
 msgid "char field"
 msgstr ""
 
-#: tests/test_edit_translation.py:1509
+#: tests/test_edit_translation.py:1448
 msgid "Default"
 msgstr ""
 
-#: tests/test_edit_translation.py:1510
+#: tests/test_edit_translation.py:1449
 msgid "First mode"
 msgstr ""
 
-#: tests/test_edit_translation.py:1511
+#: tests/test_edit_translation.py:1450
 msgid "Second mode"
 msgstr ""

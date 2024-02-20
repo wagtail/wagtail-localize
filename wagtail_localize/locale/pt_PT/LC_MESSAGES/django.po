@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 09:12+0000\n"
+"POT-Creation-Date: 2024-02-10 12:47+0000\n"
 "Last-Translator: Luís Tiago Favas <traducoes@favas.eu>, 2023\n"
 "Language-Team: Portuguese (Portugal) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
