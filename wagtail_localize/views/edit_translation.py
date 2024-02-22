@@ -1305,6 +1305,7 @@ def upload_pofile(request, translation_id):
 
     # Set delete to false. This fixes some windows errors when creating tempfiles.
     # This is due to the Windows OS locking temporary files when open.
+    # https://github.com/wagtail/wagtail-localize/issues/757
     with tempfile.NamedTemporaryFile(delete=False) as f:
         # Note: polib.pofile accepts either a filename or contents. We cannot pass the
         # contents directly into polib.pofile or users could upload a file containing
