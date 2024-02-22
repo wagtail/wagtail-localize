@@ -19,6 +19,7 @@ from django.utils.functional import cached_property
 from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
+import os
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers, status
 from rest_framework.authentication import SessionAuthentication
@@ -1302,20 +1303,24 @@ def upload_pofile(request, translation_id):
 
     do_import = True
 
-    with tempfile.NamedTemporaryFile() as f:
+    # Set delete to false. This fixes some windows errors when creating tempfiles.
+    # This is due to the Windows OS locking temporary files when open.
+    with tempfile.NamedTemporaryFile(delete=False) as f:
         # Note: polib.pofile accepts either a filename or contents. We cannot pass the
         # contents directly into polib.pofile or users could upload a file containing
         # a filename and this will be read by polib!
         f.write(request.FILES["file"].read())
         f.flush()
 
-        try:
-            po = polib.pofile(f.name)
+    # Move indentation back, we should open the file outside of the with statement.
+    # Delete must be set to false, otherwise the file will be deleted before we can open it.
+    try:
+        po = polib.pofile(f.name)
 
-        except (OSError, UnicodeDecodeError):
-            # Annoyingly, POLib uses OSError for parser exceptions...
-            messages.error(request, _("Please upload a valid PO file."))
-            do_import = False
+    except (OSError, UnicodeDecodeError):
+       # Annoyingly, POLib uses OSError for parser exceptions...
+       messages.error(request, _("Please upload a valid PO file."))
+       do_import = False
 
     if do_import:
         translation_id = po.metadata["X-WagtailLocalize-TranslationID"]
@@ -1330,8 +1335,13 @@ def upload_pofile(request, translation_id):
 
     if do_import:
         translation.import_po(po, user=request.user, tool_name="PO File")
-
         messages.success(request, _("Successfully imported translations from PO File."))
+
+    # Delete the created tempfile
+    try:
+        os.unlink(f.name)
+    except OSError:
+        pass
 
     # Work out where to redirect to
     next_url = get_valid_next_url_from_request(request)
