@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 
 from collections import defaultdict
@@ -19,7 +20,6 @@ from django.utils.functional import cached_property
 from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
-import os
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers, status
 from rest_framework.authentication import SessionAuthentication
@@ -1318,9 +1318,9 @@ def upload_pofile(request, translation_id):
         po = polib.pofile(f.name)
 
     except (OSError, UnicodeDecodeError):
-       # Annoyingly, POLib uses OSError for parser exceptions...
-       messages.error(request, _("Please upload a valid PO file."))
-       do_import = False
+        # Annoyingly, POLib uses OSError for parser exceptions...
+        messages.error(request, _("Please upload a valid PO file."))
+        do_import = False
 
     if do_import:
         translation_id = po.metadata["X-WagtailLocalize-TranslationID"]
