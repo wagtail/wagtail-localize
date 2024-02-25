@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9alpha2] - 2024-02-20
+
+### Fixed
+
+- Fix case insensitivity issue with some databases when using `Translation.import_po` ([#781](https://github.com/wagtail/wagtail-localize/pull/781)) @Nigel2392
+- Fix temporary file permissions in Windows when reading PO files ([#781](https://github.com/wagtail/wagtail-localize/pull/781)) @Nigel2392
+- Fix the publish action in Wagtail 6.0+ ([#782](https://github.com/wagtail/wagtail-localize/pull/782)) @zerolab
+
 ## [1.9alpha1] - 2024-02-20
 
-### Added formal Wagtail 6.0 support ([#776](https://github.com/wagtail/wagtail-localize/pull/776)) @laymonage and @zerolab
+### Added
+
+- formal Wagtail 6.0 support ([#776](https://github.com/wagtail/wagtail-localize/pull/776)) @laymonage and @zerolab
 
 ## [1.8] - 2024-02-10
 
@@ -305,7 +315,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.2...HEAD
+[1.9alpha2]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.1...v1.9-alpha.2
 [1.9alpha1]: https://github.com/wagtail/wagtail-localize/compare/v1.8...v1.9-alpha.1
 [1.8]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8
 [1.8beta1]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8-beta.1
