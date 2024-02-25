@@ -1,3 +1,8 @@
+.actions .w-dropdown-button > form {
+    flex-grow: 1;
+}
+
+.actions .w-dropdown-button > form button,
 .w-dropdown__content form .button {
     width: 100%;
 }
