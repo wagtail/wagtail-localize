@@ -84,24 +84,7 @@ const ActionMenu: FunctionComponent<ActionMenuProps> = ({
             aria-label={gettext('Actions')}
         >
             <div className="w-dropdown-button">
-                <button
-                    type="submit"
-                    className="button action-save button-longrunning "
-                    data-controller="w-progress"
-                    data-action="w-progress#activate"
-                    data-w-progress-active-value="Saving…"
-                >
-                    <svg
-                        className="icon icon-draft button-longrunning__icon"
-                        aria-hidden="true"
-                    >
-                        <use href="#icon-draft"></use>
-                    </svg>
-                    <svg className="icon icon-spinner icon" aria-hidden="true">
-                        <use href="#icon-spinner"></use>
-                    </svg>
-                    <em data-w-progress-target="label">{defaultAction}</em>
-                </button>
+                {defaultAction}
 
                 <div
                     data-controller="w-dropdown"

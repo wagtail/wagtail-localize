@@ -29,7 +29,9 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                 )}
             >
                 <Icon name="cross" />
-                {gettext('Stop Synced translation')}
+                <em data-w-progress-target="label">
+                    {gettext('Stop Synced translation')}
+                </em>
             </button>
         </form>,
     ];
@@ -49,7 +51,9 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     )}
                 >
                     <Icon name="wagtail-localize-convert" />
-                    {gettext('Convert to alias page')}
+                    <em data-w-progress-target="label">
+                        {gettext('Convert to alias page')}
+                    </em>
                 </button>
             </form>
         );
@@ -84,7 +88,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     )}
                 >
                     <Icon name="lock" />
-                    {gettext('Lock')}
+                    <em data-w-progress-target="label">{gettext('Lock')}</em>
                 </button>
             </form>
         );
@@ -110,7 +114,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     )}
                 >
                     <Icon name="lock-open" />
-                    {gettext('Unlock')}
+                    <em data-w-progress-target="label">{gettext('Unlock')}</em>
                 </button>
             </form>
         );
@@ -137,8 +141,8 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
 
                 <button
                     type="submit"
-                    name="action"
-                    value="publish"
+                    name="action-publish"
+                    value="action-publish"
                     className="button button-longrunning"
                     data-clicked-text={gettext('Publishing...')}
                     data-controller="w-progress"
@@ -150,7 +154,9 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                         className={'button-longrunning__icon'}
                     />
                     <Icon name="spinner" />
-                    <em>{gettext('Publish in ') + locale.displayName}</em>
+                    <em data-w-progress-target="label">
+                        {gettext('Publish in ') + locale.displayName}
+                    </em>
                 </button>
             </form>
         );
