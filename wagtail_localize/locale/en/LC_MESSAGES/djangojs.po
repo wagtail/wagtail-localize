@@ -14,7 +14,7 @@ msgstr ""
 msgid "Apply editor lock"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:82
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:86
 msgid "Applying editor lock"
 msgstr ""
 
@@ -61,17 +61,17 @@ msgstr ""
 msgid "Choose an image"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:52
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:55
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:41
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:44
 msgid "Convert to alias page"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:47
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:49
 msgid "Converting to alias page"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:62
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:66
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:54
 msgid "Delete"
 msgstr ""
@@ -122,7 +122,7 @@ msgstr ""
 msgid "Fetching page information..."
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:87
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:91
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:75
 msgid "Lock"
 msgstr ""
@@ -131,20 +131,20 @@ msgstr ""
 msgid "Not translated"
 msgstr ""
 
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:151
-#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:170
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:134
+#: wagtail_localize/static_src/common/components/ActionMenu/index.tsx:153
 #: wagtail_localize/static_src/common/components/LegacyActionMenu/index.tsx:118
 #: wagtail_localize/static_src/common/components/LegacyActionMenu/index.tsx:139
 msgid "Preview"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:153
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:158
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:137
 msgid "Publish in "
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:143
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:146
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:147
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:150
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:127
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:130
 msgid "Publishing..."
@@ -154,7 +154,7 @@ msgstr ""
 msgid "Remove editor lock"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:108
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:112
 msgid "Removing editor lock"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgstr ""
 msgid "Server error"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:32
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:33
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:25
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:28
 msgid "Stop Synced translation"
@@ -207,12 +207,12 @@ msgstr ""
 msgid "Translate with "
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:113
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:117
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:97
 msgid "Unlock"
 msgstr ""
 
-#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:123
+#: wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:127
 #: wagtail_localize/static_src/editor/components/TranslationEditor/legacy-footer.tsx:107
 msgid "Unpublish"
 msgstr ""
