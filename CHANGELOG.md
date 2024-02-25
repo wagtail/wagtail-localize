@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.1] - 2024-02-25
+
+### Fixed
+
+- Fix case insensitivity issue with some databases when using Translation.import_po (#781) @Nigel2392
+- Fix temporary file permissions in Windows when reading PO files (#781) @Nigel2392
+
 ## [1.8] - 2024-02-10
 
 ### Added
@@ -301,7 +308,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.8...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.8.1...HEAD
+[1.8]: https://github.com/wagtail/wagtail-localize/compare/v1.8...v1.8.1
 [1.8]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8
 [1.8beta1]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8-beta.1
 [1.7]: https://github.com/wagtail/wagtail-localize/compare/v1.7rc1...v1.7
