@@ -1252,8 +1252,11 @@ class Translation(models.Model):
 
         for index, entry in enumerate(po):
             try:
+                # Filter by hash instead to avoid case sensitivity issues
+                # https://github.com/wagtail/wagtail-localize/issues/758
                 string = String.objects.get(
-                    locale_id=self.source.locale_id, data=entry.msgid
+                    locale_id=self.source.locale_id,
+                    data_hash=String._get_data_hash(entry.msgid),
                 )
                 context = TranslationContext.objects.get(
                     object_id=self.source.object_id, path=entry.msgctxt
