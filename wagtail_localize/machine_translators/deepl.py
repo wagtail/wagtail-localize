@@ -1,8 +1,13 @@
+import warnings
+
 import requests
 
 from wagtail_localize.strings import StringValue
 
 from .base import BaseMachineTranslator
+
+
+SUPPORTED_FORMALITY_OPTIONS = {"default", "prefer_less", "prefer_more"}
 
 
 def language_code(code, is_target=False):
@@ -24,7 +29,7 @@ class DeepLTranslator(BaseMachineTranslator):
         return "https://api.deepl.com/v2/translate"
 
     def translate(self, source_locale, target_locale, strings):
-        args = {
+        parameters = {
             "auth_key": self.options["AUTH_KEY"],
             "text": [string.data for string in strings],
             "tag_handling": "xml",
@@ -33,11 +38,16 @@ class DeepLTranslator(BaseMachineTranslator):
         }
 
         if self.options.get("FORMALITY"):
-            args["formality"] = self.options["FORMALITY"]
+            if self.options["FORMALITY"] in SUPPORTED_FORMALITY_OPTIONS:
+                parameters["formality"] = self.options["FORMALITY"]
+            else:
+                warnings.warn(
+                    f"Unsupported formality option '{self.options['FORMALITY']}'. Supported options are: {', '.join(SUPPORTED_FORMALITY_OPTIONS)}"
+                )
 
         response = requests.post(
             self.get_api_endpoint(),
-            args,
+            parameters,
             timeout=30,
         )
 

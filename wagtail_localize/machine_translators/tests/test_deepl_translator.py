@@ -25,6 +25,14 @@ DEEPL_SETTINGS_WITH_FORMALITY = {
     },
 }
 
+DEEPL_SETTINGS_WITH_UNSUPPORTED_FORMALITY = {
+    "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
+    "OPTIONS": {
+        "AUTH_KEY": "asd-23-ssd-243-adsf-dummy-auth-key:bla",
+        "FORMALITY": "less",
+    },
+}
+
 
 class TestDeeplTranslator(TestCase):
     @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR=DEEPL_SETTINGS_FREE_ENDPOINT)
@@ -65,6 +73,25 @@ class TestDeeplTranslator(TestCase):
         strings = [StringValue("Test string")]
 
         translator.translate(source_locale, target_locale, strings)
+
+        mock_post.assert_called_once()
+        called_args, called_kwargs = mock_post.call_args
+        self.assertNotIn("formality", called_args[1])
+
+    @override_settings(
+        WAGTAILLOCALIZE_MACHINE_TRANSLATOR=DEEPL_SETTINGS_WITH_UNSUPPORTED_FORMALITY
+    )
+    @patch("requests.post")
+    @patch("warnings.warn")
+    def test_translate_with_non_supported_formality_option(self, mock_warn, mock_post):
+        translator = get_machine_translator()
+        source_locale = Mock(language_code="en")
+        target_locale = Mock(language_code="de")
+        strings = [StringValue("Test string")]
+
+        translator.translate(source_locale, target_locale, strings)
+
+        mock_warn.assert_called_once()
 
         mock_post.assert_called_once()
         called_args, called_kwargs = mock_post.call_args
