@@ -145,7 +145,7 @@ If this is all working as described, that means `i18n_patterns` and `LocaleMiddl
 Now go back into the Wagtail admin interface. When you open the "Pages" menu, you shoud see that that the "Home" page
 has been labelled as "English". If you see that, then Wagtail's internationalisation is working!
 
-![Wagtail explorer menu with internationalisation enabled](/_static/tutorial/wagtail-explorer-with-i18n.png)
+![Wagtail explorer menu with internationalisation enabled](../assets/tutorial/wagtail-explorer-with-i18n.png)
 
 ## Create the "French" locale
 
@@ -160,8 +160,8 @@ should be automatically selected as it is the only available option (this list c
 Set the "Sync from" field to "English". This keeps the "French" language tree in sync with any existing and new English
 content as it's authored.
 
-![Setting up the French locale](/_static/tutorial/wagtail-add-french-locale.png)
+![Setting up the French locale](../assets/tutorial/wagtail-add-french-locale.png)
 
 After you press "Save", there should be two "Home" pages in the page explorer:
 
-![Wagtail explorer menu with English and French homepages](/_static/tutorial/wagtail-explorer-with-english-and-french.png)
+![Wagtail explorer menu with English and French homepages](../assets/tutorial/wagtail-explorer-with-english-and-french.png)

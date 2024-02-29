@@ -87,7 +87,7 @@ Open up a browser and visit `http://localhost:8000`. If all those steps complete
 
 ---
 
-![Wagtail welcome screen](/_static/tutorial/wagtail-welcome.png)
+![Wagtail welcome screen](../assets/tutorial/wagtail-welcome.png)
 
 ---
 
@@ -95,4 +95,4 @@ Open up a browser and visit `http://localhost:8000`. If all those steps complete
 
 You can get to the admin interface by clicking the "Admin interface" link at the botton of the welcome screen. Log in with the user you created earlier.
 
-![Wagtail admin](/_static/tutorial/wagtail-admin.png)
+![Wagtail admin](../assets/tutorial/wagtail-admin.png)

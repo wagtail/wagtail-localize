@@ -108,7 +108,7 @@ Now you can create some test pages to translate! Let's start by creating a blog 
 Navigate to the English Home page in the explorer, click "Add child page" then click "Blog index page". Fill it in like
 the following screenshot, and publish it.
 
-![Blog index page being edited in Wagtail](/_static/tutorial/wagtail-blog-index-page.png)
+![Blog index page being edited in Wagtail](../assets/tutorial/wagtail-blog-index-page.png)
 
 Then navigate to the new blog index page, click "Add child page" then click "Blog post page". Fill it in how you like,
 but make sure that you cover the following:
@@ -118,7 +118,7 @@ but make sure that you cover the following:
 - Add an item in the paragraph block, with some text and a couple of list items. Use some inline formatting
   (bold, italic, etc) and add a link
 
-![Blog post page being edited in Wagtail](/_static/tutorial/wagtail-edit-source.png)
+![Blog post page being edited in Wagtail](../assets/tutorial/wagtail-edit-source.png)
 
 ## Translate it!
 
@@ -135,12 +135,12 @@ of the editor.
 When you get to the edit view, you will get this message (this is because it is keeping itself in sync with the English
 page):
 
-![Translate page](/_static/tutorial/wagtail-translate-page.png)
+![Translate page](../assets/tutorial/wagtail-translate-page.png)
 
 Hit that "Translate this page" button, then click "Submit" on the step afterwards, this will put the page into translation
 mode, and the editor should now look something like this:
 
-![Blog post page being translated in Wagtail](/_static/tutorial/wagtail-edit-translation.png)
+![Blog post page being translated in Wagtail](../assets/tutorial/wagtail-edit-translation.png)
 
 As you can see, each segment of translatable text has been extracted into a separate editable block.
 Translating in this way makes it easier to keep the translations in sync with the original page, as editors only need to
@@ -157,7 +157,7 @@ String segments can be individually translated through this UI, by downloading/u
 the top of the editor), using a [machine translation service](/how-to/integrations/machine-translation) or an
 [external translation tool](/how-to/integrations/pontoon).
 
-![A translated string segment](/_static/tutorial/wagtail-translated-segment.png)
+![A translated string segment](../assets/tutorial/wagtail-translated-segment.png)
 
 ### 2. Overridable segments
 
@@ -167,7 +167,7 @@ images, choice fields, and non-translatable string fields (such as usernames, em
 These segments will always default to the same value as in the original. But editors may override these values which
 breaks this link.
 
-![A overridden image](/_static/tutorial/wagtail-overridden-image.png)
+![A overridden image](../assets/tutorial/wagtail-overridden-image.png)
 
 ### 3. Related object segments
 
@@ -175,18 +175,18 @@ Any translatable related objects that are linked to the original page are automa
 the page is submitted. For example, the `BlogCategory` model is translatable, so Wagtail Localize has automatically
 submitted the "Dog" blog category, that was linked from the original page, for translation:
 
-![A translated blog category](/_static/tutorial/wagtail-translated-snippet.png)
+![A translated blog category](../assets/tutorial/wagtail-translated-snippet.png)
 
 Clicking "Edit" here will take the user to the translation editor of the "Dogs" snippet:
 
-![Snippet being translated in Wagtail](/_static/tutorial/wagtail-edit-snippet-translation.png)
+![Snippet being translated in Wagtail](../assets/tutorial/wagtail-edit-snippet-translation.png)
 
 !!! note "Stopping translation mode"
 
     If you would like to make significant changes to the translation, you can stop the translation mode by clicking the
     "Stop Synced translation" action in the action menu at the bottom:
 
-    ![Stop translation button in action menu](/_static/tutorial/wagtail-stop-translation.png)
+    ![Stop translation button in action menu](../assets/tutorial/wagtail-stop-translation.png)
 
     After clicking this, the page will switch to using the standard Wagtail editor. It will still be connected to the
     original, so you can still use the language switcher at the top of the page to find the original page and other

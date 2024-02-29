@@ -13,7 +13,7 @@ Not all segments are strings of text to be translated, all of the segment types 
 
 ### String Segment
 
-![Screenshot of string segment](/_static/segment-types/string.png)
+![Screenshot of string segment](../assets/segment-types/string.png)
 
 This is a snippet of translatable text that has been extracted from the page. For `CharField`/`TextField`, this
 snippet would contain the full value of the field (For example, the "title" field). `StreamField`s and
@@ -74,7 +74,7 @@ segment, that inline tag is left in the template (see the `<b>` tag in the `<li>
 
 ### Related Object Segment
 
-![Screenshot of related object segment](/_static/segment-types/related-object.png)
+![Screenshot of related object segment](../assets/segment-types/related-object.png)
 
 This segment type represents a related object that is translatable. These are extracted from `ForeignKey`,
 `OneToOneField`, or `SnippetChooserBlock`s that reference a translatable model.
@@ -85,7 +85,7 @@ Here, you can see the progress of translating this related object, with a link t
 
 ### Overridable Segment
 
-![Screenshot of overridable segment](/_static/segment-types/overridable.png)
+![Screenshot of overridable segment](../assets/segment-types/overridable.png)
 
 This segment type represents any field that can be changed per-locale. Unlike string segments, they don't have
 to be changed and they also don't have to be text fields either. By default, they are kept in sync with the original

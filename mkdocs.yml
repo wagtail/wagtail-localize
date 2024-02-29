@@ -1,6 +1,7 @@
 site_name: Wagtail Localize
 site_url: https://wagtail-localize.org
 repo_url: https://github.com/wagtail/wagtail-localize/
+edit_uri: blob/main/docs/
 theme:
   name: 'material'
   custom_dir: docs/theme_overrides
@@ -10,8 +11,8 @@ theme:
     - navigation.tabs
     - navigation.sections
     - content.code.copy
-  logo: _static/favicon.png
-  favicon: _static/favicon.png
+  logo: assets/favicon.png
+  favicon: assets/favicon.png
 
 markdown_extensions:
   - admonition

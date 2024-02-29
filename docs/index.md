@@ -2,7 +2,7 @@
 template: templates/index.html
 ---
 
-![Wagtail Localize](/_static/logo.png)
+![Wagtail Localize](assets/logo.png)
 
 {%
    include-markdown "../README.md"

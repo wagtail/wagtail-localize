@@ -27,11 +27,11 @@ following:
 Then, find your blog post page you created in the admin, and click "View live". If you don't see the "View live" link,
 make sure you've published the page first.
 
-![Blog post page on the frontend](/_static/tutorial/blog-post-frontend.png)
+![Blog post page on the frontend](../assets/tutorial/blog-post-frontend.png)
 
 The French translation should look like the following (assuming you've translated it):
 
-![Blog post page French translation on the frontend](/_static/tutorial/blog-post-frontend-translated.png)
+![Blog post page French translation on the frontend](../assets/tutorial/blog-post-frontend-translated.png)
 
 As you can see, we're most of the way there with a very simple template. Wagtail uses separate pages for each language,
 so you don't usually have to make any changes to the templates to support translated content (apart from adding
@@ -69,7 +69,7 @@ This example was taken from the Wagtail docs, have a look [there](https://docs.w
 
 Here's how it should look, the link should take you to the French version, then back again:
 
-![Blog post page on the frontend with link to french version](/_static/tutorial/blog-post-frontend-with-link.png)
+![Blog post page on the frontend with link to french version](../assets/tutorial/blog-post-frontend-with-link.png)
 
 ## Filtering search results by language
 
@@ -78,7 +78,7 @@ it's created in `search/views.py`. You can find the search view by navigating to
 
 To test this, try searching for "blog":
 
-![Search on both languages](/_static/tutorial/search-unfiltered.png)
+![Search on both languages](../assets/tutorial/search-unfiltered.png)
 
 This has returned French results even though we are visiting the English search page!
 
