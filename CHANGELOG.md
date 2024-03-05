@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.2] - 2024-05-05
+
+### Fixed
+
+- Added missing `{% load wagtailadmin_tags %}` in the legacy locales icon include
+
 ## [1.8.1] - 2024-02-25
 
 ### Fixed
@@ -308,8 +314,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.8.1...HEAD
-[1.8]: https://github.com/wagtail/wagtail-localize/compare/v1.8...v1.8.1
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.8.2...HEAD
+[1.8.2]: https://github.com/wagtail/wagtail-localize/compare/v1.8.1...v1.8.2
+[1.8.1]: https://github.com/wagtail/wagtail-localize/compare/v1.8...v1.8.1
 [1.8]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8
 [1.8beta1]: https://github.com/wagtail/wagtail-localize/compare/v1.7...v1.8-beta.1
 [1.7]: https://github.com/wagtail/wagtail-localize/compare/v1.7rc1...v1.7
