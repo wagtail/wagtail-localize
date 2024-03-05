@@ -117,7 +117,7 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 
 Website: [https://www.deepl.com/](https://www.deepl.com/)
 
-Note that You will need a pro account to get an API key.
+Note that You will need an account to get an API key. Deepl offers a free or paid subscription.
 
 ```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
