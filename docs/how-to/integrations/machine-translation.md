@@ -117,13 +117,16 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
 
 Website: [https://www.deepl.com/](https://www.deepl.com/)
 
-Note that You will need an account to get an API key. Deepl offers a free or paid subscription.
+Note that You will need an account to get an API key. DeepL offers a free or paid subscription.
 
 ```python
 WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
     "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
     "OPTIONS": {
         "AUTH_KEY": "<Your DeepL key here>",
+        # Optional DeepL API setting. Accepts "default", "prefer_more" or "prefer_less".\
+        # For more information see the API docs https://www.deepl.com/docs-api/translate-text/
+        "FORMALITY": "<Your DeepL formality preference here>",
     },
 }
 ```
