@@ -924,6 +924,7 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
         # The translated snippet should've been created
         translated_snippet = self.en_snippet.get_translation(self.fr_locale)
         self.assertEqual(translated_snippet.field, "Test snippet")
+        self.assertFalse(translated_snippet.live)
 
         self.assertRedirects(
             response,

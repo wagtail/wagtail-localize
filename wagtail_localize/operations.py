@@ -3,7 +3,7 @@ from collections import defaultdict
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from wagtail.models import Page
+from wagtail.models import DraftStateMixin, Page
 
 from wagtail_localize.models import Translation, TranslationSource
 
@@ -79,12 +79,9 @@ class TranslationCreator:
             # Determine whether to publish the translation.
             if getattr(settings, "WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE", True):
                 publish = getattr(instance, "live", True)
-            elif isinstance(instance, Page):
-                publish = False
             else:
-                # we cannot save drafts for non-Page models, so set this to True
-                # To-Do: add support for models using DraftStateMixin
-                publish = True
+                # If the model can't be saved as a draft, then we have to publish it
+                publish = not isinstance(instance, DraftStateMixin)
 
             try:
                 translation.save_target(user=self.user, publish=publish)

@@ -41,8 +41,10 @@ from wagtail.blocks.list_block import ListValue
 from wagtail.coreutils import find_available_slug
 from wagtail.fields import StreamField
 from wagtail.models import (
+    DraftStateMixin,
     Page,
     PageLogEntry,
+    RevisionMixin,
     TranslatableMixin,
     _copy,
     get_translatable_models,
@@ -727,7 +729,7 @@ class TranslationSource(models.Model):
 
         Raises:
             SourceDeletedError: if the source object has been deleted.
-            CannotSaveDraftError: if the `publish` parameter was set to `False` when translating a non-page object.
+            CannotSaveDraftError: if the `publish` parameter was set to `False` when translating a non-DraftStateMixin object.
             MissingTranslationError: if a translation is missing and `fallback `is not `True`.
             MissingRelatedObjectError: if a related object is not translated and `fallback `is not `True`.
 
@@ -737,9 +739,8 @@ class TranslationSource(models.Model):
         original = self.as_instance()
         created = False
 
-        # Only pages can be saved as draft
-        # To-Do: add support for models using DraftStateMixin
-        if not publish and not isinstance(original, Page):
+        # Only models with DraftStateMixin can be saved as a draft
+        if not publish and not isinstance(original, DraftStateMixin):
             raise CannotSaveDraftError
 
         try:
@@ -797,19 +798,31 @@ class TranslationSource(models.Model):
                     translation.save()
 
                     # Create a new revision
-                    page_revision = translation.save_revision(user=user)
+                    new_revision = translation.save_revision(user=user)
 
                     self.sync_view_restrictions(original, translation)
 
                     if publish:
-                        transaction.on_commit(page_revision.publish)
+                        transaction.on_commit(new_revision.publish)
+
+                # Note: DraftStateMixin requires RevisionMixin, so RevisionMixin is checked here for typing
+                elif isinstance(translation, RevisionMixin):
+                    # We copied another instance which may be live, so we make sure this one matches the desired state
+                    translation.live = publish
+                    translation.save()
+
+                    # Create a new revision of the Snippet
+                    new_revision = translation.save_revision(user=user)
+
+                    if publish:
+                        transaction.on_commit(new_revision.publish)
 
                 else:
-                    # Note: we don't need to run full_clean for Pages as Wagtail does that in Page.save()
+                    # Note: we don't need to run full_clean for DraftStateMixin objects or Pages as Wagtail does that in RevisionMixin.save_revision()
                     translation.full_clean()
 
                     translation.save()
-                    page_revision = None
+                    new_revision = None
 
         except ValidationError as e:
             # If the validation error's field matches the context of a translation,
@@ -855,9 +868,7 @@ class TranslationSource(models.Model):
             raise
 
         # Log that the translation was made
-        TranslationLog.objects.create(
-            source=self, locale=locale, page_revision=page_revision
-        )
+        TranslationLog.objects.create(source=self, locale=locale, revision=new_revision)
 
         return translation, created
 
@@ -1355,8 +1366,7 @@ class TranslationLog(models.Model):
         source (ForeignKey to TranslationSource): The source that was used for translation.
         locale (ForeignKey to Locale): The Locale that the source was translated into.
         created_at (DateTimeField): The date/time the translation was done.
-        page_revision (ForeignKey to PageRevision): If the translation was of a page, this links to the PageRevision
-            that was created
+        revision (ForeignKey to Revision): If the translation was of a page, this links to the Revision that was created
     """
 
     source = models.ForeignKey(
@@ -1368,7 +1378,7 @@ class TranslationLog(models.Model):
         related_name="translation_logs",
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    page_revision = models.ForeignKey(
+    revision = models.ForeignKey(
         "wagtailcore.Revision",
         on_delete=models.SET_NULL,
         null=True,
@@ -1377,7 +1387,9 @@ class TranslationLog(models.Model):
     )
 
     def __str__(self):
-        return f"TranslationLog: {self.source_id}, {self.locale_id}, {self.page_revision_id} "
+        return (
+            f"TranslationLog: {self.source_id}, {self.locale_id}, {self.revision_id} "
+        )
 
     def get_instance(self):
         """

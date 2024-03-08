@@ -72,7 +72,7 @@ With your preferred virtualenv activated, install testing dependencies:
 #### Using pip
 
 ```sh
-pip install pip>=21.3
+pip install "pip>=21.3"
 pip install -e '.[testing]' -U
 ```
 

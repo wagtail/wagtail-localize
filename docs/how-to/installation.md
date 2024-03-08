@@ -54,10 +54,13 @@ class MyPage(Page):
     # ...
 ```
 
-## Disabling default publication of translated pages
+## Saving new translations as drafts
 
-Live pages that are submitted for translation are made live immediately. If you wish live pages submitted for
-translation to remain as drafts, set `WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE = False` in your settings file.
+Live versions of models that support drafts (i.e. subclasses of `Page`, and models which inherit `DraftStateMixin` and `RevisionMixin`)
+which are submitted for translation are made live immediately by default.
+
+If you would like to ensure that live instances which are newly submitted for translation remain as drafts for manual
+publication, set `WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE = False` in your settings file.
 
 ## Control translation cleanup mode
 
