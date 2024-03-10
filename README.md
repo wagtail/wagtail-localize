@@ -5,8 +5,8 @@
 [![Version](https://img.shields.io/pypi/v/wagtail-localize.svg?style=flat)](https://pypi.python.org/pypi/wagtail-localize/)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg?style=flat)](https://opensource.org/licenses/BSD-3-Clause)
 [![codecov](https://img.shields.io/codecov/c/github/wagtail/wagtail-localize?style=flat)](https://codecov.io/gh/wagtail/wagtail-localize)
-[![black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat)](https://github.com/psf/black)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white&style=flat)](https://github.com/pre-commit/pre-commit)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/wagtail/wagtail-localize/main.svg)](https://results.pre-commit.ci/latest/github/wagtail/wagtail-localize/main)
 
 Wagtail Localize is a translation plugin for the [Wagtail CMS](https://wagtail.org). It allows pages or snippets to be translated within Wagtail's admin interface. It also provides integrations with external translations services such as [Pontoon](https://pontoon.mozilla.org/) or [DeepL](https://www.deepl.com/), and importing/exporting translations with PO files.
 
