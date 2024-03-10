@@ -52,7 +52,7 @@ class TestSnippet(TranslatableMixin, DraftStateMixin, RevisionMixin, Clusterable
 
 
 class TestNoDraftModel(TranslatableMixin):
-    field = models.CharField(max_length=10, blank=True)
+    field = models.CharField(max_length=20, blank=True)
 
     translatable_fields = [
         TranslatableField("field"),
