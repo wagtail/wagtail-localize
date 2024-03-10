@@ -281,14 +281,8 @@ def extract_segments(instance):
             if is_translatable:
                 if not issubclass(field.related_model, TranslatableMixin):
                     raise ImproperlyConfigured(
-                        "The foreign key `{}.{}.{}` was registered as a translatable "
-                        "field but the model it points to `{}.{}` is not translatable".format(
-                            field.model._meta.app_label,
-                            field.model.__name__,
-                            field.name,
-                            field.related_model._meta.app_label,
-                            field.related_model.__name__,
-                        )
+                        f"The foreign key `{field.model._meta.app_label}.{field.model.__name__}.{field.name}` was registered as a translatable "
+                        f"field but the model it points to `{field.related_model._meta.app_label}.{field.related_model.__name__}` is not translatable"
                     )
 
                 related_instance = getattr(instance, field.name)

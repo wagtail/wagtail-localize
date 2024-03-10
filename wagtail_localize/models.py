@@ -245,15 +245,11 @@ class CannotSaveDraftError(Exception):
     Raised when a save draft was request on a non-page model.
     """
 
-    pass
-
 
 class NoViewRestrictionsError(Exception):
     """
     Raised when trying to sync view restrictions for non-Page objects
     """
-
-    pass
 
 
 class MissingTranslationError(Exception):
@@ -430,9 +426,8 @@ class TranslationSource(models.Model):
         ).first()
 
         # Check if the instance has changed at all since the previous version
-        if source:
-            if json.loads(content_json) == json.loads(source.content_json):
-                return source, False
+        if source and json.loads(content_json) == json.loads(source.content_json):
+            return source, False
 
         source, created = cls.objects.update_or_create(
             object=object,
@@ -991,8 +986,6 @@ class POImportWarning:
     Base class for warnings that are yielded by Translation.import_po.
     """
 
-    pass
-
 
 class UnknownString(POImportWarning):
     def __init__(self, index, string):
@@ -1307,16 +1300,15 @@ class Translation(models.Model):
 
                 seen_translation_ids.add(string_translation.id)
 
-                if not created:
+                if not created and string_translation.data != entry.msgstr:
                     # Update the string_translation only if it has changed
-                    if string_translation.data != entry.msgstr:
-                        string_translation.data = entry.msgstr
-                        string_translation.translation_type = translation_type
-                        string_translation.tool_name = tool_name
-                        string_translation.last_translated_by = user
-                        string_translation.updated_at = timezone.now()
-                        string_translation.has_error = False  # reset the error flag.
-                        string_translation.save()
+                    string_translation.data = entry.msgstr
+                    string_translation.translation_type = translation_type
+                    string_translation.tool_name = tool_name
+                    string_translation.last_translated_by = user
+                    string_translation.updated_at = timezone.now()
+                    string_translation.has_error = False  # reset the error flag.
+                    string_translation.save()
 
             except TranslationContext.DoesNotExist:
                 warnings.append(UnknownContext(index, entry.msgctxt))
@@ -1567,20 +1559,13 @@ class TranslationContext(models.Model):
                                 block_def = value.stream_block.child_blocks[block_type]
                             block_value = block.value
 
-                        if isinstance(block_def, blocks.StructBlock):
+                        if isinstance(
+                            block_def,
+                            (blocks.StructBlock, blocks.StreamBlock, blocks.ListBlock),
+                        ):
                             return [block_type] + get_field_path_from_streamfield_block(
                                 block_value, path_components[1:]
                             )
-
-                        elif isinstance(block_def, blocks.StreamBlock):
-                            return [block_type] + get_field_path_from_streamfield_block(
-                                block_value, path_components[1:]
-                            )
-                        elif isinstance(block_def, blocks.ListBlock):
-                            return [block_type] + get_field_path_from_streamfield_block(
-                                block_value, path_components[1:]
-                            )
-
                         else:
                             return [block_type]
 
@@ -2021,6 +2006,9 @@ class StringSegment(BaseSegment):
 
     objects = StringSegmentQuerySet.as_manager()
 
+    def __str__(self):
+        return f"StringSegment from String({self.string_id})"
+
     @classmethod
     def from_value(cls, source, language, value):
         """
@@ -2065,6 +2053,9 @@ class TemplateSegment(BaseSegment):
         Template, on_delete=models.CASCADE, related_name="segments"
     )
 
+    def __str__(self):
+        return f"TemplateSegment({self.pk}) from Template({self.template_id})"
+
     @classmethod
     def from_value(cls, source, value):
         """
@@ -2107,6 +2098,11 @@ class RelatedObjectSegment(BaseSegment):
     object = models.ForeignKey(
         TranslatableObject, on_delete=models.CASCADE, related_name="references"
     )
+
+    def __str__(self):
+        return (
+            f"RelatedObjectSegment({self.pk}) from TranslatableObject({self.object_id})"
+        )
 
     def get_source_instance(self):
         return self.object.get_instance_or_none(self.source.locale)
@@ -2182,6 +2178,9 @@ class OverridableSegment(BaseSegment):
 
     objects = OverridableSegmentQuerySet.as_manager()
 
+    def __str__(self):
+        return f"OverridableSegment({self.pk}) from TranslationSource({self.source_id})"
+
     @property
     def data(self):
         """
@@ -2217,9 +2216,7 @@ def disable_translation_on_delete(instance, **kwargs):
         Q(source__locale_id=instance.locale_id)
         # Disable translations where this object was the destination
         | Q(target_locale_id=instance.locale_id)
-    ).update(
-        enabled=False
-    )
+    ).update(enabled=False)
 
 
 def cleanup_translation_on_delete(instance, **kwargs):

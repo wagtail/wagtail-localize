@@ -81,9 +81,7 @@ def handle_related_object(related_model, src_locale, tgt_locale, segments):
     """
     if len(segments) > 1:
         raise ValueError(
-            "Related object field can only have a single segment. Found {}".format(
-                len(segments)
-            )
+            f"Related object field can only have a single segment. Found {len(segments)}"
         )
 
     segment = segments[0]
@@ -123,9 +121,7 @@ class StreamFieldSegmentsWriter:
             if isinstance(block_type, EmbedBlock):
                 if len(segments) > 1:
                     raise ValueError(
-                        "EmbedBlock can only have a single segment. Found {}".format(
-                            len(segments)
-                        )
+                        f"EmbedBlock can only have a single segment. Found {len(segments)}"
                     )
 
                 segment = segments[0]
@@ -142,9 +138,7 @@ class StreamFieldSegmentsWriter:
         ):
             if len(segments) > 1:
                 raise ValueError(
-                    "TextBlock/CharBlock can only have a single segment. Found {}".format(
-                        len(segments)
-                    )
+                    f"TextBlock/CharBlock can only have a single segment. Found {len(segments)}"
                 )
 
             segment = segments[0]
@@ -177,9 +171,7 @@ class StreamFieldSegmentsWriter:
 
         else:
             raise Exception(
-                "Unrecognised StreamField block type '{}'. Have you implemented restore_translated_segments() on this class?".format(
-                    block_type.__class__.__name__
-                )
+                f"Unrecognised StreamField block type '{block_type.__class__.__name__}'. Have you implemented restore_translated_segments() on this class?"
             )
 
     def handle_related_object_block(self, related_object, segments):
@@ -285,9 +277,7 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
         elif isinstance(field, (models.TextField, models.CharField)):
             if len(field_segments) > 1:
                 raise ValueError(
-                    "TextField/CharField can only have a single segment. Found {}".format(
-                        len(field_segments)
-                    )
+                    f"TextField/CharField can only have a single segment. Found {len(field_segments)}"
                 )
 
             segment = field_segments[0]

@@ -1,3 +1,5 @@
+import contextlib
+
 from collections import defaultdict
 
 from django.conf import settings
@@ -83,10 +85,8 @@ class TranslationCreator:
                 # If the model can't be saved as a draft, then we have to publish it
                 publish = not isinstance(instance, DraftStateMixin)
 
-            try:
+            with contextlib.suppress(ValidationError):
                 translation.save_target(user=self.user, publish=publish)
-            except ValidationError:
-                pass
 
 
 @transaction.atomic

@@ -69,10 +69,7 @@ class PageIndex:
             """
             # Get parent, but only if the parent is not the root page. We consider the
             # homepage of each langauge tree to be the roots
-            if page.depth > 2:
-                parent_page = page.get_parent()
-            else:
-                parent_page = None
+            parent_page = page.get_parent() if page.depth > 2 else None
 
             return cls(
                 page.content_type,

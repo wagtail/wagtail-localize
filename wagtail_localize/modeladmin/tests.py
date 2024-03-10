@@ -109,9 +109,7 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
         )
         self.assertContains(
             response,
-            '<a href="/admin/wagtail_localize_test/testmodel/edit/{}/?locale=fr"'.format(
-                self.fr_modeladmin.pk
-            ),
+            f'<a href="/admin/wagtail_localize_test/testmodel/edit/{self.fr_modeladmin.pk}/?locale=fr"',
         )
 
         # Check restart translation button is displayed
@@ -164,9 +162,7 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
         )
         self.assertContains(
             response,
-            '<a href="/admin/wagtail_localize_test/testmodel/inspect/{}/?locale=fr"'.format(
-                self.fr_modeladmin.pk
-            ),
+            f'<a href="/admin/wagtail_localize_test/testmodel/inspect/{self.fr_modeladmin.pk}/?locale=fr"',
         )
         self.assertContains(response, "Translate")
         self.assertContains(response, "Sync translated test models")

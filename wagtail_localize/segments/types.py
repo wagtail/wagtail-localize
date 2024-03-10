@@ -28,8 +28,8 @@ class BaseValue:
 
         For example:
 
-        >>> s = StringSegmentValue('field', 'foo')
-        >>> s.wrap('wrapped')
+        >>> s = StringSegmentValue("field", "foo")
+        >>> s.wrap("wrapped")
         StringSegmentValue('wrapped.field', 'foo')
         """
         new_path = base_path
@@ -47,7 +47,7 @@ class BaseValue:
 
         For example:
 
-        >>> s = StringSegmentValue('wrapped.field', 'foo')
+        >>> s = StringSegmentValue("wrapped.field", "foo")
         >>> s.unwrap()
         'wrapped', StringSegmentValue('field', 'foo')
         """
@@ -88,9 +88,7 @@ class StringSegmentValue(BaseValue):
 
         else:
             raise TypeError(
-                "`string` must be either a `StringValue` or a `str`. Got `{}`".format(
-                    type(string).__name__
-                )
+                f"`string` must be either a `StringValue` or a `str`. Got `{type(string).__name__}`"
             )
 
         self.string = string
@@ -228,9 +226,7 @@ class TemplateSegmentValue(BaseValue):
         )
 
     def __repr__(self):
-        return "<TemplateSegmentValue {} format:{} {} segments>".format(
-            self.path, self.format, self.string_count
-        )
+        return f"<TemplateSegmentValue {self.path} format:{self.format} {self.string_count} segments>"
 
 
 class RelatedObjectSegmentValue(BaseValue):
@@ -329,9 +325,7 @@ class RelatedObjectSegmentValue(BaseValue):
         )
 
     def __repr__(self):
-        return "<RelatedObjectSegmentValue {} {} {}>".format(
-            self.path, self.content_type, self.translation_key
-        )
+        return f"<RelatedObjectSegmentValue {self.path} {self.content_type} {self.translation_key}>"
 
 
 class OverridableSegmentValue(BaseValue):
