@@ -114,9 +114,9 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
-          pip install flit
+          python -Im pip install -U flit
+          python -Im pip install "coverage>=7.0,<8.0"
           flit install --deps production --extras testing
-          pip install coverage==5.4
       - name: Test
         run: |
           coverage run testmanage.py test
