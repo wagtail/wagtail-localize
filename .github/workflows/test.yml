@@ -39,7 +39,7 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python: ['3.10', '3.11', '3.12']
         database: ['sqlite']
 
     steps:
@@ -92,10 +92,8 @@ jobs:
       - name: Install dependencies
         id: install-dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install tox tox-gh-actions
+          python -m pip install --upgrade pip tox tox-gh-actions
       - name: Test with tox
-        id: test-with-tox
         run: tox -- -v1
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
@@ -106,7 +104,7 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        python: ['3.8']
+        python: ['3.11']
 
     steps:
       - uses: actions/checkout@v4
