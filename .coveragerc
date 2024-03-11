@@ -1,17 +1,23 @@
 [run]
 branch = True
 include = wagtail_localize/*
-omit = */migrations/*,*/tests/*
+omit = **/migrations/*,**/tests/*
 
 [report]
+show_missing = true
+ignore_errors = true
+skip_empty = true
+skip_covered = true
+
 # Regexes for lines to exclude from consideration
-exclude_lines =
+exclude_also =
     # Have to re-enable the standard pragma
     pragma: no cover
 
     # Don't complain about missing debug-only code:
     def __repr__
-    if self\.debug
+    if self.debug
+    if settings.DEBUG
 
     # Don't complain if tests don't hit defensive assertion code:
     raise AssertionError
@@ -21,4 +27,7 @@ exclude_lines =
     if 0:
     if __name__ == .__main__.:
 
-ignore_errors = True
+    # Nor complain about type checking
+    "if TYPE_CHECKING:",
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod

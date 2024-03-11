@@ -491,9 +491,8 @@ def extract_ids(template):
         if not isinstance(element, Tag):
             continue
 
-        if element.name == "a":
-            if "id" in element.attrs:
-                ids.add(element.attrs["id"])
+        if element.name == "a" and "id" in element.attrs:
+            ids.add(element.attrs["id"])
 
     return ids
 

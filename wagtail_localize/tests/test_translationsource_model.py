@@ -745,9 +745,7 @@ class TestGetEphemeralTranslatedInstance(TestCase):
             locale=self.dest_locale,
             context=TranslationContext.objects.get(
                 object_id=self.page.translation_key,
-                path="test_childobjects.{}.field".format(
-                    self.page.test_childobjects.get().translation_key
-                ),
+                path=f"test_childobjects.{self.page.test_childobjects.get().translation_key}.field",
             ),
             data="Ceci est un objet enfant de test",
         )

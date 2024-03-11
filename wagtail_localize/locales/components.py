@@ -32,4 +32,3 @@ class LocaleComponentModelForm(WagtailAdminModelForm):
         """
         Validates the locale component against the given locale.
         """
-        pass

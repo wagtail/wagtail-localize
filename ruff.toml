@@ -1,34 +1,40 @@
-target-version = "py38"
+[lint]
 
-exclude = ["dist","build","venv",".venv",".tox",".git", "__pycache__", "node_modules", "LC_MESSAGES", "locale"]
-
-select = [
-    "B",   # flake8-bugbear
-    "BLE", # flake8-blind-except
-    "C4",  # flake8-comprehensions
-    "DJ",  # flake8-django
-    "E",   # pycodestyle errors
-    "F",   # pyflakes
+extend-select = [
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "DJ", # flake8-django
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
     "I",   # isort
+    "INT",  # flake8-gettext
+    "PIE", # flake8-pie
     "PGH", # pygrep-hooks
-    "RUF100",  # unused noqa
     "S",   # flake8-bandit
-    "T20",  # flake8-print
-    "UP",   # pyupgrade
-    "W",    # pycodestyle warnings
+    "SIM", # flake8-simplify
+    "W",   # pycodestyle warnings
     "YTT",   # flake8-2020
+    "UP",  # pyupgrade
+    "RUF100",  # unused noqa
+]
+
+extend-ignore = [
+    "E501",  # no line length errors
+    "B028"
 ]
 
 fixable = ["C4", "E", "F", "I", "UP"]
 
-# E501: Line too long
-ignore = ["E501","B028"]
+exclude = ["dist","build","venv",".venv",".tox",".git", "__pycache__", "node_modules", "LC_MESSAGES", "locale"]
 
-[per-file-ignores]
+[lint.per-file-ignores]
 "tests/**.py" = ["DJ008"]
 "**/report_nightly_build_failure.py" = ["T201"]
 
-[isort]
+[lint.isort]
 known-first-party = ["wagtail_localize"]
 lines-between-types = 1
 lines-after-imports = 2
+
+[format]
+docstring-code-format = true

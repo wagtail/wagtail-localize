@@ -1,3 +1,5 @@
+import contextlib
+
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -72,10 +74,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
-                "{app_label}_{model_name}_modeladmin_index".format(
-                    app_label=instance._meta.app_label,
-                    model_name=instance._meta.model_name,
-                )
+                f"{instance._meta.app_label}_{instance._meta.model_name}_modeladmin_index"
             )
 
     def get_edit_url(self, instance):
@@ -90,10 +89,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
-                "{app_label}_{model_name}_modeladmin_edit".format(
-                    app_label=instance._meta.app_label,
-                    model_name=instance._meta.model_name,
-                ),
+                f"{instance._meta.app_label}_{instance._meta.model_name}_modeladmin_edit",
                 args=[quote(instance.pk)],
             )
 
@@ -140,20 +136,16 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
         if form.cleaned_data["publish_translations"]:
             for translation in enabled_translations.select_related("target_locale"):
-                try:
+                with contextlib.suppress(ValidationError):
                     translation.save_target(user=self.request.user, publish=True)
-                except ValidationError:
-                    pass
         else:
             for translation in enabled_translations.select_related(
                 "source", "target_locale"
             ):
-                try:
+                with contextlib.suppress(ValidationError):
                     translation.source.update_target_view_restrictions(
                         translation.target_locale
                     )
-                except ValidationError:
-                    pass
 
         self.components.save(
             self.object,

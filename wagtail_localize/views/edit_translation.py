@@ -1,3 +1,4 @@
+import contextlib
 import json
 import os
 import tempfile
@@ -325,10 +326,7 @@ def get_segment_location_info(
 
             elif issubclass(field.related_model, tuple(get_snippet_models())):
                 chooser_url = reverse(
-                    "wagtailsnippetchoosers_{}_{}:choose".format(
-                        field.related_model._meta.app_label,
-                        field.related_model._meta.model_name,
-                    )
+                    f"wagtailsnippetchoosers_{field.related_model._meta.app_label}_{field.related_model._meta.model_name}:choose"
                 )
                 return {
                     "type": "snippet_chooser",
@@ -370,10 +368,7 @@ def get_segment_location_info(
 
         elif isinstance(block, SnippetChooserBlock):
             chooser_url = reverse(
-                "wagtailsnippetchoosers_{}_{}:choose".format(
-                    block.target_model._meta.app_label,
-                    block.target_model._meta.model_name,
-                )
+                f"wagtailsnippetchoosers_{block.target_model._meta.app_label}_{block.target_model._meta.model_name}:choose"
             )
             return {
                 "type": "snippet_chooser",
@@ -499,10 +494,7 @@ def edit_translation(request, translation: Translation, instance):
             last_published_at = instance.last_published_at
             last_published_by = None
 
-        if instance.live:
-            live_url = instance.full_url
-        else:
-            live_url = None
+        live_url = instance.full_url if instance.live else None
 
         can_publish = page_perms.can_publish()
         can_unpublish = page_perms.can_unpublish()
@@ -660,10 +652,8 @@ def edit_translation(request, translation: Translation, instance):
 
         # Set to the ID of a string segment that represents the title.
         # If this segment has a translation, the title will be replaced with that translation.
-        try:
+        with contextlib.suppress(StringSegment.DoesNotExist):
             title_segment_id = string_segments.get(context__path="title").id
-        except StringSegment.DoesNotExist:
-            pass
 
     machine_translator = None
     translator = get_machine_translator()
@@ -748,10 +738,7 @@ def edit_translation(request, translation: Translation, instance):
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
-                "{app_label}_{model_name}_modeladmin_edit".format(
-                    app_label=instance._meta.app_label,
-                    model_name=instance._meta.model_name,
-                ),
+                f"{instance._meta.app_label}_{instance._meta.model_name}_modeladmin_edit",
                 args=[quote(instance.pk)],
             )
 
@@ -766,10 +753,7 @@ def edit_translation(request, translation: Translation, instance):
 
         elif "wagtail_localize.modeladmin" in settings.INSTALLED_APPS:
             return reverse(
-                "{app_label}_{model_name}_modeladmin_delete".format(
-                    app_label=instance._meta.app_label,
-                    model_name=instance._meta.model_name,
-                ),
+                f"{instance._meta.app_label}_{instance._meta.model_name}_modeladmin_delete",
                 args=[quote(instance.pk)],
             )
 
@@ -1322,9 +1306,8 @@ def download_pofile(request, translation_id):
     response = HttpResponse(
         str(translation.export_po()), content_type="text/x-gettext-translation"
     )
-    response["Content-Disposition"] = "attachment; filename={}-{}.po".format(
-        slugify(translation.source.object_repr),
-        translation.target_locale.language_code,
+    response["Content-Disposition"] = (
+        f"attachment; filename={slugify(translation.source.object_repr)}-{translation.target_locale.language_code}.po"
     )
     return response
 
@@ -1375,10 +1358,8 @@ def upload_pofile(request, translation_id):
         messages.success(request, _("Successfully imported translations from PO File."))
 
     # Delete the created tempfile
-    try:
+    with contextlib.suppress(OSError):
         os.unlink(f.name)
-    except OSError:
-        pass
 
     # Work out where to redirect to
     next_url = get_valid_next_url_from_request(request)

@@ -10,7 +10,7 @@ from .base import BaseMachineTranslator
 SUPPORTED_FORMALITY_OPTIONS = {"default", "prefer_less", "prefer_more"}
 
 
-def language_code(code, is_target=False):
+def language_code(code, *, is_target=False):
     # DeepL supports targeting Brazilian Portuguese and requires to specifically request American or British English.
     # @see https://www.deepl.com/en/docs-api/translate-text/translate-text
     upper_code = code.upper()
