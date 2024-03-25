@@ -95,7 +95,7 @@ const EditorToolbox: FunctionComponent<EditorToolboxProps> = ({
             <ToolWrapper className="w-tabs__panel">
                 <p>
                     {gettext(
-                        'Upload translated PO file to submit translations'
+                        'Upload translated PO file to submit translations',
                     )}
                 </p>
                 <button
