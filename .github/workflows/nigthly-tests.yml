@@ -1,36 +1,36 @@
 name: Nightly Wagtail test
 
 on:
-  schedule:
-    # Nightly at 4am.
-    - cron: '0 4 * * *'
+    schedule:
+        # Nightly at 4am.
+        - cron: '0 4 * * *'
 
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  nightly-test:
-    # Cannot check the existence of secrets, so limiting to repository name to prevent all forks to run nightly.
-    # See: https://github.com/actions/runner/issues/520
-    if: ${{ github.repository == 'wagtail/wagtail-localize' }}
-    runs-on: ubuntu-latest
+    nightly-test:
+        # Cannot check the existence of secrets, so limiting to repository name to prevent all forks to run nightly.
+        # See: https://github.com/actions/runner/issues/520
+        if: ${{ github.repository == 'wagtail/wagtail-localize' }}
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip tox
-      - name: Test
-        id: test
-        continue-on-error: true
-        run: tox -e wagtailmain
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Python 3.12
+              uses: actions/setup-python@v5
+              with:
+                  python-version: '3.12'
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip tox
+            - name: Test
+              id: test
+              continue-on-error: true
+              run: tox -e wagtailmain
 
-      - name: Send Slack notification on failure
-        if: steps.test.outcome == 'failure'
-        run: |
-          python .github/scripts/report_nightly_build_failure.py
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - name: Send Slack notification on failure
+              if: steps.test.outcome == 'failure'
+              run: |
+                  python .github/scripts/report_nightly_build_failure.py
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
