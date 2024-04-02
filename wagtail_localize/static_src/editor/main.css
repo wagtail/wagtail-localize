@@ -1,47 +1,49 @@
-.actions .w-dropdown-button > form {
+.js-translation-editor .actions .w-dropdown-button > form {
     flex-grow: 1;
 }
 
-.actions .w-dropdown-button > form button,
+.js-translation-editor .actions .w-dropdown-button > form button,
 .w-dropdown__content form .button {
     width: 100%;
 }
 
-.js-translation-editor
-    .footer
-    .actions--primary
-    .w-dropdown-button:first-child {
-    min-width: 210px;
+.js-translation-editor .w-dropdown-button > form :is(a, button) {
+    border-end-end-radius: 0;
+    border-start-end-radius: 0;
 }
 
-.js-translation-editor
-    .footer
-    .actions--primary
-    .w-dropdown-button
-    + .w-dropdown-button {
-    margin-top: 0.5em;
+/* Style fixes for footer actions on Wagtail < 6.0.2 - https://github.com/wagtail/wagtail/pull/11751 */
+.js-translation-editor .footer .actions {
+    width: 100%;
+}
+
+.js-translation-editor .footer .actions--primary {
+    align-items: stretch;
+    display: grid;
+    gap: 0.5rem;
+    grid-auto-flow: column;
+}
+
+.js-translation-editor .footer .actions--primary .button {
+    height: 2.625rem;
+    margin-inline-start: initial;
 }
 
 @media screen and (min-width: 50em) {
+    .js-translation-editor .footer .actions {
+        width: 16rem;
+    }
+
+    .js-translation-editor .footer .actions .icon {
+        height: 1rem;
+    }
+
     .js-translation-editor .footer .actions--primary {
-        display: flex;
-        min-width: 310px;
-        width: auto;
+        min-width: 20rem;
+        width: max-content;
     }
 
-    .js-translation-editor
-        .footer
-        .actions--primary
-        .w-dropdown-button:first-child {
-        min-width: 310px;
-    }
-
-    .js-translation-editor
-        .footer
-        .actions--primary
-        .w-dropdown-button
-        + .w-dropdown-button {
-        margin-top: 0;
-        margin-left: 1em;
+    .js-translation-editor .footer .actions--primary > :first-child {
+        min-width: 14rem;
     }
 }
