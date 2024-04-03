@@ -1,35 +1,18 @@
 #
 # Translators:
 # Ragıp Ünal <ragip@ragipunal.com>, 2021
-# José Luis <alagunajs@gmail.com>, 2022
-# Py Data Geek <pydatageek@gmail.com>, 2022
 # Halim Turan <halim_turan_61@hotmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Halim Turan <halim_turan_61@hotmail.com>, 2023\n"
 "Language-Team: Turkish (Turkey) (https://app.transifex.com/torchbox/"
 "teams/8009/tr_TR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tr_TR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
-msgid "Saving…"
-msgstr "Kaydediliyor…"
-
-msgid "Save"
-msgstr "Kaydet"
-
-msgid "Delete"
-msgstr "Sil"
-
-msgid "Download XLSX"
-msgstr "XLSX İndir"
-
-msgid "Download CSV"
-msgstr "CSV İndir"
 
 msgid "Content type"
 msgstr "İçerik Tipi"

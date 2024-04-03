@@ -3,11 +3,12 @@
 # Moritz Pfeiffer <moritz@alp-phone.ch>, 2021
 # Oliver Engel <codeangel@posteo.de>, 2021
 # Krzysztof Jeziorny <github@jeziorny.net>, 2021
-# Stefan Hammer <stefan@hammerworxx.com>, 2022
+# Bohreromir, 2024
+# Stefan Hammer <stefan@hammerworxx.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Stefan Hammer <stefan@hammerworxx.com>, 2022\n"
+"Last-Translator: Stefan Hammer <stefan@hammerworxx.com>, 2024\n"
 "Language-Team: German (https://app.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -16,8 +17,14 @@ msgstr ""
 msgid "[DELETED]"
 msgstr "[GELÖSCHT]"
 
+msgid "Actions"
+msgstr "Aktionen"
+
 msgid "Apply editor lock"
 msgstr "Editor-Sperre anwenden"
+
+msgid "Applying editor lock"
+msgstr "Wende Editor-Sperre an"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -51,6 +58,9 @@ msgstr "Bild auswählen"
 
 msgid "Convert to alias page"
 msgstr "In Alias umwandeln"
+
+msgid "Converting to alias page"
+msgstr "Wird in Alias umgewandelt"
 
 msgid "Delete"
 msgstr "Löschen"
@@ -106,6 +116,9 @@ msgstr "Veröffentlichen..."
 msgid "Remove editor lock"
 msgstr "Editor-Sperre aufheben"
 
+msgid "Removing editor lock"
+msgstr "Editor-Sperre wird aufgehoben"
+
 msgid "Revert to %s version"
 msgstr "Zu Version %s zurückkehren"
 
@@ -123,6 +136,9 @@ msgstr "Serverfehler"
 
 msgid "Stop Synced translation"
 msgstr "Synchronisierte Übersetzung stoppen"
+
+msgid "Stopping Synced translation"
+msgstr "Synchronisierte Übersetzung wird gestoppt"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

@@ -1,13 +1,12 @@
 #
 # Translators:
 # Philip Crisp, 2022
-# Matt Westcott <matthew@torchbox.com>, 2022
 # Adam Hughes <adamhughes31@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Adam Hughes <adamhughes31@gmail.com>, 2023\n"
 "Language-Team: Welsh (https://app.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,23 +23,8 @@ msgstr "Cyfieithydd ffug"
 msgid "Translate"
 msgstr "Cyfieithu"
 
-msgid "Saving…"
-msgstr "Cadw…"
-
-msgid "Save"
-msgstr "Cadw"
-
 msgid "Start Synced translation"
 msgstr "Dechrau cyfieithiad cysoni"
-
-msgid "Delete"
-msgstr "Dileu"
-
-msgid "Download XLSX"
-msgstr "Lawrlwythwch XSLX"
-
-msgid "Download CSV"
-msgstr "Lawrlwythwch CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -126,8 +110,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Ydych chi'n siŵr eich bod am drosi'r dudalen hon yn alias? Bydd hyn yn "
-"trosysgrifo cynnwys y dudalen gyda chynnwys "
-"'%(source_page_title)s' (%(source_page_locale)s)"
+"trosysgrifo cynnwys y dudalen gyda chynnwys '%(source_page_title)s' "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Ia, ei drosi"

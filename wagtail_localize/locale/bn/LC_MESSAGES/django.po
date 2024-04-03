@@ -1,26 +1,16 @@
 #
 # Translators:
-# MA Rahman <ugikot@gmail.com>, 2022
 # Mahmud Abdur Rahman <clanlord.ikot@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Mahmud Abdur Rahman <clanlord.ikot@gmail.com>, 2023\n"
 "Language-Team: Bengali (https://app.transifex.com/torchbox/teams/8009/bn/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: bn\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "Saving…"
-msgstr "সংরক্ষিত হচ্ছে..."
-
-msgid "Save"
-msgstr "সংরক্ষণ"
-
-msgid "Delete"
-msgstr "মুছে ফেলুন "
 
 msgid "Content"
 msgstr "বিষয়বস্তু"

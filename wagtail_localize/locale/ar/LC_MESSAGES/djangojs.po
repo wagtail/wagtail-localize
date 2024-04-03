@@ -2,17 +2,20 @@
 # Translators:
 # ROGER MICHAEL ASHLEY ALLEN <rogermaallen@gmail.com>, 2021
 # Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2021
-# Ahmed Miske Sidi Med <boutien321@gmail.com>, 2021
 # abdulaziz alfuhigi <abajall@gmail.com>, 2021
+# Ahmed Miske Sidi Med <boutien321@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: abdulaziz alfuhigi <abajall@gmail.com>, 2021\n"
+"Last-Translator: Ahmed Miske Sidi Med <boutien321@gmail.com>, 2024\n"
 "Language-Team: Arabic (https://app.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Actions"
+msgstr "النشاطات"
 
 msgid "Change image"
 msgstr "تغير الصورة"

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2023\n"
 "Language-Team: Hungarian (https://app.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
@@ -28,23 +28,8 @@ msgstr "Fordítás"
 msgid "Sync translated %(model_name)s"
 msgstr "Szinkronfordított %(model_name)s"
 
-msgid "Saving…"
-msgstr "Mentés folyamatban..."
-
-msgid "Save"
-msgstr "Mentés"
-
 msgid "Start Synced translation"
 msgstr "Szinkronizált fordítás elkezdése"
-
-msgid "Delete"
-msgstr "Törlés"
-
-msgid "Download XLSX"
-msgstr "XLSX letöltése"
-
-msgid "Download CSV"
-msgstr "CSV letöltése"
 
 #, python-brace-format
 msgid "Translate {model_name}"

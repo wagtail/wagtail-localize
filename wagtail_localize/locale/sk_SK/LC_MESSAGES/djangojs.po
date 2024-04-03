@@ -1,17 +1,20 @@
 #
 # Translators:
-# dellax <michalnebbia@gmail.com>, 2021
 # Martin Janšto <mato@jansto.sk>, 2021
+# dellax <michalnebbia@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Martin Janšto <mato@jansto.sk>, 2021\n"
+"Last-Translator: dellax <michalnebbia@gmail.com>, 2024\n"
 "Language-Team: Slovak (Slovakia) (https://app.transifex.com/torchbox/"
 "teams/8009/sk_SK/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sk_SK\n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
 ">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
+
+msgid "Actions"
+msgstr "Akcie"
 
 msgid "Choose a document"
 msgstr "Zvoliť dokument"

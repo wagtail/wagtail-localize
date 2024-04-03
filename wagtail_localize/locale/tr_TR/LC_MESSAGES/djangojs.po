@@ -3,16 +3,19 @@
 # José Luis <alagunajs@gmail.com>, 2021
 # Ragıp Ünal <ragip@ragipunal.com>, 2021
 # Halim Turan <halim_turan_61@hotmail.com>, 2021
-# Py Data Geek <pydatageek@gmail.com>, 2021
+# Py Data Geek <pydatageek@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Py Data Geek <pydatageek@gmail.com>, 2021\n"
+"Last-Translator: Py Data Geek <pydatageek@gmail.com>, 2024\n"
 "Language-Team: Turkish (Turkey) (https://app.transifex.com/torchbox/"
 "teams/8009/tr_TR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tr_TR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Actions"
+msgstr "Eylemler"
 
 msgid "Change image"
 msgstr "Resmi değiştir"

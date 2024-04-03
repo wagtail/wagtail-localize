@@ -1,9 +1,8 @@
 #
 # Translators:
+# 2a01ec1f91c141c338f53ad8cc23abc6_8deca2d, 2021
 # Eugene <eugene.mechanism@gmail.com>, 2021
 # Alexey Trofimov <funkindy@gmail.com>, 2021
-# 2a01ec1f91c141c338f53ad8cc23abc6_8deca2d, 2022
-# Tatsiana Tsygan <art.tatsiana@gmail.com>, 2022
 # Влад <integration.into.society@gmail.com>, 2022
 # Andrei Satsevich, 2023
 # sergeybe <sergeybe@gmail.com>, 2023
@@ -11,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: sergeybe <sergeybe@gmail.com>, 2023\n"
 "Language-Team: Russian (https://app.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,23 +32,8 @@ msgstr "Перевести"
 msgid "Sync translated %(model_name)s"
 msgstr "Синхронизировать переводы %(model_name)s"
 
-msgid "Saving…"
-msgstr "Сохранение..."
-
-msgid "Save"
-msgstr "Сохранить"
-
 msgid "Start Synced translation"
 msgstr "Начать синхронизированный перевод"
-
-msgid "Delete"
-msgstr "Удалить"
-
-msgid "Download XLSX"
-msgstr "Скачать XLSX"
-
-msgid "Download CSV"
-msgstr "Скачать CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"

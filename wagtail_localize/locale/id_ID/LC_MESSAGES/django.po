@@ -2,31 +2,18 @@
 # Translators:
 # Ronggo Radityo <radityo3000@yahoo.com>, 2021
 # Sutrisno Efendi <kangfend@gmail.com>, 2021
-# M. Febrian Ramadhana <febrian@ramadhana.me>, 2022
 # Andry Widya Putra UN <andrywidyaputra@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Andry Widya Putra UN <andrywidyaputra@gmail.com>, 2023\n"
 "Language-Team: Indonesian (Indonesia) (https://app.transifex.com/torchbox/"
 "teams/8009/id_ID/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: id_ID\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-msgid "Saving…"
-msgstr "Menyimpan..."
-
-msgid "Save"
-msgstr "Simpan"
-
-msgid "Delete"
-msgstr "Hapus"
-
-msgid "Download CSV"
-msgstr "Unduh CSV"
 
 msgid "Status"
 msgstr "Status"

@@ -1,31 +1,17 @@
 #
 # Translators:
 # Peter Coward <peter@catalpa.io>, 2021
-# Joanico Barros <joanico@catalpa.io>, 2022
-# Mariano de Deus <dedeus_mariano@yahoo.com>, 2022
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
-"Last-Translator: Mariano de Deus <dedeus_mariano@yahoo.com>, 2022\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
+"Last-Translator: Peter Coward <peter@catalpa.io>, 2021\n"
 "Language-Team: Tetum (Tetun) (https://app.transifex.com/torchbox/teams/8009/"
 "tet/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tet\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-msgid "Saving…"
-msgstr "Rai tiha ona"
-
-msgid "Save"
-msgstr "Rai"
-
-msgid "Delete"
-msgstr "Hamoos"
-
-msgid "Download CSV"
-msgstr "Download CSV"
 
 msgid "Status"
 msgstr "Status"

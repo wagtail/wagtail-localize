@@ -1,15 +1,15 @@
 #
 # Translators:
 # Mykola Zamkovoi <nickzam@gmail.com>, 2021
-# Vladyslav Herasymenko <drimacus182@gmail.com>, 2021
 # Viktor Shytiuk <VicHunting@yandex.ua>, 2021
 # Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
 # d55ee35323c0c760f088259cd23b1b6d_9e8a7d1 <5459f3ae99ecdd5ed0be0220acd46004_1019581>, 2021
 # Anastasiia La, 2021
+# Vladyslav Herasymenko <drimacus182@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Anastasiia La, 2021\n"
+"Last-Translator: Vladyslav Herasymenko <drimacus182@gmail.com>, 2024\n"
 "Language-Team: Ukrainian (https://app.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -21,6 +21,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[Видалено]"
+
+msgid "Actions"
+msgstr "Дії"
 
 msgid "Apply editor lock"
 msgstr "Застосувати редакторське блокування"

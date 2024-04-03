@@ -1,20 +1,17 @@
 #
 # Translators:
-# 67feb0cba3962a6c9f09eb0e43697461_528661a <cbde1c637170da616adcdde6daca673c_96059>, 2022
+# 67feb0cba3962a6c9f09eb0e43697461_528661a <cbde1c637170da616adcdde6daca673c_96059>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: 67feb0cba3962a6c9f09eb0e43697461_528661a "
-"<cbde1c637170da616adcdde6daca673c_96059>, 2022\n"
+"<cbde1c637170da616adcdde6daca673c_96059>, 2021\n"
 "Language-Team: Basque (https://app.transifex.com/torchbox/teams/8009/eu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "Delete"
-msgstr "Ezabatu"
 
 msgid "Status"
 msgstr "Egoera"

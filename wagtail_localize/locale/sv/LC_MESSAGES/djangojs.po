@@ -2,11 +2,11 @@
 # Translators:
 # Martin Sandström <martin@marteinn.se>, 2021
 # Thomas Kunambi <kunambi@gmail.com>, 2021
-# Philip Andersen <renegadevi@codeofmagi.net>, 2022
+# Philip Andersen <renegadevi@codeofmagi.net>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2022\n"
+"Last-Translator: Philip Andersen <renegadevi@codeofmagi.net>, 2024\n"
 "Language-Team: Swedish (https://app.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -14,6 +14,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[RADERAD]"
+
+msgid "Actions"
+msgstr "Handlingar"
 
 msgid "Apply editor lock"
 msgstr "Tillämpa redaktörslås"

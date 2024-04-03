@@ -1,33 +1,19 @@
 #
 # Translators:
+# Nick Mavrakis <mavrakis.n@gmail.com>, 2021
 # George Giannoulopoulos <vdotoree@yahoo.gr>, 2021
-# 79353a696ad19dc202b261b3067b7640_bec941e, 2022
-# Nick Mavrakis <mavrakis.n@gmail.com>, 2022
-# Yiannis Inglessis <negtheone@gmail.com>, 2022
-# Matt Westcott <matthew@torchbox.com>, 2022
+# 79353a696ad19dc202b261b3067b7640_bec941e, 2021
 # fekioh, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: fekioh, 2023\n"
 "Language-Team: Greek (https://app.transifex.com/torchbox/teams/8009/el/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: el\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "Saving…"
-msgstr "Γίνεται αποθήκευση…"
-
-msgid "Save"
-msgstr "Αποθηκευση"
-
-msgid "Delete"
-msgstr "Διαγραφή"
-
-msgid "Download CSV"
-msgstr "Ληψη CSV"
 
 msgid "Content type"
 msgstr "Τύπος περιεχομένου"

@@ -1,12 +1,12 @@
 #
 # Translators:
 # Stas Rudakou <stas@garage22.net>, 2021
-# Tatsiana Tsygan <art.tatsiana@gmail.com>, 2021
 # Andrei Satsevich, 2023
+# Tatsiana Tsygan <art.tatsiana@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Andrei Satsevich, 2023\n"
+"Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2024\n"
 "Language-Team: Belarusian (https://app.transifex.com/torchbox/teams/8009/"
 "be/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,6 +17,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[ВЫДАЛЕНЫ]"
+
+msgid "Actions"
+msgstr "Дзеянні"
 
 msgid "Apply editor lock"
 msgstr "Заблакаваць рэдактар"

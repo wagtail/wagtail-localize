@@ -1,11 +1,11 @@
 #
 # Translators:
-# Luís Tiago Favas <traducoes@favas.eu>, 2020
 # Tiago Henriques <trinosauro@gmail.com>, 2022
+# Luís Tiago Favas <traducoes@favas.eu>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Tiago Henriques <trinosauro@gmail.com>, 2022\n"
+"Last-Translator: Luís Tiago Favas <traducoes@favas.eu>, 2024\n"
 "Language-Team: Portuguese (Portugal) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,6 +15,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[APAGADO]"
+
+msgid "Actions"
+msgstr "Ações"
 
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueio de editor"

@@ -2,16 +2,15 @@
 # Translators:
 # Johannes Spielmann <j@spielmannsolutions.com>, 2021
 # Tammo van Lessen <tvanlessen@gmail.com>, 2021
+# Ettore Atalan <atalanttore@googlemail.com>, 2021
 # jnns, 2022
-# Ettore Atalan <atalanttore@googlemail.com>, 2022
-# Moritz Pfeiffer <moritz@alp-phone.ch>, 2022
 # Stefan Hammer <stefan@hammerworxx.com>, 2022
 # Oliver Engel <codeangel@posteo.de>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Oliver Engel <codeangel@posteo.de>, 2023\n"
 "Language-Team: German (https://app.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,23 +30,8 @@ msgstr "Übersetzen"
 msgid "Sync translated %(model_name)s"
 msgstr "Synchronisiere übersetzte %(model_name)s"
 
-msgid "Saving…"
-msgstr "Speichern…"
-
-msgid "Save"
-msgstr "Speichern"
-
 msgid "Start Synced translation"
 msgstr "Synchronisierte Übersetzung starten"
-
-msgid "Delete"
-msgstr "Löschen"
-
-msgid "Download XLSX"
-msgstr "XLSX herunterladen"
-
-msgid "Download CSV"
-msgstr "CSV herunterladen"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -133,8 +117,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Sind Sie sicher, dass Sie diese Seite in ein Alias umwandeln wollen? Dies "
-"wird den Inhalt der Seite mit dem Inhalt von "
-"'%(source_page_title)s' (%(source_page_locale)s) überschreiben."
+"wird den Inhalt der Seite mit dem Inhalt von '%(source_page_title)s' "
+"(%(source_page_locale)s) überschreiben."
 
 msgid "Yes, convert it"
 msgstr "Ja, konvertieren"

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Mirek Zvolský <zvolsky@seznam.cz>, 2023\n"
 "Language-Team: Czech (https://app.transifex.com/torchbox/teams/8009/cs/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -21,21 +21,6 @@ msgstr "Fiktivní překladač"
 
 msgid "Translate"
 msgstr "Přeložit"
-
-msgid "Saving…"
-msgstr "Ukládá se..."
-
-msgid "Save"
-msgstr "Uložit"
-
-msgid "Delete"
-msgstr "Zrušit"
-
-msgid "Download XLSX"
-msgstr "Stáhnout XLSX"
-
-msgid "Download CSV"
-msgstr "Stáhnout CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"

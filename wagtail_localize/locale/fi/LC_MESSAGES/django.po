@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Valter Maasalo <vmaasalo@gmail.com>, 2023\n"
 "Language-Team: Finnish (https://app.transifex.com/torchbox/teams/8009/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,21 +20,6 @@ msgstr "Poista käytöstä"
 
 msgid "Translate"
 msgstr "Käännä"
-
-msgid "Saving…"
-msgstr "Tallennetaan…"
-
-msgid "Save"
-msgstr "Tallenna"
-
-msgid "Delete"
-msgstr "Poista"
-
-msgid "Download XLSX"
-msgstr "Lataa XLSX"
-
-msgid "Download CSV"
-msgstr "Lataa CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"

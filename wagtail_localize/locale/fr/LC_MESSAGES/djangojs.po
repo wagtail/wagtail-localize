@@ -1,11 +1,11 @@
 #
 # Translators:
 # Léo <leo@naeka.fr>, 2021
-# Loic Teixeira, 2022
+# Loic Teixeira, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Loic Teixeira, 2022\n"
+"Last-Translator: Loic Teixeira, 2024\n"
 "Language-Team: French (https://app.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -14,6 +14,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[SUPPRIMÉ(E)]"
+
+msgid "Actions"
+msgstr "Actions"
 
 msgid "Apply editor lock"
 msgstr "Ajouter un verrou éditeur"

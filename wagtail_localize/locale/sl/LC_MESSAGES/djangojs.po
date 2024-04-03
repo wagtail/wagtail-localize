@@ -1,12 +1,12 @@
 #
 # Translators:
-# Mitja Pagon <mitja.pagon@inueni.com>, 2021
 # UP, 2021
 # Andrej Marsetič, 2023
+# Mitja Pagon <mitja.pagon@inueni.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Andrej Marsetič, 2023\n"
+"Last-Translator: Mitja Pagon <mitja.pagon@inueni.com>, 2024\n"
 "Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,6 +16,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[IZBRISANO]"
+
+msgid "Actions"
+msgstr "Dejanja"
 
 msgid "Apply editor lock"
 msgstr "Uporabi zaklepanje urejevalnika"

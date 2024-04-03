@@ -2,7 +2,6 @@
 # Translators:
 # Huib Keemink <huib@creativedutchmen.com>, 2021
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
-# Rob Moorman <rob@moori.nl>, 2022
 # Thijs Kramer <thijskramer@gmail.com>, 2022
 # Storm Heg <storm@stormbase.digital>, 2022
 # Loic Teixeira, 2023
@@ -10,7 +9,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Loic Teixeira, 2023\n"
 "Language-Team: Dutch (https://app.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,23 +29,8 @@ msgstr "Vertaal"
 msgid "Sync translated %(model_name)s"
 msgstr "Synchroniseer vertaalde %(model_name)s"
 
-msgid "Saving…"
-msgstr "Bezig met opslaan…"
-
-msgid "Save"
-msgstr "Opslaan"
-
 msgid "Start Synced translation"
 msgstr "Start synchrone vertaling"
-
-msgid "Delete"
-msgstr "Verwijderen"
-
-msgid "Download XLSX"
-msgstr "Download XLSX"
-
-msgid "Download CSV"
-msgstr "Download CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -132,8 +116,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Weet je zeker dat je deze pagina wilt omzetten naar een alias? De inhoud zal "
-"overschreven worden met de inhoud van "
-"'%(source_page_title)s' (%(source_page_locale)s)"
+"overschreven worden met de inhoud van '%(source_page_title)s' "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Ja, converteer het"

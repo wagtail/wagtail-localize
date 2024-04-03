@@ -1,33 +1,20 @@
 #
 # Translators:
 # 2ba49a64a97dc0c30b67cbb6522d98c8_d0a1309 <5628a6f4d3ab86b48aef276247790766_814>, 2021
-# lior abazon <abazon@v15.org.il>, 2022
-# Adi Ron <adi@bnop.co>, 2022
+# lior abazon <abazon@v15.org.il>, 2021
 # Gilad Levi <gilad.x@blobim.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Gilad Levi <gilad.x@blobim.com>, 2023\n"
 "Language-Team: Hebrew (Israel) (https://app.transifex.com/torchbox/"
 "teams/8009/he_IL/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: he_IL\n"
 "Plural-Forms: nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % "
-"1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;\n"
-
-msgid "Saving…"
-msgstr "שומר..."
-
-msgid "Save"
-msgstr "שמור"
-
-msgid "Delete"
-msgstr "מחק"
-
-msgid "Download CSV"
-msgstr "הורד CSV"
+"1 == 0) ? 1: 2;\n"
 
 msgid "Content type"
 msgstr "סוג תוכן"

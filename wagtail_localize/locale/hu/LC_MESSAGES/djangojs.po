@@ -1,10 +1,10 @@
 #
 # Translators:
-# Istvan Farkas <istvan.farkas@gmail.com>, 2023
+# Istvan Farkas <istvan.farkas@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2023\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2024\n"
 "Language-Team: Hungarian (https://app.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -13,6 +13,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[TÖRÖLT]"
+
+msgid "Actions"
+msgstr "Akciók"
 
 msgid "Apply editor lock"
 msgstr "Szerkesztési zárolás"

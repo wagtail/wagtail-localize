@@ -2,11 +2,11 @@
 # Translators:
 # Antoni Aloy <aaloy@apsl.net>, 2021
 # David Llop, 2021
-# Roger Pons <rogerpons@gmail.com>, 2023
+# Roger Pons <rogerpons@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Roger Pons <rogerpons@gmail.com>, 2023\n"
+"Last-Translator: Roger Pons <rogerpons@gmail.com>, 2024\n"
 "Language-Team: Catalan (https://app.transifex.com/torchbox/teams/8009/ca/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ca\n"
@@ -15,8 +15,14 @@ msgstr ""
 msgid "[DELETED]"
 msgstr "[ESBORRAT]"
 
+msgid "Actions"
+msgstr "Accions"
+
 msgid "Apply editor lock"
 msgstr "Aplica bloqueig d'editor"
+
+msgid "Applying editor lock"
+msgstr "Aplicant bloqueig d'editor"
 
 msgid "Cancel"
 msgstr "Cancel·lar"
@@ -50,6 +56,9 @@ msgstr "Escull una imatge"
 
 msgid "Convert to alias page"
 msgstr "Convertir a àlies de pàgina"
+
+msgid "Converting to alias page"
+msgstr "Convertint a pàgina àlies"
 
 msgid "Delete"
 msgstr "Eliminar"
@@ -105,6 +114,9 @@ msgstr "Publicant..."
 msgid "Remove editor lock"
 msgstr "Esborrar bloqueig d'editor"
 
+msgid "Removing editor lock"
+msgstr "Eliminant bloqueig d'editor"
+
 msgid "Revert to %s version"
 msgstr "Revertir a la versió %s"
 
@@ -122,6 +134,9 @@ msgstr "Error de servidor"
 
 msgid "Stop Synced translation"
 msgstr "Aturar Traducció sincronitzada"
+
+msgid "Stopping Synced translation"
+msgstr "Aturant Traducció sincronitzada"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Hi ha segments no desats. Deseu-los o cancel·leu-los abans de sortir."

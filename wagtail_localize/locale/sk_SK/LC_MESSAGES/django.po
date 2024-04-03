@@ -1,32 +1,18 @@
 #
 # Translators:
-# dellax <michalnebbia@gmail.com>, 2022
-# Martin Janšto <mato@jansto.sk>, 2022
-# Jozef Gáborík <hi@jozo.io>, 2022
+# dellax <michalnebbia@gmail.com>, 2021
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
-"Last-Translator: Jozef Gáborík <hi@jozo.io>, 2022\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
+"Last-Translator: dellax <michalnebbia@gmail.com>, 2021\n"
 "Language-Team: Slovak (Slovakia) (https://app.transifex.com/torchbox/"
 "teams/8009/sk_SK/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sk_SK\n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
 ">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
-
-msgid "Saving…"
-msgstr "Ukladám…"
-
-msgid "Save"
-msgstr "Uložiť"
-
-msgid "Delete"
-msgstr "Vymazať"
-
-msgid "Download CSV"
-msgstr "Stiahnuť CSV"
 
 msgid "Content type"
 msgstr "Typ obsahu"
