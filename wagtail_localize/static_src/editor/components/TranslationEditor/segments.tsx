@@ -735,9 +735,21 @@ const EditorSynchronisedValueSegment: FunctionComponent<
         const onClickChangeSnippet = () => {
             (window as any).ModalWorkflow({
                 url: widget.chooser_url,
-                onload: (window as any).SNIPPET_CHOOSER_MODAL_ONLOAD_HANDLERS,
+                onload:
+                    (window as any).SNIPPET_CHOOSER_MODAL_ONLOAD_HANDLERS ||
+                    new (
+                        window as any
+                    ).ChooserModalOnloadHandlerFactory().getOnLoadHandlers(),
                 responses: {
                     snippetChosen: function (snippetData: any) {
+                        saveOverride(
+                            segment,
+                            snippetData.id,
+                            csrfToken,
+                            dispatch
+                        );
+                    },
+                    chosen: function (snippetData: any) {
                         saveOverride(
                             segment,
                             snippetData.id,
