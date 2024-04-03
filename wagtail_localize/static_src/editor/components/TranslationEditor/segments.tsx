@@ -649,8 +649,13 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 },
                 onload: (window as any).PAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
                 responses: {
-                    pageChosen: function (pageData: any) {
-                        saveOverride(segment, pageData.id, csrfToken, dispatch);
+                    pageChosen: function (responseData: any) {
+                        saveOverride(
+                            segment,
+                            responseData.id,
+                            csrfToken,
+                            dispatch
+                        );
                     },
                 },
             });
@@ -675,10 +680,10 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 url: (window as any).chooserUrls.imageChooser,
                 onload: (window as any).IMAGE_CHOOSER_MODAL_ONLOAD_HANDLERS,
                 responses: {
-                    chosen: function (imageData: any) {
+                    chosen: function (responseData: any) {
                         saveOverride(
                             segment,
-                            imageData.id,
+                            responseData.id,
                             csrfToken,
                             dispatch
                         );
@@ -706,10 +711,10 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 url: (window as any).chooserUrls.documentChooser,
                 onload: (window as any).DOCUMENT_CHOOSER_MODAL_ONLOAD_HANDLERS,
                 responses: {
-                    chosen: function (documentData: any) {
+                    chosen: function (responseData: any) {
                         saveOverride(
                             segment,
-                            documentData.id,
+                            responseData.id,
                             csrfToken,
                             dispatch
                         );
@@ -733,14 +738,17 @@ const EditorSynchronisedValueSegment: FunctionComponent<
         );
     } else if (widget.type == 'snippet_chooser') {
         const onClickChangeSnippet = () => {
+            const modalOnloadFactory = new (
+                window as any
+            ).ChooserModalOnloadHandlerFactory();
             (window as any).ModalWorkflow({
                 url: widget.chooser_url,
-                onload: (window as any).SNIPPET_CHOOSER_MODAL_ONLOAD_HANDLERS,
+                onload: modalOnloadFactory.getOnLoadHandlers(),
                 responses: {
-                    snippetChosen: function (snippetData: any) {
+                    chosen: function (responseData: any) {
                         saveOverride(
                             segment,
-                            snippetData.id,
+                            responseData.id,
                             csrfToken,
                             dispatch
                         );
