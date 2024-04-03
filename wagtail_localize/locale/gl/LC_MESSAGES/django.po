@@ -1,13 +1,12 @@
 #
 # Translators:
-# Matt Westcott <matthew@torchbox.com>, 2022
 # X Bello <xbello@gmail.com>, 2022
 # Amós Oviedo <amos.oviedo@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2023\n"
 "Language-Team: Galician (https://app.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,23 +26,8 @@ msgstr "Traducir"
 msgid "Sync translated %(model_name)s"
 msgstr "Traducción sincronizada de %(model_name)s"
 
-msgid "Saving…"
-msgstr "Gardando…"
-
-msgid "Save"
-msgstr "Gardar"
-
 msgid "Start Synced translation"
 msgstr "Comezar traducción Sincronizada"
-
-msgid "Delete"
-msgstr "Eliminar"
-
-msgid "Download XLSX"
-msgstr "Descargar XLSX"
-
-msgid "Download CSV"
-msgstr "Descargar CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -128,8 +112,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Seguro que queres converter esta páxina nun alias? Esto sobreescribirá o "
-"contido da páxina co contido de "
-"'%(source_page_title)s' (%(source_page_locale)s)."
+"contido da páxina co contido de '%(source_page_title)s' "
+"(%(source_page_locale)s)."
 
 msgid "Yes, convert it"
 msgstr "Sí, convertela"

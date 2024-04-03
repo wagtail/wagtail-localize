@@ -1,14 +1,17 @@
 #
 # Translators:
-# Awatea Randall <awatea@octave.nz>, 2021
+# Awatea Randall <awatea@octave.nz>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Awatea Randall <awatea@octave.nz>, 2021\n"
+"Last-Translator: Awatea Randall <awatea@octave.nz>, 2024\n"
 "Language-Team: Maori (https://app.transifex.com/torchbox/teams/8009/mi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: mi\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Actions"
+msgstr "Hohenga"
 
 msgid "Apply editor lock"
 msgstr "Purua he raka ētita"

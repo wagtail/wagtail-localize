@@ -1,14 +1,12 @@
 #
 # Translators:
-# Hồng Quân Nguyễn <ng.hong.quan@gmail.com>, 2022
-# Luan Nguyen <lihavim@gmail.com>, 2022
-# Duc Huynh <duchuynhthoai@gmail.com>, 2022
+# Luan Nguyen <lihavim@gmail.com>, 2021
 # Vu Pham, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Vu Pham, 2023\n"
 "Language-Team: Vietnamese (https://app.transifex.com/torchbox/teams/8009/"
 "vi/)\n"
@@ -18,21 +16,6 @@ msgstr ""
 
 msgid "Translate"
 msgstr "Dịch"
-
-msgid "Saving…"
-msgstr "Đang lưu..."
-
-msgid "Save"
-msgstr "Lưu"
-
-msgid "Delete"
-msgstr "Xoá"
-
-msgid "Download XLSX"
-msgstr "Tải XLSX"
-
-msgid "Download CSV"
-msgstr "Tải CSV"
 
 msgid "Source"
 msgstr "Nguồn"

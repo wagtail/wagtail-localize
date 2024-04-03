@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Miłosz Miśkiewicz, 2023\n"
 "Language-Team: Polish (https://app.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,23 +32,8 @@ msgstr "Tłumacz"
 msgid "Sync translated %(model_name)s"
 msgstr "Zsynchronizuj przetłumaczone %(model_name)s"
 
-msgid "Saving…"
-msgstr "Zapisywanie..."
-
-msgid "Save"
-msgstr "Zapisz"
-
 msgid "Start Synced translation"
 msgstr "Rozpocznij zsynchronizowane tłumaczenie"
-
-msgid "Delete"
-msgstr "Usuń"
-
-msgid "Download XLSX"
-msgstr "Pobierz XLSX"
-
-msgid "Download CSV"
-msgstr "Pobierz CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -134,8 +119,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Czy na pewno chcesz przekonwertować tę stronę na alias? Spowoduje to "
-"zastąpienie treści strony zawartością "
-"\"%(source_page_title)s\" (%(source_page_locale)s)"
+"zastąpienie treści strony zawartością \"%(source_page_title)s\" "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Tak, konwertuj"

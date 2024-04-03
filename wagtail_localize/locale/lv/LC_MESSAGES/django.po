@@ -1,30 +1,18 @@
 #
 # Translators:
-# Maris Serzans <maris.serzans@gmail.com>, 2022
+# Maris Serzans <maris.serzans@gmail.com>, 2021
 # Reinis Rozenbergs <reinisr@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Reinis Rozenbergs <reinisr@gmail.com>, 2023\n"
 "Language-Team: Latvian (https://app.transifex.com/torchbox/teams/8009/lv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: lv\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
-
-msgid "Saving…"
-msgstr "Saglabā..."
-
-msgid "Save"
-msgstr "Saglabāt"
-
-msgid "Delete"
-msgstr "Dzēst"
-
-msgid "Download CSV"
-msgstr "Lejupielādēt CSV failu"
 
 msgid "Content type"
 msgstr "Satura veids"

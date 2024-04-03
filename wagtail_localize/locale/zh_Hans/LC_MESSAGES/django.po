@@ -2,15 +2,14 @@
 # Translators:
 # hanfeng <appweb.cn@gmail.com>, 2021
 # Favo Yang <favoyang@gmail.com>, 2021
-# 汇民 王 <whuim@qq.com>, 2022
-# Vincent Zhao <zhaopu2008@gmail.com>, 2022
+# 汇民 王 <whuim@qq.com>, 2021
 # Ford Guo <agile.guo@gmail.com>, 2023
 # Yin Guanhao <sopium@mysterious.site>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Yin Guanhao <sopium@mysterious.site>, 2023\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
@@ -31,23 +30,8 @@ msgstr "翻译"
 msgid "Sync translated %(model_name)s"
 msgstr "同步翻译的 %(model_name)s"
 
-msgid "Saving…"
-msgstr "正在保存..."
-
-msgid "Save"
-msgstr "保存"
-
 msgid "Start Synced translation"
 msgstr "同步翻译"
-
-msgid "Delete"
-msgstr "删除"
-
-msgid "Download XLSX"
-msgstr "下载XLSX"
-
-msgid "Download CSV"
-msgstr "下载CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"

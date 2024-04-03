@@ -1,14 +1,13 @@
 #
 # Translators:
-# Mitja Pagon <mitja.pagon@inueni.com>, 2022
-# Matej Stavanja <matej.stavanja@zfm.si>, 2022
+# Mitja Pagon <mitja.pagon@inueni.com>, 2021
 # andrej55 <andrej.marsetic@gmail.com>, 2022
 # Andrej Marsetič, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Andrej Marsetič, 2023\n"
 "Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
@@ -30,23 +29,8 @@ msgstr "Prevedi"
 msgid "Sync translated %(model_name)s"
 msgstr "Sinhroniziraj preveden %(model_name)s"
 
-msgid "Saving…"
-msgstr "Shranjevanje ..."
-
-msgid "Save"
-msgstr "Shrani"
-
 msgid "Start Synced translation"
 msgstr "Začnite sinhronizirani prevod"
-
-msgid "Delete"
-msgstr "Izbriši"
-
-msgid "Download XLSX"
-msgstr "Prenesi XLSX"
-
-msgid "Download CSV"
-msgstr "Prenesi CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"

@@ -1,13 +1,12 @@
 #
 # Translators:
-# Luiz Boaretto <lboaretto@gmail.com>, 2021
 # Iuri L. Machado, 2021
 # Rodrigo de Almeida Sottomaior Macedo <sottomaiormacedotec@gmail.com>, 2022
+# Luiz Boaretto <lboaretto@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Rodrigo de Almeida Sottomaior Macedo "
-"<sottomaiormacedotec@gmail.com>, 2022\n"
+"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2024\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,6 +16,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[REMOVIDO]"
+
+msgid "Actions"
+msgstr "Ações"
 
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueio do editor"

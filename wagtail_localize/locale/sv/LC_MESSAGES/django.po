@@ -2,13 +2,12 @@
 # Translators:
 # Martin Sandström <martin@marteinn.se>, 2022
 # Philip Andersen <renegadevi@codeofmagi.net>, 2022
-# Andreas Lans <andreas.lans@gmail.com>, 2022
 # Thomas Kunambi <kunambi@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2023\n"
 "Language-Team: Swedish (https://app.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,23 +27,8 @@ msgstr "Översätt"
 msgid "Sync translated %(model_name)s"
 msgstr "Synkronisera översatta %(model_name)s"
 
-msgid "Saving…"
-msgstr "Sparar..."
-
-msgid "Save"
-msgstr "Spara"
-
 msgid "Start Synced translation"
 msgstr "Starta synkroniserad översättning"
-
-msgid "Delete"
-msgstr "Radera"
-
-msgid "Download XLSX"
-msgstr "Ladda ner XLSX"
-
-msgid "Download CSV"
-msgstr "Ladda ner CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"

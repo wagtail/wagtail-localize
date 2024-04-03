@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Roger Pons <rogerpons@gmail.com>, 2023\n"
 "Language-Team: Catalan (https://app.transifex.com/torchbox/teams/8009/ca/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,23 +26,8 @@ msgstr "Traduir"
 msgid "Sync translated %(model_name)s"
 msgstr "La sincronització ha traduït %(model_name)s"
 
-msgid "Saving…"
-msgstr "Desant..."
-
-msgid "Save"
-msgstr "Desar"
-
 msgid "Start Synced translation"
 msgstr "S'ha iniciat la traducció sincronitzada"
-
-msgid "Delete"
-msgstr "Esborrar"
-
-msgid "Download XLSX"
-msgstr "Baixa XLSX"
-
-msgid "Download CSV"
-msgstr "Baixa CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -127,8 +112,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Segur que voleu convertir aquesta pàgina en un àlies? Això sobreescriurà el "
-"contingut de la pàgina amb el contingut de "
-"'%(source_page_title)s' (%(source_page_locale)s)"
+"contingut de la pàgina amb el contingut de '%(source_page_title)s' "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Sí, convertir"

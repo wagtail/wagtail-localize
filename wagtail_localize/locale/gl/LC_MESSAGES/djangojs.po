@@ -1,11 +1,11 @@
 #
 # Translators:
-# Amós Oviedo <amos.oviedo@gmail.com>, 2021
-# X Bello <xbello@gmail.com>, 2022
+# Amós Oviedo <amos.oviedo@gmail.com>, 2024
+# X Bello <xbello@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: X Bello <xbello@gmail.com>, 2022\n"
+"Last-Translator: X Bello <xbello@gmail.com>, 2024\n"
 "Language-Team: Galician (https://app.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: gl\n"
@@ -14,8 +14,14 @@ msgstr ""
 msgid "[DELETED]"
 msgstr "[ELIMINADO]"
 
+msgid "Actions"
+msgstr "Accións"
+
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueo de editor"
+
+msgid "Applying editor lock"
+msgstr "Aplicando bloqueo de editor"
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -49,6 +55,9 @@ msgstr "Seleccionar unha imaxe"
 
 msgid "Convert to alias page"
 msgstr "Converter en páxina alias"
+
+msgid "Converting to alias page"
+msgstr "Convertindo en páxina alias"
 
 msgid "Delete"
 msgstr "Eliminar"
@@ -104,6 +113,9 @@ msgstr "Publicando..."
 msgid "Remove editor lock"
 msgstr "Quitar bloqueo do editor"
 
+msgid "Removing editor lock"
+msgstr "Quitando bloqueo do editor"
+
 msgid "Revert to %s version"
 msgstr "Reverter á versión %s"
 
@@ -121,6 +133,9 @@ msgstr "Erro do servidor"
 
 msgid "Stop Synced translation"
 msgstr "Deter traducción Sincronizada"
+
+msgid "Stopping Synced translation"
+msgstr "Detendo traducción Sincronizada"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

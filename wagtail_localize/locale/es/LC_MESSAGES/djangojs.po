@@ -3,10 +3,11 @@
 # José Luis <alagunajs@gmail.com>, 2021
 # Kevin Gutiérrez, 2021
 # Amós Oviedo <amos.oviedo@gmail.com>, 2022
+# Oscar Luciano Espirilla Flores, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2022\n"
+"Last-Translator: Oscar Luciano Espirilla Flores, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -15,6 +16,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[ELIMINADO]"
+
+msgid "Actions"
+msgstr "Acciones"
 
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueo del editor"

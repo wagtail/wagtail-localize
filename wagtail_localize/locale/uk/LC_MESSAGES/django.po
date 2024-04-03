@@ -1,15 +1,15 @@
 #
 # Translators:
 # Viktor Shytiuk <VicHunting@yandex.ua>, 2021
+# Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
 # Anastasiia La, 2021
 # d55ee35323c0c760f088259cd23b1b6d_9e8a7d1 <5459f3ae99ecdd5ed0be0220acd46004_1019581>, 2022
-# Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2022
 # Vladyslav Herasymenko <drimacus182@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Vladyslav Herasymenko <drimacus182@gmail.com>, 2023\n"
 "Language-Team: Ukrainian (https://app.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
@@ -28,21 +28,6 @@ msgstr "Фіктивний переклад"
 
 msgid "Translate"
 msgstr "Перекласти"
-
-msgid "Saving…"
-msgstr "Йде зберігання..."
-
-msgid "Save"
-msgstr "Зберегти"
-
-msgid "Delete"
-msgstr "Видалити"
-
-msgid "Download XLSX"
-msgstr "Завантажити XLSX"
-
-msgid "Download CSV"
-msgstr "Завантажити CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"

@@ -1,10 +1,11 @@
 #
 # Translators:
 # Mirek Zvolský <zvolsky@seznam.cz>, 2021
+# IT Management <hudan@itmanagement.cz>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Mirek Zvolský <zvolsky@seznam.cz>, 2021\n"
+"Last-Translator: IT Management <hudan@itmanagement.cz>, 2024\n"
 "Language-Team: Czech (https://app.transifex.com/torchbox/teams/8009/cs/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cs\n"
@@ -13,6 +14,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[ZRUŠENO]"
+
+msgid "Actions"
+msgstr "Akce"
 
 msgid "Apply editor lock"
 msgstr "Uzamknout pro úpravy"

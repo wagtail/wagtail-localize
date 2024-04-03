@@ -4,12 +4,12 @@
 # mahulst, 2021
 # Rob Moorman <rob@moori.nl>, 2021
 # Loic Teixeira, 2021
-# Thijs Kramer <thijskramer@gmail.com>, 2022
-# Storm Heg <storm@stormbase.digital>, 2023
+# Thijs Kramer <thijskramer@gmail.com>, 2024
+# Storm Heg <storm@stormbase.digital>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Storm Heg <storm@stormbase.digital>, 2023\n"
+"Last-Translator: Storm Heg <storm@stormbase.digital>, 2024\n"
 "Language-Team: Dutch (https://app.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -18,8 +18,14 @@ msgstr ""
 msgid "[DELETED]"
 msgstr "[VERWIJDERD]"
 
+msgid "Actions"
+msgstr "Acties"
+
 msgid "Apply editor lock"
 msgstr "Bewerkingsvergrendeling inschakelen"
+
+msgid "Applying editor lock"
+msgstr "Bewerkingsvergrendeling aan het inschakelen"
 
 msgid "Cancel"
 msgstr "Annuleren"
@@ -53,6 +59,9 @@ msgstr "Kies een afbeelding"
 
 msgid "Convert to alias page"
 msgstr "Naar alias-pagina omzetten"
+
+msgid "Converting to alias page"
+msgstr "Aan het omzetten naar alias-pagina"
 
 msgid "Delete"
 msgstr "Verwijderen"
@@ -108,6 +117,9 @@ msgstr "Bezig met publiceren..."
 msgid "Remove editor lock"
 msgstr "Verwijder bewerkingsblokkade"
 
+msgid "Removing editor lock"
+msgstr "Bewerkingsvergrendeling aan het uitschakelen"
+
 msgid "Revert to %s version"
 msgstr "Ga terug naar %sversie"
 
@@ -125,6 +137,9 @@ msgstr "Server error"
 
 msgid "Stop Synced translation"
 msgstr "Stop synchrone vertaling"
+
+msgid "Stopping Synced translation"
+msgstr "Synchrone vertaling aan het stoppen"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

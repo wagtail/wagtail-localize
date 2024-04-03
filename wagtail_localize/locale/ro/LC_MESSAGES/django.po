@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Dan Braghis, 2023\n"
 "Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,23 +27,8 @@ msgstr "Traduceți"
 msgid "Sync translated %(model_name)s"
 msgstr "Sincronizează %(model_name)s tradus(ă)"
 
-msgid "Saving…"
-msgstr "În curs de salvare..."
-
-msgid "Save"
-msgstr "Salvează"
-
 msgid "Start Synced translation"
 msgstr "Începe traducere sincronizată"
-
-msgid "Delete"
-msgstr "Șterge"
-
-msgid "Download XLSX"
-msgstr "Descarcă XLSX"
-
-msgid "Download CSV"
-msgstr "Descarcă CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -127,8 +112,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Sigur doriți să convertiți această pagină întru-un alias? Această acțiune va "
-"suprascrie conținutul paginii cu cel al "
-"'%(source_page_title)s' (%(source_page_locale)s)"
+"suprascrie conținutul paginii cu cel al '%(source_page_title)s' "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Da, convertează"

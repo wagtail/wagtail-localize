@@ -1,9 +1,8 @@
 #
 # Translators:
 # Joaquín T <joaquintita@gmail.com>, 2021
+# José Luis <alagunajs@gmail.com>, 2021
 # Kevin Gutiérrez, 2021
-# Oscar Luciano Espirilla Flores, 2022
-# José Luis <alagunajs@gmail.com>, 2022
 # X Bello <xbello@gmail.com>, 2022
 # Antoni Aloy <aaloy@apsl.net>, 2022
 # Amós Oviedo <amos.oviedo@gmail.com>, 2023
@@ -11,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,23 +31,8 @@ msgstr "Traducir"
 msgid "Sync translated %(model_name)s"
 msgstr "Sincronizar %(model_name)s traducidos"
 
-msgid "Saving…"
-msgstr "Guardando..."
-
-msgid "Save"
-msgstr "Guardar"
-
 msgid "Start Synced translation"
 msgstr "Iniciar traducción sincronizada"
-
-msgid "Delete"
-msgstr "Eliminar"
-
-msgid "Download XLSX"
-msgstr "Descargar XLSX"
-
-msgid "Download CSV"
-msgstr "Descargar CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -134,8 +118,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "¿Estás seguro de querer convetir esta página en un alias? Se sobreescribirá "
-"el contenido de la página con el contenido de "
-"'%(source_page_title)s' (%(source_page_locale)s)"
+"el contenido de la página con el contenido de '%(source_page_title)s' "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Sí, convertirla"

@@ -2,12 +2,12 @@
 # Translators:
 # Mostafa Heidarian <tabvar@gmail.com>, 2020
 # Mohammad Hossein Mojtahedi <Mhm5000@gmail.com>, 2021
-# Ehsan jahanbakhsh <man207ej@gmail.com>, 2021
 # pyzenberg <pyzenberg@gmail.com>, 2021
+# Ehsan jahanbakhsh <man207ej@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: pyzenberg <pyzenberg@gmail.com>, 2021\n"
+"Last-Translator: Ehsan jahanbakhsh <man207ej@gmail.com>, 2024\n"
 "Language-Team: Persian (https://app.transifex.com/torchbox/teams/8009/fa/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fa\n"
@@ -15,6 +15,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[حذف شده]"
+
+msgid "Actions"
+msgstr "اعمال"
 
 msgid "Apply editor lock"
 msgstr "گذاشتن قفل ویراستاری"

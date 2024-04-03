@@ -3,10 +3,12 @@
 # 2a01ec1f91c141c338f53ad8cc23abc6_8deca2d, 2021
 # Mikalai Radchuk <radchuk.m@gmail.com>, 2021
 # Влад <integration.into.society@gmail.com>, 2022
+# sergeybe <sergeybe@gmail.com>, 2024
+# Andrei Satsevich, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Влад <integration.into.society@gmail.com>, 2022\n"
+"Last-Translator: Andrei Satsevich, 2024\n"
 "Language-Team: Russian (https://app.transifex.com/torchbox/teams/8009/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -17,8 +19,14 @@ msgstr ""
 msgid "[DELETED]"
 msgstr "[УДАЛЕНО]"
 
+msgid "Actions"
+msgstr "Действия"
+
 msgid "Apply editor lock"
 msgstr "Применить блокировку редактора"
+
+msgid "Applying editor lock"
+msgstr "Применение блокировки редактора"
 
 msgid "Cancel"
 msgstr "Отменить"
@@ -52,6 +60,9 @@ msgstr "Выберите изображение"
 
 msgid "Convert to alias page"
 msgstr "Преобразовать в псевдоним страницы"
+
+msgid "Converting to alias page"
+msgstr "Преобразование в псевдоним страницы"
 
 msgid "Delete"
 msgstr "Удалить"
@@ -107,6 +118,9 @@ msgstr "Публикация..."
 msgid "Remove editor lock"
 msgstr "Убрать блокировку редактора"
 
+msgid "Removing editor lock"
+msgstr "Снятие блокировки редактора"
+
 msgid "Revert to %s version"
 msgstr "Вернуться к версии %s"
 
@@ -124,6 +138,9 @@ msgstr "Ошибка сервера"
 
 msgid "Stop Synced translation"
 msgstr "Остановить синхронизацию перевода"
+
+msgid "Stopping Synced translation"
+msgstr "Остановка синхронизированного перевода"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

@@ -5,10 +5,11 @@
 # Favo Yang <favoyang@gmail.com>, 2021
 # 汇民 王 <whuim@qq.com>, 2021
 # Ford Guo <agile.guo@gmail.com>, 2023
+# First Last <abc+github@mynook.info>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Ford Guo <agile.guo@gmail.com>, 2023\n"
+"Last-Translator: First Last <abc+github@mynook.info>, 2024\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/torchbox/"
 "teams/8009/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,6 +18,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[已删除]"
+
+msgid "Actions"
+msgstr "动作"
 
 msgid "Apply editor lock"
 msgstr "应用锁编辑"

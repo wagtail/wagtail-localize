@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Rodrigo Yanez, 2023\n"
 "Language-Team: Spanish (Latin America) (https://app.transifex.com/torchbox/"
 "teams/8009/es_419/)\n"
@@ -13,15 +13,6 @@ msgstr ""
 "Language: es_419\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
 "1 : 2;\n"
-
-msgid "Saving…"
-msgstr "Guardando..."
-
-msgid "Save"
-msgstr "Guardar"
-
-msgid "Delete"
-msgstr "Borrar"
 
 msgid "Go back"
 msgstr "Volver atrás"

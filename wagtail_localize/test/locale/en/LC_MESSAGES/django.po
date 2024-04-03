@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-20 16:51+0000\n"
+"POT-Creation-Date: 2024-04-03 08:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: test/models.py:31
+#: test/models.py:37
 msgid "field"
 msgstr ""
 
-#: test/models.py:187
+#: test/models.py:205
 msgid "text block"
 msgstr ""
 
-#: test/models.py:258
+#: test/models.py:276
 msgid "char field"
 msgstr ""
 

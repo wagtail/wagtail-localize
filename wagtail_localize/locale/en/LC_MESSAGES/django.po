@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 14:51+0000\n"
+"POT-Creation-Date: 2024-04-03 08:26+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -43,46 +43,46 @@ msgid ""
 "{locales}"
 msgstr ""
 
-#: models.py:1152
+#: models.py:1156
 msgid "Up to date"
 msgstr ""
 
-#: models.py:1154
+#: models.py:1158
 msgid "Waiting for translations"
 msgstr ""
 
-#: models.py:1625
+#: models.py:1622
 msgid "Manual"
 msgstr ""
 
-#: models.py:1626
+#: models.py:1623
 msgid "Machine"
 msgstr ""
 
-#: models.py:1753
+#: models.py:1750
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr ""
 
-#: models.py:1758
+#: models.py:1755
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr ""
 
-#: models.py:1763
+#: models.py:1760
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr ""
 
-#: models.py:2276
+#: models.py:2285
 msgid "This locale cannot be synced into itself."
 msgstr ""
 
-#: models.py:2281
+#: models.py:2290
 msgid "Synchronise content from another locale"
 msgstr ""
 
-#: models.py:2283
+#: models.py:2292
 msgid ""
 "Choose a locale to synchronise content from. Any existing and future content "
 "authored in the selected locale will be automatically copied to this one."
@@ -100,7 +100,7 @@ msgid ""
 "tags)"
 msgstr ""
 
-#: strings.py:507
+#: strings.py:506
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr ""
 
@@ -213,28 +213,28 @@ msgstr ""
 msgid "Page '{}' has been converted into an alias."
 msgstr ""
 
-#: views/edit_translation.py:161
+#: views/edit_translation.py:162
 msgid "Content"
 msgstr ""
 
-#: views/edit_translation.py:547
+#: views/edit_translation.py:571
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
 "Please fix them or click publish again to ignore these translations for now."
 msgstr ""
 
-#: views/edit_translation.py:575
+#: views/edit_translation.py:599
 #, python-brace-format
 msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 
-#: views/edit_translation.py:585
+#: views/edit_translation.py:609
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr ""
 
-#: views/edit_translation.py:865
+#: views/edit_translation.py:885
 #, python-brace-format
 msgid ""
 "The data model for '{model_name}' has been changed since the last "
@@ -242,31 +242,31 @@ msgid ""
 "be visible until the next translation sync."
 msgstr ""
 
-#: views/edit_translation.py:1137
+#: views/edit_translation.py:1157
 msgid "Translation has been stopped."
 msgstr ""
 
-#: views/edit_translation.py:1148
+#: views/edit_translation.py:1168
 msgid "Translation has been restarted."
 msgstr ""
 
-#: views/edit_translation.py:1323
+#: views/edit_translation.py:1342
 msgid "Please upload a valid PO file."
 msgstr ""
 
-#: views/edit_translation.py:1332
+#: views/edit_translation.py:1351
 msgid "Cannot import PO file that was created for a different translation."
 msgstr ""
 
-#: views/edit_translation.py:1339
+#: views/edit_translation.py:1358
 msgid "Successfully imported translations from PO File."
 msgstr ""
 
-#: views/edit_translation.py:1420
+#: views/edit_translation.py:1437
 msgid "Successfully translated with {}."
 msgstr ""
 
-#: views/edit_translation.py:1424
+#: views/edit_translation.py:1441
 msgid "There isn't anything left to translate."
 msgstr ""
 
@@ -311,21 +311,21 @@ msgid ""
 "{locales}"
 msgstr ""
 
-#: views/update_translations.py:24
+#: views/update_translations.py:26
 msgid "Publish immediately"
 msgstr ""
 
-#: views/update_translations.py:26
+#: views/update_translations.py:28
 msgid ""
 "This will apply the updates and publish immediately, before any new "
 "translations happen."
 msgstr ""
 
-#: views/update_translations.py:34
+#: views/update_translations.py:36
 msgid "Update existing translations"
 msgstr ""
 
-#: views/update_translations.py:54
+#: views/update_translations.py:56
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
 msgstr ""

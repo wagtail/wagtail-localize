@@ -1,35 +1,19 @@
 #
 # Translators:
 # Eirik Krogstad <eirikkr@gmail.com>, 2021
-# Stein Strindhaug <stein.strindhaug@gmail.com>, 2022
 # Ole Kristian Losvik <ole@losol.no>, 2023
 # Jonathan D, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Jonathan D, 2023\n"
 "Language-Team: Norwegian Bokmål (https://app.transifex.com/torchbox/"
 "teams/8009/nb/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nb\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "Saving…"
-msgstr "Lagrer..."
-
-msgid "Save"
-msgstr "Lagre"
-
-msgid "Delete"
-msgstr "Slett"
-
-msgid "Download XLSX"
-msgstr "Last ned XLSX"
-
-msgid "Download CSV"
-msgstr "Last ned CSV"
 
 msgid "Go back"
 msgstr "Gå tilbake"

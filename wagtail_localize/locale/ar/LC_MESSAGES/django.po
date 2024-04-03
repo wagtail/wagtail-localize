@@ -1,36 +1,19 @@
 #
 # Translators:
+# abdulaziz alfuhigi <abajall@gmail.com>, 2021
 # ROGER MICHAEL ASHLEY ALLEN <rogermaallen@gmail.com>, 2021
-# abdulaziz alfuhigi <abajall@gmail.com>, 2022
-# Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2022
-# ultraify media <ultraify@gmail.com>, 2022
 # Younes Oumakhou, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Younes Oumakhou, 2023\n"
 "Language-Team: Arabic (https://app.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
-
-msgid "Saving…"
-msgstr "يتم الحفظ…"
-
-msgid "Save"
-msgstr "حفظ"
-
-msgid "Delete"
-msgstr "حذف"
-
-msgid "Download XLSX"
-msgstr "تنزيل XLSX"
-
-msgid "Download CSV"
-msgstr "تنزيل ملف CSV"
 
 msgid "Go back"
 msgstr "رجوع"

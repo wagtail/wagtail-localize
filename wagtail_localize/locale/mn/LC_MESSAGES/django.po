@@ -1,33 +1,18 @@
 #
 # Translators:
-# Myagmarjav Enkhbileg <miigaa.lucky@gmail.com>, 2022
+# Myagmarjav Enkhbileg <miigaa.lucky@gmail.com>, 2021
 # visual, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: visual, 2023\n"
 "Language-Team: Mongolian (https://app.transifex.com/torchbox/teams/8009/"
 "mn/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: mn\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "Saving…"
-msgstr "Хадгалж байна..."
-
-msgid "Save"
-msgstr "Хадгалах"
-
-msgid "Delete"
-msgstr "Устгах"
-
-msgid "Download XLSX"
-msgstr "XLSX-р татах"
-
-msgid "Download CSV"
-msgstr "CSV татах"
 
 msgid "Yes, convert it"
 msgstr "Тийм, хөрвүүлэх"

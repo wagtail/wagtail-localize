@@ -1,14 +1,17 @@
 #
 # Translators:
-# Erlend Eelmets <debcf78e@opayq.com>, 2021
+# Erlend Eelmets <debcf78e@opayq.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Erlend Eelmets <debcf78e@opayq.com>, 2021\n"
+"Last-Translator: Erlend Eelmets <debcf78e@opayq.com>, 2024\n"
 "Language-Team: Estonian (https://app.transifex.com/torchbox/teams/8009/et/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Actions"
+msgstr "Toimingud"
 
 msgid "Apply editor lock"
 msgstr "Rakenda redaktori lukustus"

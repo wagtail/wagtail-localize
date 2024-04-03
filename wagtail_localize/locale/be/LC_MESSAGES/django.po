@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Andrei Satsevich, 2023\n"
 "Language-Team: Belarusian (https://app.transifex.com/torchbox/teams/8009/"
 "be/)\n"
@@ -29,23 +29,8 @@ msgstr "Перавесці"
 msgid "Sync translated %(model_name)s"
 msgstr "Перакладзена %(model_name)s"
 
-msgid "Saving…"
-msgstr "Захаваць..."
-
-msgid "Save"
-msgstr "Захаваць"
-
 msgid "Start Synced translation"
 msgstr "Пачаць сінхранізаваны пераклад"
-
-msgid "Delete"
-msgstr "Выдаліць"
-
-msgid "Download XLSX"
-msgstr "Спампаваць XLSX"
-
-msgid "Download CSV"
-msgstr "Спампаваць CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -129,8 +114,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Вы ўпэўнены, што хочаце пераўтварыць гэтую старонку ў псеўданім? Гэта "
-"перазапіша змесціва старонкі змесцівам "
-"'%(source_page_title)s' (%(source_page_locale)s)"
+"перазапіша змесціва старонкі змесцівам '%(source_page_title)s' "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Так, канвертаваць гэта"

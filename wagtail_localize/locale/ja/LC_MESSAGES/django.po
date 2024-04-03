@@ -1,35 +1,17 @@
 #
 # Translators:
 # 石田秀 <ishidashu@gmail.com>, 2021
-# Daigo Shitara <stain.witness@gmail.com>, 2022
-# Hiroki Sawano, 2022
-# shuhei hirota, 2022
 # kojikojikojikoji, 2023
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: kojikojikojikoji, 2023\n"
 "Language-Team: Japanese (https://app.transifex.com/torchbox/teams/8009/ja/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-msgid "Saving…"
-msgstr "保存中..."
-
-msgid "Save"
-msgstr "保存"
-
-msgid "Delete"
-msgstr "削除"
-
-msgid "Download XLSX"
-msgstr "XLSXファイルをダウンロード"
-
-msgid "Download CSV"
-msgstr "CSVをダウンロードする"
 
 msgid "Yes, convert it"
 msgstr "はい。変換します。"

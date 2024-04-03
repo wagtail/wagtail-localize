@@ -1,11 +1,11 @@
 #
 # Translators:
 # Adam Hughes <adamhughes31@gmail.com>, 2021
-# Philip Crisp, 2022
+# Philip Crisp, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Philip Crisp, 2022\n"
+"Last-Translator: Philip Crisp, 2024\n"
 "Language-Team: Welsh (https://app.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
@@ -14,6 +14,9 @@ msgstr ""
 
 msgid "[DELETED]"
 msgstr "[WEDI'I DILEU]"
+
+msgid "Actions"
+msgstr "Gweithredoedd"
 
 msgid "Apply editor lock"
 msgstr "Cymhwyso clo golygydd"

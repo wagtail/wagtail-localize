@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-02-25 14:51+0000\n"
 "Last-Translator: Luís Tiago Favas <traducoes@favas.eu>, 2023\n"
 "Language-Team: Portuguese (Portugal) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
@@ -26,23 +26,8 @@ msgstr "Tradutor simulado"
 msgid "Translate"
 msgstr "Traduzir"
 
-msgid "Saving…"
-msgstr "A gravar…"
-
-msgid "Save"
-msgstr "Gravar"
-
 msgid "Start Synced translation"
 msgstr "Iniciar tradução Sincronizada"
-
-msgid "Delete"
-msgstr "Apagar"
-
-msgid "Download XLSX"
-msgstr "Descarregar XLSX"
-
-msgid "Download CSV"
-msgstr "Descarregar CSV"
 
 #, python-brace-format
 msgid "Translate {model_name}"
@@ -128,8 +113,8 @@ msgid ""
 "'%(source_page_title)s' (%(source_page_locale)s)"
 msgstr ""
 "Tem a certeza que quer converter esta página num atalho? O conteúdo da "
-"página será substituído com o conteúdo de "
-"'%(source_page_title)s' (%(source_page_locale)s)"
+"página será substituído com o conteúdo de '%(source_page_title)s' "
+"(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
 msgstr "Sim, converter"
