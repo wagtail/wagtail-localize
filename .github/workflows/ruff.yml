@@ -1,22 +1,22 @@
 name: Ruff
 
 on:
-  push:
-    branches:
-      - main
-      - 'stable/**'
-  pull_request:
-    branches: [main]
+    push:
+        branches:
+            - main
+            - 'stable/**'
+    pull_request:
+        branches: [main]
 
 jobs:
-  ruff:
-    runs-on: ubuntu-latest
+    ruff:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - run: python -Im pip install --user ruff
+            - run: python -Im pip install --user ruff
 
-      - name: Run ruff
-        working-directory: .
-        run: ruff --output-format=github wagtail_localize
+            - name: Run ruff
+              working-directory: .
+              run: ruff --output-format=github wagtail_localize
