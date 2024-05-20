@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const enableInput = componentForm.querySelector(
-            '.component-form__fieldname-enabled input'
+            '.component-form__fieldname-enabled input',
         ) as HTMLInputElement | null;
         if (enableInput) {
             enableInput.checked = isChecked;

@@ -43,7 +43,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     <Icon name="wagtail-localize-convert" />
                     {gettext('Convert to alias page')}
                 </button>
-            </form>
+            </form>,
         );
     }
 
@@ -52,7 +52,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
             <a className="button action-secondary" href={links.deleteUrl}>
                 <Icon name="bin" />
                 {gettext('Delete')}
-            </a>
+            </a>,
         );
     }
 
@@ -74,7 +74,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     <Icon name="lock" />
                     {gettext('Lock')}
                 </button>
-            </form>
+            </form>,
         );
     }
 
@@ -96,7 +96,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     <Icon name="lock-open" />
                     {gettext('Unlock')}
                 </button>
-            </form>
+            </form>,
         );
     }
 
@@ -105,7 +105,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
             <a className="button action-secondary" href={links.unpublishUrl}>
                 <Icon name="download" />
                 {gettext('Unpublish')}
-            </a>
+            </a>,
         );
     }
 
@@ -136,7 +136,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     <Icon name="spinner" />
                     <em>{gettext('Publish in ') + locale.displayName}</em>
                 </button>
-            </form>
+            </form>,
         );
     }
 
