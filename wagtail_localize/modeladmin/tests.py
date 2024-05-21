@@ -214,11 +214,9 @@ class TestModelAdminAdmin(TestCase, WagtailTestUtils):
     def test_get_templates(self):
         def result(action):
             return [
-                "wagtail_localize/modeladmin/wagtail_localize_test/testmodel/translatable_%s.html"
-                % action,
-                "wagtail_localize/modeladmin/wagtail_localize_test/translatable_%s.html"
-                % action,
-                "wagtail_localize/modeladmin/translatable_%s.html" % action,
+                f"wagtail_localize/modeladmin/wagtail_localize_test/testmodel/translatable_{action}.html",
+                f"wagtail_localize/modeladmin/wagtail_localize_test/translatable_{action}.html",
+                f"wagtail_localize/modeladmin/translatable_{action}.html",
             ]
 
         self.assertEqual(self.model_admin.get_templates("index"), result("index"))
