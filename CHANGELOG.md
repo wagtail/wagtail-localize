@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for Wagtail 6.1
+
+### Removed
+
+- Support for Django < 4.2
+
 ## [1.9] - 2024-04-03
 
 ### Added
