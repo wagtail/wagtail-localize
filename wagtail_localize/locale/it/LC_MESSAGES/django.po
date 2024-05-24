@@ -3,111 +3,138 @@
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
 # Marco Lerco <marcolerco@gmail.com>, 2023
 # Marco Badan <marco.badan@gmail.com>, 2024
+# Alessio Tognan <tognan@infofactory.it>, 2024
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 14:51+0000\n"
-"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2024\n"
+"POT-Creation-Date: 2024-05-24 07:50+0000\n"
+"Last-Translator: Alessio Tognan <tognan@infofactory.it>, 2024\n"
 "Language-Team: Italian (https://app.transifex.com/torchbox/teams/8009/it/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
 "1 : 2;\n"
 
+#: components.py:30 templates/wagtail_localize/admin/_components.html:17
 msgid "Disable"
 msgstr "Disabilita"
 
+#: machine_translators/dummy.py:49
 msgid "Dummy translator"
 msgstr "Traduttore fittizio"
 
+#: modeladmin/helpers.py:66 modeladmin/helpers.py:68
+#: views/submit_translations.py:74 wagtail_hooks.py:198
 msgid "Translate"
 msgstr "Traduci"
 
+#: modeladmin/helpers.py:80 modeladmin/helpers.py:83
 #, python-format
 msgid "Sync translated %(model_name)s"
 msgstr "Sincronizza %(model_name)s tradotto"
 
+#: modeladmin/templates/wagtail_localize/modeladmin/translatable_edit.html:14
+#: wagtail_hooks.py:264 wagtail_hooks.py:351
 msgid "Start Synced translation"
 msgstr "Inizia traduzione sincronizzata"
 
+#: modeladmin/views.py:184 views/submit_translations.py:208
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr "Traduci {model_name}"
 
+#: modeladmin/views.py:209 views/submit_translations.py:237
 #, python-brace-format
 msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
-"Il {model_name} '{object}' è stato inviato con successo per la traduzione in "
+"{model_name} '{object}' è stato inviato con successo per la traduzione in "
 "{locales}"
 
+#: models.py:1156
 msgid "Up to date"
 msgstr "Aggiornato"
 
+#: models.py:1158
 msgid "Waiting for translations"
 msgstr "In attesa di traduzioni"
 
+#: models.py:1622
 msgid "Manual"
 msgstr "Manuale"
 
+#: models.py:1623
 msgid "Machine"
 msgstr "Automatica"
 
+#: models.py:1750
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr "Tradotto con {tool_name} il {date}"
 
+#: models.py:1755
 #, python-brace-format
 msgid "Translated manually on {date}"
-msgstr "Tradotta manualmente il {date}"
+msgstr "Tradotto manualmente il {date}"
 
+#: models.py:1760
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr "Tradotto automaticamente {date}"
 
+#: models.py:2285
 msgid "This locale cannot be synced into itself."
-msgstr "Questa localizzazione non può essere sincronizzata con se stessa."
+msgstr "Questa lingua non può essere sincronizzata con se stessa."
 
+#: models.py:2290
 msgid "Synchronise content from another locale"
-msgstr "Sincronizza contenuto da un'altra localizzazione"
+msgstr "Sincronizza contenuto da un'altra lingua"
 
+#: models.py:2292
 msgid ""
 "Choose a locale to synchronise content from. Any existing and future content "
 "authored in the selected locale will be automatically copied to this one."
 msgstr ""
 "Scegli una lingua da cui sincronizzare il contenuto. Qualsiasi contenuto "
-"esistente e futuro creato nella localizzazione selezionata verrà "
-"automaticamente copiato in questo."
+"esistente e futuro creato nella lingua selezionata verrà "
+"automaticamente copiato in questa lingua."
 
+#: strings.py:48
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
 msgstr ""
-"<{}> tag non permessa. Le stringhe possono contenere solo tag inline HTML "
+"<{}> tag non permessa. I testi possono contenere solo tag inline HTML "
 "standard (come <b>, <a>)"
 
+#: strings.py:59
 msgid ""
 "Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
 "tags)"
 msgstr ""
-"Le stringhe non possono avere tag HTML con attributi (con eccezione di 'id' "
+"I testi non possono avere tag HTML con attributi (con eccezione di 'id' "
 "nelle tag <a> )"
 
+#: strings.py:506
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr "Id non riconosciuto trovato in una tag <a>: {}"
 
+#: templates/wagtail_localize/admin/_components.html:16
 msgid "Enable"
 msgstr "Abilita"
 
+#: templates/wagtail_localize/admin/confirm_convert_to_alias.html:3
 #, python-format
 msgid "Convert to alias %(title)s"
 msgstr "Converti in alias %(title)s"
 
+#: templates/wagtail_localize/admin/confirm_convert_to_alias.html:6
 msgid "Convert to alias"
 msgstr "Converti in alias"
 
+#: templates/wagtail_localize/admin/confirm_convert_to_alias.html:11
 #, python-format
 msgid ""
 "Are you sure you want to convert this page into an alias? This will "
@@ -118,12 +145,15 @@ msgstr ""
 "sovrascriverà il contenuto della pagina con il contenuto di "
 "'%(source_page_title)s' (%(source_page_locale)s)"
 
+#: templates/wagtail_localize/admin/confirm_convert_to_alias.html:20
 msgid "Yes, convert it"
 msgstr "Sì, convertilo"
 
+#: templates/wagtail_localize/admin/confirm_convert_to_alias.html:21
 msgid "No, leave it as a page"
 msgstr "No, lascialo come una pagina"
 
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:8
 #, python-format
 msgid ""
 "This page hasn't been translated yet. It is mirroring the <a "
@@ -131,43 +161,65 @@ msgid ""
 "page</a>."
 msgstr ""
 "Questa pagina non è stata ancora tradotta. Sta rispecchiando <a "
-"href=\"%(edit_original_page_url)s\" target=\"_blank\">la pagina "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">la pagina in "
 "%(original_locale)s</a>."
 
+#: templates/wagtail_localize/admin/edit_translatable_alias.html:14
+#: wagtail_hooks.py:155
 msgid "Translate this page"
 msgstr "Traduci questa pagina"
 
+#: templates/wagtail_localize/admin/edit_translation.html:6
 #, python-format
 msgid "Translation of %(instance)s into %(locale)s"
 msgstr "Traduzione di %(instance)s in %(locale)s"
 
+#: templates/wagtail_localize/admin/edit_translation.html:34
+#: views/report.py:140 wagtail_hooks.py:384
 msgid "Translations"
 msgstr "Traduzioni"
 
+#: templates/wagtail_localize/admin/includes/generic_header.html:6
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Modificando %(object_type)s %(title)s"
+
+#: templates/wagtail_localize/admin/submit_translation.html:29
+#: templates/wagtail_localize/admin/update_translations.html:62
 msgid "Submit"
 msgstr "Invia"
 
+#: templates/wagtail_localize/admin/submit_translation.html:29
+#: templates/wagtail_localize/admin/update_translations.html:62
 msgid "Go back"
 msgstr "Torna indietro"
 
+#: templates/wagtail_localize/admin/translations_report.html:10
+#: views/report.py:116
 msgid "Content type"
 msgstr "Tipo di contenuto"
 
+#: templates/wagtail_localize/admin/translations_report.html:13
 msgid "Source"
 msgstr "Fonte"
 
+#: templates/wagtail_localize/admin/translations_report.html:16
 msgid "Target"
-msgstr "Obiettivo"
+msgstr "Tradotto in"
 
+#: templates/wagtail_localize/admin/translations_report.html:19
 msgid "Status"
 msgstr "Stato"
 
+#: templates/wagtail_localize/admin/translations_report.html:49
 msgid "No translations found."
 msgstr "Nessuna traduzione trovata."
 
+#: templates/wagtail_localize/admin/update_translations.html:11
 msgid "Why would I sync my page?"
 msgstr "Perché dovrei sincronizzare la mia pagina?"
 
+#: templates/wagtail_localize/admin/update_translations.html:12
 msgid ""
 "Changes are not automatically applied between translated pages. Syncing will "
 "add new content for translation and remove deleted content."
@@ -176,6 +228,7 @@ msgstr ""
 "La sincronizzazione aggiungerà nuovi contenuti per la traduzione e rimuoverà "
 "i contenuti eliminati."
 
+#: templates/wagtail_localize/admin/update_translations.html:15
 #, python-format
 msgid ""
 "The last sync date was %(last_sync_date)s. You are about to sync the "
@@ -184,12 +237,15 @@ msgstr ""
 "L'ultima data di sincronizzazione è stata %(last_sync_date)s. Stai per "
 "sincronizzare quanto segue:"
 
+#: views/convert.py:84
 msgid "Page '{}' has been converted into an alias."
 msgstr "La pagina '{}' è stata convertita in un alias."
 
+#: views/edit_translation.py:162
 msgid "Content"
 msgstr "Contenuto"
 
+#: views/edit_translation.py:571
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
@@ -199,74 +255,93 @@ msgstr ""
 "'{object}' in {locale}. Correggile o fai nuovamente clic su pubblica per "
 "ignorare queste traduzioni per ora."
 
+#: views/edit_translation.py:599
 #, python-brace-format
 msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 "Pubblicato '{object}' in {locale} con traduzioni mancanti - vedi sotto."
 
+#: views/edit_translation.py:609
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr "Pubblicato '{object}' in {locale}."
 
+#: views/edit_translation.py:885
 #, python-brace-format
 msgid ""
 "The data model for '{model_name}' has been changed since the last "
 "translation sync. If any new fields have been added recently, these may not "
 "be visible until the next translation sync."
 msgstr ""
-"Il modello dati per \"{model_name}\" è stato modificato dall'ultima "
+"Il modello \"{model_name}\" è stato modificato dall'ultima "
 "sincronizzazione della traduzione. Se di recente sono stati aggiunti nuovi "
 "campi, questi potrebbero non essere visibili fino alla successiva "
 "sincronizzazione della traduzione."
 
+#: views/edit_translation.py:1157
 msgid "Translation has been stopped."
 msgstr "La traduzione è stata interrotta."
 
+#: views/edit_translation.py:1168
 msgid "Translation has been restarted."
 msgstr "La traduzione è stata riavviata."
 
+#: views/edit_translation.py:1342
 msgid "Please upload a valid PO file."
 msgstr "Carica un file PO valido."
 
+#: views/edit_translation.py:1351
 msgid "Cannot import PO file that was created for a different translation."
-msgstr "Impossibile importare il file PO creato per una traduzione differente."
+msgstr "Impossibile importare il file PO creato per una traduzione diversa."
 
+#: views/edit_translation.py:1358
 msgid "Successfully imported translations from PO File."
 msgstr "Traduzioni importate con successo dal file PO."
 
+#: views/edit_translation.py:1437
 msgid "Successfully translated with {}."
 msgstr "Tradotto con successo con {}."
 
+#: views/edit_translation.py:1441
 msgid "There isn't anything left to translate."
 msgstr "Non è rimasto nulla da tradurre."
 
+#: views/report.py:118
 msgid "Source title"
-msgstr "File sorgente"
+msgstr "Titolo originale"
 
+#: views/report.py:123 views/report.py:129
 msgid "All"
 msgstr "Tutto"
 
+#: views/submit_translations.py:25
 msgid "Select all"
 msgstr "Seleziona tutti"
 
+#: views/submit_translations.py:27
 msgid "Locales"
 msgstr "Lingue"
 
+#: views/submit_translations.py:32
 msgid "All child pages will be created."
 msgstr "Tutte le pagine figlio verranno create."
 
+#: views/submit_translations.py:46
 msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] "Includi sottoalbero ({} pagina)"
-msgstr[1] "Include includi sottoalbero  ({} pagine)"
-msgstr[2] "Include includi sottoalbero  ({} pagine)"
+msgstr[1] "Includi sottoalbero  ({} pagine)"
+msgstr[2] "Includi sottoalbero  ({} pagine)"
 
+#: views/submit_translations.py:156
 msgid "{} locales"
 msgstr "{} lingue"
 
+#: views/submit_translations.py:178
 msgid "Translate page"
 msgstr "Traduci pagina"
 
+#: views/submit_translations.py:202
 #, python-brace-format
 msgid ""
 "The page '{page_title}' was successfully submitted for translation into "
@@ -275,9 +350,11 @@ msgstr ""
 "La pagina '{page_title}' è stata inviata con successo per la traduzione in "
 "{locales}"
 
+#: views/update_translations.py:26
 msgid "Publish immediately"
 msgstr "Pubblica immediatamente"
 
+#: views/update_translations.py:28
 msgid ""
 "This will apply the updates and publish immediately, before any new "
 "translations happen."
@@ -285,29 +362,50 @@ msgstr ""
 "Questo applicherà gli aggiornamenti e li pubblicherà immediatamente, prima "
 "che avvengano nuove traduzioni."
 
+#: views/update_translations.py:36
 msgid "Update existing translations"
 msgstr "Aggiorna traduzioni esistenti"
 
+#: views/update_translations.py:56
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
 msgstr "Traduzioni aggiornate con successo per '{object}'"
 
+#: wagtail_hooks.py:169
 msgid "Sync translated pages"
 msgstr "Sincronizza pagine tradotte"
 
+#: wagtail_hooks.py:201
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr "Traduci '%(title)s'"
 
+#: wagtail_hooks.py:215
 msgid "Sync translated snippets"
 msgstr "Sincronizza snippets tradotti"
 
+#: wagtail_hooks.py:218
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizza traduzioni per '%(title)s'"
 
+#: wagtail_hooks.py:287
 msgid "Convert to alias page"
 msgstr "Converti in pagina alias"
 
+#: wagtail_hooks.py:395
 msgid "Convert page to alias"
 msgstr "Converti pagina in alias"
+
+#: wagtail_hooks.py:400
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Pagina '%(title)s' convertita in un alias della pagina sorgente "
+"'%(source_title)s'"
+
+#: wagtail_hooks.py:406
+msgid "Converted page to an alias of the translation source page"
+msgstr "Pagina convertita in un alias della pagina sorgente"
