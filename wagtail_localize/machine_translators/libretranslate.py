@@ -32,7 +32,7 @@ class LibreTranslator(BaseMachineTranslator):
                     "source": self.language_code(source_locale.language_code),
                     "target": self.language_code(target_locale.language_code),
                     "api_key": self.options["API_KEY"],
-                    "format": "html"
+                    "format": "html",
                 }
             ),
             headers={"Content-Type": "application/json"},
