@@ -87,6 +87,7 @@ class TestLibreTranslator(TestCase):
                     "source": "en",
                     "target": "fr",
                     "api_key": LIBRETRANSLATE_SETTINGS_ENDPOINT["OPTIONS"]["API_KEY"],
+                    "format": "html",
                 }
             ),
             headers={"Content-Type": "application/json"},
@@ -139,6 +140,7 @@ class TestLibreTranslator(TestCase):
                     "source": "en",
                     "target": "fr",
                     "api_key": LIBRETRANSLATE_SETTINGS_ENDPOINT["OPTIONS"]["API_KEY"],
+                    "format": "html",
                 }
             ),
             headers={"Content-Type": "application/json"},
