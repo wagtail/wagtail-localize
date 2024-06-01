@@ -19,6 +19,9 @@ class LibreTranslator(BaseMachineTranslator):
     def get_api_endpoint(self):
         return self.options["LIBRETRANSLATE_URL"]
 
+    def get_timeout(self):
+        return self.options.get("TIMEOUT", 10)
+
     def language_code(self, code):
         return code.split("-")[0]
 
@@ -35,7 +38,7 @@ class LibreTranslator(BaseMachineTranslator):
                 }
             ),
             headers={"Content-Type": "application/json"},
-            timeout=10,
+            timeout=self.get_timeout(),
         )
         response.raise_for_status()
 
