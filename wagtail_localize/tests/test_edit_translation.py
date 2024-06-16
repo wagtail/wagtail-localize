@@ -25,7 +25,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, TitleFieldPanel
 from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
 from wagtail.images.models import Image
@@ -1506,7 +1506,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         # Hide fields that don't have a panel to edit them with
         previous_panels = TestPage.content_panels
         TestPage.content_panels = [
-            FieldPanel("title"),
+            TitleFieldPanel("title"),
             FieldPanel("test_textfield"),
         ]
         TestPage.get_edit_handler.cache_clear()

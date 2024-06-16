@@ -18,8 +18,8 @@ INSTALLED_APPS = [
 When registering your custom models you can use the supplied `TranslatableModelAdmin` in place of Wagtail's `ModelAdmin` class.
 
 ```python
-from wagtail.contrib.modeladmin.options import modeladmin_register
 from wagtail_localize.modeladmin.options import TranslatableModelAdmin
+from wagtail_modeladmin.options import modeladmin_register
 
 from .models import MyTranslatableModel
 
