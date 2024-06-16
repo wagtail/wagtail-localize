@@ -146,6 +146,7 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
         "LIBRETRANSLATE_URL": "https://libretranslate.org",  # or your self-hosted instance URL
         # For self-hosted instances without API key setup, use a random string as the API key.
         "API_KEY": "<Your LibreTranslate api key here>",
+        "TIMEOUT": 40 # optional timeout in seconds, defaults to 10
     },
 }
 ```
