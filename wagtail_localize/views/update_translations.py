@@ -17,16 +17,35 @@ from wagtail.models import Page
 from wagtail.snippets.models import get_snippet_models
 from wagtail.utils.version import get_main_version
 
+from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import TranslationSource
+from wagtail_localize.views.edit_translation import apply_machine_translation
 from wagtail_localize.views.submit_translations import TranslationComponentManager
+
+
+if get_machine_translator():
+    PUBLISH_TRANSLATIONS_HELP = (
+        "Select this to publish immediately. Changes will be published "
+        "in the original language unless you also select use machine translation."
+    )
+else:
+    PUBLISH_TRANSLATIONS_HELP = (
+        "Select this to publish immediately. Changes will be published "
+        "in the original language until you translate and publish them."
+    )
+
+USE_MACHINE_TRANSLATION_HELP = "Apply machine translations to the incoming changes."
 
 
 class UpdateTranslationsForm(forms.Form):
     publish_translations = forms.BooleanField(
         label=gettext_lazy("Publish immediately"),
-        help_text=gettext_lazy(
-            "This will apply the updates and publish immediately, before any new translations happen."
-        ),
+        help_text=gettext_lazy(PUBLISH_TRANSLATIONS_HELP),
+        required=False,
+    )
+    use_machine_translation = forms.BooleanField(
+        label=gettext_lazy("Use machine translation"),
+        help_text=gettext_lazy(USE_MACHINE_TRANSLATION_HELP),
         required=False,
     )
 
@@ -109,6 +128,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                         enabled=True
                     ).select_related("target_locale")
                 ],
+                "machine_translator": get_machine_translator(),
                 "last_sync_date": self.object.last_updated_at,
                 "form": self.get_form(),
                 "next_url": self.get_success_url(),
@@ -133,6 +153,9 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
         self.object.update_from_db()
 
         enabled_translations = self.object.translations.filter(enabled=True)
+        if form.cleaned_data["use_machine_translation"]:
+            for translation in enabled_translations.select_related("target_locale"):
+                apply_machine_translation(translation.id, self.request.user)
 
         if form.cleaned_data["publish_translations"]:
             for translation in enabled_translations.select_related("target_locale"):
