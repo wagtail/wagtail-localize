@@ -1370,12 +1370,11 @@ def upload_pofile(request, translation_id):
     return redirect(next_url)
 
 
-@require_POST
-def machine_translate(request, translation_id):
+def apply_machine_translation(translation_id, user):
     translation = get_object_or_404(Translation, id=translation_id)
 
     instance = translation.get_target_instance()
-    if not user_can_edit_instance(request.user, instance):
+    if not user_can_edit_instance(user, instance):
         raise PermissionDenied
 
     translator = get_machine_translator()
@@ -1426,12 +1425,19 @@ def machine_translate(request, translation_id):
                             "data": translations[string].data,
                             "translation_type": StringTranslation.TRANSLATION_TYPE_MACHINE,
                             "tool_name": translator.display_name,
-                            "last_translated_by": request.user,
+                            "last_translated_by": user,
                             "has_error": False,
                             "field_error": "",
                         },
                     )
+        return True
+    return False
 
+
+@require_POST
+def machine_translate(request, translation_id):
+    if apply_machine_translation(translation_id, request.user):
+        translator = get_machine_translator()
         messages.success(
             request,
             _("Successfully translated with {}.").format(translator.display_name),
