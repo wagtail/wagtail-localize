@@ -26,8 +26,8 @@ It will prompt for a password, leave that blank.
 
 Now you need to create a git repo for the PO files to live in. You can use any host for this you like as long as it:
 
-- Is accessible over the network from both Pontoon and Wagtail
-- Supports deploy keys that can write to the repository (Both GitHub and Gitlab support this)
+-   Is accessible over the network from both Pontoon and Wagtail
+-   Supports deploy keys that can write to the repository (Both GitHub and Gitlab support this)
 
 Note that you do not need to make your repo public as both Pontoon and Wagtail Localize can authenticate using a deploy
 key.
@@ -72,13 +72,13 @@ use it. There are instructions on how to do this on Heroku at the end of this gu
 
 On your Wagtail server, you'll need to set two Django settings:
 
-- `WAGTAILLOCALIZE_GIT_URL` should be set to the SSH git clone URL of your repository
+-   `WAGTAILLOCALIZE_GIT_URL` should be set to the SSH git clone URL of your repository
 
-- `WAGTAILLOCALIZE_GIT_CLONE_DIR` needs to be set to a directory that Wagtail Localize can clone the git repository into.
+-   `WAGTAILLOCALIZE_GIT_CLONE_DIR` needs to be set to a directory that Wagtail Localize can clone the git repository into.
 
-  If you're running on an ephermeral file system (such as on Heroku), this can be pointed to a temporary directory.
-  Wagtail Localize will re-clone the repository if it's ever deleted. It keeps track of what the previous `HEAD`
-  commit was in the database so it will not lose track of anything if a deletion occurs.
+    If you're running on an ephermeral file system (such as on Heroku), this can be pointed to a temporary directory.
+    Wagtail Localize will re-clone the repository if it's ever deleted. It keeps track of what the previous `HEAD`
+    commit was in the database so it will not lose track of anything if a deletion occurs.
 
 For example:
 

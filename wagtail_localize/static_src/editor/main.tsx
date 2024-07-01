@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (element instanceof HTMLElement && element.dataset.props) {
         const csrfTokenElement = element.querySelector(
-            '[name="csrfmiddlewaretoken"]'
+            '[name="csrfmiddlewaretoken"]',
         );
 
         if (csrfTokenElement instanceof HTMLInputElement) {
@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             ReactDOM.render(
                 <Component csrfToken={csrfToken} {...props} />,
-                element
+                element,
             );
         } else {
             console.error(
-                "Not starting translation editor because I couldn't find the CSRF token element!"
+                "Not starting translation editor because I couldn't find the CSRF token element!",
             );
         }
     }

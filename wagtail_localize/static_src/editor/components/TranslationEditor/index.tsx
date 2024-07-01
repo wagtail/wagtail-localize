@@ -231,7 +231,7 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
         if (state.editingSegments.size > 0) {
             const onUnload = (event: BeforeUnloadEvent) => {
                 const confirmationMessage = gettext(
-                    'There are unsaved segments. Please save or cancel them before leaving.'
+                    'There are unsaved segments. Please save or cancel them before leaving.',
                 );
 
                 // eslint-disable-next-line no-param-reassign
@@ -249,17 +249,17 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
     const tabData = props.tabs
         .map((tab) => {
             const segments = props.segments.filter(
-                (segment) => segment.location.tab == tab.slug
+                (segment) => segment.location.tab == tab.slug,
             );
             const translations = segments.map(
                 (segment) =>
                     segment.type == 'string' &&
-                    state.stringTranslations.get(segment.id)
+                    state.stringTranslations.get(segment.id),
             );
 
             return {
                 numErrors: translations.filter(
-                    (translation) => translation && translation.isErrored
+                    (translation) => translation && translation.isErrored,
                 ).length,
                 segments,
                 ...tab,

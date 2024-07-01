@@ -16,7 +16,7 @@ const DocumentChooser: FunctionComponent<DocumentChooserProps> = ({
     documentId,
 }) => {
     const [documentInfo, setDocumentInfo] = React.useState<DocumentAPI | null>(
-        null
+        null,
     );
 
     React.useEffect(() => {
