@@ -143,7 +143,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                         isSaving: false,
                         isErrored: true,
                         comment: gettext('Server error'),
-                    })
+                    }),
                 );
             }
             break;
@@ -168,7 +168,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                     action.segmentId,
                     Object.assign({}, override, {
                         isSaving: true,
-                    })
+                    }),
                 );
             }
             break;
@@ -194,7 +194,7 @@ export function reducer(state: EditorState, action: EditorAction) {
                     action.segmentId,
                     Object.assign({}, override, {
                         isSaving: false,
-                    })
+                    }),
                 );
             }
             break;
