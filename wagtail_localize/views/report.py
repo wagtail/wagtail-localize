@@ -157,7 +157,9 @@ def _adapt_wagtail_report_attributes(cls):
         # The `results_template_name` attr was **added** in Wagtail 6.2
         # to support updating the listing via AJAX upon filtering and
         # to allow the use of the `wagtail.admin.ui.tables` framework.
-        cls.results_template_name = "wagtail_localize/admin/translations_report_results.html"
+        cls.results_template_name = (
+            "wagtail_localize/admin/translations_report_results.html"
+        )
         # The `index_results_url_name` attr was **added** in Wagtail 6.2
         # to support updating the listing via AJAX upon filtering.
         cls.index_results_url_name = "wagtail_localize:translations_report_results"
