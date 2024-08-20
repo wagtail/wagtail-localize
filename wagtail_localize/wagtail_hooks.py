@@ -10,6 +10,7 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
@@ -116,6 +117,16 @@ def register_admin_urls():
             name="snippets_api_detail",
         ),
     ]
+
+    if WAGTAIL_VERSION >= (6, 2):
+        # Add a results-only view to add support for AJAX-based filtering
+        urls.append(
+            path(
+                "reports/translations/results/",
+                report.TranslationsReportView.as_view(results_only=True),
+                name="translations_report_results",
+            ),
+        )
 
     return [
         path(
