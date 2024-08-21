@@ -24,7 +24,7 @@ We'll be at Wagtail Space US this year! The Call for Participation and Registrat
 
 Wagtail Localize requires the following:
 
-- Python (3.8, 3.9, 3.10, 3.11)
+- Python (3.9, 3.10, 3.11)
 - Django (4.2, 5.0, 5.1)
 - Wagtail (5.2, 6.1) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
 - [wagtail-modeladmin](https://pypi.org/project/wagtail-modeladmin/) if `using wagtail_localize.modeladmin` and Wagtail >= 5.2
