@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.1] - 2024-08-22
+
+### Fixed
+
+- Fixed missing `window.chooserUrls` ([#815](https://github.com/wagtail/wagtail-localize/pull/815)) @zerolab
+
 ## [1.9] - 2024-04-03
 
 ### Added
@@ -338,7 +344,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.2...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/wagtail/wagtail-localize/compare/v1.9...v1.9.1
 [1.9]: https://github.com/wagtail/wagtail-localize/compare/v1.8...v1.9
 [1.9alpha3]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.2...v1.9-alpha.3
 [1.9alpha2]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.1...v1.9-alpha.2
