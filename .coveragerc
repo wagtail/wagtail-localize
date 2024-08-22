@@ -1,5 +1,6 @@
 [run]
 branch = True
+concurrency = multiprocessing, thread
 include = wagtail_localize/*
 omit = **/migrations/*,**/tests/*
 

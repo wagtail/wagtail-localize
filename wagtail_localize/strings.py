@@ -335,12 +335,9 @@ def extract_strings(html):
 
             # Ignore if there are no text nodes
             # This will exclude both <br> tags and empty inline tags
-            if not any(
+            return not any(
                 isinstance(desc, NavigableString) for desc in element.descendants
-            ):
-                return True
-
-            return False
+            )
 
         if ignore_if_at_end(elements[0]):
             wrap(elements[1:])
