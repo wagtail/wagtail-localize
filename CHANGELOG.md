@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for Wagtail 6.1 ([#797](https://github.com/wagtail/wagtail-localize/pull/797)) & 6.2 ([#813](https://github.com/wagtail/wagtail-localize/pull/813))
+
+### Removed
+
+- Support for Django < 4.2 ([#797](https://github.com/wagtail/wagtail-localize/pull/797))
+- Support for Python < 3.9 ([#813](https://github.com/wagtail/wagtail-localize/pull/813))
+
 ## [1.9] - 2024-04-03
 
 ### Added
