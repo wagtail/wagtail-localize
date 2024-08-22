@@ -48,7 +48,15 @@
 
 {% block extra_js %}
     {% include "wagtailadmin/pages/_editor_js.html" %}
-
+    <script>
+        if (typeof window.chooserUrls === "undefined") {
+            window.chooserUrls = {
+                imageChooser: "{% url "wagtailimages_chooser:choose" %}",
+                documentChooser: "{% url "wagtaildocs_chooser:choose" %}",
+                pageChooser: "{% url "wagtailadmin_choose_page" %}",
+            }
+        }
+    </script>
     <script src="{% url 'wagtail_localize:javascript_catalog' %}"></script>
     <script src="{% versioned_static 'wagtailadmin/js/page-chooser-modal.js' %}"></script>
     <script src="{% versioned_static 'wagtailadmin/js/page-chooser.js' %}"></script>
