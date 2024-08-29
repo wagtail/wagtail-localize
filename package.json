@@ -15,14 +15,14 @@
     "@types/react-dom": "^16.9.13",
     "@types/styled-components": "^5.1.9",
     "copy-webpack-plugin": "^6.4.1",
-    "css-loader": "^2.1.1",
-    "file-loader": "^3.0.1",
+    "css-loader": "^7.1.2",
+    "file-loader": "^6.2.0",
     "gettext-extractor": "^3.5.3",
     "style-loader": "^0.23.1",
     "ts-loader": "^6.2.2",
     "typescript": "^3.9.9",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12"
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "react": "^16.14.0",
