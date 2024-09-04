@@ -50,6 +50,14 @@ class UpdateTranslationsForm(forms.Form):
         required=False,
     )
 
+    def clean(self):
+        cleaned_data = super().clean()
+        if (
+            cleaned_data.get("use_machine_translation")
+            and get_machine_translator() is None
+        ):
+            raise ValidationError(_("A machine translator could not be found."))
+
 
 class UpdateTranslationsView(SingleObjectMixin, TemplateView):
     template_name = "wagtail_localize/admin/update_translations.html"
@@ -155,8 +163,11 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
         enabled_translations = self.object.translations.filter(enabled=True)
         if form.cleaned_data["use_machine_translation"]:
+            machine_translator = get_machine_translator()
             for translation in enabled_translations.select_related("target_locale"):
-                apply_machine_translation(translation.id, self.request.user)
+                apply_machine_translation(
+                    translation.id, self.request.user, machine_translator
+                )
 
         if form.cleaned_data["publish_translations"]:
             for translation in enabled_translations.select_related("target_locale"):

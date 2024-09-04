@@ -1370,18 +1370,14 @@ def upload_pofile(request, translation_id):
     return redirect(next_url)
 
 
-def apply_machine_translation(translation_id, user):
+def apply_machine_translation(translation_id, user, machine_translator):
     translation = get_object_or_404(Translation, id=translation_id)
 
     instance = translation.get_target_instance()
     if not user_can_edit_instance(user, instance):
         raise PermissionDenied
 
-    translator = get_machine_translator()
-    if translator is None:
-        raise Http404
-
-    if not translator.can_translate(
+    if not machine_translator.can_translate(
         translation.source.locale, translation.target_locale
     ):
         raise Http404
@@ -1410,7 +1406,7 @@ def apply_machine_translation(translation_id, user):
         )
 
     if segments:
-        translations = translator.translate(
+        translations = machine_translator.translate(
             translation.source.locale, translation.target_locale, segments.keys()
         )
 
@@ -1424,7 +1420,7 @@ def apply_machine_translation(translation_id, user):
                         defaults={
                             "data": translations[string].data,
                             "translation_type": StringTranslation.TRANSLATION_TYPE_MACHINE,
-                            "tool_name": translator.display_name,
+                            "tool_name": machine_translator.display_name,
                             "last_translated_by": user,
                             "has_error": False,
                             "field_error": "",
@@ -1436,11 +1432,16 @@ def apply_machine_translation(translation_id, user):
 
 @require_POST
 def machine_translate(request, translation_id):
-    if apply_machine_translation(translation_id, request.user):
-        translator = get_machine_translator()
+    machine_translator = get_machine_translator()
+    if machine_translator is None:
+        raise Http404
+
+    if apply_machine_translation(translation_id, request.user, machine_translator):
         messages.success(
             request,
-            _("Successfully translated with {}.").format(translator.display_name),
+            _("Successfully translated with {}.").format(
+                machine_translator.display_name
+            ),
         )
 
     else:
