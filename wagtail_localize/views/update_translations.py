@@ -23,7 +23,9 @@ from wagtail_localize.views.edit_translation import apply_machine_translation
 from wagtail_localize.views.submit_translations import TranslationComponentManager
 
 
-if get_machine_translator():
+HAS_MACHINE_TRANSLATOR = get_machine_translator() is not None
+
+if HAS_MACHINE_TRANSLATOR:
     PUBLISH_TRANSLATIONS_HELP = (
         "Apply the updates and publish immediately. The changes will use "
         "the original language until translated unless you also select "
@@ -50,12 +52,14 @@ class UpdateTranslationsForm(forms.Form):
         required=False,
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not HAS_MACHINE_TRANSLATOR:
+            self.fields["use_machine_translation"].widget = forms.HiddenInput()
+
     def clean(self):
         cleaned_data = super().clean()
-        if (
-            cleaned_data.get("use_machine_translation")
-            and get_machine_translator() is None
-        ):
+        if cleaned_data.get("use_machine_translation") and not HAS_MACHINE_TRANSLATOR:
             raise ValidationError(_("A machine translator could not be found."))
 
 
@@ -137,7 +141,6 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
                         enabled=True
                     ).select_related("target_locale")
                 ],
-                "machine_translator": get_machine_translator(),
                 "last_sync_date": self.object.last_updated_at,
                 "form": self.get_form(),
                 "next_url": self.get_success_url(),
