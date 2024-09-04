@@ -25,13 +25,14 @@ from wagtail_localize.views.submit_translations import TranslationComponentManag
 
 if get_machine_translator():
     PUBLISH_TRANSLATIONS_HELP = (
-        "Select this to publish immediately. Changes will be published "
-        "in the original language unless you also select use machine translation."
+        "Apply the updates and publish immediately. The changes will use "
+        "the original language until translated unless you also select "
+        '"Use machine translation".'
     )
 else:
     PUBLISH_TRANSLATIONS_HELP = (
-        "Select this to publish immediately. Changes will be published "
-        "in the original language until you translate and publish them."
+        "Apply the updates and publish immediately. The changes will use "
+        "the original language until translated."
     )
 
 USE_MACHINE_TRANSLATION_HELP = "Apply machine translations to the incoming changes."
