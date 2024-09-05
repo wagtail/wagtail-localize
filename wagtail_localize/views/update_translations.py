@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.models import Page
+from wagtail.models import Page, RevisionMixin
 from wagtail.snippets.models import get_snippet_models
 from wagtail.utils.version import get_main_version
 
@@ -29,6 +29,20 @@ class UpdateTranslationsForm(forms.Form):
         ),
         required=False,
     )
+    from_revision = forms.BooleanField(
+        label=gettext_lazy("Sync draft changes"),
+        help_text=gettext_lazy(
+            "This will update translations with current draft content. "
+            "If not set, then only published changes will be synced."
+        ),
+        required=False,
+    )
+
+    def __init__(self, instance, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        source_instance = instance.get_source_instance()
+        if not isinstance(source_instance, RevisionMixin):
+            self.fields["from_revision"].widget = forms.HiddenInput()
 
 
 class UpdateTranslationsView(SingleObjectMixin, TemplateView):
@@ -48,9 +62,9 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
     def get_form(self):
         if self.request.method == "POST":
-            return UpdateTranslationsForm(self.request.POST)
+            return UpdateTranslationsForm(self.object, self.request.POST)
         else:
-            return UpdateTranslationsForm()
+            return UpdateTranslationsForm(self.object)
 
     def get_success_message(self):
         return _("Successfully updated translations for '{object}'").format(
@@ -130,7 +144,10 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
     @transaction.atomic
     def form_valid(self, form):
-        self.object.update_from_db()
+        from_latest_revision = False
+        if form.cleaned_data["from_revision"]:
+            from_latest_revision = True
+        self.object.update_from_db(from_latest_revision)
 
         enabled_translations = self.object.translations.filter(enabled=True)
 
