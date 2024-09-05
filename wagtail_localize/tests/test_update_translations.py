@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.forms.widgets import CheckboxInput, HiddenInput
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail.models import Locale, Page, PageViewRestriction
@@ -617,6 +618,39 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         )
         # one call from the first post, and one from above
         self.assertEqual(update_target_view_restrictions.call_count, 2)
+
+    @mock.patch(
+        "wagtail_localize.views.update_translations.HAS_MACHINE_TRANSLATOR", False
+    )
+    def test_update_translations_form_without_machine_translator(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.snippet_source.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIsInstance(
+            response.context["form"].fields["use_machine_translation"].widget,
+            HiddenInput,
+        )
+
+    def test_update_translations_form_with_machine_translator(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.snippet_source.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIsInstance(
+            response.context["form"].fields["use_machine_translation"].widget,
+            CheckboxInput,
+        )
 
     def test_post_update_page_translation_with_publish_translations_and_use_machine_translation(
         self,
