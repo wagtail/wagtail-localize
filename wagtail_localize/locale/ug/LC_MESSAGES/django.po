@@ -1,0 +1,16 @@
+#
+# Translators:
+# Azat, 2024
+#
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-03 08:26+0000\n"
+"Last-Translator: Azat, 2024\n"
+"Language-Team: Uyghur (https://app.transifex.com/torchbox/teams/8009/ug/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ug\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "All"
+msgstr "ھەممىسى"

@@ -2,13 +2,13 @@
 # Translators:
 # Mitja Pagon <mitja.pagon@inueni.com>, 2021
 # andrej55 <andrej.marsetic@gmail.com>, 2022
-# Andrej Marsetič, 2023
+# Andrej Marsetič, 2024
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 14:51+0000\n"
-"Last-Translator: Andrej Marsetič, 2023\n"
+"POT-Creation-Date: 2024-04-03 08:26+0000\n"
+"Last-Translator: Andrej Marsetič, 2024\n"
 "Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -105,6 +105,15 @@ msgstr "Pretvori v vzdevek %(title)s"
 msgid "Convert to alias"
 msgstr "Pretvori v vzdevek"
 
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Ste prepričani, da želite to stran pretvoriti v vzdevek? To bo vsebino "
+"strani prepisalo z vsebino '%(source_page_title)s' (%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Da, pretvori ga"
 
@@ -165,6 +174,14 @@ msgid ""
 msgstr ""
 "Spremembe se med prevedenimi stranmi ne prenašajo samodejno. Sinhronizacija "
 "dodaja nove vsebine za prevod in odstranjuje izbrisane."
+
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"Datum zadnje sinhronizacije je bil %(last_sync_date)s. Sinhronizirali boste "
+"naslednje:"
 
 msgid "Page '{}' has been converted into an alias."
 msgstr "Stran '{}' je bila pretvorjena v vzdevek."
@@ -236,11 +253,24 @@ msgstr "Območja"
 msgid "All child pages will be created."
 msgstr "Vse podrejene strani bodo ustvarjene."
 
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "Vključi poddrevo ({} stran)"
+msgstr[1] "Vključi poddrevo ({} strani)"
+msgstr[2] "Vključi poddrevo ({} strani)"
+msgstr[3] "Vključi poddrevo ({} strani)"
+
 msgid "{} locales"
 msgstr "{} lokalizacij"
 
 msgid "Translate page"
 msgstr "Prevedi stran"
+
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr "Stran '{page_title}' je bila uspešno poslana v prevajanje v {locales}"
 
 msgid "Publish immediately"
 msgstr "Objavi takoj"
@@ -278,6 +308,14 @@ msgstr "Pretvori v vzdevek strani"
 
 msgid "Convert page to alias"
 msgstr "Pretvori stran v vzdevek"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"Pretvorjena stran '%(title)s' v vzdevek izvorne strani prevoda "
+"'%(source_title)s'"
 
 msgid "Converted page to an alias of the translation source page"
 msgstr "Stran pretvorjena v vzdevek izvorne strani prevoda"

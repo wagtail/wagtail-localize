@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-10 12:47+0000\n"
+"POT-Creation-Date: 2024-09-08 11:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,12 +30,12 @@ msgstr ""
 msgid "Select a new language"
 msgstr ""
 
-#: locales/templates/wagtaillocales/confirm_delete.html:13
+#: locales/templates/wagtaillocales/confirm_delete.html:10
 msgid "Yes, delete"
 msgstr ""
 
-#: locales/templates/wagtaillocales/confirm_delete.html:14
-#: locales/templates/wagtaillocales/confirm_delete.html:19
+#: locales/templates/wagtaillocales/confirm_delete.html:11
+#: locales/templates/wagtaillocales/confirm_delete.html:16
 msgid "Back"
 msgstr ""
 

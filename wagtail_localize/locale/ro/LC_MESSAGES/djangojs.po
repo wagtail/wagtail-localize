@@ -1,11 +1,11 @@
 #
 # Translators:
-# Dan Braghis, 2022
 # Bogdan Mateescu, 2024
+# Dan Braghis, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Bogdan Mateescu, 2024\n"
+"Last-Translator: Dan Braghis, 2024\n"
 "Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
@@ -53,6 +53,9 @@ msgstr "Selectează o imagine"
 
 msgid "Convert to alias page"
 msgstr "Convertează în pagină alias"
+
+msgid "Converting to alias page"
+msgstr "Se convertește în pagină alias"
 
 msgid "Delete"
 msgstr "Șterge"
@@ -108,6 +111,9 @@ msgstr "Publicare..."
 msgid "Remove editor lock"
 msgstr "Elimină blocaj editorial"
 
+msgid "Removing editor lock"
+msgstr "Se elimină blocajul editorial"
+
 msgid "Revert to %s version"
 msgstr "Revină la versiunea %s"
 
@@ -125,6 +131,9 @@ msgstr "Eroare de server"
 
 msgid "Stop Synced translation"
 msgstr "Oprește traducere sincronizată"
+
+msgid "Stopping Synced translation"
+msgstr "Se oprește traducerea sincronizată"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Există segment nesalvate. Salvează sau anulează înainte de plecare."

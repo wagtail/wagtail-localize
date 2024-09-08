@@ -4,15 +4,15 @@
 # Claudemiro Alves Feitosa Neto <dimiro1@gmail.com>, 2021
 # Éder Brito <britoederr@gmail.com>, 2021
 # Iuri L. Machado, 2021
-# Rodrigo de Almeida Sottomaior Macedo <sottomaiormacedotec@gmail.com>, 2022
+# Rodrigo Sottomaior Macedo <sottomaiormacedotec@sottomaiormacedo.tech>, 2022
 # Fabio Santos <f4bio.sa@gmail.com>, 2023
-# Luiz Boaretto <lboaretto@gmail.com>, 2023
+# Luiz Boaretto <lboaretto@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 14:51+0000\n"
-"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2023\n"
+"POT-Creation-Date: 2024-04-03 08:26+0000\n"
+"Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2024\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_BR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,6 +28,10 @@ msgstr "Tradutor fictício "
 
 msgid "Translate"
 msgstr "Traduzir"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Sincronizar traduzido %(model_name)s"
 
 msgid "Start Synced translation"
 msgstr "Iniciar tradução sincronizada"
@@ -143,6 +147,10 @@ msgstr "Traduzido do %(instance)s para %(locale)s "
 
 msgid "Translations"
 msgstr "Traduções"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Editando %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Enviar"
@@ -309,3 +317,6 @@ msgstr "Converter em página de atalho"
 
 msgid "Convert page to alias"
 msgstr "Converter página em alias"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "Página convertida em um alias da página de origem da tradução"

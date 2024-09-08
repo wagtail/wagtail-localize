@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 08:26+0000\n"
+"POT-Creation-Date: 2024-09-08 11:16+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -17,7 +17,7 @@ msgid "Dummy translator"
 msgstr ""
 
 #: modeladmin/helpers.py:66 modeladmin/helpers.py:68
-#: views/submit_translations.py:74 wagtail_hooks.py:198
+#: views/submit_translations.py:74 wagtail_hooks.py:209
 msgid "Translate"
 msgstr ""
 
@@ -27,7 +27,7 @@ msgid "Sync translated %(model_name)s"
 msgstr ""
 
 #: modeladmin/templates/wagtail_localize/modeladmin/translatable_edit.html:14
-#: wagtail_hooks.py:264 wagtail_hooks.py:351
+#: wagtail_hooks.py:275 wagtail_hooks.py:362
 msgid "Start Synced translation"
 msgstr ""
 
@@ -100,7 +100,7 @@ msgid ""
 "tags)"
 msgstr ""
 
-#: strings.py:506
+#: strings.py:503
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr ""
 
@@ -142,7 +142,7 @@ msgid ""
 msgstr ""
 
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:155
+#: wagtail_hooks.py:166
 msgid "Translate this page"
 msgstr ""
 
@@ -152,7 +152,7 @@ msgid "Translation of %(instance)s into %(locale)s"
 msgstr ""
 
 #: templates/wagtail_localize/admin/edit_translation.html:34
-#: views/report.py:140 wagtail_hooks.py:384
+#: views/report.py:153 views/report.py:156 wagtail_hooks.py:395
 msgid "Translations"
 msgstr ""
 
@@ -172,23 +172,28 @@ msgid "Go back"
 msgstr ""
 
 #: templates/wagtail_localize/admin/translations_report.html:10
-#: views/report.py:116
+#: templates/wagtail_localize/admin/translations_report_results.html:9
+#: views/report.py:117
 msgid "Content type"
 msgstr ""
 
 #: templates/wagtail_localize/admin/translations_report.html:13
+#: templates/wagtail_localize/admin/translations_report_results.html:12
 msgid "Source"
 msgstr ""
 
 #: templates/wagtail_localize/admin/translations_report.html:16
+#: templates/wagtail_localize/admin/translations_report_results.html:15
 msgid "Target"
 msgstr ""
 
 #: templates/wagtail_localize/admin/translations_report.html:19
+#: templates/wagtail_localize/admin/translations_report_results.html:18
 msgid "Status"
 msgstr ""
 
 #: templates/wagtail_localize/admin/translations_report.html:49
+#: templates/wagtail_localize/admin/translations_report_results.html:50
 msgid "No translations found."
 msgstr ""
 
@@ -270,11 +275,11 @@ msgstr ""
 msgid "There isn't anything left to translate."
 msgstr ""
 
-#: views/report.py:118
+#: views/report.py:119
 msgid "Source title"
 msgstr ""
 
-#: views/report.py:123 views/report.py:129
+#: views/report.py:124 views/report.py:130
 msgid "All"
 msgstr ""
 
@@ -330,39 +335,39 @@ msgstr ""
 msgid "Successfully updated translations for '{object}'"
 msgstr ""
 
-#: wagtail_hooks.py:169
+#: wagtail_hooks.py:180
 msgid "Sync translated pages"
 msgstr ""
 
-#: wagtail_hooks.py:201
+#: wagtail_hooks.py:212
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:215
+#: wagtail_hooks.py:226
 msgid "Sync translated snippets"
 msgstr ""
 
-#: wagtail_hooks.py:218
+#: wagtail_hooks.py:229
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:287
+#: wagtail_hooks.py:298
 msgid "Convert to alias page"
 msgstr ""
 
-#: wagtail_hooks.py:395
+#: wagtail_hooks.py:406
 msgid "Convert page to alias"
 msgstr ""
 
-#: wagtail_hooks.py:400
+#: wagtail_hooks.py:411
 #, python-format
 msgid ""
 "Converted page '%(title)s' to an alias of the translation source page "
 "'%(source_title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:406
+#: wagtail_hooks.py:417
 msgid "Converted page to an alias of the translation source page"
 msgstr ""

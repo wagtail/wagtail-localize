@@ -1,11 +1,11 @@
 #
 # Translators:
-# Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2022
 # saevarom <saevar@saevar.is>, 2024
+# Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: saevarom <saevar@saevar.is>, 2024\n"
+"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2024\n"
 "Language-Team: Icelandic (Iceland) (https://app.transifex.com/torchbox/"
 "teams/8009/is_IS/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,6 +19,9 @@ msgid "Actions"
 msgstr "Aðgerðir"
 
 msgid "Apply editor lock"
+msgstr "Kveikja á skriflás"
+
+msgid "Applying editor lock"
 msgstr "Kveikja á skriflás"
 
 msgid "Cancel"
@@ -52,6 +55,9 @@ msgid "Choose an image"
 msgstr "Veldu mynd"
 
 msgid "Convert to alias page"
+msgstr "Breyta í spegilsíðu"
+
+msgid "Converting to alias page"
 msgstr "Breyta í spegilsíðu"
 
 msgid "Delete"
@@ -108,6 +114,9 @@ msgstr "Set í birtingu..."
 msgid "Remove editor lock"
 msgstr "Fjarlægja skriflás"
 
+msgid "Removing editor lock"
+msgstr "Fjarlægja skriflás"
+
 msgid "Revert to %s version"
 msgstr "Skipta yfir í útgáfu %s "
 
@@ -124,6 +133,9 @@ msgid "Server error"
 msgstr "Villa á netþjóni"
 
 msgid "Stop Synced translation"
+msgstr "Stöðva samræmda þýðingu"
+
+msgid "Stopping Synced translation"
 msgstr "Stöðva samræmda þýðingu"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."

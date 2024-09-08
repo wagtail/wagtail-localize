@@ -5,10 +5,11 @@
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
 # Marco Badan <marco.badan@gmail.com>, 2022
 # Stefano Marchetto <airbatum@gmail.com>, 2024
+# tognee, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Stefano Marchetto <airbatum@gmail.com>, 2024\n"
+"Last-Translator: tognee, 2024\n"
 "Language-Team: Italian (https://app.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
@@ -103,13 +104,16 @@ msgid "Preview"
 msgstr "Anteprima"
 
 msgid "Publish in "
-msgstr "Pubblicata in"
+msgstr "Pubblica in "
 
 msgid "Publishing..."
 msgstr "Pubblicazione in corso..."
 
 msgid "Remove editor lock"
 msgstr "Rimuovi blocco editor"
+
+msgid "Removing editor lock"
+msgstr "Rimuovendo blocco editor"
 
 msgid "Revert to %s version"
 msgstr "Torna alla versione %s"
@@ -131,16 +135,16 @@ msgstr "Interrompi traduzione sincronizzata"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
-"Ci sono segmenti non salvati. Per favore salva o annulla prima di uscire."
+"Ci sono segmenti non salvati. Per favore salvali o annullali prima di uscire."
 
 msgid "Translate"
 msgstr "Traduci"
 
 msgid "Translate all missing strings with "
-msgstr "Traduci le stringhe mancanti con"
+msgstr "Traduci i testi mancanti con "
 
 msgid "Translate with "
-msgstr "Traduci con"
+msgstr "Traduci con "
 
 msgid "Unlock"
 msgstr "Sblocca"

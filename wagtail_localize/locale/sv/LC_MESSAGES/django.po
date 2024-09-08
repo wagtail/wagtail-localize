@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 14:51+0000\n"
+"POT-Creation-Date: 2024-04-03 08:26+0000\n"
 "Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2023\n"
 "Language-Team: Swedish (https://app.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

@@ -2,10 +2,11 @@
 # Translators:
 # Léo <leo@naeka.fr>, 2021
 # Loic Teixeira, 2024
+# Sébastien Corbin <seb.corbin@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Loic Teixeira, 2024\n"
+"Last-Translator: Sébastien Corbin <seb.corbin@gmail.com>, 2024\n"
 "Language-Team: French (https://app.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -20,6 +21,9 @@ msgstr "Actions"
 
 msgid "Apply editor lock"
 msgstr "Ajouter un verrou éditeur"
+
+msgid "Applying editor lock"
+msgstr "Application du verrou d'édition"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -53,6 +57,9 @@ msgstr "Choisir une image"
 
 msgid "Convert to alias page"
 msgstr "Convertir en alias de page"
+
+msgid "Converting to alias page"
+msgstr "Conversion de la page d'alias"
 
 msgid "Delete"
 msgstr "Supprimer"
@@ -108,6 +115,9 @@ msgstr "Publication..."
 msgid "Remove editor lock"
 msgstr "Supprimer un verrou éditeur"
 
+msgid "Removing editor lock"
+msgstr "Suppression du verrou d'édition"
+
 msgid "Revert to %s version"
 msgstr "Revenir à la version %s"
 
@@ -125,6 +135,9 @@ msgstr "Erreur du serveur"
 
 msgid "Stop Synced translation"
 msgstr "Arrêter la synchronisation des traductions"
+
+msgid "Stopping Synced translation"
+msgstr "Arrêt de la synchronisation de traduction"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

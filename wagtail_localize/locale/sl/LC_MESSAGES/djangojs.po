@@ -1,12 +1,12 @@
 #
 # Translators:
 # UP, 2021
-# Andrej Marsetič, 2023
 # Mitja Pagon <mitja.pagon@inueni.com>, 2024
+# Andrej Marsetič, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Mitja Pagon <mitja.pagon@inueni.com>, 2024\n"
+"Last-Translator: Andrej Marsetič, 2024\n"
 "Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,6 +22,9 @@ msgstr "Dejanja"
 
 msgid "Apply editor lock"
 msgstr "Uporabi zaklepanje urejevalnika"
+
+msgid "Applying editor lock"
+msgstr "Uporaba zaklepa urejevalnika"
 
 msgid "Cancel"
 msgstr "Prekliči"
@@ -55,6 +58,9 @@ msgstr "Izberi sliko"
 
 msgid "Convert to alias page"
 msgstr "Pretvori v vzdevek strani"
+
+msgid "Converting to alias page"
+msgstr "Pretvarjanje v stran z vzdevkom"
 
 msgid "Delete"
 msgstr "Izbriši"
@@ -110,6 +116,9 @@ msgstr "Objava..."
 msgid "Remove editor lock"
 msgstr "Odstranite zaklep urejevalnika"
 
+msgid "Removing editor lock"
+msgstr "Odstranitev ključavnice urejevalnika"
+
 msgid "Revert to %s version"
 msgstr "Povrni na različico %s"
 
@@ -127,6 +136,9 @@ msgstr "Napaka strežnika"
 
 msgid "Stop Synced translation"
 msgstr "Ustavi sinhroniziran prevod"
+
+msgid "Stopping Synced translation"
+msgstr "Ustavitev sinhroniziranega prevajanja"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

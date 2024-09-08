@@ -1,12 +1,12 @@
 #
 # Translators:
 # Stas Rudakou <stas@garage22.net>, 2021
-# Andrei Satsevich, 2023
 # Tatsiana Tsygan <art.tatsiana@gmail.com>, 2024
+# Andrei Satsevich, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Tatsiana Tsygan <art.tatsiana@gmail.com>, 2024\n"
+"Last-Translator: Andrei Satsevich, 2024\n"
 "Language-Team: Belarusian (https://app.transifex.com/torchbox/teams/8009/"
 "be/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,6 +23,9 @@ msgstr "Дзеянні"
 
 msgid "Apply editor lock"
 msgstr "Заблакаваць рэдактар"
+
+msgid "Applying editor lock"
+msgstr "Прымяненне блакавання рэдактара"
 
 msgid "Cancel"
 msgstr "Адмена"
@@ -56,6 +59,9 @@ msgstr "Выбраць малюнак"
 
 msgid "Convert to alias page"
 msgstr "Пераўтварыць у старонку псеўданіма"
+
+msgid "Converting to alias page"
+msgstr "Пераўтварэнне ў старонку псеўданіма"
 
 msgid "Delete"
 msgstr "Выдаліць"
@@ -111,6 +117,9 @@ msgstr "Публікацыя..."
 msgid "Remove editor lock"
 msgstr "Выдаліць блакаванне рэдактара"
 
+msgid "Removing editor lock"
+msgstr "Зняцце блакавання рэдактара"
+
 msgid "Revert to %s version"
 msgstr "Вярнуцца да %s версіі"
 
@@ -128,6 +137,9 @@ msgstr "Памылка сервера"
 
 msgid "Stop Synced translation"
 msgstr "Спыніць сінхранізаваны пераклад"
+
+msgid "Stopping Synced translation"
+msgstr "Спыняецца сінхранізаваны пераклад"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

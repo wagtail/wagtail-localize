@@ -1,7 +1,7 @@
 #
 # Translators:
 # Iuri L. Machado, 2021
-# Rodrigo de Almeida Sottomaior Macedo <sottomaiormacedotec@gmail.com>, 2022
+# Rodrigo Sottomaior Macedo <sottomaiormacedotec@sottomaiormacedo.tech>, 2022
 # Luiz Boaretto <lboaretto@gmail.com>, 2024
 #
 msgid ""
@@ -22,6 +22,9 @@ msgstr "Ações"
 
 msgid "Apply editor lock"
 msgstr "Aplicar bloqueio do editor"
+
+msgid "Applying editor lock"
+msgstr "Aplicando bloqueio de editor"
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -55,6 +58,9 @@ msgstr "Escolha uma imagem"
 
 msgid "Convert to alias page"
 msgstr "Converter em página de atalho"
+
+msgid "Converting to alias page"
+msgstr "Convertendo para página de atalho"
 
 msgid "Delete"
 msgstr "Excluir"
@@ -110,6 +116,9 @@ msgstr "Publicando..."
 msgid "Remove editor lock"
 msgstr "Remover bloqueio do editor"
 
+msgid "Removing editor lock"
+msgstr "Removendo bloqueio do editor"
+
 msgid "Revert to %s version"
 msgstr "Reverter para %s versão"
 
@@ -127,6 +136,9 @@ msgstr "Erro de servidor"
 
 msgid "Stop Synced translation"
 msgstr "Parar tradução sincronizada"
+
+msgid "Stopping Synced translation"
+msgstr "Parando a tradução sincronizada"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Existem segmentos não salvos. Salve ou cancele-os antes de sair."

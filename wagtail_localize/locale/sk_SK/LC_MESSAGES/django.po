@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 14:51+0000\n"
+"POT-Creation-Date: 2024-04-03 08:26+0000\n"
 "Last-Translator: dellax <michalnebbia@gmail.com>, 2021\n"
 "Language-Team: Slovak (Slovakia) (https://app.transifex.com/torchbox/"
 "teams/8009/sk_SK/)\n"
