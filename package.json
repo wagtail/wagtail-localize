@@ -1,6 +1,11 @@
 {
   "name": "wagtail-localize-admin",
-  "version": "1.9.0",
+  "version": "1.10.0",
+  "private": "true",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wagtail/wagtail-localize.git"
+  },
   "description": "",
   "main": "src/main.ts",
   "scripts": {
