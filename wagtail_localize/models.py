@@ -448,7 +448,7 @@ class TranslationSource(models.Model):
         return source, created
 
     @transaction.atomic
-    def update_from_db(self):
+    def update_from_db(self, from_latest_revision=False):
         """
         Retrieves the source instance from the database and updates this TranslationSource
         with its current contents.
@@ -457,6 +457,8 @@ class TranslationSource(models.Model):
             Model.DoesNotExist: If the source instance has been deleted.
         """
         instance = self.get_source_instance()
+        if from_latest_revision and isinstance(instance, RevisionMixin):
+            instance = instance.get_latest_revision_as_object()
 
         if isinstance(instance, ClusterableModel):
             self.content_json = instance.to_json()
