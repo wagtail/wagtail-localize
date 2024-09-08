@@ -48,6 +48,7 @@ jobs:
         with:
           name: coverage-data-${{ matrix.python }}-sqlite
           path: .coverage.*
+          include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 1
 
@@ -97,6 +98,7 @@ jobs:
         with:
           name: coverage-data-${{ matrix.python }}-postgres
           path: .coverage.*
+          include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 1
 
