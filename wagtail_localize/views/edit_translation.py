@@ -1417,6 +1417,12 @@ def machine_translate(request, translation_id):
 
         with transaction.atomic():
             for string, contexts in segments.items():
+                if (
+                    translations.get(string) is None
+                    or translations[string].data is None
+                ):
+                    # Don't create a translation if the machine can't provide
+                    continue
                 for string_id, context_id in contexts:
                     StringTranslation.objects.get_or_create(
                         translation_of_id=string_id,

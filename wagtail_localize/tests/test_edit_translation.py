@@ -33,6 +33,7 @@ from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Locale, Page, Revision
 from wagtail.test.utils import WagtailTestUtils
 
+from wagtail_localize.machine_translators.dummy import translate_html
 from wagtail_localize.models import (
     OverridableSegment,
     SegmentOverride,
@@ -43,6 +44,7 @@ from wagtail_localize.models import (
     TranslationLog,
     TranslationSource,
 )
+from wagtail_localize.strings import StringValue
 from wagtail_localize.test.models import (
     Header,
     NavigationLink,
@@ -88,6 +90,23 @@ STREAM_DATA = [
         "value": RICH_TEXT_DATA,
     },
 ]
+
+
+# Patches for translation skipping tests
+def patched_translate(source_locale, target_locale, strings):
+    result = {}
+    for string in strings:
+        if not all(ord(c) < 128 for c in string.data):
+            continue
+        result[string] = StringValue(translate_html(string.data))
+
+    return result
+
+
+def patched_translate_html(html):
+    if not all(ord(c) < 128 for c in html):
+        return None
+    return translate_html(html)
 
 
 class EditTranslationTestData(WagtailTestUtils):
@@ -3399,6 +3418,110 @@ class TestMachineTranslateView(EditTranslationTestData, TestCase):
         )
         self.assertEqual(translation_3.tool_name, "Dummy translator")
         self.assertEqual(translation_3.last_translated_by, self.user)
+
+    @patch(
+        "wagtail_localize.machine_translators.dummy.DummyTranslator.translate",
+        side_effect=patched_translate,
+    )
+    def test_machine_translate_page_with_translate_skip(self, mock_translate_html):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:machine_translate", args=[self.page_translation.id]
+            ),
+            {
+                "next": reverse("wagtailadmin_pages:edit", args=[self.fr_page.id]),
+            },
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+
+        translation_1 = StringTranslation.objects.get(
+            translation_of__data="A char field",
+            context__path="test_charfield",
+            locale=self.fr_locale,
+        )
+
+        self.assertEqual(translation_1.data, "field char A")
+        self.assertEqual(
+            translation_1.translation_type, StringTranslation.TRANSLATION_TYPE_MACHINE
+        )
+        self.assertEqual(translation_1.tool_name, "Dummy translator")
+        self.assertEqual(translation_1.last_translated_by, self.user)
+
+        translation_2 = StringTranslation.objects.get(
+            translation_of__data='<a id="a1">This is a link</a>.',
+            context__path="test_richtextfield",
+            locale=self.fr_locale,
+        )
+
+        self.assertEqual(translation_2.data, '.<a id="a1">link a is This</a>')
+        self.assertEqual(
+            translation_2.translation_type, StringTranslation.TRANSLATION_TYPE_MACHINE
+        )
+        self.assertEqual(translation_2.tool_name, "Dummy translator")
+        self.assertEqual(translation_2.last_translated_by, self.user)
+
+        translation_3 = StringTranslation.objects.filter(
+            translation_of__data="Special characters: '\"!? セキレイ",
+            context__path="test_richtextfield",
+            locale=self.fr_locale,
+        ).first()
+
+        self.assertIsNone(translation_3)
+
+    @patch(
+        "wagtail_localize.machine_translators.dummy.translate_html",
+        side_effect=patched_translate_html,
+    )
+    def test_machine_translate_page_with_translate_html_skip(self, mock_translate_html):
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:machine_translate", args=[self.page_translation.id]
+            ),
+            {
+                "next": reverse("wagtailadmin_pages:edit", args=[self.fr_page.id]),
+            },
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+
+        translation_1 = StringTranslation.objects.get(
+            translation_of__data="A char field",
+            context__path="test_charfield",
+            locale=self.fr_locale,
+        )
+
+        self.assertEqual(translation_1.data, "field char A")
+        self.assertEqual(
+            translation_1.translation_type, StringTranslation.TRANSLATION_TYPE_MACHINE
+        )
+        self.assertEqual(translation_1.tool_name, "Dummy translator")
+        self.assertEqual(translation_1.last_translated_by, self.user)
+
+        translation_2 = StringTranslation.objects.get(
+            translation_of__data='<a id="a1">This is a link</a>.',
+            context__path="test_richtextfield",
+            locale=self.fr_locale,
+        )
+
+        self.assertEqual(translation_2.data, '.<a id="a1">link a is This</a>')
+        self.assertEqual(
+            translation_2.translation_type, StringTranslation.TRANSLATION_TYPE_MACHINE
+        )
+        self.assertEqual(translation_2.tool_name, "Dummy translator")
+        self.assertEqual(translation_2.last_translated_by, self.user)
+
+        translation_3 = StringTranslation.objects.filter(
+            translation_of__data="Special characters: '\"!? セキレイ",
+            context__path="test_richtextfield",
+            locale=self.fr_locale,
+        ).first()
+
+        self.assertIsNone(translation_3)
 
     def test_machine_translate_snippet(self):
         response = self.client.post(
