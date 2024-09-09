@@ -17,18 +17,50 @@ from wagtail.models import Page
 from wagtail.snippets.models import get_snippet_models
 from wagtail.utils.version import get_main_version
 
+from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import TranslationSource
+from wagtail_localize.views.edit_translation import apply_machine_translation
 from wagtail_localize.views.submit_translations import TranslationComponentManager
+
+
+HAS_MACHINE_TRANSLATOR = get_machine_translator() is not None
+
+if HAS_MACHINE_TRANSLATOR:
+    PUBLISH_TRANSLATIONS_HELP = (
+        "Apply the updates and publish immediately. The changes will use "
+        "the original language until translated unless you also select "
+        '"Use machine translation".'
+    )
+else:
+    PUBLISH_TRANSLATIONS_HELP = (
+        "Apply the updates and publish immediately. The changes will use "
+        "the original language until translated."
+    )
+
+USE_MACHINE_TRANSLATION_HELP = "Apply machine translations to the incoming changes."
 
 
 class UpdateTranslationsForm(forms.Form):
     publish_translations = forms.BooleanField(
         label=gettext_lazy("Publish immediately"),
-        help_text=gettext_lazy(
-            "This will apply the updates and publish immediately, before any new translations happen."
-        ),
+        help_text=gettext_lazy(PUBLISH_TRANSLATIONS_HELP),
         required=False,
     )
+    use_machine_translation = forms.BooleanField(
+        label=gettext_lazy("Use machine translation"),
+        help_text=gettext_lazy(USE_MACHINE_TRANSLATION_HELP),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not HAS_MACHINE_TRANSLATOR:
+            self.fields["use_machine_translation"].widget = forms.HiddenInput()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("use_machine_translation") and not HAS_MACHINE_TRANSLATOR:
+            raise ValidationError(_("A machine translator could not be found."))
 
 
 class UpdateTranslationsView(SingleObjectMixin, TemplateView):
@@ -133,6 +165,12 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
         self.object.update_from_db()
 
         enabled_translations = self.object.translations.filter(enabled=True)
+        if form.cleaned_data["use_machine_translation"]:
+            machine_translator = get_machine_translator()
+            for translation in enabled_translations.select_related("target_locale"):
+                apply_machine_translation(
+                    translation.id, self.request.user, machine_translator
+                )
 
         if form.cleaned_data["publish_translations"]:
             for translation in enabled_translations.select_related("target_locale"):
