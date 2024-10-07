@@ -13,18 +13,18 @@ The first step is to loop through all fields defined on the model. This is done 
 
 The following are excluded:
 
-- Auto fields, such as `id`
-- Any field with `editable=False`
-- `ManyToManyField` and `ParentalKey`
-- Parent link fields, such as `page_ptr`
-- Inherited `MP_Node` fields named `path`, `depth`, and `numchild`
-- Inherited `Page` fields named `go_live_at`, `expire_at`, `first_published_at`, `content_type` and `owner`
+-   Auto fields, such as `id`
+-   Any field with `editable=False`
+-   `ManyToManyField` and `ParentalKey`
+-   Parent link fields, such as `page_ptr`
+-   Inherited `MP_Node` fields named `path`, `depth`, and `numchild`
+-   Inherited `Page` fields named `go_live_at`, `expire_at`, `first_published_at`, `content_type` and `owner`
 
 Next, we look at text fields. All text fields (including `RichTextField` and `StreamField`) are set to translatable,
 except for the following which are set to synchronised:
 
-- `URLField` and `EmailField`
-- `CharField` with `choices` set
+-   `URLField` and `EmailField`
+-   `CharField` with `choices` set
 
 `ForeignKey` and `OneToOneField` fields are set to translatable if the referenced model inherits from
 `TranslatableMixin`, otherwise they are set to synchronised.

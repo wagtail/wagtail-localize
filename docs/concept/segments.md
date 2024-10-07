@@ -52,9 +52,9 @@ string segments need to be inserted.
 
 If you combined the above template with the following string segments:
 
-- `The Heading`
-- `A paragraph with some <b>Bold text</b>`
-- `A list item`
+-   `The Heading`
+-   `A paragraph with some <b>Bold text</b>`
+-   `A list item`
 
 This would produce the following rich text value:
 
