@@ -4,7 +4,13 @@ from django.urls import reverse
 from wagtail.models import Locale, Page
 from wagtail.test.utils import WagtailTestUtils
 
-from wagtail_localize.models import Translation, TranslationSource
+from wagtail_localize.models import (
+    String,
+    StringTranslation,
+    Translation,
+    TranslationContext,
+    TranslationSource,
+)
 from wagtail_localize.test.models import TestSnippet
 
 from .utils import make_test_page
@@ -40,7 +46,10 @@ class TestTranslationReport(TestCase, WagtailTestUtils):
 
         self.en_blog_index = make_test_page(self.en_homepage, title="Blog", slug="blog")
         self.en_blog_post = make_test_page(
-            self.en_blog_index, title="Blog post", slug="blog-post"
+            self.en_blog_index,
+            title="Blog post",
+            slug="blog-post",
+            test_charfield="Test content",
         )
 
         self.snippet_translation = Translation.objects.create(
@@ -67,6 +76,10 @@ class TestTranslationReport(TestCase, WagtailTestUtils):
             source=TranslationSource.get_or_create_from_instance(self.en_blog_post)[0],
             target_locale=self.fr_locale,
         )
+        self.test_charfield_context = TranslationContext.objects.get(
+            path="test_charfield"
+        )
+        self.test_content_string = String.objects.get(data="Test content")
 
     def test_get_empty_report(self):
         Translation.objects.all().delete()
@@ -192,3 +205,45 @@ class TestTranslationReport(TestCase, WagtailTestUtils):
                 ("es", "Spanish"),
             ],
         )
+
+    def test_filter_by_waiting_for_translation_true(self):
+        StringTranslation.objects.create(
+            translation_of=self.test_content_string,
+            context=self.test_charfield_context,
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+        response = self.client.get(
+            reverse("wagtail_localize:translations_report")
+            + "?waiting_for_translation=true"
+        )
+
+        # These pages don't have any translations, so they should be listed
+        self.assertIn(self.snippet_translation, response.context["object_list"])
+        self.assertIn(self.homepage_translation, response.context["object_list"])
+        self.assertIn(self.de_homepage_translation, response.context["object_list"])
+        # Blog index page has no translatable strings, so should not be included
+        self.assertNotIn(self.blog_index_translation, response.context["object_list"])
+        # Translation is complete for this page, so should not be included
+        self.assertNotIn(self.blog_post_translation, response.context["object_list"])
+
+    def test_filter_by_waiting_for_translation_false(self):
+        StringTranslation.objects.create(
+            translation_of=self.test_content_string,
+            context=self.test_charfield_context,
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+        response = self.client.get(
+            reverse("wagtail_localize:translations_report")
+            + "?waiting_for_translation=false"
+        )
+
+        # These pages don't have any translations, so they should not be listed
+        self.assertNotIn(self.snippet_translation, response.context["object_list"])
+        self.assertNotIn(self.homepage_translation, response.context["object_list"])
+        self.assertNotIn(self.de_homepage_translation, response.context["object_list"])
+        # Blog index page has no translatable strings, so should be included
+        self.assertIn(self.blog_index_translation, response.context["object_list"])
+        # Translation is complete for this page, so should be included
+        self.assertIn(self.blog_post_translation, response.context["object_list"])
