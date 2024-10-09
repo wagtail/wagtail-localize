@@ -1,6 +1,7 @@
 import django_filters
 
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Exists, OuterRef
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy
 from django_filters.constants import EMPTY_VALUES
@@ -12,7 +13,7 @@ from wagtail.admin.views.reports import ReportView
 from wagtail.coreutils import get_content_languages
 from wagtail.models import get_translatable_models
 
-from wagtail_localize.models import Translation
+from wagtail_localize.models import StringSegment, StringTranslation, Translation
 
 
 class SourceTitleFilter(django_filters.CharFilter):
@@ -130,10 +131,19 @@ class TranslationsReportFilterSet(WagtailFilterSet):
         null_label=gettext_lazy("All"),
         null_value="all",
     )
+    waiting_for_translation = django_filters.BooleanFilter(
+        label=gettext_lazy("Waiting for translations"),
+    )
 
     class Meta:
         model = Translation
-        fields = ["content_type", "source_title", "source_locale", "target_locale"]
+        fields = [
+            "content_type",
+            "source_title",
+            "source_locale",
+            "target_locale",
+            "waiting_for_translation",
+        ]
 
 
 def _adapt_wagtail_report_attributes(cls):
@@ -175,4 +185,24 @@ class TranslationsReportView(ReportView):
     filterset_class = TranslationsReportFilterSet
 
     def get_queryset(self):
-        return Translation.objects.all()
+        return Translation.objects.annotate(
+            # Check to see if there is at least one string segment that is not
+            # translated.
+            waiting_for_translation=Exists(
+                StringSegment.objects.filter(source_id=OuterRef("source_id"))
+                .annotate(
+                    # Annotate here just to filter in the next subquery, as Django
+                    # doesn't have support for nested OuterRefs.
+                    _target_locale_id=OuterRef("target_locale_id"),
+                    is_translated=Exists(
+                        StringTranslation.objects.filter(
+                            translation_of_id=OuterRef("string_id"),
+                            context_id=OuterRef("context_id"),
+                            locale_id=OuterRef("_target_locale_id"),
+                            has_error=False,
+                        )
+                    ),
+                )
+                .filter(is_translated=False)
+            )
+        )
