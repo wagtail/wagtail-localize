@@ -155,6 +155,18 @@ class TestGetProgress(TestCase):
         progress = self.translation.get_progress()
         self.assertEqual(progress, (2, 0))
 
+    def test_get_progress_with_no_strings(self):
+        # Check getting progress when there are no strings to be translated
+        page = create_test_page(title="Empty page", slug="empty-page")
+        source, created = TranslationSource.get_or_create_from_instance(page)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        progress = translation.get_progress()
+        self.assertEqual(progress, (0, 0))
+
 
 class TestExportPO(TestCase):
     def setUp(self):
@@ -576,6 +588,17 @@ class TestGetStatus(TestCase):
         )
 
         self.assertEqual(self.translation.get_status_display(), "Up to date")
+
+    def test_get_status_with_no_strings(self):
+        # Check getting status when there are no strings to be translated
+        page = create_test_page(title="Empty page", slug="empty-page")
+        source, created = TranslationSource.get_or_create_from_instance(page)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        self.assertEqual(translation.get_status_display(), "Up to date")
 
 
 class TestSaveTarget(TestCase):
