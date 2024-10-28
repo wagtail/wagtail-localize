@@ -28,27 +28,43 @@ class DeepLTranslator(BaseMachineTranslator):
             return "https://api-free.deepl.com/v2/translate"
         return "https://api.deepl.com/v2/translate"
 
-    def translate(self, source_locale, target_locale, strings):
+    def get_parameters(self, source_locale, target_locale, strings):
+        source_lang = language_code(source_locale.language_code)
+        target_lang = language_code(target_locale.language_code, is_target=True)
+
         parameters = {
             "auth_key": self.options["AUTH_KEY"],
             "text": [string.data for string in strings],
             "tag_handling": "xml",
-            "source_lang": language_code(source_locale.language_code),
-            "target_lang": language_code(target_locale.language_code, is_target=True),
+            "source_lang": source_lang,
+            "target_lang": target_lang,
         }
 
-        if self.options.get("FORMALITY"):
-            if self.options["FORMALITY"] in SUPPORTED_FORMALITY_OPTIONS:
-                parameters["formality"] = self.options["FORMALITY"]
+        if formality := self.options.get("FORMALITY"):
+            if formality in SUPPORTED_FORMALITY_OPTIONS:
+                parameters["formality"] = formality
             else:
                 warnings.warn(
-                    f"Unsupported formality option '{self.options['FORMALITY']}'. Supported options are: {', '.join(SUPPORTED_FORMALITY_OPTIONS)}"
+                    f"Unsupported formality option '{formality}'. "
+                    f"Supported options are: {', '.join(SUPPORTED_FORMALITY_OPTIONS)}"
                 )
 
+        if glossaries := self.options.get("GLOSSARY_IDS"):
+            lang_pair = (source_lang, target_lang)
+            if glossary_id := glossaries.get(lang_pair):
+                parameters["glossary_id"] = glossary_id
+            else:
+                warnings.warn(
+                    f"No glossary defined for (source, target) pair: {lang_pair}"
+                )
+
+        return parameters
+
+    def translate(self, source_locale, target_locale, strings):
         response = requests.post(
             self.get_api_endpoint(),
-            parameters,
-            timeout=30,
+            self.get_parameters(source_locale, target_locale, strings),
+            timeout=int(self.options.get("TIMEOUT", 30)),
         )
 
         return {
