@@ -14,6 +14,6 @@ def get_something(request, tag):
   default_tag = tag.get_translation(tag.get_default_locale())
   pages = SomePage.objects.live().filter(
     Q(locale__language_code=lang),
-    Q(category__tags=default_tag) | Q(category__tags=tag)
+    Q(tags=default_tag) | Q(tags=tag)
   ).distinct()
 ```
