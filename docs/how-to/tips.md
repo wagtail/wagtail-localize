@@ -9,11 +9,33 @@ To solve this, you can query both the default language and the current language,
 language.
 
 ```python
-def get_something(request, tag):
-  lang = request.LANGUAGE_CODE
-  default_tag = tag.get_translation(tag.get_default_locale())
-  pages = SomePage.objects.live().filter(
-    Q(locale__language_code=lang),
-    Q(tags=default_tag) | Q(tags=tag)
-  ).distinct()
+from django.db import models
+from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
+from wagtail.snippets.models import register_snippet
+from wagtail.models import TranslatableMixin, Page
+
+
+@register_snippet
+class Tag(TranslatableMixin, models.Model):
+    tag = models.CharField(_("Tag"), max_length=255)
+
+    def __str__(self):
+        return self.tag
+
+class BlogPage(Page):
+    my_tag = models.ForeignKey(
+        "snippets.Tag",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        if self.my_tag:
+            default_tag = self.my_tag.get_translation(self.my_tag.get_default_locale())
+            context['pages'] = BlogPage.objects.live().filter(Q(locale=self.locale), Q(my_tag=default_tag) | Q(my_tag=self.my_tag)).distinct()
+            return context
 ```
