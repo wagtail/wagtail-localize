@@ -2,6 +2,7 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from modelcluster.fields import ParentalKey
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page, TranslatableMixin
@@ -51,6 +52,14 @@ class StreamFieldSegmentExtractor:
                     return [OverridableSegmentValue("", block_value.url)]
                 else:
                     return []
+
+        if WAGTAIL_VERSION >= (6, 3) and apps.is_installed("wagtail.images"):
+            from wagtail.images.blocks import ImageBlock
+
+            if isinstance(block_type, ImageBlock):
+                return self.handle_image_block(
+                    block_type, block_value, raw_value=raw_value
+                )
 
         if hasattr(block_type, "get_translatable_segments"):
             return block_type.get_translatable_segments(block_value)
@@ -179,6 +188,28 @@ class StreamFieldSegmentExtractor:
                             block.block, block.value, raw_value=block_raw_value
                         )
                     )
+        return segments
+
+    def handle_image_block(self, block, image_block_value, raw_value=None):
+        segments = []
+
+        for field_name, block_type in block.child_blocks.items():
+            try:
+                block_raw_value = raw_value["value"].get(field_name)
+                block_value = (
+                    image_block_value if field_name == "image" else block_raw_value
+                )
+            except (KeyError, TypeError):
+                # e.g. raw_value is None, or is that from chooser
+                block_raw_value = None
+                block_value = None
+            segments.extend(
+                segment.wrap(field_name)
+                for segment in self.handle_block(
+                    block_type, block_value, raw_value=block_raw_value
+                )
+            )
+
         return segments
 
     def handle_stream_block(self, stream_block):

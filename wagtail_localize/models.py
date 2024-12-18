@@ -3,6 +3,7 @@ import uuid
 
 import polib
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.contenttypes.models import ContentType
@@ -36,6 +37,7 @@ from modelcluster.models import (
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.blocks.list_block import ListValue
 from wagtail.coreutils import find_available_slug
@@ -1558,6 +1560,14 @@ class TranslationContext(models.Model):
                                 block_type = block.block_type
                                 block_def = value.stream_block.child_blocks[block_type]
                             block_value = block.value
+
+                        if WAGTAIL_VERSION >= (6, 3) and apps.is_installed(
+                            "wagtail.images"
+                        ):
+                            from wagtail.images.blocks import ImageBlock
+
+                            if isinstance(block_def, ImageBlock):
+                                return [block_type] + path_components[1:]
 
                         if isinstance(
                             block_def,
