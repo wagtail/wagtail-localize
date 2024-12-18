@@ -2,7 +2,10 @@ import unittest
 import uuid
 
 from django.test import TestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.blocks import StreamValue
+from wagtail.images import get_image_model
+from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Locale, Page
 
 from wagtail_localize.fields import copy_synchronised_fields
@@ -516,6 +519,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
 
     def test_structblock(self):
         block_id = uuid.uuid4()
+
         page = make_test_page_with_streamfield_block(
             str(block_id),
             "test_structblock",
@@ -551,6 +555,53 @@ class TestSegmentIngestionWithStreamField(TestCase):
                     "value": {
                         "field_a": "Tester le contenu",
                         "field_b": "Encore du contenu de test",
+                    },
+                }
+            ],
+        )
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
+    )
+    def test_imageblock(self):
+        block_id = uuid.uuid4()
+        test_image = get_image_model().objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_imageblock",
+            {"image": test_image.pk, "alt_text": "Some test alt text"},
+        )
+
+        translated_page = page.copy_for_translation(self.locale)
+
+        ingest_segments(
+            page,
+            translated_page,
+            self.src_locale,
+            self.locale,
+            [
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}.alt_text",
+                    "Tester le alt_text contenu",
+                ),
+            ],
+        )
+
+        translated_page.save()
+        translated_page.refresh_from_db()
+
+        self.assertEqual(
+            list(translated_page.test_streamfield.raw_data),
+            [
+                {
+                    "id": str(block_id),
+                    "type": "test_imageblock",
+                    "value": {
+                        "image": 1,
+                        "alt_text": "Tester le alt_text contenu",
+                        "decorative": False,
                     },
                 }
             ],

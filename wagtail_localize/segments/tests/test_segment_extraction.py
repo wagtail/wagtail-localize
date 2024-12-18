@@ -3,7 +3,10 @@ import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.blocks import StreamValue
+from wagtail.images import get_image_model
+from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Page, Site
 
 from wagtail_localize.segments import (
@@ -339,6 +342,37 @@ class TestSegmentExtractionWithStreamField(TestCase):
                 ),
                 StringSegmentValue(
                     f"test_streamfield.{block_id}.field_b", "Some more test content"
+                ),
+            ],
+        )
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
+    )
+    def test_imageblock(self):
+        block_id = uuid.uuid4()
+        test_image = get_image_model().objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_imageblock",
+            {
+                "image": test_image.pk,
+                "decorative": False,
+                "alt_text": "Test alt content",
+            },
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(
+            segments,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.image", test_image.pk
+                ),
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}.alt_text", "Test alt content"
                 ),
             ],
         )
