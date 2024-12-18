@@ -19,14 +19,14 @@ env:
   TOX_TESTENV_PASSENV: FORCE_COLOR
   PIP_DISABLE_PIP_VERSION_CHECK: '1'
   PIP_NO_PYTHON_VERSION_WARNING: '1'
-  PYTHON_LATEST: '3.11'
+  PYTHON_LATEST: '3.13'
 
 jobs:
   test-sqlite:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ['3.10', '3.11', '3.12']
+        python: ['3.10', '3.11', '3.12', '3.13']
         database: ['sqlite']
 
     steps:
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11', '3.12']
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
         database: ['postgres']
 
     services:
@@ -109,7 +109,7 @@ jobs:
       - test-postgres
     strategy:
       matrix:
-        python: ['3.12']
+        python: ['3.13']
 
     steps:
       - uses: actions/checkout@v4
