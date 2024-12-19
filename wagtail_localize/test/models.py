@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks, telepath
 from wagtail.admin.panels import (
     FieldPanel,
@@ -12,6 +13,7 @@ from wagtail.admin.panels import (
     PageChooserPanel,
     TabbedInterface,
 )
+from wagtail.blocks import StructBlock
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.fields import RichTextField, StreamField
@@ -30,6 +32,18 @@ from wagtail_localize.components import register_translation_component
 from wagtail_localize.fields import SynchronizedField, TranslatableField
 from wagtail_localize.models import TranslationSource
 from wagtail_localize.segments import StringSegmentValue
+
+
+if WAGTAIL_VERSION >= (6, 3):
+    from wagtail.images.blocks import ImageBlock
+else:
+
+    class ImageBlock(StructBlock):
+        image = ImageChooserBlock(required=True)
+        decorative = blocks.BooleanBlock(
+            default=False, required=False, label=gettext_lazy("Image is decorative")
+        )
+        alt_text = blocks.CharBlock(required=False, label=gettext_lazy("Alt text"))
 
 
 @register_snippet
@@ -260,6 +274,8 @@ class TestStreamBlock(blocks.StreamBlock):
             ]
         )
     )
+
+    test_imageblock = ImageBlock()
 
 
 class TestCustomField(models.TextField):

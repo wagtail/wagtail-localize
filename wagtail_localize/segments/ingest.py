@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from django.apps import apps
 from django.db import models
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.fields import RichTextField, StreamField
 from wagtail.rich_text import RichText
@@ -129,6 +130,12 @@ class StreamFieldSegmentsWriter:
                 if isinstance(segment, OverridableSegmentValue):
                     return EmbedValue(segment.data)
 
+        if WAGTAIL_VERSION >= (6, 3) and apps.is_installed("wagtail.images"):
+            from wagtail.images.blocks import ImageBlock
+
+            if isinstance(block_type, ImageBlock):
+                return self.handle_image_block(block_type, block_value, segments)
+
         if hasattr(block_type, "restore_translated_segments"):
             return block_type.restore_translated_segments(block_value, segments)
 
@@ -210,6 +217,31 @@ class StreamFieldSegmentsWriter:
             )
 
         return list_block
+
+    def handle_image_block(self, block, image_block_value, segments):
+        """
+        The Wagtail 6.3+ ImageBlock deconstructs to an Image instance with the
+        contextual alt text / decorative values set based on the ImageBlock selection.
+        """
+        segments_by_field = defaultdict(list)
+
+        for segment in segments:
+            field_name, segment = segment.unwrap()
+            segments_by_field[field_name].append(segment)
+
+        # ImageBlock field -> Image field.
+        field_map = {"alt_text": "contextual_alt_text", "decorative": "decorative"}
+        for field_name, segments in segments_by_field.items():
+            if segments:
+                block_type = block.child_blocks[field_name]
+                value = self.handle_block(
+                    block_type,
+                    getattr(image_block_value, field_map[field_name]),
+                    segments,
+                )
+                setattr(image_block_value, field_map[field_name], value)
+
+        return image_block_value
 
     def get_stream_block_child_data(self, stream_block, block_uuid):
         for stream_child in stream_block:
