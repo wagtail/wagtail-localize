@@ -218,23 +218,30 @@ class StreamFieldSegmentsWriter:
 
         return list_block
 
-    def handle_image_block(self, block, image_block, segments):
+    def handle_image_block(self, block, image_block_value, segments):
+        """
+        The Wagtail 6.3+ ImageBlock deconstructs to an Image instance with the
+        contextual alt text / decorative values set based on the ImageBlock selection.
+        """
         segments_by_field = defaultdict(list)
 
         for segment in segments:
             field_name, segment = segment.unwrap()
             segments_by_field[field_name].append(segment)
 
+        # ImageBlock field -> Image field.
         field_map = {"alt_text": "contextual_alt_text", "decorative": "decorative"}
         for field_name, segments in segments_by_field.items():
             if segments:
                 block_type = block.child_blocks[field_name]
                 value = self.handle_block(
-                    block_type, getattr(image_block, field_map[field_name]), segments
+                    block_type,
+                    getattr(image_block_value, field_map[field_name]),
+                    segments,
                 )
-                setattr(image_block, field_map[field_name], value)
+                setattr(image_block_value, field_map[field_name], value)
 
-        return image_block
+        return image_block_value
 
     def get_stream_block_child_data(self, stream_block, block_uuid):
         for stream_child in stream_block:

@@ -191,6 +191,12 @@ class StreamFieldSegmentExtractor:
         return segments
 
     def handle_image_block(self, block, image_block_value, raw_value=None):
+        """
+        Handles the Wagtail 6.3+ ImageBlock, which is a specialized StructBlock with
+        image (ImageChooserBlock), alt_text (CharBlock) and decorative (BooleanBlock).
+        However, unlike a StructBlock, it deconstructs to an Image instance, rather than
+        the usual StructValue, so we need add special handling.
+        """
         segments = []
 
         for field_name, block_type in block.child_blocks.items():

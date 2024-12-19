@@ -1567,6 +1567,9 @@ class TranslationContext(models.Model):
                             from wagtail.images.blocks import ImageBlock
 
                             if isinstance(block_def, ImageBlock):
+                                # the path components are ["the_image_block_field_name", "alt_text"]
+                                # so there is no need for further processing as this will return
+                                # ["image_block", "alt_text"]
                                 return [block_type] + path_components[1:]
 
                         if isinstance(
