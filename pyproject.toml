@@ -59,7 +59,7 @@ testing = [
     "coverage>=7.0,<8.0"
 ]
 linting = [
-    "pre-commit>=4.0,<5"
+    "pre-commit>=5.0,<6"
 ]
 
 [project.urls]
