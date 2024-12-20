@@ -24,6 +24,7 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -1141,7 +1142,8 @@ class Translation(models.Model):
                 output_field=IntegerField(),
             )
         ).aggregate(
-            total_segments=Count("pk"), translated_segments=Sum("is_translated_i")
+            total_segments=Count("pk"),
+            translated_segments=Coalesce(Sum("is_translated_i"), 0),
         )
 
         return aggs["total_segments"], aggs["translated_segments"]
