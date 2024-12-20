@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -43,46 +43,46 @@ msgid ""
 "{locales}"
 msgstr ""
 
-#: models.py:1156
+#: models.py:1160
 msgid "Up to date"
 msgstr ""
 
-#: models.py:1158
+#: models.py:1162 views/report.py:135
 msgid "Waiting for translations"
 msgstr ""
 
-#: models.py:1622
+#: models.py:1637
 msgid "Manual"
 msgstr ""
 
-#: models.py:1623
+#: models.py:1638
 msgid "Machine"
 msgstr ""
 
-#: models.py:1750
+#: models.py:1765
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr ""
 
-#: models.py:1755
+#: models.py:1770
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr ""
 
-#: models.py:1760
+#: models.py:1775
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr ""
 
-#: models.py:2285
+#: models.py:2300
 msgid "This locale cannot be synced into itself."
 msgstr ""
 
-#: models.py:2290
+#: models.py:2305
 msgid "Synchronise content from another locale"
 msgstr ""
 
-#: models.py:2292
+#: models.py:2307
 msgid ""
 "Choose a locale to synchronise content from. Any existing and future content "
 "authored in the selected locale will be automatically copied to this one."
@@ -152,7 +152,7 @@ msgid "Translation of %(instance)s into %(locale)s"
 msgstr ""
 
 #: templates/wagtail_localize/admin/edit_translation.html:34
-#: views/report.py:153 views/report.py:156 wagtail_hooks.py:395
+#: views/report.py:163 views/report.py:166 wagtail_hooks.py:395
 msgid "Translations"
 msgstr ""
 
@@ -162,18 +162,18 @@ msgid "Editing %(object_type)s %(title)s"
 msgstr ""
 
 #: templates/wagtail_localize/admin/submit_translation.html:29
-#: templates/wagtail_localize/admin/update_translations.html:62
+#: templates/wagtail_localize/admin/update_translations.html:74
 msgid "Submit"
 msgstr ""
 
 #: templates/wagtail_localize/admin/submit_translation.html:29
-#: templates/wagtail_localize/admin/update_translations.html:62
+#: templates/wagtail_localize/admin/update_translations.html:74
 msgid "Go back"
 msgstr ""
 
 #: templates/wagtail_localize/admin/translations_report.html:10
 #: templates/wagtail_localize/admin/translations_report_results.html:9
-#: views/report.py:117
+#: views/report.py:118
 msgid "Content type"
 msgstr ""
 
@@ -267,19 +267,19 @@ msgstr ""
 msgid "Successfully imported translations from PO File."
 msgstr ""
 
-#: views/edit_translation.py:1437
+#: views/edit_translation.py:1448
 msgid "Successfully translated with {}."
 msgstr ""
 
-#: views/edit_translation.py:1441
+#: views/edit_translation.py:1454
 msgid "There isn't anything left to translate."
 msgstr ""
 
-#: views/report.py:119
+#: views/report.py:120
 msgid "Source title"
 msgstr ""
 
-#: views/report.py:124 views/report.py:130
+#: views/report.py:125 views/report.py:131
 msgid "All"
 msgstr ""
 
@@ -316,21 +316,35 @@ msgid ""
 "{locales}"
 msgstr ""
 
-#: views/update_translations.py:26
+#: views/update_translations.py:28
 msgid "Publish immediately"
 msgstr ""
 
-#: views/update_translations.py:28
+#: views/update_translations.py:39
 msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
 msgstr ""
 
-#: views/update_translations.py:36
+#: views/update_translations.py:44
+msgid "Use machine translation"
+msgstr ""
+
+#: views/update_translations.py:46
+msgid "Apply machine translations to the incoming changes."
+msgstr ""
+
+#: views/update_translations.py:52
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+
+#: views/update_translations.py:59
 msgid "Update existing translations"
 msgstr ""
 
-#: views/update_translations.py:56
+#: views/update_translations.py:79
 #, python-brace-format
 msgid "Successfully updated translations for '{object}'"
 msgstr ""

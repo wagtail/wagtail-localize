@@ -4,13 +4,13 @@
 # Sergiy Shkodenko <shkodenkosergiy@gmail.com>, 2021
 # Anastasiia La, 2021
 # d55ee35323c0c760f088259cd23b1b6d_9e8a7d1 <5459f3ae99ecdd5ed0be0220acd46004_1019581>, 2022
-# Vladyslav Herasymenko <drimacus182@gmail.com>, 2023
+# Vladyslav Herasymenko <drimacus182@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 08:26+0000\n"
-"Last-Translator: Vladyslav Herasymenko <drimacus182@gmail.com>, 2023\n"
+"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"Last-Translator: Vladyslav Herasymenko <drimacus182@gmail.com>, 2024\n"
 "Language-Team: Ukrainian (https://app.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -98,6 +98,23 @@ msgstr "Нерозпізнаний ідентифікатор знайдений
 msgid "Enable"
 msgstr "Увімкнути"
 
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "Конвертувати в пов'язану копію %(title)s"
+
+msgid "Convert to alias"
+msgstr "Конвертувати в пов'язану копію"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"Ви впевнені, що хочете конвертувати цю сторінку в пов'язану копію? Ця дії "
+"перезапише вміст цієї сторінки вмістом '%(source_page_title)s' "
+"(%(source_page_locale)s)"
+
 msgid "Yes, convert it"
 msgstr "Так, конвертувати"
 
@@ -159,6 +176,9 @@ msgid ""
 msgstr ""
 "Остання дата синхронізації була %(last_sync_date)s. Ви збираєтесь "
 "синхронізувати наступне: "
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "Сторінка '{}' була перетворена у пов'язану копію."
 
 msgid "Content"
 msgstr "Контент"
@@ -277,3 +297,9 @@ msgstr "Синхронізувати перекладені уривки"
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr "Синхронізувати переклади для '%(title)s'"
+
+msgid "Convert to alias page"
+msgstr "Конвертувати в пов'язану копію"
+
+msgid "Convert page to alias"
+msgstr "Конвертувати сторінку в пов'язану копію"

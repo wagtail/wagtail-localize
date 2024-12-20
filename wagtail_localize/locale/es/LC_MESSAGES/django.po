@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 08:26+0000\n"
+"POT-Creation-Date: 2024-09-08 11:16+0000\n"
 "Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

@@ -2,12 +2,13 @@
 # Translators:
 # Philip Crisp, 2022
 # Adam Hughes <adamhughes31@gmail.com>, 2023
+# Philip Lindsay-Crisp, 2024
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 08:26+0000\n"
-"Last-Translator: Adam Hughes <adamhughes31@gmail.com>, 2023\n"
+"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"Last-Translator: Philip Lindsay-Crisp, 2024\n"
 "Language-Team: Welsh (https://app.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
@@ -22,6 +23,10 @@ msgstr "Cyfieithydd ffug"
 
 msgid "Translate"
 msgstr "Cyfieithu"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "Cydamseru cyfieithiadau ar gyfer %(model_name)s"
 
 msgid "Start Synced translation"
 msgstr "Dechrau cyfieithiad cysoni"
@@ -138,6 +143,10 @@ msgstr "Gyfieithiad %(instance)s i %(locale)s"
 
 msgid "Translations"
 msgstr "Cyfieithiadau"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Yn newid %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Cyflwyno"

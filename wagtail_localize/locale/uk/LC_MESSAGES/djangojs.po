@@ -58,6 +58,9 @@ msgstr "Оберіть сторінку"
 msgid "Choose an image"
 msgstr "Оберіть зображення"
 
+msgid "Convert to alias page"
+msgstr "Конвертувати в пов'язану копію"
+
 msgid "Delete"
 msgstr "Видалити"
 

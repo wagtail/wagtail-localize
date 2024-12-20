@@ -1,16 +1,320 @@
 #
 # Translators:
 # Azat, 2024
+# Abduqadir Abliz <sahranbay@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 08:26+0000\n"
-"Last-Translator: Azat, 2024\n"
+"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"Last-Translator: Abduqadir Abliz <sahranbay@gmail.com>, 2024\n"
 "Language-Team: Uyghur (https://app.transifex.com/torchbox/teams/8009/ug/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ug\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Disable"
+msgstr "چەكلە"
+
+msgid "Dummy translator"
+msgstr "مەۋھۇم تەرجىمان"
+
+msgid "Translate"
+msgstr "تەرجىمە"
+
+#, python-format
+msgid "Sync translated %(model_name)s"
+msgstr "قەدەمداش تەرجىمە قىلىنغىنى %(model_name)s"
+
+msgid "Start Synced translation"
+msgstr "قەدەمداش تەرجىمىنى باشلا"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "{model_name} تەرجىمىسى"
+
+#, python-brace-format
+msgid ""
+"The {model_name} '{object}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"بۇ {model_name} «{object}» نىڭ تەرجىمىسى {locales} غا مۇۋەپپەقىيەتلىك "
+"يوللاندى"
+
+msgid "Up to date"
+msgstr "ئەڭ يېڭى"
+
+msgid "Waiting for translations"
+msgstr "تەرجىمىنى كۈتۈۋاتىدۇ"
+
+msgid "Manual"
+msgstr "قولدا"
+
+msgid "Machine"
+msgstr "ماشىنا"
+
+#, python-brace-format
+msgid "Translated with {tool_name} on {date}"
+msgstr "{date} دە {tool_name} دا تەرجىمە قىلىندى"
+
+#, python-brace-format
+msgid "Translated manually on {date}"
+msgstr "{date} دە قولدا تەرجىمە قىلىندى"
+
+#, python-brace-format
+msgid "Machine translated on {date}"
+msgstr "{date} دە ماشىنىدا تەرجىمە قىلىندى"
+
+msgid "This locale cannot be synced into itself."
+msgstr "بۇ يەرلىك تىل ئۆزىنى ئۆزى قەدەمداشلىيالمايدۇ."
+
+msgid "Synchronise content from another locale"
+msgstr "مەزمۇن باشقا تىلدىن قەدەمداشلىنىدۇ"
+
+msgid ""
+"Choose a locale to synchronise content from. Any existing and future content "
+"authored in the selected locale will be automatically copied to this one."
+msgstr ""
+"مەزمۇننى قەدەمداشلايدىغان باشقا بىر يەرلىك تىل تاللىنىدۇ. مەۋجۇت ۋە "
+"كەلگۈسىدىكى خالىغان مەزمۇن تاللانغان دەلىللەنگەن يەرلىك تىلدىن ئۆزلۈكىدىن "
+"مەزكۇر تىلغا كۆچۈرۈلىدۇ."
+
+msgid ""
+"<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
+"(such as <b>, <a>)"
+msgstr ""
+"<{}> بەلگىگە يول قويۇلمايدۇ. ھەرپ تىزىقى پەقەت (<b> ،<a> غا ئوخشاش) "
+"ئۆلچەملىك HTML قۇر بەلگىلىرىنى ئۆز ئىچىگە ئالالايدۇ."
+
+msgid ""
+"Strings cannot have any HTML tags with attributes (except for 'id' in <a> "
+"tags)"
+msgstr ""
+"ھەرپ تىزىقى HTML بەلگىلىرىنىڭ خاسلىقىغا ئىگە بولالمايدۇ (<a> بەلگىسىدىكى "
+"«id» بۇنىڭ سىرتىدا)"
+
+msgid "Unrecognised id found in an <a> tag: {}"
+msgstr "<a> بەلگىدە تونىيالمايدىغان id بايقالدى: {}"
+
+msgid "Enable"
+msgstr "قوزغات"
+
+#, python-format
+msgid "Convert to alias %(title)s"
+msgstr "باشقا ئىسىمغا ئايلاندۇر %(title)s"
+
+msgid "Convert to alias"
+msgstr "باشقا ئىسىمغا ئايلاندۇر"
+
+#, python-format
+msgid ""
+"Are you sure you want to convert this page into an alias? This will "
+"overwrite the content of the page with the content of "
+"'%(source_page_title)s' (%(source_page_locale)s)"
+msgstr ""
+"راستتىنلا بۇ بەتنى باشقا ئىسىمغا ئايلاندۇرامسىز؟ بۇنداق بولغاندا "
+"«%(source_page_title)s» (%(source_page_locale)s)مەزمۇنى بىلەت بەت مەزمۇنىنى "
+"قاپلىۋېتىدۇ"
+
+msgid "Yes, convert it"
+msgstr "ھەئە، قاپلىۋەت"
+
+msgid "No, leave it as a page"
+msgstr "ياق، ئۇنى بەت سۈپىتىدە قالدۇر"
+
+#, python-format
+msgid ""
+"This page hasn't been translated yet. It is mirroring the <a "
+"href=\"%(edit_original_page_url)s\" target=\"_blank\">%(original_locale)s "
+"page</a>."
+msgstr ""
+"بۇ بەت تېخى تەرجىمە قىلىنمىدى. ئۇ <a href=\"%(edit_original_page_url)s\" "
+"target=\"_blank\">%(original_locale)s بەت</a>نىڭ تەسۋىرى."
+
+msgid "Translate this page"
+msgstr "بۇ بەتنى تەرجىمە قىلىڭ"
+
+#, python-format
+msgid "Translation of %(instance)s into %(locale)s"
+msgstr "%(locale)s غا %(instance)s تەرجىمە قىلغان"
+
+msgid "Translations"
+msgstr "تەرجىمىسى"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "%(object_type)s %(title)s تەرجىمە"
+
+msgid "Submit"
+msgstr "تاپشۇر"
+
+msgid "Go back"
+msgstr "كەينىگە"
+
+msgid "Content type"
+msgstr "مەزمۇن تىپى"
+
+msgid "Source"
+msgstr "مەنبە"
+
+msgid "Target"
+msgstr "نىشان"
+
+msgid "Status"
+msgstr "ھالەت"
+
+msgid "No translations found."
+msgstr "ھېچقانداق تەرجىمە تېپىلمىدى."
+
+msgid "Why would I sync my page?"
+msgstr "نېمىشقا بېتىمنى قەدەمداشلايمەن؟"
+
+msgid ""
+"Changes are not automatically applied between translated pages. Syncing will "
+"add new content for translation and remove deleted content."
+msgstr ""
+"تەرجىمە قىلىنغان بەتلەر ئارىسىدىكى ئۆزگەرتىش ئۆزلۈكىدىن قوللىنىلمايدۇ. "
+"قەدەمداش تەرجىمىگە يېڭى مەزمۇن قوشىدۇ ۋە ئۆچۈرۈلگەن مەزمۇنلارنى چىقىرىۋېتىدۇ."
+
+#, python-format
+msgid ""
+"The last sync date was %(last_sync_date)s. You are about to sync the "
+"following:"
+msgstr ""
+"ئاخىرقى قەدەمداشلانغان ۋاقتى %(last_sync_date)s. تۆۋەندىكىلەرنى "
+"قەدەمداشلىماقچى بولۇۋاتىسىز:"
+
+msgid "Page '{}' has been converted into an alias."
+msgstr "«{}» بەت باشقا ئىسىمغا ئۆزگەرتىلگەن ئىدى."
+
+msgid "Content"
+msgstr "مەزمۇن"
+
+#, python-brace-format
+msgid ""
+"New validation errors were found when publishing '{object}' in {locale}. "
+"Please fix them or click publish again to ignore these translations for now."
+msgstr ""
+"«{locale}» دىكى«{object}» نى تارقىتىۋاتقاندا يېڭى دەلىللەش خاتالىقى "
+"بايقالدى. بۇ تەرجىمىلەرگە ھازىرچە پەرۋا قىلماسلىق ئۈچۈن ئۇلارنى تۈزىتىڭ ياكى "
+"«تارقات» نى قايتا چېكىڭ."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale} with missing translations - see below."
+msgstr ""
+"{locale} دىكى «{object}» تەرجىمىسى كەم ھالدا تارقىتىلدى - تۆۋەندىكىنى كۆرۈڭ."
+
+#, python-brace-format
+msgid "Published '{object}' in {locale}."
+msgstr "{locale} دىكى «{object}» تارقىتىلدى."
+
+#, python-brace-format
+msgid ""
+"The data model for '{model_name}' has been changed since the last "
+"translation sync. If any new fields have been added recently, these may not "
+"be visible until the next translation sync."
+msgstr ""
+"ئاخىرقى قەدەمداشلاشتىن كېيىن «{model_name}» نىڭ سانلىق مەلۇمات مودېلى "
+"ئۆزگەردى. ئەگەر يېقىندا يېڭى بۆلەك قوشۇلغان بولسا، كېيىنكى تەرجىمە "
+"قەدەمداشلاشتىن ئىلگىرى ئۇلار كۆرۈنمەسلىكى مۇمكىن."
+
+msgid "Translation has been stopped."
+msgstr "تەرجىمە توختىتىلغان."
+
+msgid "Translation has been restarted."
+msgstr "تەرجىمە قايتا قوزغىتىلغان."
+
+msgid "Please upload a valid PO file."
+msgstr "ئىناۋەتلىك PO ھۆججىتىنى يۈكلەڭ."
+
+msgid "Cannot import PO file that was created for a different translation."
+msgstr "پەرقلىق تەرجىمە ئۈچۈن قۇرۇلغان PO ھۆججەتنى ئەكىرەلمەيدۇ."
+
+msgid "Successfully imported translations from PO File."
+msgstr "PO ھۆججەتتىن تەرجىمىنى مۇۋەپپەقىيەتلىك ئەكىردى."
+
+msgid "Successfully translated with {}."
+msgstr "{} بىلەن مۇۋەپپەقىيەتلىك تەرجىمە قىلىندى."
+
+msgid "There isn't anything left to translate."
+msgstr "تەرجىمە قىلىدىغان ھېچنېمە قالمىدى."
+
+msgid "Source title"
+msgstr "مەنبە ماۋزۇسى"
+
 msgid "All"
 msgstr "ھەممىسى"
+
+msgid "Select all"
+msgstr "ھەممىنى تاللا"
+
+msgid "Locales"
+msgstr "يەرلىك تىل"
+
+msgid "All child pages will be created."
+msgstr "بارلىق بالا بەت قۇرۇلىدۇ."
+
+msgid "Include subtree ({} page)"
+msgid_plural "Include subtree ({} pages)"
+msgstr[0] "تارماق شاخ ({} بەت) نىمۇ ئۆز ئىچىگە ئالىدۇ"
+msgstr[1] "تارماق شاخ ({} بەت) نىمۇ ئۆز ئىچىگە ئالىدۇ"
+
+msgid "{} locales"
+msgstr "{} يەرلىك تىل"
+
+msgid "Translate page"
+msgstr "بەت تەرجىمىسى"
+
+#, python-brace-format
+msgid ""
+"The page '{page_title}' was successfully submitted for translation into "
+"{locales}"
+msgstr ""
+"«{page_title}» بەت {locales} غا تەرجىمە قىلىش مۇۋەپپەقىيەتلىك يوللانغان."
+
+msgid "Publish immediately"
+msgstr "دەرھال تارقات"
+
+msgid ""
+"This will apply the updates and publish immediately, before any new "
+"translations happen."
+msgstr ""
+"يېڭى تەرجىمە يۈز بېرىشتىن ئىلگىرى يېڭىلانمىنى قوللىنىپ دەرھال تارقىتىلىدۇ."
+
+msgid "Update existing translations"
+msgstr "مەۋجۇت تەرجىمىلەرنى يېڭىلا"
+
+#, python-brace-format
+msgid "Successfully updated translations for '{object}'"
+msgstr "«{object}» نىڭ تەرجىمىسى مۇۋەپپەقىيەتلىك يېڭىلاندى"
+
+msgid "Sync translated pages"
+msgstr "تەرجىمە بەتنى قەدەمداشلا"
+
+#, python-format
+msgid "Translate '%(title)s'"
+msgstr "«%(title)s» نى تەرجىمە قىلىڭ"
+
+msgid "Sync translated snippets"
+msgstr "تەرجىمە پۇرۇچنى قەدەمداشلا"
+
+#, python-format
+msgid "Sync translations of '%(title)s'"
+msgstr "«%(title)s» نىڭ تەرجىمىسىنى قەدەمداشلا"
+
+msgid "Convert to alias page"
+msgstr "باشقا بەتكە ئايلاندۇر"
+
+msgid "Convert page to alias"
+msgstr "بەتنى باشقا ئىسىمغا ئايلاندۇر"
+
+#, python-format
+msgid ""
+"Converted page '%(title)s' to an alias of the translation source page "
+"'%(source_title)s'"
+msgstr ""
+"«%(title)s» بەتنى تەرجىمە مەنبە بېتى «%(source_title)s» نىڭ باشقا ئىسمىغا "
+"ئايلاندۇردى"
+
+msgid "Converted page to an alias of the translation source page"
+msgstr "بەتنى تەرجىمە مەنبە بېتىنىڭ باشقا ئىسمىغا ئايلاندۇردى"

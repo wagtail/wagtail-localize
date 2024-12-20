@@ -1,12 +1,12 @@
 #
 # Translators:
 # Łukasz Bołdys (Lukasz Boldys), 2021
-# Krzysztof Jeziorny <github@jeziorny.net>, 2023
 # Miłosz Miśkiewicz, 2024
+# Krzysztof Jeziorny <github@jeziorny.net>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Miłosz Miśkiewicz, 2024\n"
+"Last-Translator: Krzysztof Jeziorny <github@jeziorny.net>, 2024\n"
 "Language-Team: Polish (https://app.transifex.com/torchbox/teams/8009/pl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pl\n"
@@ -22,6 +22,9 @@ msgstr "Akcje"
 
 msgid "Apply editor lock"
 msgstr "Zastosuj blokadę edytorską"
+
+msgid "Applying editor lock"
+msgstr "Aktywuję blokadę edytorską"
 
 msgid "Cancel"
 msgstr "Anuluj"
@@ -55,6 +58,9 @@ msgstr "Wybierz obraz"
 
 msgid "Convert to alias page"
 msgstr "Konwertuj na alias strony"
+
+msgid "Converting to alias page"
+msgstr "Konwertuję na alias strony"
 
 msgid "Delete"
 msgstr "Usuń"
@@ -110,6 +116,9 @@ msgstr "Publikowanie..."
 msgid "Remove editor lock"
 msgstr "Usuń blokadę edytorską"
 
+msgid "Removing editor lock"
+msgstr "Usuwam blokadę edytorską"
+
 msgid "Revert to %s version"
 msgstr "Przywróć wersję %s"
 
@@ -127,6 +136,9 @@ msgstr "Błąd serwera"
 
 msgid "Stop Synced translation"
 msgstr "Zatrzymaj zsynchronizowane tłumaczenie"
+
+msgid "Stopping Synced translation"
+msgstr "Zatrzymuję zsynchronizowane tłumaczenie"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr "Istnieją niezapisane fragmenty. Zapisz lub anuluj je przed wyjściem."

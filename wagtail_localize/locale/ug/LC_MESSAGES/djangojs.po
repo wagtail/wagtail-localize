@@ -1,23 +1,164 @@
 #
 # Translators:
-# Azat, 2024
+# Abduqadir Abliz <sahranbay@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Azat, 2024\n"
+"Last-Translator: Abduqadir Abliz <sahranbay@gmail.com>, 2024\n"
 "Language-Team: Uyghur (https://app.transifex.com/torchbox/teams/8009/ug/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ug\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "[DELETED]"
+msgstr "[ئۆچۈرۈلدى]"
+
+msgid "Actions"
+msgstr "مەشغۇلات"
+
+msgid "Apply editor lock"
+msgstr "تەھرىرلىگۈچ قۇلۇپىنى قوللان"
+
+msgid "Applying editor lock"
+msgstr "تەھرىرلىگۈچ قۇلۇپىنى قوللىنىۋاتىدۇ"
+
+msgid "Cancel"
+msgstr "ۋاز كەچ"
+
+msgid "Change %s"
+msgstr "%s نى ئۆزگەرت"
+
+msgid "Change document"
+msgstr "پۈتۈك ئۆزگەرت"
+
+msgid "Change image"
+msgstr "سۈرەت ئۆزگەرت"
+
+msgid "Change page"
+msgstr "بەت ئۆزگەرت"
+
+msgid "Changed"
+msgstr "ئۆزگەردى"
+
+msgid "Choose a %s"
+msgstr "%s تاللىنىدۇ"
+
+msgid "Choose a document"
+msgstr "پۈتۈك تاللىنىدۇ"
+
+msgid "Choose a page"
+msgstr "بەت تاللىنىدۇ"
+
+msgid "Choose an image"
+msgstr "سۈرەت تاللىنىدۇ"
+
+msgid "Convert to alias page"
+msgstr "باشقا بەتكە ئايلاندۇر"
+
+msgid "Converting to alias page"
+msgstr "باشقا بەتكە ئايلاندۇرۇۋاتىدۇ"
+
 msgid "Delete"
-msgstr "ئۆچۈرۈش"
+msgstr "ئۆچۈر"
+
+msgid "Download PO file"
+msgstr "PO ھۆججىتىنى چۈشۈر"
+
+msgid "Download PO file and input translations offline"
+msgstr "PO ھۆججىتىنى چۈشۈرۈپ ھەمدە تەرجىمىسى تورسىز كىرگۈزۈلىدۇ"
 
 msgid "Edit"
-msgstr "تەھرىرلەش"
+msgstr "تەھرىر"
+
+msgid "Edit this %s"
+msgstr "%s نى تەھرىرلەيدۇ"
+
+msgid "Edit this document"
+msgstr "پۈتۈك تەھرىرلەيدۇ"
+
+msgid "Edit this image"
+msgstr "سۈرەت تەھرىرلەيدۇ"
+
+msgid "Edit this page"
+msgstr "بەت تەھرىرلەيدۇ"
+
+msgid "Fetching %s information..."
+msgstr "%s ئۇچۇرىغا ئېرىشىۋاتىدۇ…"
+
+msgid "Fetching document information..."
+msgstr "پۈتۈك ئۇچۇرىغا ئېرىشىۋاتىدۇ…"
+
+msgid "Fetching image information..."
+msgstr "سۈرەت ئۇچۇرىغا ئېرىشىۋاتىدۇ…"
+
+msgid "Fetching page information..."
+msgstr "بەت ئۇچۇرىغا ئېرىشىۋاتىدۇ…"
+
+msgid "Lock"
+msgstr "قۇلۇپلا"
+
+msgid "Not translated"
+msgstr "تەرجىمە قىلىنمىغان"
+
+msgid "Preview"
+msgstr "ئالدىن كۆزەت"
+
+msgid "Publish in "
+msgstr "تارقىتىش ۋاقتى "
+
+msgid "Publishing..."
+msgstr "تارقىتىلىۋاتىدۇ…"
+
+msgid "Remove editor lock"
+msgstr "تەھرىرلىگۈچ قۇلۇپىنى چىقىرىۋەت"
+
+msgid "Removing editor lock"
+msgstr "تەھرىرلىگۈچ قۇلۇپىنى چىقىرىۋەت"
+
+msgid "Revert to %s version"
+msgstr "%s تۈزىتىلمىگە ئەسلىگە كەلتۈر"
 
 msgid "Save"
-msgstr "ساقلاش"
+msgstr "ساقلا"
+
+msgid "Saving..."
+msgstr "ساقلاۋاتىدۇ…"
+
+msgid "segments translated"
+msgstr "بۆلەك تەرجىمە قىلىنغان"
+
+msgid "Server error"
+msgstr "مۇلازىمېتىر خاتالىقى"
+
+msgid "Stop Synced translation"
+msgstr "قەدەمداش تەرجىمىنى توختات"
+
+msgid "Stopping Synced translation"
+msgstr "قەدەمداش تەرجىمىنى توختىتىۋاتىدۇ"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr "ساقلانمىغان بۆلەك بار. ئايرىلىشتىن ئىلگىرى ساقلاڭ ياكى ۋاز كېچىڭ."
+
+msgid "Translate"
+msgstr "تەرجىمە"
+
+msgid "Translate all missing strings with "
+msgstr "تەرجىمە قىلىنىدىغان ھەممە ھەرپ تىزىقى "
+
+msgid "Translate with "
+msgstr "تەرجىمىسى "
+
+msgid "Unlock"
+msgstr "قۇلۇپ ئاچ"
 
 msgid "Unpublish"
-msgstr "نەشىردىن ئېلىپ تاشلاش"
+msgstr "تارقاتما"
+
+msgid "Upload PO file"
+msgstr "PO ھۆججىتىنى يۈكلە"
+
+msgid "Upload translated PO file to submit translations"
+msgstr "تەرجىمە قىلىنغان PO ھۆججىتىنى يۈكلەپ تەرجىمىنى تاپشۇرىدۇ"
+
+msgid "Uses %s version"
+msgstr "ئىشلىتىۋاتقان نەشرى %s"

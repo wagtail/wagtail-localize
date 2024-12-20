@@ -2,10 +2,11 @@
 # Translators:
 # Adam Hughes <adamhughes31@gmail.com>, 2021
 # Philip Crisp, 2024
+# Philip Lindsay-Crisp, 2024
 #
 msgid ""
 msgstr ""
-"Last-Translator: Philip Crisp, 2024\n"
+"Last-Translator: Philip Lindsay-Crisp, 2024\n"
 "Language-Team: Welsh (https://app.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: cy\n"
@@ -19,6 +20,9 @@ msgid "Actions"
 msgstr "Gweithredoedd"
 
 msgid "Apply editor lock"
+msgstr "Cymhwyso clo golygydd"
+
+msgid "Applying editor lock"
 msgstr "Cymhwyso clo golygydd"
 
 msgid "Cancel"
@@ -53,6 +57,9 @@ msgstr "Dewis delwedd"
 
 msgid "Convert to alias page"
 msgstr "Trosi i dudalen arallenw"
+
+msgid "Converting to alias page"
+msgstr "Trosi i dudalen alias"
 
 msgid "Delete"
 msgstr "Dileu"
@@ -108,6 +115,9 @@ msgstr "Wrthi'n cyhoeddi..."
 msgid "Remove editor lock"
 msgstr "Dileu clo'r golygydd"
 
+msgid "Removing editor lock"
+msgstr "Yn tynnu clo golygydd"
+
 msgid "Revert to %s version"
 msgstr "Dychwelyd i fersiwn %s"
 
@@ -125,6 +135,9 @@ msgstr "Gwall gweinydd"
 
 msgid "Stop Synced translation"
 msgstr "Stopio cyfieithiad wedi'i syncio"
+
+msgid "Stopping Synced translation"
+msgstr "Rhoi'r gorau i gyfieithu cysoni"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""
