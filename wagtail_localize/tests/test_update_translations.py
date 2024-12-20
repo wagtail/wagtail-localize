@@ -5,12 +5,18 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.forms.widgets import CheckboxInput
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
-from wagtail_localize.models import StringSegment, Translation, TranslationSource
+from wagtail_localize.models import (
+    StringSegment,
+    StringTranslation,
+    Translation,
+    TranslationSource,
+)
 from wagtail_localize.test.models import NonTranslatableSnippet, TestSnippet
 
 from .utils import assert_permission_denied, make_test_page
@@ -612,3 +618,111 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         )
         # one call from the first post, and one from above
         self.assertEqual(update_target_view_restrictions.call_count, 2)
+
+    @mock.patch(
+        "wagtail_localize.views.update_translations.get_machine_translator",
+        return_value=None,
+    )
+    def test_update_translations_form_without_machine_translator(
+        self, mocked_get_machine_translator
+    ):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.snippet_source.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(
+            response,
+            "Apply the updates and publish immediately. The changes will use the original language until translated.",
+        )
+        self.assertNotContains(response, "use_machine_translation")
+        self.assertNotIn("use_machine_translation", response.context["form"].fields)
+
+    def test_update_translations_form_with_machine_translator(self):
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.snippet_source.id],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIsInstance(
+            response.context["form"].fields["use_machine_translation"].widget,
+            CheckboxInput,
+        )
+
+        self.assertContains(
+            response,
+            "Apply the updates and publish immediately. The changes will use "
+            "the original language until translated unless you also select "
+            "&quot;Use machine translation&quot;.",
+        )
+
+    def test_post_update_page_translation_with_publish_translations_and_use_machine_translation(
+        self,
+    ):
+        self.en_blog_post.test_charfield = "Edited blog post"
+        self.en_blog_post.save_revision().publish()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {
+                "publish_translations": "on",
+                "use_machine_translation": "on",
+            },
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        # The FR version should be translated (Dummy translator will reverse) and updated
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "post blog Edited")
+
+    def test_post_update_page_translation_with_use_machine_translation(self):
+        self.en_blog_post.test_charfield = "Edited blog post"
+        self.en_blog_post.save_revision().publish()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {
+                "use_machine_translation": "on",
+            },
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "Test content")
+
+        # Check that the translation is done, awaiting publication
+        fr = Locale.objects.get(language_code="fr")
+        translation_source = TranslationSource.objects.get_for_instance_or_none(
+            self.en_blog_post
+        )
+        translation = translation_source.translations.get(target_locale=fr)
+
+        string_segment = translation.source.stringsegment_set.get(
+            string__data="Edited blog post"
+        )
+        string_translation = StringTranslation.objects.get(
+            translation_of_id=string_segment.string_id,
+            locale=fr,
+            context_id=string_segment.context_id,
+        )
+        self.assertEqual(string_translation.data, "post blog Edited")

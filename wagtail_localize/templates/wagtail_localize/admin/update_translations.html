@@ -49,6 +49,18 @@
                                 </div>
                                 <p class="help">{{ field.help_text }}</p>
                             </li>
+                        {% elif field.name == 'use_machine_translation' %}
+                            <li class="use-machine-translation-field">
+                                <div class="field boolean_field checkbox_input">
+                                    <div class="field-content">
+                                        <div class="input">
+                                            <input type="checkbox" name="{{ field.name }}" id="{{ field.auto_id }}">
+                                            <label class="use-machine-translation-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="help">{{ field.help_text }}</p>
+                            </li>
                         {% else %}
                             <li>{% include "wagtailadmin/shared/field.html" %}</li>
                         {% endif %}
