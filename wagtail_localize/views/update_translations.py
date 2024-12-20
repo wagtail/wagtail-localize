@@ -23,44 +23,35 @@ from wagtail_localize.views.edit_translation import apply_machine_translation
 from wagtail_localize.views.submit_translations import TranslationComponentManager
 
 
-HAS_MACHINE_TRANSLATOR = get_machine_translator() is not None
-
-if HAS_MACHINE_TRANSLATOR:
-    PUBLISH_TRANSLATIONS_HELP = (
-        "Apply the updates and publish immediately. The changes will use "
-        "the original language until translated unless you also select "
-        '"Use machine translation".'
-    )
-else:
-    PUBLISH_TRANSLATIONS_HELP = (
-        "Apply the updates and publish immediately. The changes will use "
-        "the original language until translated."
-    )
-
-USE_MACHINE_TRANSLATION_HELP = "Apply machine translations to the incoming changes."
-
-
 class UpdateTranslationsForm(forms.Form):
     publish_translations = forms.BooleanField(
         label=gettext_lazy("Publish immediately"),
-        help_text=gettext_lazy(PUBLISH_TRANSLATIONS_HELP),
         required=False,
     )
-    use_machine_translation = forms.BooleanField(
-        label=gettext_lazy("Use machine translation"),
-        help_text=gettext_lazy(USE_MACHINE_TRANSLATION_HELP),
-        required=False,
-    )
+    _has_machine_translator = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not HAS_MACHINE_TRANSLATOR:
-            self.fields["use_machine_translation"].widget = forms.HiddenInput()
+        self._has_machine_translator = get_machine_translator() is not None
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if cleaned_data.get("use_machine_translation") and not HAS_MACHINE_TRANSLATOR:
-            raise ValidationError(_("A machine translator could not be found."))
+        if self._has_machine_translator:
+            self.fields["publish_translations"].help_text = gettext_lazy(
+                "Apply the updates and publish immediately. The changes will use "
+                "the original language until translated unless you also select "
+                '"Use machine translation".'
+            )
+            self.fields["use_machine_translation"] = forms.BooleanField(
+                label=gettext_lazy("Use machine translation"),
+                help_text=gettext_lazy(
+                    "Apply machine translations to the incoming changes."
+                ),
+                required=False,
+            )
+        else:
+            self.fields["publish_translations"].help_text = gettext_lazy(
+                "Apply the updates and publish immediately. The changes will use "
+                "the original language until translated."
+            )
 
 
 class UpdateTranslationsView(SingleObjectMixin, TemplateView):

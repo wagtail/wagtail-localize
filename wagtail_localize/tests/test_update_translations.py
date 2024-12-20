@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.forms.widgets import CheckboxInput, HiddenInput
+from django.forms.widgets import CheckboxInput
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail.models import Locale, Page, PageViewRestriction
@@ -620,9 +620,12 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.assertEqual(update_target_view_restrictions.call_count, 2)
 
     @mock.patch(
-        "wagtail_localize.views.update_translations.HAS_MACHINE_TRANSLATOR", False
+        "wagtail_localize.views.update_translations.get_machine_translator",
+        return_value=None,
     )
-    def test_update_translations_form_without_machine_translator(self):
+    def test_update_translations_form_without_machine_translator(
+        self, mocked_get_machine_translator
+    ):
         response = self.client.get(
             reverse(
                 "wagtail_localize:update_translations",
@@ -632,10 +635,12 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
 
-        self.assertIsInstance(
-            response.context["form"].fields["use_machine_translation"].widget,
-            HiddenInput,
+        self.assertContains(
+            response,
+            "Apply the updates and publish immediately. The changes will use the original language until translated.",
         )
+        self.assertNotContains(response, "use_machine_translation")
+        self.assertNotIn("use_machine_translation", response.context["form"].fields)
 
     def test_update_translations_form_with_machine_translator(self):
         response = self.client.get(
@@ -650,6 +655,13 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         self.assertIsInstance(
             response.context["form"].fields["use_machine_translation"].widget,
             CheckboxInput,
+        )
+
+        self.assertContains(
+            response,
+            "Apply the updates and publish immediately. The changes will use "
+            "the original language until translated unless you also select "
+            "&quot;Use machine translation&quot;.",
         )
 
     def test_post_update_page_translation_with_publish_translations_and_use_machine_translation(
