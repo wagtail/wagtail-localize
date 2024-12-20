@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11] - 2025-12-20
+
+### Added
+
+- Official support for Wagtail 6.3 (including the new `ImageBlock`), Python 3.13 ([#840](https://github.com/wagtail/wagtail-localize/pull/840)) @zerolab
+- A documentation page for tips with notes on snippets ([#836](https://github.com/wagtail/wagtail-localize/pull/836)) @onno-timmerman
+- The option to directly send for machine translation when syncing translations ([#807](https://github.com/wagtail/wagtail-localize/pull/807)) @waldo90
+- Status filter to the translations report ([#830](https://github.com/wagtail/wagtail-localize/pull/830)) @alexkiro
+- Ability to configure DeepL glossaries and timeout ([#835](https://github.com/wagtail/wagtail-localize/pull/835)) @alexkiro
+
+### Changed
+
+- Skip creating `StringTranslations` if the machine translators do not provide the translation ([#819](https://github.com/wagtail/wagtail-localize/pull/819)) @tognee
+
+### Fixed
+
+- Progress in the translations report for items without strings ([#829](https://github.com/wagtail/wagtail-localize/pull/829)) @alexkiro
+
 ## [1.10] - 2024-09-08
 
 ### Added
@@ -360,8 +378,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.10...HEAD
-[1.9]: https://github.com/wagtail/wagtail-localize/compare/v1.9.1...v1.10
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.11...HEAD
+[1.11]: https://github.com/wagtail/wagtail-localize/compare/v1.10...v1.11
+[1.10]: https://github.com/wagtail/wagtail-localize/compare/v1.9.1...v1.10
 [1.9.1]: https://github.com/wagtail/wagtail-localize/compare/v1.9...v1.9.1
 [1.9]: https://github.com/wagtail/wagtail-localize/compare/v1.8...v1.9
 [1.9alpha3]: https://github.com/wagtail/wagtail-localize/compare/v1.9-alpha.2...v1.9-alpha.3
