@@ -127,6 +127,13 @@ WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
         # Optional DeepL API setting. Accepts "default", "prefer_more" or "prefer_less".\
         # For more information see the API docs https://www.deepl.com/docs-api/translate-text/
         "FORMALITY": "<Your DeepL formality preference here>",
+        # Optional DeepL Glossary IDs by (source, target) language pairs
+        "GLOSSARY_IDS": {
+            ("EN", "ES"): "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            ("EN", "FR"): "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        },
+        # Optional timeout for the request to the DeepL API
+        "TIMEOUT": 30,
     },
 }
 ```
