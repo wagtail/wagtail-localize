@@ -7,7 +7,6 @@ from unittest.mock import patch
 import polib
 
 from django.contrib.admin.utils import quote
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
@@ -113,7 +112,24 @@ def patched_translate_html(html):
 class EditTranslationTestData(WagtailTestUtils):
     @classmethod
     def setUpTestData(cls):
+        cls.user = cls.create_test_user()
         cls.moderators_group = Group.objects.get(name="Moderators")
+
+        # Convert the user into an editor
+        for permission in Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(TestSnippet)
+        ):
+            cls.moderators_group.permissions.add(permission)
+        for permission in Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)
+        ):
+            cls.moderators_group.permissions.add(permission)
+        cls.user.groups.add(cls.moderators_group)
+        cls.user.is_superuser = False
+        cls.user.save(update_fields=["is_superuser"])
+
+        cls.home_page = Page.objects.get(depth=2)
+        cls.fr_locale = Locale.objects.create(language_code="fr")
 
         if WAGTAIL_VERSION >= (6, 4, 0, "alpha", 0):
             cls.avatar_url = (
@@ -125,25 +141,10 @@ class EditTranslationTestData(WagtailTestUtils):
             )
 
     def setUp(self):
-        self.login()
-        self.user = get_user_model().objects.get()
-
-        # Convert the user into an editor
-        for permission in Permission.objects.filter(
-            content_type=ContentType.objects.get_for_model(TestSnippet)
-        ):
-            self.moderators_group.permissions.add(permission)
-        for permission in Permission.objects.filter(
-            content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)
-        ):
-            self.moderators_group.permissions.add(permission)
-        self.user.is_superuser = False
-        self.user.groups.add(self.moderators_group)
-        self.user.save()
+        self.login(username=self.user.username)
 
         # Create page
         self.snippet = TestSnippet.objects.create(field="Test snippet")
-        self.home_page = Page.objects.get(depth=2)
         self.page = self.home_page.add_child(
             instance=TestPage(
                 title="The title",
@@ -165,8 +166,6 @@ class EditTranslationTestData(WagtailTestUtils):
         )
 
         # Create translations
-        self.fr_locale = Locale.objects.create(language_code="fr")
-
         self.snippet_source, created = TranslationSource.get_or_create_from_instance(
             self.snippet
         )
@@ -3732,9 +3731,13 @@ class TestEditAlias(WagtailTestUtils, TestCase):
     that have a different locale to their original.
     """
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = cls.create_test_user()
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+
     def setUp(self):
-        self.login()
-        self.user = get_user_model().objects.get()
+        self.login(username=self.user.username)
 
         # Create a test page
         self.home_page = Page.objects.get(depth=2)
@@ -3746,7 +3749,6 @@ class TestEditAlias(WagtailTestUtils, TestCase):
         )
 
         # Set up French locale
-        self.fr_locale = Locale.objects.create(language_code="fr")
         self.fr_home_page = self.home_page.copy_for_translation(self.fr_locale)
 
     def test_edit_translatable_alias(self):
