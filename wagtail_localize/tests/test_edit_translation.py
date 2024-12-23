@@ -25,6 +25,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.panels import FieldPanel, TitleFieldPanel
 from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
@@ -110,12 +111,24 @@ def patched_translate_html(html):
 
 
 class EditTranslationTestData(WagtailTestUtils):
+    @classmethod
+    def setUpTestData(cls):
+        cls.moderators_group = Group.objects.get(name="Moderators")
+
+        if WAGTAIL_VERSION >= (6, 4, 0, "alpha", 0):
+            cls.avatar_url = (
+                "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?d=mp&s=50"
+            )
+        else:
+            cls.avatar_url = (
+                "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm"
+            )
+
     def setUp(self):
         self.login()
         self.user = get_user_model().objects.get()
 
         # Convert the user into an editor
-        self.moderators_group = Group.objects.get(name="Moderators")
         for permission in Permission.objects.filter(
             content_type=ContentType.objects.get_for_model(TestSnippet)
         ):
@@ -2305,7 +2318,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": None,
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
@@ -2353,7 +2366,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": None,
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
@@ -2401,7 +2414,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": "<script> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)",
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
@@ -2450,7 +2463,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": "Unrecognised id found in an <a> tag: a42",
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
