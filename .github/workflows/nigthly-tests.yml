@@ -7,9 +7,6 @@ on:
 
   workflow_dispatch:
 
-  pull_request:
-    branches: [main]
-
 jobs:
   nightly-test:
     # Cannot check the existence of secrets, so limiting to repository name to prevent all forks to run nightly.
