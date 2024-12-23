@@ -1,5 +1,5 @@
 """
-Called by CircleCI when the nightly build fails.
+Called by GitHub Action when the nightly build fails.
 
 This reports an error to the #nightly-build-failures Slack channel.
 """
@@ -10,16 +10,20 @@ import requests
 
 
 if "SLACK_WEBHOOK_URL" in os.environ:
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/environment-variables#default-environment-variables
+    repository = os.environ["GITHUB_REPOSITORY"]
+    run_id = os.environ["GITHUB_RUN_ID"]
+    url = f"https://github.com/{repository}/actions/runs/{run_id}"
+
     print("Reporting to #nightly-build-failures slack channel")
-    response = requests.post(
+    response = requests.post(  # noqa: S113
         os.environ["SLACK_WEBHOOK_URL"],
         json={
-            "text": "A Nightly build failed. See " + os.environ["CIRCLE_BUILD_URL"],
+            "text": f"A Nightly build failed. See {url}",
         },
-        timeout=30,
     )
 
-    print("Slack responded with:", response)
+    print(f"Slack responded with: {response}")
 
 else:
     print(

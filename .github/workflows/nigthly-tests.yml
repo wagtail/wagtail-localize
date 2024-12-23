@@ -24,7 +24,7 @@ jobs:
           python-version: '3.13'
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip tox
+          python -m pip install --upgrade pip tox requests
       - name: Test
         id: test
         continue-on-error: true
