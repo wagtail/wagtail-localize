@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.1] - 2025-12-24
+
+### Fixed
+
+- `UpdateTranslationsView` validation when machine translations are not enabled. Follow up to [#807](https://github.com/wagtail/wagtail-localize/pull/807)
+
 ## [1.11] - 2025-12-20
 
 ### Added
@@ -378,7 +384,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.11...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.11.1...HEAD
+[1.11.1]: https://github.com/wagtail/wagtail-localize/compare/v1.11...v1.11.1
 [1.11]: https://github.com/wagtail/wagtail-localize/compare/v1.10...v1.11
 [1.10]: https://github.com/wagtail/wagtail-localize/compare/v1.9.1...v1.10
 [1.9.1]: https://github.com/wagtail/wagtail-localize/compare/v1.9...v1.9.1
