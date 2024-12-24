@@ -156,7 +156,7 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
         self.object.update_from_db()
 
         enabled_translations = self.object.translations.filter(enabled=True)
-        if form.cleaned_data["use_machine_translation"]:
+        if form.cleaned_data.get("use_machine_translation"):
             machine_translator = get_machine_translator()
             for translation in enabled_translations.select_related("target_locale"):
                 apply_machine_translation(
