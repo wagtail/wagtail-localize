@@ -51,6 +51,7 @@ from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
 from wagtail.utils.decorators import xframe_options_sameorigin_override
+from wagtailmedia.blocks import AudioChooserBlock, VideoChooserBlock
 
 from wagtail_localize.compat import DATE_FORMAT
 from wagtail_localize.machine_translators import get_machine_translator
@@ -365,6 +366,9 @@ def get_segment_location_info(
 
         elif isinstance(block, ImageChooserBlock):
             return {"type": "image_chooser"}
+
+        elif isinstance(block, AudioChooserBlock) or isinstance(block, VideoChooserBlock):
+            return {"type": "media_chooser"}
 
         elif isinstance(block, SnippetChooserBlock):
             chooser_url = reverse(

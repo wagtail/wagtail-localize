@@ -61,7 +61,7 @@ export interface SnippetChooserWidget {
 }
 
 export interface OtherWidgets {
-    type: 'text' | 'image_chooser' | 'document_chooser' | 'unknown';
+    type: 'text' | 'image_chooser' | 'document_chooser' | 'media_chooser' | 'unknown';
 }
 
 export interface SegmentCommon {
