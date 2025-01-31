@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.2] - 2025-01-31
+
+### Fixed
+
+- Better handling of nested `ImageBlock`s ([#850](https://github.com/wagtail/wagtail-localize/pull/850))
+
 ## [1.11.1] - 2025-12-24
 
 ### Fixed
@@ -384,7 +390,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.11.1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.11.2...HEAD
+[1.11.2]: https://github.com/wagtail/wagtail-localize/compare/v1.11.1...v1.11.2
 [1.11.1]: https://github.com/wagtail/wagtail-localize/compare/v1.11...v1.11.1
 [1.11]: https://github.com/wagtail/wagtail-localize/compare/v1.10...v1.11
 [1.10]: https://github.com/wagtail/wagtail-localize/compare/v1.9.1...v1.10
