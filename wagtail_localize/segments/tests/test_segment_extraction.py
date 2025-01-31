@@ -360,7 +360,7 @@ class TestSegmentExtractionWithStreamField(TestCase):
             {
                 "image": test_image.pk,
                 "decorative": False,
-                "alt_text": "Test alt content",
+                "alt_text": "The Alt text",
             },
         )
 
@@ -372,7 +372,111 @@ class TestSegmentExtractionWithStreamField(TestCase):
                     f"test_streamfield.{block_id}.image", test_image.pk
                 ),
                 StringSegmentValue(
-                    f"test_streamfield.{block_id}.alt_text", "Test alt content"
+                    f"test_streamfield.{block_id}.alt_text", "The Alt text"
+                ),
+            ],
+        )
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
+    )
+    def test_imageblock_in_structblock(self):
+        block_id = uuid.uuid4()
+        test_image = get_image_model().objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_imageblock_in_structblock",
+            {
+                "the_image": {
+                    "image": test_image.pk,
+                    "decorative": False,
+                    "alt_text": "The Alt text",
+                }
+            },
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(
+            segments,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.the_image.image", test_image.pk
+                ),
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}.the_image.alt_text", "The Alt text"
+                ),
+            ],
+        )
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
+    )
+    def test_imageblock_in_listblock(self):
+        block_id = uuid.uuid4()
+        test_image = get_image_model().objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+        item_id = "11111111-1111-1111-1111-111111111111"
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_imageblock_in_listblock",
+            [
+                {
+                    "type": "item",
+                    "id": item_id,
+                    "value": {
+                        "image": test_image.pk,
+                        "decorative": False,
+                        "alt_text": "",
+                    },
+                },
+            ],
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(
+            segments,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.{item_id}.image", test_image.pk
+                ),
+            ],
+        )
+
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
+    )
+    def test_imageblock_in_streamblock(self):
+        block_id = uuid.uuid4()
+        nested_block_id = uuid.uuid4()
+        test_image = get_image_model().objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_imageblock_in_streamblock",
+            [
+                {
+                    "id": str(nested_block_id),
+                    "type": "the_image",
+                    "value": {
+                        "image": test_image.pk,
+                        "decorative": True,
+                        "alt_text": "",
+                    },
+                },
+            ],
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(
+            segments,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.{nested_block_id}.image",
+                    test_image.pk,
                 ),
             ],
         )
