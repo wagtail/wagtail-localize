@@ -214,6 +214,19 @@ telepath.register(
 )
 
 
+class ImageBlockInStructBlock(StructBlock):
+    the_image = ImageBlock(required=False)
+
+
+class ImageBlockInListBlock(blocks.ListBlock):
+    def __init__(self, search_index=True, **kwargs):
+        super().__init__(ImageBlock, search_index=search_index, **kwargs)
+
+
+class ImageBlockInStreamBlock(blocks.StreamBlock):
+    the_image = ImageBlock()
+
+
 class TestStreamBlock(blocks.StreamBlock):
     test_charblock = blocks.CharBlock(max_length=255)
     test_textblock = blocks.TextBlock(label=gettext_lazy("text block"))
@@ -276,6 +289,9 @@ class TestStreamBlock(blocks.StreamBlock):
     )
 
     test_imageblock = ImageBlock()
+    test_imageblock_in_structblock = ImageBlockInStructBlock()
+    test_imageblock_in_listblock = ImageBlockInListBlock()
+    test_imageblock_in_streamblock = ImageBlockInStreamBlock()
 
 
 class TestCustomField(models.TextField):
