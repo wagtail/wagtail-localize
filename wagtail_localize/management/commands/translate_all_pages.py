@@ -8,7 +8,6 @@ from wagtail.models import Page, Locale
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.operations import translate_object
 from wagtail_localize.views import edit_translation
-from wagtail_localize.segments.extract import extract_segments
 from wagtail_localize.machine_translators import get_machine_translator
 from typing import List, Type, Optional
 
@@ -23,7 +22,7 @@ class Command(BaseCommand):
             type=str,
             help="Source language code to copy pages from")
         parser.add_argument(
-            "exclude_models",
+            "--exclude",
             nargs="*",
             type=str,
             help="List of model names to exclude from translation")
@@ -70,7 +69,6 @@ class Command(BaseCommand):
 
             try:
                 if not dry_run:
-                    extract_segments(page.specific)
                     translate_object(page, locales)
                     (
                         TranslationSource.objects
@@ -99,7 +97,6 @@ class Command(BaseCommand):
                 continue
 
             try:
-                # Get or create translation source and extract segments
                 translation_source, created = TranslationSource.update_or_create_from_instance(page.specific)
 
                 # Get translation
@@ -157,7 +154,7 @@ class Command(BaseCommand):
             self.stderr.write(f"Error: Locale with language code {options['language_code']} not found")
             return
 
-        exclude_models = self.get_exclude_models(options['exclude_models'])
+        exclude_models = self.get_exclude_models(options['exclude'] or [])
 
         admin_user = self.get_admin_user()
         if not admin_user:
