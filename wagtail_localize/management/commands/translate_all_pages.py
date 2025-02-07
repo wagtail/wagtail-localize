@@ -92,7 +92,7 @@ class Command(BaseCommand):
         """Apply machine translation to copied pages."""
         machine_translator = get_machine_translator()
 
-        for page in pages_to_translate[:15]:
+        for page in pages_to_translate:
             if isinstance(page.specific, tuple(excluded_models)):
                 continue
 
