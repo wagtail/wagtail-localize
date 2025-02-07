@@ -1,22 +1,22 @@
 import logging
+from typing import List, Type, Optional, Callable, TypeVar
 from django.db import models
 from django.apps import apps
 from django.core.management.base import BaseCommand
-from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from wagtail.models import Page, Locale
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.operations import translate_object
 from wagtail_localize.views import edit_translation
 from wagtail_localize.machine_translators import get_machine_translator
-from typing import List, Type, Optional
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
+T = TypeVar('T', bound=models.Model)
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument(
             "language_code",
             type=str,
@@ -31,8 +31,7 @@ class Command(BaseCommand):
             action='store_true',
             help="Run without making any actual changes")
 
-    def get_exclude_models(self, model_names: List[str]) -> List[Type[models.Model]]:
-        """ Convert model names to actual model classes."""
+    def _get_exclude_models(self, model_names: List[str]) -> List[Type[models.Model]]:
         exclude_models = []
         for model_name in model_names:
             found_model = None
@@ -48,129 +47,113 @@ class Command(BaseCommand):
                 self.stderr.write(f"Model '{model_name}' not found in any installed app.")
         return exclude_models
 
-    def get_admin_user(self) -> Optional[User]:
+    def _get_admin_user(self) -> Optional[User]:
         admin_user = User.objects.filter(is_superuser=True).first()
         if not admin_user:
             self.stderr.write("Error: No superuser found in the system.")
-            return None
         return admin_user
 
-    def copy_pages(self, admin_user, pages_locale_language: models.QuerySet, exclude_models: List[Type[models.Model]], dry_run: bool):
-        """Copy pages to all other locales."""
+    def _handle_page_operation(self, page: Page, operation_func: Callable,
+                               error_msg: str, dry_run: bool) -> bool:
+        if dry_run:
+            self.stdout.write(f"Would process page: {page.title} (ID: {page.id})")
+            return True
+
+        try:
+            operation_func()
+            self.stdout.write(f"Processed page: {page.title} (ID: {page.id})")
+            return True
+        except Exception as e:
+            logger.error(f"{error_msg}: {page.title} (ID: {page.id}): {e}")
+            return False
+
+    def _should_process_page(self, page: Page, exclude_models: List[Type[models.Model]]) -> bool:
+        return not (page.is_root() or isinstance(page.specific, tuple(exclude_models)))
+
+    def _copy_page(self, page: Page, admin_user: User, locales: models.QuerySet) -> None:
+        translate_object(page, locales)
+        translation_source = (TranslationSource.objects
+        .update_or_create_from_instance(page.specific)
+        .create_or_update_translation(
+            locale=page.locale,
+            user=admin_user,
+            publish=True
+        ))
+        return translation_source
+
+    def copy_pages(self, admin_user: User, pages_locale_language: models.QuerySet,
+                   exclude_models: List[Type[models.Model]], dry_run: bool) -> None:
         locales = Locale.objects.all()
 
         for page in pages_locale_language:
-            if page.is_root():
+            if not self._should_process_page(page, exclude_models):
                 continue
 
-            if isinstance(page.specific, tuple(exclude_models)):
-                logger.info(f"Skipped excluded model: {page.specific._meta.model_name} (ID: {page.id})")
-                continue
+            self._handle_page_operation(
+                page,
+                lambda: self._copy_page(page, admin_user, locales),
+                "Error processing page",
+                dry_run
+            )
 
-            try:
-                if not dry_run:
-                    translate_object(page, locales)
-                    (
-                        TranslationSource.objects
-                        .update_or_create_from_instance(page.specific)
-                        .create_or_update_translation(
-                            locale=page.locale,
-                            user=admin_user,
-                            publish=True
-                        )
-                    )
-                self.stdout.write(f"Processed page: {page.title} (ID: {page.id})")
-            except TypeError as e:
-                logger.error(f"TypeError on page: {page.title} (ID: {page.id}): {e}")
-                continue
-            except Exception as e:
-                logger.error(f"Error processing page: {page.title} (ID: {page.id}): {e}")
-                continue
-
-    def translate_pages(self, pages_to_translate: models.QuerySet, excluded_models: List[Type[models.Model]],
-                        admin_user: User, dry_run: bool):
-        """Apply machine translation to copied pages."""
+    def _translate_page(self, page: Page, admin_user: User) -> bool:
         machine_translator = get_machine_translator()
+        translation_source, _ = TranslationSource.update_or_create_from_instance(page.specific)
 
+        translation = Translation.objects.get(
+            source__object_id=page.translation_key,
+            target_locale_id=page.locale_id,
+            enabled=True
+        )
+
+        if edit_translation.apply_machine_translation(
+            translation.id,
+            admin_user,
+            machine_translator
+        ):
+            translation_source.create_or_update_translation(
+                locale=page.locale,
+                user=admin_user,
+                publish=True
+            )
+            return True
+        return False
+
+    def translate_pages(self, pages_to_translate: models.QuerySet,
+                        excluded_models: List[Type[models.Model]],
+                        admin_user: User, dry_run: bool) -> None:
         for page in pages_to_translate:
-            if isinstance(page.specific, tuple(excluded_models)):
+            if not self._should_process_page(page, excluded_models):
                 continue
 
-            try:
-                translation_source, created = TranslationSource.update_or_create_from_instance(page.specific)
+            self._handle_page_operation(
+                page,
+                lambda: self._translate_page(page, admin_user),
+                "Error processing translation",
+                dry_run
+            )
 
-                # Get translation
-                translation = Translation.objects.get(
-                    source__object_id=page.translation_key,
-                    target_locale_id=page.locale_id,
-                    enabled=True
-                )
-
-                if not dry_run:
-                    try:
-                        # Apply machine translation
-                        if edit_translation.apply_machine_translation(
-                            translation.id,
-                            admin_user,
-                            machine_translator
-                        ):
-                            self.stdout.write(
-                                f"Successfully translated page {page.title} with {machine_translator.display_name}")
-
-                            try:
-                                # Create or update the translation
-                                translation_source.create_or_update_translation(
-                                    locale=page.locale,
-                                    user=admin_user,
-                                    publish=True
-                                )
-
-                                self.stdout.write(f"Successfully saved and published translation for {page.title}")
-
-                            except ValidationError as ve:
-                                self.stderr.write(f"Validation error while saving page {page.title}: {str(ve)}")
-                            except Exception as e:
-                                self.stderr.write(f"Error while saving page {page.title}: {str(e)}")
-                        else:
-                            self.stdout.write(f"No new translations needed for page {page.title}")
-
-                    except Exception as e:
-                        self.stderr.write(f"Error during translation process for page {page.title}: {str(e)}")
-                else:
-                    self.stdout.write(f"Would translate page: {page.title} (ID: {page.id})")
-
-            except Translation.DoesNotExist:
-                logger.warning(
-                    f"Translation object does not exist or is not enabled for page {page.title} (ID: {page.id})")
-            except Exception as e:
-                logger.error(f"Error processing translation for page {page.title} (ID: {page.id}): {str(e)}")
-
-        self.stdout.write("Completed translation process")
-
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         try:
             Locale.objects.get(language_code=options['language_code'])
         except Locale.DoesNotExist:
             self.stderr.write(f"Error: Locale with language code {options['language_code']} not found")
             return
 
-        exclude_models = self.get_exclude_models(options['exclude'] or [])
-
-        admin_user = self.get_admin_user()
+        admin_user = self._get_admin_user()
         if not admin_user:
             return
 
+        exclude_models = self._get_exclude_models(options['exclude'] or [])
         pages_locale_language = Page.objects.filter(locale__language_code=options['language_code'])
         pages_to_translate = Page.objects.exclude(locale__language_code=options['language_code'])
 
         if options['dry_run']:
             self.stdout.write("Running in dry-run mode - no changes will be made")
 
-        # Step 1: Copy pages to other locales
         self.stdout.write("Starting page copy process...")
         self.copy_pages(admin_user, pages_locale_language, exclude_models, options['dry_run'])
 
-        # Step 2: Apply machine translation
         self.stdout.write("Starting translation process...")
         self.translate_pages(pages_to_translate, exclude_models, admin_user, options['dry_run'])
 
