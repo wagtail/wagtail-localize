@@ -7,7 +7,6 @@ from unittest.mock import patch
 import polib
 
 from django.contrib.admin.utils import quote
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
@@ -25,6 +24,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.panels import FieldPanel, TitleFieldPanel
 from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
@@ -110,27 +110,41 @@ def patched_translate_html(html):
 
 
 class EditTranslationTestData(WagtailTestUtils):
-    def setUp(self):
-        self.login()
-        self.user = get_user_model().objects.get()
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = cls.create_test_user()
+        cls.moderators_group = Group.objects.get(name="Moderators")
 
         # Convert the user into an editor
-        self.moderators_group = Group.objects.get(name="Moderators")
         for permission in Permission.objects.filter(
             content_type=ContentType.objects.get_for_model(TestSnippet)
         ):
-            self.moderators_group.permissions.add(permission)
+            cls.moderators_group.permissions.add(permission)
         for permission in Permission.objects.filter(
             content_type=ContentType.objects.get_for_model(NonTranslatableSnippet)
         ):
-            self.moderators_group.permissions.add(permission)
-        self.user.is_superuser = False
-        self.user.groups.add(self.moderators_group)
-        self.user.save()
+            cls.moderators_group.permissions.add(permission)
+        cls.user.groups.add(cls.moderators_group)
+        cls.user.is_superuser = False
+        cls.user.save(update_fields=["is_superuser"])
+
+        cls.home_page = Page.objects.get(depth=2)
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+
+        if WAGTAIL_VERSION >= (6, 4, 0, "alpha", 0):
+            cls.avatar_url = (
+                "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?d=mp&s=50"
+            )
+        else:
+            cls.avatar_url = (
+                "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm"
+            )
+
+    def setUp(self):
+        self.login(username=self.user.username)
 
         # Create page
         self.snippet = TestSnippet.objects.create(field="Test snippet")
-        self.home_page = Page.objects.get(depth=2)
         self.page = self.home_page.add_child(
             instance=TestPage(
                 title="The title",
@@ -152,8 +166,6 @@ class EditTranslationTestData(WagtailTestUtils):
         )
 
         # Create translations
-        self.fr_locale = Locale.objects.create(language_code="fr")
-
         self.snippet_source, created = TranslationSource.get_or_create_from_instance(
             self.snippet
         )
@@ -2305,7 +2317,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": None,
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
@@ -2353,7 +2365,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": None,
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
@@ -2401,7 +2413,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": "<script> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)",
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
@@ -2450,7 +2462,7 @@ class TestEditStringTranslationAPIView(EditTranslationTestData, APITestCase):
                 "error": "Unrecognised id found in an <a> tag: a42",
                 "comment": "Translated manually on 21 August 2020",
                 "last_translated_by": {
-                    "avatar_url": "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm",
+                    "avatar_url": self.avatar_url,
                     "full_name": "",
                 },
             },
@@ -3719,9 +3731,13 @@ class TestEditAlias(WagtailTestUtils, TestCase):
     that have a different locale to their original.
     """
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = cls.create_test_user()
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+
     def setUp(self):
-        self.login()
-        self.user = get_user_model().objects.get()
+        self.login(username=self.user.username)
 
         # Create a test page
         self.home_page = Page.objects.get(depth=2)
@@ -3733,7 +3749,6 @@ class TestEditAlias(WagtailTestUtils, TestCase):
         )
 
         # Set up French locale
-        self.fr_locale = Locale.objects.create(language_code="fr")
         self.fr_home_page = self.home_page.copy_for_translation(self.fr_locale)
 
     def test_edit_translatable_alias(self):
