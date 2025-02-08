@@ -229,6 +229,12 @@ class StreamFieldSegmentsWriter:
             field_name, segment = segment.unwrap()
             segments_by_field[field_name].append(segment)
 
+        image_segments = segments_by_field.pop("image", None)
+        if image_segments is not None:
+            image_block_value = self.handle_related_object_block(
+                image_block_value, image_segments
+            )
+
         # ImageBlock field -> Image field.
         field_map = {"alt_text": "contextual_alt_text", "decorative": "decorative"}
         for field_name, segments in segments_by_field.items():
