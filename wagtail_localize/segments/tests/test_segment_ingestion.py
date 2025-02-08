@@ -568,6 +568,9 @@ class TestSegmentIngestionWithStreamField(TestCase):
         test_image = get_image_model().objects.create(
             title="Test image", file=get_test_image_file()
         )
+        test_image2 = get_image_model().objects.create(
+            title="Test image2", file=get_test_image_file()
+        )
         page = make_test_page_with_streamfield_block(
             str(block_id),
             "test_imageblock",
@@ -586,6 +589,10 @@ class TestSegmentIngestionWithStreamField(TestCase):
                     f"test_streamfield.{block_id}.alt_text",
                     "Tester le alt_text contenu",
                 ),
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.image",
+                    test_image2.id,
+                ),
             ],
         )
 
@@ -599,7 +606,7 @@ class TestSegmentIngestionWithStreamField(TestCase):
                     "id": str(block_id),
                     "type": "test_imageblock",
                     "value": {
-                        "image": 1,
+                        "image": 2,
                         "alt_text": "Tester le alt_text contenu",
                         "decorative": False,
                     },
