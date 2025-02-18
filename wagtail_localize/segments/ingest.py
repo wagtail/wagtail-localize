@@ -212,9 +212,10 @@ class StreamFieldSegmentsWriter:
 
         for block_index, block in enumerate(list_block.bound_blocks):
             block_segments = segments_by_block[block.id]
-            list_block.bound_blocks[block_index].value = self.handle_block(
-                block.block, block.value, block_segments
-            )
+            if len(block_segments):
+                list_block.bound_blocks[block_index].value = self.handle_block(
+                    block.block, block.value, block_segments
+                )
 
         return list_block
 
