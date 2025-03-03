@@ -35,6 +35,7 @@ from wagtail_localize.test.models import (
     TestNoDraftModel,
     TestPage,
     TestParentalSnippet,
+    TestRevisionsButNoDraftModel,
     TestSnippet,
     TestUUIDModel,
     TestUUIDSnippet,
@@ -689,6 +690,27 @@ class TestSaveTarget(TestCase):
 
     def test_save_target_snippet(self):
         snippet = TestSnippet.objects.create(field="Test content")
+        source, created = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source,
+            target_locale=self.fr_locale,
+        )
+
+        field_context = TranslationContext.objects.get(path="field")
+        StringTranslation.objects.create(
+            translation_of=self.test_content_string,
+            context=field_context,
+            locale=self.fr_locale,
+            data="Contenu de test",
+        )
+
+        translation.save_target()
+
+        translated_snippet = snippet.get_translation(self.fr_locale)
+        self.assertEqual(translated_snippet.field, "Contenu de test")
+
+    def test_save_target_with_revisions_but_not_draft(self):
+        snippet = TestRevisionsButNoDraftModel.objects.create(field="Test content")
         source, created = TranslationSource.get_or_create_from_instance(snippet)
         translation = Translation.objects.create(
             source=source,

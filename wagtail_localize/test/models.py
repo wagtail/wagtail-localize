@@ -77,6 +77,18 @@ class TestNoDraftModel(TranslatableMixin):
     ]
 
 
+class TestRevisionsButNoDraftModel(TranslatableMixin, RevisionMixin):
+    field = models.CharField(max_length=20, blank=True)
+
+    translatable_fields = [
+        TranslatableField("field"),
+    ]
+
+    panels = [
+        FieldPanel("field"),
+    ]
+
+
 class TestSnippetOrderable(TranslatableMixin, Orderable):
     parent = ParentalKey(
         "TestSnippet",
