@@ -70,16 +70,17 @@ class Command(BaseCommand):
     def _should_process_page(self, page: Page, exclude_models: List[Type[models.Model]]) -> bool:
         return not (page.is_root() or isinstance(page.specific, tuple(exclude_models)))
 
-    def _copy_page(self, page: Page, admin_user: User, locales: models.QuerySet) -> None:
+    def _copy_page(self, page: Page, admin_user: User, locales: models.QuerySet) -> bool:
         translate_object(page, locales)
-        translation_source = (TranslationSource.objects
-        .update_or_create_from_instance(page.specific)
-        .create_or_update_translation(
+        translation_source, created = TranslationSource.get_or_create_from_instance(page.specific)
+        translation_source.create_or_update_translation(
             locale=page.locale,
             user=admin_user,
-            publish=True
-        ))
-        return translation_source
+            publish=True,
+            fallback=True
+        )
+        translation_source.update_from_db()
+        return True
 
     def copy_pages(self, admin_user: User, pages_locale_language: models.QuerySet,
                    exclude_models: List[Type[models.Model]], dry_run: bool) -> None:
@@ -100,11 +101,14 @@ class Command(BaseCommand):
         machine_translator = get_machine_translator()
         translation_source, _ = TranslationSource.update_or_create_from_instance(page.specific)
 
-        translation = Translation.objects.get(
+        translation = Translation.objects.filter(
             source__object_id=page.translation_key,
             target_locale_id=page.locale_id,
             enabled=True
-        )
+        ).first()
+
+        if not translation:
+            return False
 
         if edit_translation.apply_machine_translation(
             translation.id,
@@ -114,7 +118,8 @@ class Command(BaseCommand):
             translation_source.create_or_update_translation(
                 locale=page.locale,
                 user=admin_user,
-                publish=True
+                publish=True,
+                fallback=True
             )
             return True
         return False
@@ -146,7 +151,6 @@ class Command(BaseCommand):
 
         exclude_models = self._get_exclude_models(options['exclude'] or [])
         pages_locale_language = Page.objects.filter(locale__language_code=options['language_code'])
-        pages_to_translate = Page.objects.exclude(locale__language_code=options['language_code'])
 
         if options['dry_run']:
             self.stdout.write("Running in dry-run mode - no changes will be made")
@@ -154,6 +158,7 @@ class Command(BaseCommand):
         self.stdout.write("Starting page copy process...")
         self.copy_pages(admin_user, pages_locale_language, exclude_models, options['dry_run'])
 
+        pages_to_translate = Page.objects.exclude(locale__language_code=options['language_code'])
         self.stdout.write("Starting translation process...")
         self.translate_pages(pages_to_translate, exclude_models, admin_user, options['dry_run'])
 
