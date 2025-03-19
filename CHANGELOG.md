@@ -7,13 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Tox testing for Wagtail 6.4
-
-### Removed
-
-- Tox testing for Wagtail 6.2
+- Added Wagtail 6.4 to, and removed 6.2 from the test matrix.
 
 ## [1.11.3] - 2025-02-08
 
