@@ -256,8 +256,7 @@ class TabHelper:
             elif (
                 isinstance(edit_handler, InlinePanel) and edit_handler.model is not None
             ):
-                # we can only reliably get panel definitions with the relevant instance data in Wagtail 3.0+
-                for panel in edit_handler.panel_definitions:
+                for panel in edit_handler.child_edit_handler.children:
                     walk(panel)
 
         walk(self.edit_handler)
