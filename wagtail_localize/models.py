@@ -803,8 +803,7 @@ class TranslationSource(models.Model):
                     if publish:
                         transaction.on_commit(new_revision.publish)
 
-                # Note: DraftStateMixin requires RevisionMixin, so RevisionMixin is checked here for typing
-                elif isinstance(translation, RevisionMixin):
+                elif isinstance(translation, DraftStateMixin):
                     # We copied another instance which may be live, so we make sure this one matches the desired state
                     translation.live = publish
                     translation.save()
@@ -814,6 +813,13 @@ class TranslationSource(models.Model):
 
                     if publish:
                         transaction.on_commit(new_revision.publish)
+
+                elif isinstance(translation, RevisionMixin):
+                    translation.save()
+
+                    # Create a new revision of the Snippet
+                    # - Models which are not subclasses of DraftStateMixin are not publishable
+                    new_revision = translation.save_revision(user=user)
 
                 else:
                     # Note: we don't need to run full_clean for DraftStateMixin objects or Pages as Wagtail does that in RevisionMixin.save_revision()
