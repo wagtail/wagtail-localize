@@ -707,6 +707,134 @@ class TestSegmentIngestionWithStreamField(TestCase):
             ],
         )
 
+    def test_listblock_with_nontranslated_pagechooserblock(self):
+        block_id = uuid.uuid4()
+        nested_block_id = uuid.uuid4()
+        pageblock_id = uuid.uuid4()
+        pageblock_id_2 = uuid.uuid4()
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_nestedstreamblock",
+            [
+                {
+                    "id": str(nested_block_id),
+                    "type": "chooser_in_list",
+                    "value": [
+                        {"id": str(pageblock_id), "type": "item", "value": 1},
+                        {"id": str(pageblock_id_2), "type": "item", "value": 2},
+                    ],
+                }
+            ],
+        )
+
+        translated_page = page.copy_for_translation(self.locale)
+
+        ingest_segments(
+            page,
+            translated_page,
+            self.src_locale,
+            self.locale,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.{nested_block_id}.{pageblock_id}",
+                    3,
+                ),
+            ],
+        )
+
+        translated_page.save()
+        translated_page.refresh_from_db()
+
+        self.assertEqual(
+            list(translated_page.test_streamfield.raw_data),
+            [
+                {
+                    "id": str(block_id),
+                    "type": "test_nestedstreamblock",
+                    "value": [
+                        {
+                            "id": str(nested_block_id),
+                            "type": "chooser_in_list",
+                            "value": [
+                                {"id": str(pageblock_id), "type": "item", "value": 3},
+                                {"id": str(pageblock_id_2), "type": "item", "value": 2},
+                            ],
+                        }
+                    ],
+                }
+            ],
+        )
+
+    def test_listblock_with_nontranslated_imageblock(self):
+        block_id = uuid.uuid4()
+        imageblock_id = uuid.uuid4()
+        imageblock_id_2 = uuid.uuid4()
+        test_image = get_image_model().objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+        test_image2 = get_image_model().objects.create(
+            title="Test image2", file=get_test_image_file()
+        )
+        test_image3 = get_image_model().objects.create(
+            title="Test image3", file=get_test_image_file()
+        )
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_image_chooser_in_listblock",
+            [
+                {
+                    "id": str(imageblock_id),
+                    "type": "item",
+                    "value": test_image.id,
+                },
+                {
+                    "id": str(imageblock_id_2),
+                    "type": "item",
+                    "value": test_image2.id,
+                },
+            ],
+        )
+
+        translated_page = page.copy_for_translation(self.locale)
+
+        ingest_segments(
+            page,
+            translated_page,
+            self.src_locale,
+            self.locale,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.{imageblock_id}",
+                    test_image3.id,
+                ),
+            ],
+        )
+
+        translated_page.save()
+        translated_page.refresh_from_db()
+
+        self.assertEqual(
+            list(translated_page.test_streamfield.raw_data),
+            [
+                {
+                    "id": str(block_id),
+                    "type": "test_image_chooser_in_listblock",
+                    "value": [
+                        {
+                            "id": str(imageblock_id),
+                            "type": "item",
+                            "value": test_image3.id,
+                        },
+                        {
+                            "id": str(imageblock_id_2),
+                            "type": "item",
+                            "value": test_image2.id,
+                        },
+                    ],
+                }
+            ],
+        )
+
     def test_customstructblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
