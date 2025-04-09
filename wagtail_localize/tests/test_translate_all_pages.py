@@ -4,7 +4,9 @@ from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
 from wagtail.models import Locale, Page
+
 from wagtail_localize.test.models import TestPage
+
 
 User = get_user_model()
 
@@ -50,13 +52,25 @@ class TranslateAllPagesCommandTest(TestCase):
 
         # Assert no translated pages
         self.assertEqual(Page.objects.exclude(locale=self.default_locale).count(), 0)
-        self.assertEqual(TestPage.objects.exclude(locale=self.default_locale).count(), 0)
+        self.assertEqual(
+            TestPage.objects.exclude(locale=self.default_locale).count(), 0
+        )
 
     def test_translate_all_pages_invalid_exclude_model(self):
         out = StringIO()
         err = StringIO()
 
-        call_command('translate_all_pages', 'en', '--exclude', 'InvalidModel', verbosity=3, stdout=out, stderr=err)
+        call_command(
+            "translate_all_pages",
+            "en",
+            "--exclude",
+            "InvalidModel",
+            verbosity=3,
+            stdout=out,
+            stderr=err,
+        )
 
-        self.assertIn("Model 'InvalidModel' not found in any installed app", err.getvalue())
+        self.assertIn(
+            "Model 'InvalidModel' not found in any installed app", err.getvalue()
+        )
         self.assertEqual(Page.objects.exclude(locale=self.default_locale).count(), 2)
