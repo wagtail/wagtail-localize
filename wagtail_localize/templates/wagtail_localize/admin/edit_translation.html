@@ -53,6 +53,7 @@
             window.chooserUrls = {
                 imageChooser: "{% url "wagtailimages_chooser:choose" %}",
                 documentChooser: "{% url "wagtaildocs_chooser:choose" %}",
+                mediaChooser: "{% url "wagtailmedia:chooser" %}",
                 pageChooser: "{% url "wagtailadmin_choose_page" %}",
             }
         }
@@ -65,6 +66,8 @@
     <script src="{% versioned_static 'wagtaildocs/js/document-chooser-modal.js' %}"></script>
     <script src="{% versioned_static 'wagtaildocs/js/document-chooser.js' %}"></script>
     <script src="{% versioned_static 'wagtailadmin/js/chooser-modal.js' %}"></script>
+    <script src="{% versioned_static 'wagtailmedia/js/media-chooser-modal.js' %}"></script>
+    <script src="{% versioned_static 'wagtailmedia/js/tabs.js' %}"></script>
     <script src="{% versioned_static 'wagtailsnippets/js/snippet-chooser.js' %}"></script>
     <script src="{% versioned_static 'wagtail_localize/js/wagtail-localize.js' %}"></script>
 {% endblock %}
