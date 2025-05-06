@@ -27,7 +27,8 @@ classifiers = [
     "Framework :: Django :: 5.1",
     "Framework :: Wagtail",
     "Framework :: Wagtail :: 5",
-    "Framework :: Wagtail :: 6"
+    "Framework :: Wagtail :: 6",
+    "Framework :: Wagtail :: 7"
 ]
 dynamic = ["version"]
 requires-python = ">=3.9"
@@ -59,7 +60,7 @@ testing = [
     "coverage>=7.0,<8.0"
 ]
 linting = [
-    "pre-commit>=5.0,<6"
+    "pre-commit>=4.2.0,<6"
 ]
 
 [project.urls]
