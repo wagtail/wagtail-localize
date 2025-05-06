@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Added Wagtail 6.4 to, and removed 6.2 from the test matrix.
+
 ## [1.11.3] - 2025-02-08
 
 ### Fixed
