@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Yin Guanhao <sopium@mysterious.site>, 2023\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/torchbox/teams/"
 "8009/zh_CN/)\n"
@@ -246,11 +246,6 @@ msgstr "页面 '{page_title}' 的翻译成功提交到 {locales}"
 
 msgid "Publish immediately"
 msgstr "立即发布"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr "这将立即应用更改并发布，不等待新的翻译完成。"
 
 msgid "Update existing translations"
 msgstr "更新已存在的翻译"

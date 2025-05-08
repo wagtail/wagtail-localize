@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.1] - 2025-05-08
+
+### Changed
+
+- Updated action button used in listings for Wagtail 7.0 (which deprecated the specialised listing button classes)
+- Updated translations
+
+### Removed
+
+- Support and shims for Wagtail < 6.3
+
 ## [1.12] - 2025-05-06
 
 ### Changed
@@ -17,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix regression in `InlinePanel` handling on Wagtail 7.9 ([#862](https://github.com/wagtail/wagtail-localize/pull/862)) @gasman
 - Fix crash when using Snippets with `RevisionMixin` but not also `DraftStateMixin`. ([#859](https://github.com/wagtail/wagtail-localize/pull/859)) @alexalligator
-  alexalligator
 - Fix `IndexError` when a translation with overridden and unchanged chooser inside a `ListBlock` is published ([#856]https://github.com/wagtail/wagtail-localize/pull/856)) @murray3k
 
 ## [1.11.3] - 2025-02-08
@@ -409,7 +419,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.12...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.12.1...HEAD
+[1.12.1]: https://github.com/wagtail/wagtail-localize/compare/v1.12...v1.12.1
 [1.12]: https://github.com/wagtail/wagtail-localize/compare/v1.11.3...v1.12
 [1.11.3]: https://github.com/wagtail/wagtail-localize/compare/v1.11.2...v1.11.3
 [1.11.2]: https://github.com/wagtail/wagtail-localize/compare/v1.11.1...v1.11.2

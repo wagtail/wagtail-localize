@@ -3,14 +3,18 @@
 # Jihan Chung <jihanchung20@gmail.com>, 2021
 # Kyu Choi, 2022
 # Kyungil Choi <hanpama@gmail.com>, 2024
+# sl kim <vizuan@gmail.com>, 2025
 #
 msgid ""
 msgstr ""
-"Last-Translator: Kyungil Choi <hanpama@gmail.com>, 2024\n"
+"Last-Translator: sl kim <vizuan@gmail.com>, 2025\n"
 "Language-Team: Korean (https://app.transifex.com/torchbox/teams/8009/ko/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "[DELETED]"
+msgstr "[삭제됨]"
 
 msgid "Actions"
 msgstr "액션"

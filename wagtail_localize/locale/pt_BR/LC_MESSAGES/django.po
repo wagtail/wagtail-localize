@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Luiz Boaretto <lboaretto@gmail.com>, 2024\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/torchbox/teams/"
 "8009/pt_BR/)\n"
@@ -283,13 +283,6 @@ msgstr ""
 
 msgid "Publish immediately"
 msgstr "Publicar imediatamente"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Isto irá aplicar atualizações e publicar imediatamente, antes das novas "
-"traduções estarem prontas."
 
 msgid "Update existing translations"
 msgstr "Atualizar traduções existentes"

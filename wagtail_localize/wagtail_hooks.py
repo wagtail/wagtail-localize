@@ -14,11 +14,9 @@ from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
-from wagtail.admin.widgets import ListingButton
 from wagtail.log_actions import LogFormatter
 from wagtail.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
-from wagtail.snippets.widgets import SnippetListingButton
 
 # Import synctree so it can register its signal handler
 from . import synctree  # noqa: F401
@@ -31,6 +29,14 @@ from .views import (
     submit_translations,
     update_translations,
 )
+
+
+if WAGTAIL_VERSION >= (7, 0):
+    from wagtail.admin.widgets.button import Button as ListingButton
+    from wagtail.admin.widgets.button import Button as SnippetListingButton
+else:
+    from wagtail.admin.widgets import ListingButton
+    from wagtail.snippets.widgets import SnippetListingButton
 
 
 @hooks.register("register_admin_urls")
@@ -116,17 +122,12 @@ def register_admin_urls():
             snippets_api.SnippetViewSet.as_view({"get": "retrieve"}),
             name="snippets_api_detail",
         ),
+        path(
+            "reports/translations/results/",
+            report.TranslationsReportView.as_view(results_only=True),
+            name="translations_report_results",
+        ),
     ]
-
-    if WAGTAIL_VERSION >= (6, 2):
-        # Add a results-only view to add support for AJAX-based filtering
-        urls.append(
-            path(
-                "reports/translations/results/",
-                report.TranslationsReportView.as_view(results_only=True),
-                name="translations_report_results",
-            ),
-        )
 
     return [
         path(

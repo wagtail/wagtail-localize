@@ -31,7 +31,6 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.admin import messages
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -919,7 +918,6 @@ def edit_translation(request, translation: Translation, instance):
         for translated_instance in translations
     ]
 
-    has_legacy_action_menu = WAGTAIL_VERSION < (6, 0)
     context = {
         "translation": translation,
         "instance": instance,
@@ -1036,11 +1034,9 @@ def edit_translation(request, translation: Translation, instance):
                     many=True,
                     context={"translation_source": translation.source},
                 ).data,
-                "hasLegacyActionMenu": has_legacy_action_menu,
             },
             cls=DjangoJSONEncoder,
         ),
-        "has_legacy_action_menu": has_legacy_action_menu,
     }
 
     side_panels = []

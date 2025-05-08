@@ -3,12 +3,13 @@
 # Karl Hobley <karl@torchbox.com>, 2021
 # Benoît Bar <bar.benoit@gmail.com>, 2021
 # Loic Teixeira, 2023
+# Sébastien Corbin <seb.corbin@gmail.com>, 2025
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
-"Last-Translator: Loic Teixeira, 2023\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
+"Last-Translator: Sébastien Corbin <seb.corbin@gmail.com>, 2025\n"
 "Language-Team: French (https://app.transifex.com/torchbox/teams/8009/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -285,11 +286,25 @@ msgid "Publish immediately"
 msgstr "Publier immédiatement"
 
 msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
 msgstr ""
-"Ceci appliquera et publiera immédiatement les modifications, avant que les "
-"nouvelles traductions ne soient effectuées."
+"Appliquer les mises à jour et publier immédiatement. Les changements "
+"utiliseront la langue originale jusqu'à ce qu'ils soient traduits, vous "
+"pouvez également sélectionner \"Utiliser la traduction automatique\"."
+
+msgid "Use machine translation"
+msgstr "Utiliser la traduction automatique"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Appliquer la traduction automatique aux nouvelles modifications."
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Appliquer les mises à jour et publier immédiatement. Les changements "
+"utiliseront la langue originale jusqu'à ce qu'ils soient traduits."
 
 msgid "Update existing translations"
 msgstr "Mettre à jour les traductions existantes"

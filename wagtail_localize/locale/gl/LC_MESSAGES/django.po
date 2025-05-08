@@ -1,13 +1,13 @@
 #
 # Translators:
-# X Bello <xbello@gmail.com>, 2022
 # Amós Oviedo <amos.oviedo@gmail.com>, 2023
+# X Bello <xbello@gmail.com>, 2024
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
-"Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2023\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
+"Last-Translator: X Bello <xbello@gmail.com>, 2024\n"
 "Language-Team: Galician (https://app.transifex.com/torchbox/teams/8009/gl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: gl\n"
@@ -278,11 +278,25 @@ msgid "Publish immediately"
 msgstr "Publicar inmediatamente"
 
 msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
 msgstr ""
-"Esto aplicará as actualizacións e publicará inmediatamente, antes de que se "
-"traduza nada."
+"Aplicar as actualizacións e publicar de inmediato. Os cambios usarán a "
+"lingua orixinal ata que se traduzan, a menos que tamén seleccione \"Usar "
+"tradución automática\"."
+
+msgid "Use machine translation"
+msgstr "Usar tradución automática"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Aplicar tradución automática ós cambios que cheguen."
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Aplicar as actualizacións e publicar de inmediato. Os cambios usarán a "
+"lingua orixinal ata que se traduzan."
 
 msgid "Update existing translations"
 msgstr "Actualizar traduccións existentes"

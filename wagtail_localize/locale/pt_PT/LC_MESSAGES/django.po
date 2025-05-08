@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Luís Tiago Favas <traducoes@favas.eu>, 2023\n"
 "Language-Team: Portuguese (Portugal) (https://app.transifex.com/torchbox/"
 "teams/8009/pt_PT/)\n"
@@ -274,13 +274,6 @@ msgstr ""
 
 msgid "Publish immediately"
 msgstr "Publicar imediatamente"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Isto irá aplicar as atualizações e publicar imediatamente, antes que surjam "
-"quaisquer novas traduções."
 
 msgid "Update existing translations"
 msgstr "Atualizar traduções existentes"

@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Vladyslav Herasymenko <drimacus182@gmail.com>, 2024\n"
 "Language-Team: Ukrainian (https://app.transifex.com/torchbox/teams/8009/"
 "uk/)\n"
@@ -269,13 +269,6 @@ msgstr "Сторінка '{page_title}' успішно надіслано для
 
 msgid "Publish immediately"
 msgstr "Опублікувати негайно"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Це застосує оновлення та опублікує їх негайно, до того, як відбудуться нові "
-"переклади."
 
 msgid "Update existing translations"
 msgstr "Оновити існуючі переклади"

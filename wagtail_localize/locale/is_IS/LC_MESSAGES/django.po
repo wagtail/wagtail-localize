@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2023\n"
 "Language-Team: Icelandic (Iceland) (https://app.transifex.com/torchbox/teams/"
 "8009/is_IS/)\n"
@@ -270,13 +270,6 @@ msgstr "Tókst að senda inn síðuna '{page_title}' í þýðingu fyrir {locale
 
 msgid "Publish immediately"
 msgstr "Setja í birtingu strax"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Þetta keyrir uppfærsluna og setur í birtingu strax, áður en fleiri þýðingar "
-"verða gerðar."
 
 msgid "Update existing translations"
 msgstr "Uppfæra núverandi þýðingar"

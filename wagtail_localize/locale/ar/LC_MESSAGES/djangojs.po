@@ -4,10 +4,11 @@
 # Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2021
 # abdulaziz alfuhigi <abajall@gmail.com>, 2021
 # Ahmed Miske Sidi Med <boutien321@gmail.com>, 2024
+# Tarek Berkane, 2025
 #
 msgid ""
 msgstr ""
-"Last-Translator: Ahmed Miske Sidi Med <boutien321@gmail.com>, 2024\n"
+"Last-Translator: Tarek Berkane, 2025\n"
 "Language-Team: Arabic (https://app.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
@@ -16,6 +17,9 @@ msgstr ""
 
 msgid "Actions"
 msgstr "النشاطات"
+
+msgid "Cancel"
+msgstr "إلغاء"
 
 msgid "Change image"
 msgstr "تغير الصورة"
