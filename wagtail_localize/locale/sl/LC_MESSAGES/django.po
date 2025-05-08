@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Andrej Marsetič, 2024\n"
 "Language-Team: Slovenian (https://app.transifex.com/torchbox/teams/8009/"
 "sl/)\n"
@@ -274,13 +274,6 @@ msgstr "Stran '{page_title}' je bila uspešno poslana v prevajanje v {locales}"
 
 msgid "Publish immediately"
 msgstr "Objavi takoj"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"S tem bodo posodobitve uporabljene in objavljene takoj, preden pride do "
-"novih prevodov."
 
 msgid "Update existing translations"
 msgstr "Posodobite obstoječe prevode"

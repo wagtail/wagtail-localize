@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Abduqadir Abliz <sahranbay@gmail.com>, 2024\n"
 "Language-Team: Uyghur (https://app.transifex.com/torchbox/teams/8009/ug/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -274,12 +274,6 @@ msgstr ""
 
 msgid "Publish immediately"
 msgstr "دەرھال تارقات"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"يېڭى تەرجىمە يۈز بېرىشتىن ئىلگىرى يېڭىلانمىنى قوللىنىپ دەرھال تارقىتىلىدۇ."
 
 msgid "Update existing translations"
 msgstr "مەۋجۇت تەرجىمىلەرنى يېڭىلا"

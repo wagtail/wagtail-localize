@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2023\n"
 "Language-Team: Swedish (https://app.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -275,13 +275,6 @@ msgstr "Sidan '{page_title}' lyckades skickas för översättning till {locales}
 
 msgid "Publish immediately"
 msgstr "Publicera omgående"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Detta kommer tillämpa uppdateringar och publicera omgående, innan nya "
-"översättningar sker."
 
 msgid "Update existing translations"
 msgstr "Uppdatera existerande översättningar"
