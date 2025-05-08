@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.1] - 2025-05-08
+
+### Changed
+
+- Updated action button used in listings for Wagtail 7.0 (which deprecated the specialised listing button classes)
+
+### Removed
+
+- Support and shims for Wagtail < 6.3
+
 ## [1.12] - 2025-05-06
 
 ### Changed
