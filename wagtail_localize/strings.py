@@ -360,7 +360,7 @@ def extract_strings(html):
 
             # Remove elements
             for element in elements:
-                element.replaceWith("")
+                element.replace_with("")
 
     def walk(element):
         """
@@ -368,7 +368,7 @@ def extract_strings(html):
 
         When it encounters an element that could be extracted, it wraps it with
         a <text> tag. These are extracted in the next stage (because we want to
-        preserve order of occurance).
+        preserve order of occurrence).
 
         For example:
 
@@ -473,9 +473,9 @@ def restore_strings(template, strings):
         str: A HTML blob with the strings inserted into the template.
     """
     soup = BeautifulSoup(template, "html.parser")
-    for text_element in soup.findAll("text"):
+    for text_element in soup.find_all("text"):
         string, attrs = strings[int(text_element.get("position"))]
-        text_element.replaceWith(string.render_soup(attrs))
+        text_element.replace_with(string.render_soup(attrs))
 
     return str(soup)
 
