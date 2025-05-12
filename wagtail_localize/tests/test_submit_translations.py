@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
@@ -82,10 +83,12 @@ class TestTranslatePageListingButton(WagtailTestUtils, TestCase):
             reverse("wagtailadmin_explore", args=[parent_page_id])
         )
 
+        suffix = ' class=""' if WAGTAIL_VERSION >= (7, 1) else ""
+
         self.assertContains(
             response,
             (
-                f'<a href="/admin/localize/submit/page/{expected_page_id}/">'
+                f'<a href="/admin/localize/submit/page/{expected_page_id}/"{suffix}>'
                 '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
                 '<use href="#icon-wagtail-localize-language"></use></svg>'
                 "Translate this page"
