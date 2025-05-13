@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.forms.widgets import CheckboxInput
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
@@ -85,10 +86,11 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
+        suffix = ' class=""' if WAGTAIL_VERSION >= (7, 1) else ""
         self.assertContains(
             response,
             (
-                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/">'
+                f'<a href="/admin/localize/submit/page/{self.en_blog_index.id}/"{suffix}>'
                 '<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true">'
                 '<use href="#icon-wagtail-localize-language"></use></svg>'
                 "Translate this page"
@@ -155,10 +157,11 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
         )
 
         next = "%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"
+        suffix = 'class=""' if WAGTAIL_VERSION >= (7, 1) else ""
         self.assertContains(
             response,
             (
-                f'<a href="/admin/localize/update/{self.source.id}/?next={next}" '
+                f'<a href="/admin/localize/update/{self.source.id}/?next={next}" {suffix}'
                 f'aria-label="Sync translations of &#x27;{self.en_snippet}&#x27;">'
                 f'<svg class="icon icon-resubmit icon" aria-hidden="true"><use href="#icon-resubmit"></use></svg>'
                 f"Sync translated snippets</a>"
