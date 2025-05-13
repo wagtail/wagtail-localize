@@ -719,10 +719,11 @@ class TestTranslateSnippetListingButton(WagtailTestUtils, TestCase):
             reverse("wagtailsnippets_wagtail_localize_test_testsnippet:list")
         )
 
+        suffix = 'class=""' if WAGTAIL_VERSION >= (7, 1) else ""
         self.assertContains(
             response,
             (
-                f'<a href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/" '
+                f'<a href="/admin/localize/submit/snippet/wagtail_localize_test/testsnippet/{self.en_snippet.id}/" {suffix}'
                 f'aria-label="Translate &#x27;{self.en_snippet}&#x27;">'
                 f'<svg class="icon icon-wagtail-localize-language icon" aria-hidden="true"><use href="#icon-wagtail-localize-language"></use></svg>'
                 f"Translate</a>"
