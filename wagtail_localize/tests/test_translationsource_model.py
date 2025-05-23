@@ -727,6 +727,31 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
         )
 
 
+class TestStringNormalization(TestCase):
+    def test_whitespace_normalization(self):
+        # Test normalization of whitespace characters
+        string_value = StringValue(
+            "This is a  test with   multiple spaces\tand\ttabs\nand\nnew\nlines"
+        )
+        normalized_string = string_value.normalize_whitespace()
+        self.assertEqual(
+            normalized_string,
+            "This is a test with multiple spaces and tabs and new lines",
+        )
+
+    def test_unicode_normalization(self):
+        # Test normalization of unicode characters
+        string_value = StringValue("Café")
+        normalized_string = string_value.normalize_unicode()
+        self.assertEqual(normalized_string, "Cafe")
+
+    def test_combined_normalization(self):
+        # Test combined normalization of whitespace and unicode characters
+        string_value = StringValue("Café\twith\nnew\nlines\nand  multiple   spaces")
+        normalized_string = string_value.normalize()
+        self.assertEqual(normalized_string, "Cafe with new lines and multiple spaces")
+
+
 class TestCreateOrUpdateTranslationForSnippet(TestCase):
     def setUp(self):
         self.snippet = TestSnippet.objects.create(
