@@ -4,14 +4,14 @@
 # Tammo van Lessen <tvanlessen@gmail.com>, 2021
 # Ettore Atalan <atalanttore@googlemail.com>, 2021
 # jnns, 2022
-# Stefan Hammer <stefan@hammerworxx.com>, 2022
 # Oliver Engel <codeangel@posteo.de>, 2023
+# Stefan Hammer <stefan@hammerworxx.com>, 2025
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
-"Last-Translator: Oliver Engel <codeangel@posteo.de>, 2023\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
+"Last-Translator: Stefan Hammer <stefan@hammerworxx.com>, 2025\n"
 "Language-Team: German (https://app.transifex.com/torchbox/teams/8009/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -287,11 +287,25 @@ msgid "Publish immediately"
 msgstr "Sofort veröffentlichen"
 
 msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
 msgstr ""
-"Dies wird die Aktualisierungen anwenden und sofort veröffentlichen, bevor "
-"neue Übersetzungen stattfinden."
+"Aktualisierungen sofort anwenden und veröffentlichen. Bis zur Übersetzung "
+"bleiben die Änderungen in der Originalsprache, sofern Sie nicht auch "
+"„Maschinelle Übersetzung verwenden“ auswählen."
+
+msgid "Use machine translation"
+msgstr "Maschinelle Übersetzung verwenden"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Maschinelle Übersetzung auf die eingehenden Änderungen anwenden."
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Aktualisierungen sofort anwenden und veröffentlichen. Bis zur Übersetzung "
+"bleiben die Änderungen in der Originalsprache."
 
 msgid "Update existing translations"
 msgstr "Vorhandene Übersetzungen aktualisieren"

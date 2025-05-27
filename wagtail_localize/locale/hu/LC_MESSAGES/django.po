@@ -2,13 +2,13 @@
 # Translators:
 # Laszlo Molnar <lazlowmiller@gmail.com>, 2021
 # Dan Braghis, 2022
-# Istvan Farkas <istvan.farkas@gmail.com>, 2023
+# Istvan Farkas <istvan.farkas@gmail.com>, 2025
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
-"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2023\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2025\n"
 "Language-Team: Hungarian (https://app.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -282,11 +282,24 @@ msgid "Publish immediately"
 msgstr "Azonnali közzététel"
 
 msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
 msgstr ""
-"Ez elmenti a módosításokat, és azonnal publikálja az oldalt, a fordítások "
-"előtt."
+"Tartalom frissítése és azonnali közzététele. A változások az eredeti nyelven "
+"fognak megjelenni, ha nem választja a \"gépi fordítás\" lehetőséget."
+
+msgid "Use machine translation"
+msgstr "Gépi fordítás"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Gépi fordítás alkalmazása a bejövő változásokhoz."
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Tartalom frissítése és azonnali közzététele. A változások az eredeti nyelven "
+"fognak megjelenni azok lefordításáig."
 
 msgid "Update existing translations"
 msgstr "Meglévő fordítások frissítése"

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Mirek Zvolský <zvolsky@seznam.cz>, 2023\n"
 "Language-Team: Czech (https://app.transifex.com/torchbox/teams/8009/cs/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -180,13 +180,6 @@ msgstr "Stránka '{page_title}' byla úspěšně uložena pro překlad do {local
 
 msgid "Publish immediately"
 msgstr "Ihned zveřejnit"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Budou zohledněny aktualizace a bude ihned zveřejněno - dříve než proběhnou "
-"další překlady."
 
 msgid "Update existing translations"
 msgstr "Aktualizovat existující překlady"

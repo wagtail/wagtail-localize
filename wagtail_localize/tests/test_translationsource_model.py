@@ -2,7 +2,7 @@ import json
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings
+from django.test import TestCase, TransactionTestCase, override_settings
 from django.utils import timezone
 from wagtail.blocks import StreamValue
 from wagtail.models import Locale, Page, PageLogEntry
@@ -22,6 +22,7 @@ from wagtail_localize.test.models import (
     TestChildObject,
     TestNonParentalChildObject,
     TestPage,
+    TestRevisionsButNoDraftModel,
     TestSnippet,
     TestSynchronizedChildObject,
 )
@@ -157,6 +158,118 @@ class TestUpdateOrCreateFromInstance(TestCase):
                     "pk": self.snippet.pk,
                     "field": "Some different content",  # Changed
                     "small_charfield": "",
+                    "translation_key": str(self.snippet.translation_key),
+                    "locale": self.snippet.locale_id,
+                }
+            ),
+            last_updated_at=timezone.now(),
+        )
+
+        new_source, created = TranslationSource.update_or_create_from_instance(
+            self.snippet
+        )
+
+        self.assertFalse(created)
+
+        self.assertEqual(source, new_source)
+        self.assertEqual(
+            json.loads(source.content_json)["field"], "Some different content"
+        )
+        self.assertEqual(
+            json.loads(new_source.content_json)["field"], "This is some test content"
+        )
+
+
+class TestRevisionsButNoDraftModelGetOrCreateInstance(TestCase):
+    def setUp(self):
+        self.snippet = TestRevisionsButNoDraftModel.objects.create(
+            field="This is some test content"
+        )
+
+    def test_create(self):
+        source, created = TranslationSource.get_or_create_from_instance(self.snippet)
+
+        self.assertTrue(created)
+        self.assertEqual(source.object_id, self.snippet.translation_key)
+        self.assertEqual(source.locale, self.snippet.locale)
+        self.assertEqual(
+            json.loads(source.content_json),
+            {
+                "pk": self.snippet.pk,
+                "latest_revision": None,
+                "field": "This is some test content",
+                "translation_key": str(self.snippet.translation_key),
+                "locale": self.snippet.locale_id,
+            },
+        )
+        self.assertTrue(source.created_at)
+
+    def test_update(self):
+        source = TranslationSource.objects.create(
+            object_id=self.snippet.translation_key,
+            specific_content_type=ContentType.objects.get_for_model(
+                TestRevisionsButNoDraftModel
+            ),
+            locale=self.snippet.locale,
+            content_json=json.dumps(
+                {
+                    "pk": self.snippet.pk,
+                    "field": "Some different content",  # Changed
+                    "translation_key": str(self.snippet.translation_key),
+                    "locale": self.snippet.locale_id,
+                },
+            ),
+            last_updated_at=timezone.now(),
+        )
+
+        new_source, created = TranslationSource.get_or_create_from_instance(
+            self.snippet
+        )
+
+        self.assertEqual(source, new_source)
+        self.assertEqual(
+            json.loads(source.content_json)["field"], "Some different content"
+        )
+        self.assertEqual(
+            json.loads(new_source.content_json)["field"], "Some different content"
+        )
+
+
+class TestRevisionsButNoDraftModelUpdateOrCreateFromInstance(TestCase):
+    def setUp(self):
+        self.snippet = TestRevisionsButNoDraftModel.objects.create(
+            field="This is some test content"
+        )
+
+    def test_create(self):
+        source, created = TranslationSource.update_or_create_from_instance(self.snippet)
+
+        self.assertTrue(created)
+        self.assertEqual(source.object_id, self.snippet.translation_key)
+        self.assertEqual(source.locale, self.snippet.locale)
+        self.assertEqual(
+            json.loads(source.content_json),
+            {
+                "pk": self.snippet.pk,
+                "latest_revision": None,
+                "field": "This is some test content",
+                "translation_key": str(self.snippet.translation_key),
+                "locale": self.snippet.locale_id,
+            },
+        )
+        self.assertTrue(source.created_at)
+
+    def test_update(self):
+        source = TranslationSource.objects.create(
+            object_id=self.snippet.translation_key,
+            specific_content_type=ContentType.objects.get_for_model(
+                TestRevisionsButNoDraftModel
+            ),
+            locale=self.snippet.locale,
+            content_json=json.dumps(
+                {
+                    "pk": self.snippet.pk,
+                    "field": "Some different content",  # Changed
                     "translation_key": str(self.snippet.translation_key),
                     "locale": self.snippet.locale_id,
                 }
@@ -703,6 +816,65 @@ class TestCreateOrUpdateTranslationForSnippet(TestCase):
         self.assertEqual(
             e.exception.messages,
             ["Ensure this value has at most 10 characters (it has 11)."],
+        )
+
+
+class TestCreateOrUpdateTranslationForRevisionsWithoutDraftsSnippet(
+    TransactionTestCase
+):
+    def setUp(self):
+        # The default locale created by Wagtail gets flushed when using TransactionTestCase
+        # however this is necessary to check the behaviour of on_commit hook in
+        # the update_or_create_translation method
+        self.source_locale, _ = Locale.objects.get_or_create(language_code="en")
+        self.dest_locale = Locale.objects.create(language_code="fr")
+
+        self.snippet = TestRevisionsButNoDraftModel.objects.create(
+            field="Test snippet content"
+        )
+        self.source, created = TranslationSource.get_or_create_from_instance(
+            self.snippet
+        )
+
+        # Add translation for field
+        self.string = String.from_value(
+            self.source_locale, StringValue.from_plaintext("Test snippet content")
+        )
+        self.translation = StringTranslation.objects.create(
+            translation_of=self.string,
+            locale=self.dest_locale,
+            context=TranslationContext.objects.get(
+                object_id=self.snippet.translation_key, path="field"
+            ),
+            data="Tester le contenu",
+        )
+
+    def test_create(self):
+        new_snippet, created = self.source.create_or_update_translation(
+            self.dest_locale
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(new_snippet.field, "Tester le contenu")
+        self.assertEqual(new_snippet.translation_key, self.snippet.translation_key)
+        self.assertEqual(new_snippet.locale, self.dest_locale)
+        self.assertTrue(
+            self.source.translation_logs.filter(locale=self.dest_locale).exists()
+        )
+
+    def test_update(self):
+        self.snippet.copy_for_translation(self.dest_locale).save()
+
+        new_snippet, created = self.source.create_or_update_translation(
+            self.dest_locale
+        )
+
+        self.assertFalse(created)
+        self.assertEqual(new_snippet.field, "Tester le contenu")
+        self.assertEqual(new_snippet.translation_key, self.snippet.translation_key)
+        self.assertEqual(new_snippet.locale, self.dest_locale)
+        self.assertTrue(
+            self.source.translation_logs.filter(locale=self.dest_locale).exists()
         )
 
 

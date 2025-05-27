@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Dan Braghis, 2023\n"
 "Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -273,13 +273,6 @@ msgstr "Pagina '{page_title}' a fost trimisă pentru traducere în {locales}"
 
 msgid "Publish immediately"
 msgstr "Publichează imediat"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Aceasta va aplica modificările și va publica imediat, înainte de orice "
-"traduceri noi."
 
 msgid "Update existing translations"
 msgstr "Actualizează traduceri existente"

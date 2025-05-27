@@ -24,12 +24,15 @@ We'll be at Wagtail Space US this year! The Call for Participation and Registrat
 
 Wagtail Localize requires the following:
 
-- Python (3.9, 3.10, 3.11)
-- Django (4.2, 5.0, 5.1)
-- Wagtail (5.2, 6.1) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
+- Python (3.9, 3.10, 3.11, 3.12, 3.13)
+- Django (4.2, 5.1, 5.2)
+- Wagtail (5.2 - 7.0) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
 - [wagtail-modeladmin](https://pypi.org/project/wagtail-modeladmin/) if `using wagtail_localize.modeladmin` and Wagtail >= 5.2
 
 ## Installation
+
+Before you start, follow Wagtail's [configuration guide](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
+to enable internationalisation in Wagtail and Django.
 
 Install using `pip`:
 
@@ -105,8 +108,8 @@ Now you can run tests as shown below:
 tox
 ```
 
-or, you can run them for a specific environment `tox -e python3.11-django4.2-wagtail5.2` or specific test
-`tox -e python3.11-django4.2-wagtail5.2-sqlite -- wagtail_localize.tests.test_edit_translation.TestGetEditTranslationView`
+or, you can run them for a specific environment `tox -e python3.13-django5.2-wagtail7.0` or specific test
+`tox -e python3.13-django5.2-wagtail7.0-sqlite -- wagtail_localize.tests.test_edit_translation.TestGetEditTranslationView`
 
 To run the test app interactively, use `tox -e interactive`, visit `http://127.0.0.1:8020/admin/` and log in with `admin`/`changeme`.
 

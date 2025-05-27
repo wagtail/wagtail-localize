@@ -212,9 +212,10 @@ class StreamFieldSegmentsWriter:
 
         for block_index, block in enumerate(list_block.bound_blocks):
             block_segments = segments_by_block[block.id]
-            list_block.bound_blocks[block_index].value = self.handle_block(
-                block.block, block.value, block_segments
-            )
+            if len(block_segments):
+                list_block.bound_blocks[block_index].value = self.handle_block(
+                    block.block, block.value, block_segments
+                )
 
         return list_block
 
@@ -228,6 +229,15 @@ class StreamFieldSegmentsWriter:
         for segment in segments:
             field_name, segment = segment.unwrap()
             segments_by_field[field_name].append(segment)
+
+        # Handle the image first (either as original, or as an override)
+        # we need to pop it from the dict as we then follow this up with setting the attributes
+        # on the image block value (which happens to be the actual image instance
+        image_segment = segments_by_field.pop("image", None)
+        if image_segment is not None:
+            image_block_value = self.handle_related_object_block(
+                image_block_value, image_segment
+            )
 
         # ImageBlock field -> Image field.
         field_map = {"alt_text": "contextual_alt_text", "decorative": "decorative"}

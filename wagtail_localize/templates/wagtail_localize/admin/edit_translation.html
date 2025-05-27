@@ -72,8 +72,6 @@
     <script src="{% versioned_static 'wagtail_localize/js/wagtail-localize.js' %}"></script>
 {% endblock %}
 
-{% block extra_css %}
-    {% if not has_legacy_action_menu %}
-        <link rel="stylesheet" href="{% versioned_static 'wagtail_localize/css/wagtail-localize-editor-form.css' %}" />
-    {% endif %}
+{% block extra_css_ %}
+    <link rel="stylesheet" href="{% versioned_static 'wagtail_localize/css/wagtail-localize-editor-form.css' %}" />
 {% endblock %}

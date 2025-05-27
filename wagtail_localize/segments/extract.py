@@ -200,8 +200,15 @@ class StreamFieldSegmentExtractor:
         segments = []
 
         for field_name, block_type in block.child_blocks.items():
+            if raw_value.get("type") and raw_value.get("value"):
+                # for top-level ImageBlock, raw_value has a
+                # {"type": "field_name", "value": {"image": X, "alt_text": "", "caption": ""}} format.
+                # whereas if the ImageBlock is part of a StructBlock, ListBlock or StreamBlock, we
+                # only get the "value" part.
+                raw_value = raw_value.get("value")
+
             try:
-                block_raw_value = raw_value["value"].get(field_name)
+                block_raw_value = raw_value.get(field_name)
                 block_value = (
                     image_block_value if field_name == "image" else block_raw_value
                 )
@@ -209,6 +216,10 @@ class StreamFieldSegmentExtractor:
                 # e.g. raw_value is None, or is that from chooser
                 block_raw_value = None
                 block_value = None
+
+            if isinstance(block_type, blocks.CharBlock) and block_value is None:
+                block_value = ""
+
             segments.extend(
                 segment.wrap(field_name)
                 for segment in self.handle_block(

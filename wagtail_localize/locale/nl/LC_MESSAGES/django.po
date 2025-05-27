@@ -3,14 +3,14 @@
 # Huib Keemink <huib@creativedutchmen.com>, 2021
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
 # Thijs Kramer <thijskramer@gmail.com>, 2022
-# Storm Heg <storm@stormbase.digital>, 2022
 # Loic Teixeira, 2023
+# Storm Heg <storm@stormbase.digital>, 2025
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
-"Last-Translator: Loic Teixeira, 2023\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
+"Last-Translator: Storm Heg <storm@stormbase.digital>, 2025\n"
 "Language-Team: Dutch (https://app.transifex.com/torchbox/teams/8009/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -285,11 +285,25 @@ msgid "Publish immediately"
 msgstr "Direct publiceren"
 
 msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
 msgstr ""
-"Dit zal de wijzigingen toepassen en direct publiceren, voordat er "
-"vertalingen plaatsgevonden hebben."
+"Updates doorvoeren en onmiddellijk publiceren. De wijzigingen blijven in de "
+"oorspronkelijke taal totdat ze worden vertaald. Of vink de optie 'gebruik "
+"automatische vertaling' aan."
+
+msgid "Use machine translation"
+msgstr "Gebruik automatische vertaling"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Gebruik automatische vertalingen om inkomende wijzigingen te verwerken"
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Updates doorvoeren en onmiddellijk publiceren. De wijzigingen blijven in de "
+"oorspronkelijke taal totdat ze worden vertaald."
 
 msgid "Update existing translations"
 msgstr "Huidige vertalingen bijwerken"

@@ -1,10 +1,10 @@
 #
 # Translators:
-# Istvan Farkas <istvan.farkas@gmail.com>, 2024
+# Istvan Farkas <istvan.farkas@gmail.com>, 2025
 #
 msgid ""
 msgstr ""
-"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2024\n"
+"Last-Translator: Istvan Farkas <istvan.farkas@gmail.com>, 2025\n"
 "Language-Team: Hungarian (https://app.transifex.com/torchbox/teams/8009/"
 "hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,6 +19,9 @@ msgstr "Akciók"
 
 msgid "Apply editor lock"
 msgstr "Szerkesztési zárolás"
+
+msgid "Applying editor lock"
+msgstr "Szerkesztési zár alkalmazása"
 
 msgid "Cancel"
 msgstr "Mégsem"
@@ -51,6 +54,9 @@ msgid "Choose an image"
 msgstr "Kép kiválasztása"
 
 msgid "Convert to alias page"
+msgstr "Kapcsolt példánnyá konvertálás"
+
+msgid "Converting to alias page"
 msgstr "Kapcsolt példánnyá konvertálás"
 
 msgid "Delete"
@@ -107,6 +113,9 @@ msgstr "Közzététel..."
 msgid "Remove editor lock"
 msgstr "Szerkesztési zár feloldása"
 
+msgid "Removing editor lock"
+msgstr "Szerkesztési zár feloldása"
+
 msgid "Revert to %s version"
 msgstr "Visszaváltás erre a verzióra: %s"
 
@@ -123,6 +132,9 @@ msgid "Server error"
 msgstr "Szerverhiba"
 
 msgid "Stop Synced translation"
+msgstr "Szinkronizált fordítás befejezése"
+
+msgid "Stopping Synced translation"
 msgstr "Szinkronizált fordítás befejezése"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."

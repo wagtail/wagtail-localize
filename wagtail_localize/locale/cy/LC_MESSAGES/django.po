@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Philip Lindsay-Crisp, 2024\n"
 "Language-Team: Welsh (https://app.transifex.com/torchbox/teams/8009/cy/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -282,13 +282,6 @@ msgstr ""
 
 msgid "Publish immediately"
 msgstr "Cyhoeddi ar unwaith"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Bydd hyn yn cymhwyso'r diweddariadau ac yn cyhoeddi ar unwaith, cyn i unrhyw "
-"gyfieithiadau newydd ddigwydd."
 
 msgid "Update existing translations"
 msgstr "Diweddaru cyfieithiadau presennol"

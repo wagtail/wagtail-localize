@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2024-12-20 15:02+0000\n"
 "Last-Translator: Amós Oviedo <amos.oviedo@gmail.com>, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/torchbox/teams/8009/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -286,13 +286,6 @@ msgstr ""
 
 msgid "Publish immediately"
 msgstr "Publicar inmediatamente"
-
-msgid ""
-"This will apply the updates and publish immediately, before any new "
-"translations happen."
-msgstr ""
-"Esto aplicará las actualizaciones y publicará inmediatamente, antes de que "
-"ninguna traducción nueva se lleve a cabo."
 
 msgid "Update existing translations"
 msgstr "Actualizar traducciones existentes"

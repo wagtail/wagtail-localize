@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy
 from django_filters.constants import EMPTY_VALUES
 from django_filters.fields import ModelChoiceField
 from modelcluster.fields import ParentalKey
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.views.reports import ReportView
 from wagtail.coreutils import get_content_languages
@@ -146,41 +145,13 @@ class TranslationsReportFilterSet(WagtailFilterSet):
         ]
 
 
-def _adapt_wagtail_report_attributes(cls):
-    """
-    A class decorator that adapts ReportView-derived classes for compatibility
-    with multiple versions of Wagtail by conditionally assigning attributes
-    based on the Wagtail version. This includes setting appropriate titles,
-    and adjusting template names and URL names for AJAX support since Wagtail 6.2.
-
-    Attributes adjusted:
-    - `title` or `page_title` based on Wagtail version for the display name of the report.
-    - For Wagtail 6.2 and above, additional attributes like `results_template_name`,
-      `index_results_url_name`, and `index_url_name` are set to support AJAX updates
-      and utilize the `wagtail.admin.ui.tables` framework.
-    """
-    if WAGTAIL_VERSION < (6, 2):
-        cls.title = gettext_lazy("Translations")
-    else:
-        # The `title` attr was **changed** to `page_title` in Wagtail 6.2
-        cls.page_title = gettext_lazy("Translations")
-        # The `results_template_name` attr was **added** in Wagtail 6.2
-        # to support updating the listing via AJAX upon filtering and
-        # to allow the use of the `wagtail.admin.ui.tables` framework.
-        cls.results_template_name = (
-            "wagtail_localize/admin/translations_report_results.html"
-        )
-        # The `index_results_url_name` attr was **added** in Wagtail 6.2
-        # to support updating the listing via AJAX upon filtering.
-        cls.index_results_url_name = "wagtail_localize:translations_report_results"
-        cls.index_url_name = "wagtail_localize:translations_report"
-    return cls
-
-
-@_adapt_wagtail_report_attributes
 class TranslationsReportView(ReportView):
     template_name = "wagtail_localize/admin/translations_report.html"
+    results_template_name = "wagtail_localize/admin/translations_report_results.html"
+    index_url_name = "wagtail_localize:translations_report"
+    index_results_url_name = "wagtail_localize:translations_report_results"
     header_icon = "site"
+    page_title = gettext_lazy("Translations")
 
     filterset_class = TranslationsReportFilterSet
 
