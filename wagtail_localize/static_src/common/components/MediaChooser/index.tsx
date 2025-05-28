@@ -3,7 +3,7 @@ import gettext from 'gettext';
 
 interface MediaAPI {
     result: {
-        id: number
+        id: number;
         title: string;
         edit_url: string;
     };
@@ -37,7 +37,9 @@ const MediaChooser: FunctionComponent<MediaChooserProps> = ({
             inner = (
                 <div className="chosen">
                     <div className="preview-media">
-                        <strong>{mediaInfo.result.title} (ID: {mediaInfo.result.id})</strong>
+                        <strong>
+                            {mediaInfo.result.title} (ID: {mediaInfo.result.id})
+                        </strong>
                     </div>
 
                     <ul className="actions" style={{ listStyleType: 'none' }}>

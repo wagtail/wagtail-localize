@@ -1,7 +1,9 @@
-from django import template
-from django.urls import reverse, NoReverseMatch
-from django.apps import apps
 from contextlib import suppress
+
+from django import template
+from django.apps import apps
+from django.urls import NoReverseMatch, reverse
+
 
 register = template.Library()
 

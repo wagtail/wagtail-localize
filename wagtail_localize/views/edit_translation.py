@@ -348,6 +348,7 @@ def get_segment_location_info(
 
         elif apps.is_installed("wagtailmedia"):
             from wagtailmedia.models import AbstractMedia
+
             if issubclass(field.related_model, AbstractMedia):
                 return {"type": "media_chooser"}
 
@@ -414,6 +415,7 @@ def get_segment_location_info(
 
         elif apps.is_installed("wagtailmedia"):
             from wagtailmedia.blocks import AudioChooserBlock, VideoChooserBlock
+
             if isinstance(block, (AudioChooserBlock, VideoChooserBlock)):
                 return {"type": "media_chooser"}
 

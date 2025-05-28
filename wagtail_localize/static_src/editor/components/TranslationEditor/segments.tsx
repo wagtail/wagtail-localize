@@ -728,16 +728,15 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 <ActionButton onClick={onClickChangeMedia}>
                     {gettext('Change media')}
                 </ActionButton>
-            )
+            );
         }
         value = (
             <MediaChooser
                 adminBaseUrl={adminBaseUrl}
                 mediaId={(override && override.value) || segment.value}
             />
-        )
-    }
-    else if (widget.type == 'document_chooser') {
+        );
+    } else if (widget.type == 'document_chooser') {
         const onClickChangeDocument = () => {
             (window as any).ModalWorkflow({
                 url: (window as any).chooserUrls.documentChooser,
