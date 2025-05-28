@@ -414,7 +414,7 @@ def get_segment_location_info(
 
         elif apps.is_installed("wagtailmedia"):
             from wagtailmedia.blocks import AudioChooserBlock, VideoChooserBlock
-            if isinstance(block, AudioChooserBlock) or isinstance(block, VideoChooserBlock):
+            if isinstance(block, (AudioChooserBlock, VideoChooserBlock)):
                 return {"type": "media_chooser"}
 
         return {"type": "unknown"}

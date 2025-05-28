@@ -1,6 +1,7 @@
 from django import template
 from django.urls import reverse, NoReverseMatch
 from django.apps import apps
+from contextlib import suppress
 
 register = template.Library()
 
@@ -19,9 +20,7 @@ def get_chooser_urls():
     }
 
     if wagtailmedia_is_installed():
-        try:
+        with suppress(NoReverseMatch):
             urls["mediaChooser"] = reverse("wagtailmedia:chooser")
-        except NoReverseMatch:
-            pass
 
     return urls
