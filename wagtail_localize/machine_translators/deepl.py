@@ -61,7 +61,6 @@ class DeepLTranslator(BaseMachineTranslator):
 
     def get_headers(self):
         return {
-            "Content-Type": "application/json",
             "Authorization": f"DeepL-Auth-Key {self.options['AUTH_KEY']}",
         }
 
