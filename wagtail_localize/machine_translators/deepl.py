@@ -60,11 +60,18 @@ class DeepLTranslator(BaseMachineTranslator):
 
         return parameters
 
+    def get_headers(self):
+        return {
+            "Content-Type": "application/json",
+            "Authorization": f"DeepL-Auth-Key {self.options['AUTH_KEY']}",
+        }
+
     def translate(self, source_locale, target_locale, strings):
         response = requests.post(
             self.get_api_endpoint(),
             self.get_parameters(source_locale, target_locale, strings),
             timeout=int(self.options.get("TIMEOUT", 30)),
+            headers=self.get_headers(),
         )
 
         return {
