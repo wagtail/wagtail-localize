@@ -33,7 +33,6 @@ class DeepLTranslator(BaseMachineTranslator):
         target_lang = language_code(target_locale.language_code, is_target=True)
 
         parameters = {
-            "auth_key": self.options["AUTH_KEY"],
             "text": [string.data for string in strings],
             "tag_handling": "xml",
             "source_lang": source_lang,
