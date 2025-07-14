@@ -15,9 +15,6 @@ msgstr ""
 "Language: id_ID\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Apply editor lock"
-msgstr "Terapkan kunci editor"
-
 msgid "Change image"
 msgstr "Ubah gambar"
 

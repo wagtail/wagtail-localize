@@ -1,6 +1,5 @@
 #
 # Translators:
-# Marco Lerco <marcolerco@gmail.com>, 2021
 # andrea tagliazucchi <andreatagliazucchi@gmail.com>, 2021
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
 # Marco Badan <marco.badan@gmail.com>, 2022
@@ -21,9 +20,6 @@ msgstr "[DELETED]"
 
 msgid "Actions"
 msgstr "Azioni"
-
-msgid "Apply editor lock"
-msgstr "Applica il blocco dell'editor"
 
 msgid "Cancel"
 msgstr "Annulla"
@@ -108,9 +104,6 @@ msgstr "Pubblica in "
 
 msgid "Publishing..."
 msgstr "Pubblicazione in corso..."
-
-msgid "Remove editor lock"
-msgstr "Rimuovi blocco editor"
 
 msgid "Removing editor lock"
 msgstr "Rimuovendo blocco editor"

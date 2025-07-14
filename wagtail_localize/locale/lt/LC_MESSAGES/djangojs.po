@@ -20,9 +20,6 @@ msgstr "[IŠTRINTA]"
 msgid "Actions"
 msgstr "Veiksmai"
 
-msgid "Apply editor lock"
-msgstr "Taikyti redaktoriaus užraktą"
-
 msgid "Cancel"
 msgstr "Atšaukti"
 
@@ -94,9 +91,6 @@ msgstr "Publikuoti "
 
 msgid "Publishing..."
 msgstr "Publikuojama..."
-
-msgid "Remove editor lock"
-msgstr "Pašalinti redaktoriaus užraktą"
 
 msgid "Save"
 msgstr "Išsaugoti"

@@ -22,9 +22,6 @@ msgstr "[已删除]"
 msgid "Actions"
 msgstr "动作"
 
-msgid "Apply editor lock"
-msgstr "应用锁编辑"
-
 msgid "Cancel"
 msgstr "取消"
 
@@ -108,9 +105,6 @@ msgstr "发布在"
 
 msgid "Publishing..."
 msgstr "正在发布……"
-
-msgid "Remove editor lock"
-msgstr "移除编辑锁定"
 
 msgid "Revert to %s version"
 msgstr "回滚至 %s 版本"

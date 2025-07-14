@@ -20,9 +20,6 @@ msgstr "[GELÖSCHT]"
 msgid "Actions"
 msgstr "Aktionen"
 
-msgid "Apply editor lock"
-msgstr "Editor-Sperre anwenden"
-
 msgid "Applying editor lock"
 msgstr "Wende Editor-Sperre an"
 
@@ -112,9 +109,6 @@ msgstr "Veröffentlichen in "
 
 msgid "Publishing..."
 msgstr "Veröffentlichen..."
-
-msgid "Remove editor lock"
-msgstr "Editor-Sperre aufheben"
 
 msgid "Removing editor lock"
 msgstr "Editor-Sperre wird aufgehoben"

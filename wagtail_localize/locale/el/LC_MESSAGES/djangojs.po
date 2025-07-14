@@ -17,9 +17,6 @@ msgstr ""
 msgid "Actions"
 msgstr "Ενέργειες"
 
-msgid "Apply editor lock"
-msgstr "Κλείδωμα επεξεργαστή κειμένου"
-
 msgid "Cancel"
 msgstr "Ακύρωση"
 

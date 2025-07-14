@@ -13,9 +13,6 @@ msgstr ""
 msgid "Actions"
 msgstr "Toimingud"
 
-msgid "Apply editor lock"
-msgstr "Rakenda redaktori lukustus"
-
 msgid "Cancel"
 msgstr "Tühista"
 

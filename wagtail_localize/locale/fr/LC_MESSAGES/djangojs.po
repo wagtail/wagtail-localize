@@ -19,9 +19,6 @@ msgstr "[SUPPRIMÉ(E)]"
 msgid "Actions"
 msgstr "Actions"
 
-msgid "Apply editor lock"
-msgstr "Ajouter un verrou éditeur"
-
 msgid "Applying editor lock"
 msgstr "Application du verrou d'édition"
 
@@ -111,9 +108,6 @@ msgstr "Publier dans"
 
 msgid "Publishing..."
 msgstr "Publication..."
-
-msgid "Remove editor lock"
-msgstr "Supprimer un verrou éditeur"
 
 msgid "Removing editor lock"
 msgstr "Suppression du verrou d'édition"

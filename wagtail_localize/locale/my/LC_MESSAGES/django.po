@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
 "Last-Translator: ime11 <pmh.yourworstnightmare@gmail.com>, 2021\n"
 "Language-Team: Burmese (https://app.transifex.com/torchbox/teams/8009/my/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"

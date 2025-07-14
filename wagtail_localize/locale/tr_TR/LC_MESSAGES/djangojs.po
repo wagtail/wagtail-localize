@@ -53,9 +53,6 @@ msgstr "Kilitle"
 msgid "Preview"
 msgstr "Önizleme"
 
-msgid "Remove editor lock"
-msgstr "Editör kilidini kaldır"
-
 msgid "Save"
 msgstr "Kaydet"
 

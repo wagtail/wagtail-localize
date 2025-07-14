@@ -19,9 +19,6 @@ msgstr "[삭제됨]"
 msgid "Actions"
 msgstr "액션"
 
-msgid "Apply editor lock"
-msgstr "편집자 잠금 적용"
-
 msgid "Cancel"
 msgstr "취소"
 
@@ -63,9 +60,6 @@ msgstr "미리보기"
 
 msgid "Publishing..."
 msgstr "게시 중..."
-
-msgid "Remove editor lock"
-msgstr "편집자 잠금 제거"
 
 msgid "Save"
 msgstr "저장"

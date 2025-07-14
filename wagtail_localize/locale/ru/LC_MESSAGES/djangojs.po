@@ -22,9 +22,6 @@ msgstr "[УДАЛЕНО]"
 msgid "Actions"
 msgstr "Действия"
 
-msgid "Apply editor lock"
-msgstr "Применить блокировку редактора"
-
 msgid "Applying editor lock"
 msgstr "Применение блокировки редактора"
 
@@ -114,9 +111,6 @@ msgstr "Опубликовать в"
 
 msgid "Publishing..."
 msgstr "Публикация..."
-
-msgid "Remove editor lock"
-msgstr "Убрать блокировку редактора"
 
 msgid "Removing editor lock"
 msgstr "Снятие блокировки редактора"

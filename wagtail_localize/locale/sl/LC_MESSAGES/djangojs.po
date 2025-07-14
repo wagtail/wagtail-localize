@@ -20,9 +20,6 @@ msgstr "[IZBRISANO]"
 msgid "Actions"
 msgstr "Dejanja"
 
-msgid "Apply editor lock"
-msgstr "Uporabi zaklepanje urejevalnika"
-
 msgid "Applying editor lock"
 msgstr "Uporaba zaklepa urejevalnika"
 
@@ -112,9 +109,6 @@ msgstr "Objavi v "
 
 msgid "Publishing..."
 msgstr "Objava..."
-
-msgid "Remove editor lock"
-msgstr "Odstranite zaklep urejevalnika"
 
 msgid "Removing editor lock"
 msgstr "Odstranitev ključavnice urejevalnika"

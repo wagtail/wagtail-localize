@@ -16,9 +16,6 @@ msgstr "[ئۆچۈرۈلدى]"
 msgid "Actions"
 msgstr "مەشغۇلات"
 
-msgid "Apply editor lock"
-msgstr "تەھرىرلىگۈچ قۇلۇپىنى قوللان"
-
 msgid "Applying editor lock"
 msgstr "تەھرىرلىگۈچ قۇلۇپىنى قوللىنىۋاتىدۇ"
 
@@ -108,9 +105,6 @@ msgstr "تارقىتىش ۋاقتى "
 
 msgid "Publishing..."
 msgstr "تارقىتىلىۋاتىدۇ…"
-
-msgid "Remove editor lock"
-msgstr "تەھرىرلىگۈچ قۇلۇپىنى چىقىرىۋەت"
 
 msgid "Removing editor lock"
 msgstr "تەھرىرلىگۈچ قۇلۇپىنى چىقىرىۋەت"

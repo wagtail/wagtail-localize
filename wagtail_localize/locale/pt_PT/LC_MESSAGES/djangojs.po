@@ -19,9 +19,6 @@ msgstr "[APAGADO]"
 msgid "Actions"
 msgstr "Ações"
 
-msgid "Apply editor lock"
-msgstr "Aplicar bloqueio de editor"
-
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -105,9 +102,6 @@ msgstr "Publicar em"
 
 msgid "Publishing..."
 msgstr "A publicar..."
-
-msgid "Remove editor lock"
-msgstr "Retirar bloqueio de editor"
 
 msgid "Revert to %s version"
 msgstr "Reverter à versão %s "

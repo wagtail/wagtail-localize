@@ -17,9 +17,6 @@ msgstr ""
 msgid "Actions"
 msgstr "Eylemler"
 
-msgid "Apply editor lock"
-msgstr "Editör kilidini kaldır"
-
 msgid "Change image"
 msgstr "Resmi değiştir"
 
@@ -55,9 +52,6 @@ msgstr "Kilitle"
 
 msgid "Preview"
 msgstr "Önizleme"
-
-msgid "Remove editor lock"
-msgstr "Editör kilidini kaldır"
 
 msgid "Save"
 msgstr "Kaydet"

@@ -3,17 +3,21 @@
 # abdulaziz alfuhigi <abajall@gmail.com>, 2021
 # ROGER MICHAEL ASHLEY ALLEN <rogermaallen@gmail.com>, 2021
 # Younes Oumakhou, 2023
+# Abdullah Bamuhrez <bamuhrez@gmail.com>, 2025
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Younes Oumakhou, 2023\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Abdullah Bamuhrez <bamuhrez@gmail.com>, 2025\n"
 "Language-Team: Arabic (https://app.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Yes, convert it"
+msgstr "نعم قم بتحويله"
 
 msgid "Go back"
 msgstr "رجوع"

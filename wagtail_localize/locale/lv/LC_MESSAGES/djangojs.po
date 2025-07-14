@@ -15,9 +15,6 @@ msgstr ""
 msgid "Actions"
 msgstr "Darbības"
 
-msgid "Apply editor lock"
-msgstr "Pielietot redaktora slēgšanu"
-
 msgid "Choose a document"
 msgstr "Izvēlēties dokumentu"
 

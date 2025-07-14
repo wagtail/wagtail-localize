@@ -11,9 +11,6 @@ msgstr ""
 "Language: bn\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Apply editor lock"
-msgstr "এডিটর লক প্রয়োগ করুন"
-
 msgid "Delete"
 msgstr "মুছে ফেলুন "
 

@@ -13,9 +13,6 @@ msgstr ""
 msgid "Actions"
 msgstr "Hohenga"
 
-msgid "Apply editor lock"
-msgstr "Purua he raka ētita"
-
 msgid "Choose a document"
 msgstr "Kōhiti he pukapuka"
 

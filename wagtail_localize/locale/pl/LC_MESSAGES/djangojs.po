@@ -20,9 +20,6 @@ msgstr "[USUNIĘTE]"
 msgid "Actions"
 msgstr "Akcje"
 
-msgid "Apply editor lock"
-msgstr "Zastosuj blokadę edytorską"
-
 msgid "Applying editor lock"
 msgstr "Aktywuję blokadę edytorską"
 
@@ -112,9 +109,6 @@ msgstr "Opublikuj w"
 
 msgid "Publishing..."
 msgstr "Publikowanie..."
-
-msgid "Remove editor lock"
-msgstr "Usuń blokadę edytorską"
 
 msgid "Removing editor lock"
 msgstr "Usuwam blokadę edytorską"

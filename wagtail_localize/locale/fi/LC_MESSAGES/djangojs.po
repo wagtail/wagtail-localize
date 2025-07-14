@@ -18,9 +18,6 @@ msgstr "[POISTETTU]"
 msgid "Actions"
 msgstr "Toimet"
 
-msgid "Apply editor lock"
-msgstr "Toteuta editorin lukitus"
-
 msgid "Cancel"
 msgstr "Peruuta"
 
@@ -98,9 +95,6 @@ msgstr "Esikatsele"
 
 msgid "Publishing..."
 msgstr "Julkaistaan..."
-
-msgid "Remove editor lock"
-msgstr "Poista editorin lukitus"
 
 msgid "Save"
 msgstr "Tallenna"

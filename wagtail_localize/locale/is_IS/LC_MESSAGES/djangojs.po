@@ -18,9 +18,6 @@ msgstr "[EYDD]"
 msgid "Actions"
 msgstr "Aðgerðir"
 
-msgid "Apply editor lock"
-msgstr "Kveikja á skriflás"
-
 msgid "Applying editor lock"
 msgstr "Kveikja á skriflás"
 
@@ -110,9 +107,6 @@ msgstr "Birta í"
 
 msgid "Publishing..."
 msgstr "Set í birtingu..."
-
-msgid "Remove editor lock"
-msgstr "Fjarlægja skriflás"
 
 msgid "Removing editor lock"
 msgstr "Fjarlægja skriflás"

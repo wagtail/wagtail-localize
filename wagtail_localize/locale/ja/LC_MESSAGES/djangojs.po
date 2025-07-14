@@ -4,8 +4,8 @@
 # Daigo Shitara <stain.witness@gmail.com>, 2021
 # 石田秀 <ishidashu@gmail.com>, 2021
 # Yudai Kobayashi <yudai.kobayashi.miraidenshi@gmail.com>, 2021
-# shuhei hirota, 2021
 # kojikojikojikoji, 2021
+# shuhei hirota, 2021
 # 小口英昭 <oguchi@bluff-lab.com>, 2024
 #
 msgid ""
@@ -18,9 +18,6 @@ msgstr ""
 
 msgid "Actions"
 msgstr "操作"
-
-msgid "Apply editor lock"
-msgstr "エディターロック機能を適用する"
 
 msgid "Cancel"
 msgstr "キャンセル"

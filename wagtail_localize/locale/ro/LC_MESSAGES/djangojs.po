@@ -18,9 +18,6 @@ msgstr "[ȘTERS]"
 msgid "Actions"
 msgstr "Acțiuni"
 
-msgid "Apply editor lock"
-msgstr "Aplică blocaj editorial"
-
 msgid "Cancel"
 msgstr "Anulează"
 
@@ -107,9 +104,6 @@ msgstr "Publică în"
 
 msgid "Publishing..."
 msgstr "Publicare..."
-
-msgid "Remove editor lock"
-msgstr "Elimină blocaj editorial"
 
 msgid "Removing editor lock"
 msgstr "Se elimină blocajul editorial"
