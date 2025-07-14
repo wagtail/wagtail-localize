@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.2] - 2025-07-14
+
+### Fixed
+
+- Resolve deprecation warnings of bs4 library ([#867](https://github.com/wagtail/wagtail-localize/pull/867)) @emmanuel-ferdman
+- DeepL API key is now passed via headers ([#870](https://github.com/wagtail/wagtail-localize/pull/870)) @catilgan-nextension
+- Update tests in preparation for Wagtail 7.1
+
 ## [1.12.1] - 2025-05-08
 
 ### Changed
@@ -419,7 +427,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.12.1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.12.2...HEAD
+[1.12.2]: https://github.com/wagtail/wagtail-localize/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/wagtail/wagtail-localize/compare/v1.12...v1.12.1
 [1.12]: https://github.com/wagtail/wagtail-localize/compare/v1.11.3...v1.12
 [1.11.3]: https://github.com/wagtail/wagtail-localize/compare/v1.11.2...v1.11.3
