@@ -2330,6 +2330,7 @@ class LocaleSynchronizationModelForm(LocaleComponentModelForm):
         "Any existing and future content authored in the selected locale will "
         "be automatically copied to this one."
     ),
+    required=True,
 )
 class LocaleSynchronization(models.Model):
     """
