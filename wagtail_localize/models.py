@@ -2296,8 +2296,13 @@ def register_post_delete_signal_handlers():
 
 
 class LocaleSynchronizationModelForm(LocaleComponentModelForm):
+    SYNC_PAGE_STATUS_CHOICES = [
+        ("MIRROR", _("Mirror source status")),
+        ("DRAFT", _("Draft (always unpublished)")),
+    ]
+    
     sync_page_status = forms.ChoiceField(
-        choices=LocaleSynchronization.SYNC_PAGE_STATUS_CHOICES,
+        choices=SYNC_PAGE_STATUS_CHOICES,
         widget=forms.RadioSelect,
         label=_("Page status for synced pages"),
         help_text=_(
@@ -2338,11 +2343,6 @@ class LocaleSynchronization(models.Model):
         sync_page_status (CharField): Controls whether synced pages are created as draft or mirror source status
     """
 
-    SYNC_PAGE_STATUS_CHOICES = [
-        ("MIRROR", _("Mirror source status")),
-        ("DRAFT", _("Draft (always unpublished)")),
-    ]
-
     locale = models.OneToOneField(
         "wagtailcore.Locale", on_delete=models.CASCADE, related_name="+"
     )
@@ -2351,7 +2351,7 @@ class LocaleSynchronization(models.Model):
     )
     sync_page_status = models.CharField(
         max_length=10,
-        choices=SYNC_PAGE_STATUS_CHOICES,
+        choices=LocaleSynchronizationModelForm.SYNC_PAGE_STATUS_CHOICES,
         default="MIRROR",
         verbose_name=_("Page status for synced pages"),
         help_text=_(
