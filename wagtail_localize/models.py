@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import OperationalError, models, transaction
+from django import forms
 from django.db.migrations.recorder import MigrationRecorder
 from django.db.models import (
     Case,
@@ -2295,6 +2296,16 @@ def register_post_delete_signal_handlers():
 
 
 class LocaleSynchronizationModelForm(LocaleComponentModelForm):
+    sync_page_status = forms.ChoiceField(
+        choices=LocaleSynchronization.SYNC_PAGE_STATUS_CHOICES,
+        widget=forms.RadioSelect,
+        label=_("Page status for synced pages"),
+        help_text=_(
+            "Choose how synced pages should be published. 'Draft' keeps all synced pages "
+            "unpublished until manually reviewed. 'Mirror' matches the source page's live/draft status."
+        ),
+    )
+
     def validate_with_locale(self, locale):
         # Note: we must compare the language_codes as it may be the same locale record,
         # but the language_code was updated in this request
@@ -2324,13 +2335,29 @@ class LocaleSynchronization(models.Model):
     Attributes:
         locale (ForeignKey to Locale): The destination Locale of the synchronisation
         sync_from (ForeignKey to Locale): The source Locale of the synchronisation
+        sync_page_status (CharField): Controls whether synced pages are created as draft or mirror source status
     """
+
+    SYNC_PAGE_STATUS_CHOICES = [
+        ("MIRROR", _("Mirror source status")),
+        ("DRAFT", _("Draft (always unpublished)")),
+    ]
 
     locale = models.OneToOneField(
         "wagtailcore.Locale", on_delete=models.CASCADE, related_name="+"
     )
     sync_from = models.ForeignKey(
         "wagtailcore.Locale", on_delete=models.CASCADE, related_name="+"
+    )
+    sync_page_status = models.CharField(
+        max_length=10,
+        choices=SYNC_PAGE_STATUS_CHOICES,
+        default="MIRROR",
+        verbose_name=_("Page status for synced pages"),
+        help_text=_(
+            "Choose how synced pages should be published. 'Draft' keeps all synced pages "
+            "unpublished until manually reviewed. 'Mirror' matches the source page's live/draft status."
+        ),
     )
 
     base_form_class = LocaleSynchronizationModelForm
@@ -2344,7 +2371,7 @@ class LocaleSynchronization(models.Model):
         background.enqueue(
             synchronize_tree,
             args=[self.sync_from, self.locale],
-            kwargs={"page_index": page_index},
+            kwargs={"page_index": page_index, "sync_page_status": self.sync_page_status},
         )
 
 
