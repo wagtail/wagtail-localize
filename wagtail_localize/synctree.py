@@ -157,7 +157,7 @@ class PageIndex:
         return PageIndex(pages)
 
 
-def synchronize_tree(source_locale, target_locale, *, page_index=None):
+def synchronize_tree(source_locale, target_locale, *, page_index=None, sync_page_status="MIRROR"):
     """
     Synchronises a locale tree with an other locale.
 
@@ -167,6 +167,7 @@ def synchronize_tree(source_locale, target_locale, *, page_index=None):
         source_locale (Locale): The Locale to sync from.
         target_locale (Locale): The Locale to sync into
         page_index (PageIndex, optional): The Page index to reuse for performance. Otherwise will generate a new one.
+        sync_page_status (str): How to handle page status. 'MIRROR' mirrors source status, 'DRAFT' sets all to draft.
 
     """
     # Build a page index
@@ -192,26 +193,30 @@ def synchronize_tree(source_locale, target_locale, *, page_index=None):
         )
 
         if target_locale.id not in page.aliased_locales:
-            source_page.copy_for_translation(
+            new_alias = source_page.copy_for_translation(
                 target_locale, copy_parents=True, alias=True
             )
+            
+            # Apply status override if set to draft
+            if sync_page_status == "DRAFT":
+                new_alias.live = False
+                new_alias.save(update_fields=["live"], clean=False)
 
 
 def create_aliases_for_new_page(page):
     # Check if the source tree needs to be synchronised into any other trees
     from .models import LocaleSynchronization
 
-    locales_to_sync_to = Locale.objects.filter(
-        id__in=(
-            LocaleSynchronization.objects.filter(
-                sync_from_id=page.locale_id
-            ).values_list("locale_id", flat=True)
-        )
-    )
+    locale_syncs = LocaleSynchronization.objects.filter(sync_from_id=page.locale_id)
 
     # Create aliases in all those locales
-    for locale in locales_to_sync_to:
-        new_alias = page.copy_for_translation(locale, copy_parents=True, alias=True)
+    for locale_sync in locale_syncs:
+        new_alias = page.copy_for_translation(locale_sync.locale, copy_parents=True, alias=True)
+        
+        # Apply status override if set to draft
+        if locale_sync.sync_page_status == "DRAFT":
+            new_alias.live = False
+            new_alias.save(update_fields=["live"], clean=False)
 
         create_aliases_for_new_page(new_alias)
 

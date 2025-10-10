@@ -263,3 +263,131 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         self.assertTrue(new_en_homepage.has_translation(self.fr_locale))
         self.assertTrue(new_en_homepage.has_translation(self.fr_ca_locale))
         self.assertTrue(new_en_homepage.has_translation(self.es_locale))
+
+    def test_synchronize_tree_with_draft_status(self):
+        """Test that pages are created with live=False when sync_page_status='DRAFT'"""
+        from wagtail_localize.synctree import synchronize_tree
+        
+        # Create a live page in English
+        live_page = self.en_homepage.add_child(
+            instance=TestPage(title="Live Page", slug="live-page")
+        )
+        live_page.save_revision().publish()
+        
+        # Create a draft page in English
+        draft_page = self.en_homepage.add_child(
+            instance=TestPage(title="Draft Page", slug="draft-page")
+        )
+        draft_page.save_revision()
+        
+        # Sync with DRAFT status
+        synchronize_tree(self.en_locale, self.fr_locale, sync_page_status="DRAFT")
+        
+        # Check that both pages were created as drafts in French
+        fr_live_page = TestPage.objects.get(
+            translation_key=live_page.translation_key, locale=self.fr_locale
+        )
+        fr_draft_page = TestPage.objects.get(
+            translation_key=draft_page.translation_key, locale=self.fr_locale
+        )
+        
+        self.assertFalse(fr_live_page.live)
+        self.assertFalse(fr_draft_page.live)
+
+    def test_synchronize_tree_with_mirror_status(self):
+        """Test that pages mirror source status when sync_page_status='MIRROR'"""
+        from wagtail_localize.synctree import synchronize_tree
+        
+        # Create a live page in English
+        live_page = self.en_homepage.add_child(
+            instance=TestPage(title="Live Page", slug="live-page")
+        )
+        live_page.save_revision().publish()
+        
+        # Create a draft page in English
+        draft_page = self.en_homepage.add_child(
+            instance=TestPage(title="Draft Page", slug="draft-page")
+        )
+        draft_page.save_revision()
+        
+        # Sync with MIRROR status (default)
+        synchronize_tree(self.en_locale, self.fr_locale, sync_page_status="MIRROR")
+        
+        # Check that pages mirror the source status
+        fr_live_page = TestPage.objects.get(
+            translation_key=live_page.translation_key, locale=self.fr_locale
+        )
+        fr_draft_page = TestPage.objects.get(
+            translation_key=draft_page.translation_key, locale=self.fr_locale
+        )
+        
+        self.assertTrue(fr_live_page.live)
+        self.assertFalse(fr_draft_page.live)
+
+    def test_create_new_page_with_draft_sync(self):
+        """Test that auto-sync of new pages respects draft setting"""
+        # Update the existing sync to use DRAFT status
+        locale_sync = LocaleSynchronization.objects.get(locale=self.fr_locale)
+        locale_sync.sync_page_status = "DRAFT"
+        locale_sync.save()
+        
+        # Create a new live page in English
+        new_page = self.en_homepage.add_child(
+            instance=TestPage(title="New Page", slug="new-page")
+        )
+        new_page.save_revision().publish()
+        
+        # Check that the French version was created as draft
+        fr_new_page = TestPage.objects.get(
+            translation_key=new_page.translation_key, locale=self.fr_locale
+        )
+        self.assertFalse(fr_new_page.live)
+
+    def test_create_new_page_with_mirror_sync(self):
+        """Test that auto-sync of new pages respects mirror setting"""
+        # Ensure sync is set to MIRROR (default)
+        locale_sync = LocaleSynchronization.objects.get(locale=self.fr_locale)
+        locale_sync.sync_page_status = "MIRROR"
+        locale_sync.save()
+        
+        # Create a new live page in English
+        new_page = self.en_homepage.add_child(
+            instance=TestPage(title="New Page", slug="new-page")
+        )
+        new_page.save_revision().publish()
+        
+        # Check that the French version mirrors the live status
+        fr_new_page = TestPage.objects.get(
+            translation_key=new_page.translation_key, locale=self.fr_locale
+        )
+        self.assertTrue(fr_new_page.live)
+
+    def test_mixed_live_and_draft_pages(self):
+        """Test that draft mode sets all pages to draft regardless of source status"""
+        from wagtail_localize.synctree import synchronize_tree
+        
+        # Create multiple pages with different statuses
+        live_page1 = self.en_homepage.add_child(
+            instance=TestPage(title="Live Page 1", slug="live-page-1")
+        )
+        live_page1.save_revision().publish()
+        
+        live_page2 = self.en_homepage.add_child(
+            instance=TestPage(title="Live Page 2", slug="live-page-2")
+        )
+        live_page2.save_revision().publish()
+        
+        draft_page = self.en_homepage.add_child(
+            instance=TestPage(title="Draft Page", slug="draft-page")
+        )
+        draft_page.save_revision()
+        
+        # Sync with DRAFT status
+        synchronize_tree(self.en_locale, self.fr_locale, sync_page_status="DRAFT")
+        
+        # Check that all pages are created as drafts
+        for page in [live_page1, live_page2, draft_page]:
+            fr_page = TestPage.objects.get(
+                translation_key=page.translation_key, locale=self.fr_locale
+            )
+            self.assertFalse(fr_page.live)

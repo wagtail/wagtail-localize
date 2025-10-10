@@ -8,7 +8,7 @@ from wagtail.test.utils import WagtailTestUtils
 from wagtail.utils.version import get_main_version
 
 from wagtail_localize.locales.components import LOCALE_COMPONENTS
-from wagtail_localize.models import LocaleSynchronization
+from wagtail_localize.models import LocaleSynchronization, LocaleSynchronizationModelForm
 
 
 @override_settings(WAGTAIL_CONTENT_LANGUAGES=[("en", "English"), ("fr", "French")])
@@ -476,6 +476,72 @@ class TestLocaleEditView(BaseLocaleTestCase):
             component_form.errors["sync_from"],
             ["This locale cannot be synced into itself."],
         )
+
+    def test_sync_page_status_field_in_form(self):
+        """Test that the sync_page_status field appears in the LocaleSynchronization form"""
+        # Create a LocaleSynchronization instance
+        LocaleSynchronization.objects.create(
+            locale=self.french, sync_from=self.english, sync_page_status="DRAFT"
+        )
+        
+        # Get the edit view
+        response = self.client.get(reverse("wagtaillocales:edit", args=[self.french.id]))
+        self.assert_successful_response(response)
+        
+        # Check that the sync_page_status field is in the form
+        components = response.context["components"]
+        sync_component = None
+        for component, component_instance, component_form in components:
+            if component["model"] == LocaleSynchronization:
+                sync_component = component_form
+                break
+        
+        self.assertIsNotNone(sync_component)
+        self.assertIn("sync_page_status", sync_component.fields)
+        self.assertEqual(sync_component.fields["sync_page_status"].widget.__class__.__name__, "RadioSelect")
+
+    def test_sync_page_status_form_validation(self):
+        """Test form validation with different sync_page_status values"""
+        # Test with valid DRAFT value
+        form_data = {
+            "sync_from": self.english.id,
+            "sync_page_status": "DRAFT",
+        }
+        form = LocaleSynchronizationModelForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        
+        # Test with valid MIRROR value
+        form_data = {
+            "sync_from": self.english.id,
+            "sync_page_status": "MIRROR",
+        }
+        form = LocaleSynchronizationModelForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        
+        # Test with invalid value
+        form_data = {
+            "sync_from": self.english.id,
+            "sync_page_status": "INVALID",
+        }
+        form = LocaleSynchronizationModelForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("sync_page_status", form.errors)
+
+    def test_sync_page_status_saves_correctly(self):
+        """Test that the sync_page_status field saves correctly"""
+        # Create LocaleSynchronization with DRAFT status
+        locale_sync = LocaleSynchronization.objects.create(
+            locale=self.french, sync_from=self.english, sync_page_status="DRAFT"
+        )
+        
+        self.assertEqual(locale_sync.sync_page_status, "DRAFT")
+        
+        # Update to MIRROR status
+        locale_sync.sync_page_status = "MIRROR"
+        locale_sync.save()
+        
+        locale_sync.refresh_from_db()
+        self.assertEqual(locale_sync.sync_page_status, "MIRROR")
 
 
 class TestLocaleDeleteView(BaseLocaleTestCase):
