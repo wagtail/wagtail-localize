@@ -177,6 +177,59 @@ class TestStructBlockIgnoreAll(blocks.StructBlock):
     translatable_blocks = []
 
 
+# Test blocks for comprehensive translatable_blocks testing
+class CustomImageBlock(blocks.StructBlock):
+    """
+    A custom block with image and description, where description is translatable
+    but image can be optionally included for per-language overrides.
+    """
+    image = ImageChooserBlock(required=False)
+    description = blocks.CharBlock(required=False)
+
+    # By default (without translatable_blocks), both fields would be extracted
+    # Can be overridden to control which fields are translatable
+
+
+class CustomImageBlockWithTranslatableDescription(blocks.StructBlock):
+    """Only the description is translatable, image is synchronized."""
+    image = ImageChooserBlock(required=False)
+    description = blocks.CharBlock(required=False)
+
+    translatable_blocks = ["description"]
+
+
+class CustomImageBlockWithBothTranslatable(blocks.StructBlock):
+    """Both image and description are translatable (overridable)."""
+    image = ImageChooserBlock(required=False)
+    description = blocks.CharBlock(required=False)
+
+    translatable_blocks = ["image", "description"]
+
+
+class YouTubeBlock(blocks.StructBlock):
+    """A YouTube block with no translatable fields."""
+    url = blocks.URLBlock(required=False)
+    caption = blocks.CharBlock(required=False)
+
+    translatable_blocks = []
+
+
+class CodeBlock(blocks.StructBlock):
+    """A code block with no translatable fields."""
+    language = blocks.CharBlock(required=False)
+    code = blocks.TextBlock(required=False)
+
+    translatable_blocks = []
+
+
+class AddressBlock(blocks.StructBlock):
+    """An address block where address is locked but image can vary by language."""
+    address = blocks.TextBlock(required=False, help_text="Locked across languages")
+    image = ImageChooserBlock(required=False, help_text="Can vary by language")
+
+    translatable_blocks = ["image"]
+
+
 class TestNestedChooserStructBlock(blocks.StructBlock):
     nested_page = TestChooserStructBlock()
 
@@ -320,6 +373,16 @@ class TestStreamBlock(blocks.StreamBlock):
     test_imageblock_in_structblock = ImageBlockInStructBlock()
     test_imageblock_in_listblock = ImageBlockInListBlock()
     test_imageblock_in_streamblock = ImageBlockInStreamBlock()
+
+    # New test blocks for translatable_blocks testing
+    test_customimageblock = CustomImageBlock()
+    test_customimageblock_with_translatable_description = (
+        CustomImageBlockWithTranslatableDescription()
+    )
+    test_customimageblock_with_both_translatable = CustomImageBlockWithBothTranslatable()
+    test_youtubeblock = YouTubeBlock()
+    test_codeblock = CodeBlock()
+    test_addressblock = AddressBlock()
 
 
 class TestCustomField(models.TextField):
