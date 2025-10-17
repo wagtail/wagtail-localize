@@ -12,11 +12,10 @@ Test scenarios include:
 - Integration with model-level translatable/synchronized fields
 - Synchronization vs translation behavior
 """
-import unittest
+
 import uuid
 
 from django.test import TestCase
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.blocks import StreamValue
 from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
@@ -586,8 +585,9 @@ class TestTranslatableBlocksWithSynchronizedFields(TestCase):
 
         # Find segments from each field
         translatable_segments = [
-            s for s in segments if "test_streamfield" in s.path
-            and "synchronized" not in s.path
+            s
+            for s in segments
+            if "test_streamfield" in s.path and "synchronized" not in s.path
         ]
         synchronized_segments = [s for s in segments if "test_synchronized" in s.path]
 
@@ -630,8 +630,16 @@ class TestTranslatableBlocksBackwardCompatibility(TestCase):
         block_id_text = uuid.uuid4()
 
         stream_data = [
-            {"id": str(block_id_char), "type": "test_charblock", "value": "Char content"},
-            {"id": str(block_id_text), "type": "test_textblock", "value": "Text content"},
+            {
+                "id": str(block_id_char),
+                "type": "test_charblock",
+                "value": "Char content",
+            },
+            {
+                "id": str(block_id_text),
+                "type": "test_textblock",
+                "value": "Text content",
+            },
         ]
 
         page = make_test_page(

@@ -183,6 +183,7 @@ class CustomImageBlock(blocks.StructBlock):
     A custom block with image and description, where description is translatable
     but image can be optionally included for per-language overrides.
     """
+
     image = ImageChooserBlock(required=False)
     description = blocks.CharBlock(required=False)
 
@@ -192,6 +193,7 @@ class CustomImageBlock(blocks.StructBlock):
 
 class CustomImageBlockWithTranslatableDescription(blocks.StructBlock):
     """Only the description is translatable, image is synchronized."""
+
     image = ImageChooserBlock(required=False)
     description = blocks.CharBlock(required=False)
 
@@ -200,6 +202,7 @@ class CustomImageBlockWithTranslatableDescription(blocks.StructBlock):
 
 class CustomImageBlockWithBothTranslatable(blocks.StructBlock):
     """Both image and description are translatable (overridable)."""
+
     image = ImageChooserBlock(required=False)
     description = blocks.CharBlock(required=False)
 
@@ -208,6 +211,7 @@ class CustomImageBlockWithBothTranslatable(blocks.StructBlock):
 
 class YouTubeBlock(blocks.StructBlock):
     """A YouTube block with no translatable fields."""
+
     url = blocks.URLBlock(required=False)
     caption = blocks.CharBlock(required=False)
 
@@ -216,6 +220,7 @@ class YouTubeBlock(blocks.StructBlock):
 
 class CodeBlock(blocks.StructBlock):
     """A code block with no translatable fields."""
+
     language = blocks.CharBlock(required=False)
     code = blocks.TextBlock(required=False)
 
@@ -224,6 +229,7 @@ class CodeBlock(blocks.StructBlock):
 
 class AddressBlock(blocks.StructBlock):
     """An address block where address is locked but image can vary by language."""
+
     address = blocks.TextBlock(required=False, help_text="Locked across languages")
     image = ImageChooserBlock(required=False, help_text="Can vary by language")
 
@@ -379,7 +385,9 @@ class TestStreamBlock(blocks.StreamBlock):
     test_customimageblock_with_translatable_description = (
         CustomImageBlockWithTranslatableDescription()
     )
-    test_customimageblock_with_both_translatable = CustomImageBlockWithBothTranslatable()
+    test_customimageblock_with_both_translatable = (
+        CustomImageBlockWithBothTranslatable()
+    )
     test_youtubeblock = YouTubeBlock()
     test_codeblock = CodeBlock()
     test_addressblock = AddressBlock()

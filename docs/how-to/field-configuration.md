@@ -155,6 +155,7 @@ class LocationBlock(blocks.StructBlock):
 ```
 
 In this example:
+
 - The `location_image` is included in `translatable_blocks`, making it overridable. Editors can choose different images for different language versions.
 - The `address` is excluded, meaning it will be synchronized across all languages and cannot be overridden in translations.
 
@@ -220,6 +221,7 @@ class BlogPage(Page):
 ```
 
 In this configuration:
+
 - In the `body` field, the `description` will be a translatable string
 - In the `sidebar` field, the `description` will be an overridable segment (synchronized but can be customized per language)
 - In both cases, the `image` field is excluded from `translatable_blocks`, so it won't be extracted at all
