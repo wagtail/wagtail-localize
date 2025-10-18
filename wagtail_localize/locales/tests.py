@@ -125,6 +125,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
             "language_code": "fr",
             "component-wagtail_localize_localesynchronization-enabled": "on",
             "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+            "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
         }
 
         response = self.post(post_data)
@@ -161,7 +162,14 @@ class TestLocaleCreateView(BaseLocaleTestCase):
 
     def test_create_view_success_message(self):
         # Send a POST request to the create locale view
-        response = self.post({"language_code": "fr"})
+        response = self.post(
+            {
+                "language_code": "fr",
+                "component-wagtail_localize_localesynchronization-enabled": "on",
+                "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
+            }
+        )
 
         # Check that the response status code is a redirect (302)
         self.assertEqual(response.status_code, 302)
@@ -179,6 +187,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
                 "language_code": "en",
                 "component-wagtail_localize_localesynchronization-enabled": "on",
                 "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
             }
         )
 
@@ -198,6 +207,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
                 "language_code": "ja",
                 "component-wagtail_localize_localesynchronization-enabled": "on",
                 "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
             }
         )
 
@@ -334,6 +344,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
                 "language_code": "fr",
                 "component-wagtail_localize_localesynchronization-enabled": "on",
                 "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
             }
         )
 
@@ -371,6 +382,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
                 "language_code": "en",
                 "component-wagtail_localize_localesynchronization-enabled": "on",
                 "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
             },
             locale=french,
         )
@@ -391,6 +403,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
                 "language_code": "ja",
                 "component-wagtail_localize_localesynchronization-enabled": "on",
                 "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
             }
         )
 
@@ -467,6 +480,7 @@ class TestLocaleEditView(BaseLocaleTestCase):
                 "language_code": "en",
                 "component-wagtail_localize_localesynchronization-enabled": "on",
                 "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                "component-wagtail_localize_localesynchronization-sync_page_status": "MIRROR",
             }
         )
 
