@@ -83,7 +83,7 @@ def pk(obj):
         return Translation.objects.filter(target_locale=pk(target_locale))
 
 
-    # Both of these would be valid calls
+    # Both of these would be valid function calls
     get_translations(Locale.objects.get(id=1))
     get_translations(1)
     ```
