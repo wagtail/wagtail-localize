@@ -48,7 +48,9 @@ class ComponentManager(BaseComponentManager):
         is_valid = True
 
         for component, _component_instance, component_form in self.components:
-            if component["required"] or component_form["enabled"].value():
+            if component["required"] or (
+                not component["required"] and component_form["enabled"].value()
+            ):
                 component_form.full_clean()
 
                 try:
@@ -63,7 +65,9 @@ class ComponentManager(BaseComponentManager):
 
     def save(self, locale, *args, **kwargs):
         for component, component_instance, component_form in self.components:
-            if component["required"] or component_form["enabled"].value():
+            if component["required"] or (
+                not component["required"] and component_form["enabled"].value()
+            ):
                 component_instance = component_form.save(commit=False)
                 component_instance.locale = locale
                 component_instance.save()
