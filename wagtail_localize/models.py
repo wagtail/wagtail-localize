@@ -3,6 +3,7 @@ import uuid
 
 import polib
 
+from django import forms
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import quote
@@ -10,7 +11,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import OperationalError, models, transaction
-from django import forms
 from django.db.migrations.recorder import MigrationRecorder
 from django.db.models import (
     Case,
@@ -2300,7 +2300,7 @@ class LocaleSynchronizationModelForm(LocaleComponentModelForm):
         ("MIRROR", _("Mirror source status")),
         ("DRAFT", _("Draft (always unpublished)")),
     ]
-    
+
     sync_page_status = forms.ChoiceField(
         choices=SYNC_PAGE_STATUS_CHOICES,
         widget=forms.RadioSelect,
@@ -2310,6 +2310,9 @@ class LocaleSynchronizationModelForm(LocaleComponentModelForm):
             "unpublished until manually reviewed. 'Mirror' matches the source page's live/draft status."
         ),
     )
+
+    class Meta:
+        fields = ["sync_from", "sync_page_status"]
 
     def validate_with_locale(self, locale):
         # Note: we must compare the language_codes as it may be the same locale record,
@@ -2372,8 +2375,15 @@ class LocaleSynchronization(models.Model):
         background.enqueue(
             synchronize_tree,
             args=[self.sync_from, self.locale],
-            kwargs={"page_index": page_index, "sync_page_status": self.sync_page_status},
+            kwargs={
+                "page_index": page_index,
+                "sync_page_status": self.sync_page_status,
+            },
         )
+
+
+# Set the model for the form after the class is defined
+LocaleSynchronizationModelForm.Meta.model = LocaleSynchronization
 
 
 @receiver(post_save, sender=LocaleSynchronization)
