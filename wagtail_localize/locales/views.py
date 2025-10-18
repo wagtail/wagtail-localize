@@ -21,7 +21,7 @@ from .utils import get_locale_usage
 @functools.lru_cache
 def get_locale_component_edit_handler(model):
     if hasattr(model, "edit_handler"):
-        # use the edit handler specified on the class
+        # use the edit handler specified on the model class
         return model.edit_handler
     else:
         panels = extract_panel_definitions_from_model_class(model, exclude=["locale"])

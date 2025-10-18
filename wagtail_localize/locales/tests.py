@@ -130,7 +130,7 @@ class TestLocaleCreateView(BaseLocaleTestCase):
 
         response = self.post(post_data)
 
-        # Should redirect back to index
+        # Should redirect back to index page
         self.assert_redirect_to_index(response)
         self.assertRedirects(response, reverse("wagtaillocales:index"))
 

@@ -47,7 +47,7 @@ class TestPageIndex(TestCase):
         # Create an index and sort it by tree position
         page_index = PageIndex.from_database().sort_by_tree_position()
 
-        # Homepage should be first
+        # Homepage should be first entry in the index
         homepage_entry = page_index.pages[0]
         self.assertEqual(
             homepage_entry.content_type, ContentType.objects.get_for_model(TestHomePage)
