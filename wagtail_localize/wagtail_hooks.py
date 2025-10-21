@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
 from django.db import transaction
@@ -309,6 +310,20 @@ def after_publish_page(request, page):
                 source.translations.filter(enabled=True),
                 use_machine_translation=True,
                 publish_translations=True,
+            )
+    elif getattr(settings, "WAGTAILLOCALIZE_UPDATE_TRANSLATIONS_ON_PUBLISH", False):
+        if not request.user.has_perm("wagtail_localize.submit_translation"):
+            return
+
+        source = TranslationSource.objects.get_for_instance_or_none(page)
+        if source is None or not source.translations.filter(enabled=True).exists():
+            return
+
+        with transaction.atomic():
+            update_translations.update_translations(
+                request,
+                source,
+                source.translations.filter(enabled=True),
             )
 
 
