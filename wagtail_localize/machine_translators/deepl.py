@@ -74,7 +74,9 @@ class DeepLTranslator(BaseMachineTranslator):
 
         return {
             string: StringValue(translation["text"])
-            for string, translation in zip(strings, response.json()["translations"])
+            for string, translation in zip(
+                strings, response.json()["translations"], strict=True
+            )
         }
 
     def can_translate(self, source_locale, target_locale):

@@ -45,7 +45,9 @@ class LibreTranslator(BaseMachineTranslator):
 
         return {
             string: StringValue(translation)
-            for string, translation in zip(strings, response.json()["translatedText"])
+            for string, translation in zip(
+                strings, response.json()["translatedText"], strict=True
+            )
         }
 
     def can_translate(self, source_locale, target_locale):

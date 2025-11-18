@@ -64,14 +64,14 @@ class StreamFieldSegmentExtractor:
         if hasattr(block_type, "get_translatable_segments"):
             return block_type.get_translatable_segments(block_value)
 
-        elif isinstance(block_type, (blocks.URLBlock, blocks.EmailBlock)):
+        elif isinstance(block_type, blocks.URLBlock | blocks.EmailBlock):
             if self.include_overridables:
                 return [OverridableSegmentValue("", block_value)]
             else:
                 return []
 
         elif isinstance(
-            block_type, (blocks.CharBlock, blocks.TextBlock, blocks.BlockQuoteBlock)
+            block_type, blocks.CharBlock | blocks.TextBlock | blocks.BlockQuoteBlock
         ):
             return [StringSegmentValue("", block_value)]
 
@@ -312,7 +312,7 @@ def extract_segments(instance):
             if extract_overridables:
                 pass  # TODO: Extract images and links
 
-        elif isinstance(field, (models.TextField, models.CharField)):
+        elif isinstance(field, models.TextField | models.CharField):
             if not field.choices:
                 value = field.value_from_object(instance)
 
