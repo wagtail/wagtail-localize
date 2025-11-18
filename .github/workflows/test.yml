@@ -63,7 +63,7 @@ jobs:
 
     services:
       postgres:
-        image: bitnami/postgresql:15
+        image: postgres:15
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
