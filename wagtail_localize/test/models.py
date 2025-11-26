@@ -145,6 +145,33 @@ class NonTranslatableSnippet(models.Model):
         return self.field
 
 
+@register_snippet
+class TestM2MSnippet(TranslatableMixin, models.Model):
+    """
+    A snippet with a regular ManyToManyField to test synchronization.
+    """
+
+    title = models.CharField(max_length=255, blank=True)
+    m2m_field = models.ManyToManyField(
+        NonTranslatableSnippet,
+        blank=True,
+        related_name="m2m_snippets",
+    )
+
+    translatable_fields = [
+        TranslatableField("title"),
+        SynchronizedField("m2m_field"),
+    ]
+
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("m2m_field"),
+    ]
+
+    def __str__(self):
+        return self.title or f"TestM2MSnippet ({self.pk})"
+
+
 class TestStructBlock(blocks.StructBlock):
     field_a = blocks.TextBlock()
     field_b = blocks.TextBlock()
