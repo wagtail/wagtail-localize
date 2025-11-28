@@ -292,6 +292,11 @@ def copy_synchronised_fields(source, target):
                     if values:
                         setattr(target, field.attname, values)
 
+            elif isinstance(field, models.ManyToManyField):
+                source_manager = getattr(source, field.name)
+                target_manager = getattr(target, field.name)
+                target_manager.set(source_manager.all())
+
             else:
                 # For all other fields, just set the attribute
                 setattr(target, field.attname, getattr(source, field.attname))
