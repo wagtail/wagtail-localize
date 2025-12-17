@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Remove python 3.9 from the test matrix
+- Remove Python 3.9 from the test matrix
 
 ## [1.12.1] - 2025-05-08
 
