@@ -76,11 +76,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-          --tmpfs /dev/shm:rw,size=1g
-          -c fsync=off
-          -c full_page_writes=off
-          -c synchronous_commit=off
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
