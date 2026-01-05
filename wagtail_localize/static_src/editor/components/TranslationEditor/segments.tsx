@@ -40,7 +40,7 @@ function saveTranslation(
     segment: StringSegment,
     value: string,
     csrfToken: string,
-    dispatch: React.Dispatch<EditorAction>
+    dispatch: React.Dispatch<EditorAction>,
 ) {
     dispatch({
         type: EDIT_STRING_TRANSLATION,
@@ -108,7 +108,7 @@ function saveOverride(
     segment: SynchronisedValueSegment,
     value: any,
     csrfToken: string,
-    dispatch: React.Dispatch<EditorAction>
+    dispatch: React.Dispatch<EditorAction>,
 ) {
     dispatch({
         type: EDIT_OVERRIDE,
@@ -153,7 +153,7 @@ function saveOverride(
 function deleteOverride(
     segment: SynchronisedValueSegment,
     csrfToken: string,
-    dispatch: React.Dispatch<EditorAction>
+    dispatch: React.Dispatch<EditorAction>,
 ) {
     dispatch({
         type: DELETE_OVERRIDE,
@@ -416,7 +416,7 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
     csrfToken,
 }) => {
     const [editingValue, setEditingValue] = React.useState(
-        (translation && translation.value) || ''
+        (translation && translation.value) || '',
     );
 
     let comment = <></>;
@@ -501,7 +501,7 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
                     <ActionButton onClick={onClickEdit}>
                         {translation ? gettext('Edit') : gettext('Translate')}
                     </ActionButton>
-                </li>
+                </li>,
             );
         }
 
@@ -584,7 +584,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             <>
                 {gettext('Uses %s version').replace(
                     '%s',
-                    sourceLocale.displayName
+                    sourceLocale.displayName,
                 )}{' '}
                 <Icon name="check" className="icon--green" />
             </>
@@ -594,7 +594,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
     const widget = segment.location.widget;
     if (widget.type == 'text') {
         const [editingValue, setEditingValue] = React.useState(
-            (override && override.value) || segment.value
+            (override && override.value) || segment.value,
         );
 
         if (isEditing && !isLocked) {
@@ -634,7 +634,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 buttons.push(
                     <ActionButton onClick={onClickEdit}>
                         {gettext('Edit')}
-                    </ActionButton>
+                    </ActionButton>,
                 );
             }
 
@@ -654,7 +654,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                             segment,
                             responseData.id,
                             csrfToken,
-                            dispatch
+                            dispatch,
                         );
                     },
                 },
@@ -664,7 +664,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             buttons.push(
                 <ActionButton onClick={onClickChangePage}>
                     {gettext('Change page')}
-                </ActionButton>
+                </ActionButton>,
             );
         }
 
@@ -685,7 +685,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                             segment,
                             responseData.id,
                             csrfToken,
-                            dispatch
+                            dispatch,
                         );
                     },
                 },
@@ -695,7 +695,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             buttons.push(
                 <ActionButton onClick={onClickChangeImage}>
                     {gettext('Change image')}
-                </ActionButton>
+                </ActionButton>,
             );
         }
 
@@ -716,7 +716,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                             segment,
                             responseData.id,
                             csrfToken,
-                            dispatch
+                            dispatch,
                         );
                     },
                 },
@@ -726,7 +726,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             buttons.push(
                 <ActionButton onClick={onClickChangeDocument}>
                     {gettext('Change document')}
-                </ActionButton>
+                </ActionButton>,
             );
         }
 
@@ -750,7 +750,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                             segment,
                             responseData.id,
                             csrfToken,
-                            dispatch
+                            dispatch,
                         );
                     },
                 },
@@ -761,9 +761,9 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 <ActionButton onClick={onClickChangeSnippet}>
                     {gettext('Change %s').replace(
                         '%s',
-                        widget.snippet_model.verbose_name
+                        widget.snippet_model.verbose_name,
                     )}
-                </ActionButton>
+                </ActionButton>,
             );
         }
 
@@ -786,9 +786,9 @@ const EditorSynchronisedValueSegment: FunctionComponent<
             <ActionButton onClick={onClickUseEnglishVersion}>
                 {gettext('Revert to %s version').replace(
                     '%s',
-                    sourceLocale.displayName
+                    sourceLocale.displayName,
                 )}
-            </ActionButton>
+            </ActionButton>,
         );
     }
 
@@ -991,7 +991,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                     <BlockSegments>{segmentsRendered}</BlockSegments>
                 </li>
             );
-        }
+        },
     );
 
     return <SegmentList>{segmentRendered}</SegmentList>;

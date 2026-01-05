@@ -76,9 +76,9 @@ On your Wagtail server, you'll need to set two Django settings:
 
 - `WAGTAILLOCALIZE_GIT_CLONE_DIR` needs to be set to a directory that Wagtail Localize can clone the git repository into.
 
-  If you're running on an ephermeral file system (such as on Heroku), this can be pointed to a temporary directory.
-  Wagtail Localize will re-clone the repository if it's ever deleted. It keeps track of what the previous `HEAD`
-  commit was in the database so it will not lose track of anything if a deletion occurs.
+    If you're running on an ephermeral file system (such as on Heroku), this can be pointed to a temporary directory.
+    Wagtail Localize will re-clone the repository if it's ever deleted. It keeps track of what the previous `HEAD`
+    commit was in the database so it will not lose track of anything if a deletion occurs.
 
 For example:
 

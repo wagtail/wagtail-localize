@@ -24,7 +24,7 @@ const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
     snippetId,
 }) => {
     const [snippetInfo, setSnippetInfo] = React.useState<SnippetAPI | null>(
-        null
+        null,
     );
 
     React.useEffect(() => {
@@ -32,7 +32,7 @@ const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
 
         if (snippetId) {
             fetch(
-                `${adminBaseUrl}localize/api/snippets/${snippetModel.app_label}/${snippetModel.model_name}/${snippetId}/`
+                `${adminBaseUrl}localize/api/snippets/${snippetModel.app_label}/${snippetModel.model_name}/${snippetId}/`,
             )
                 .then((response) => response.json())
                 .then(setSnippetInfo);
@@ -58,7 +58,7 @@ const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
                             >
                                 {gettext('Edit this %s').replace(
                                     '%s',
-                                    snippetModel.verbose_name
+                                    snippetModel.verbose_name,
                                 )}
                             </a>
                         </li>
@@ -70,7 +70,7 @@ const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
                 <p>
                     {gettext('Fetching %s information...').replace(
                         '%s',
-                        snippetModel.verbose_name
+                        snippetModel.verbose_name,
                     )}
                 </p>
             );
@@ -86,7 +86,7 @@ const SnippetChooser: FunctionComponent<SnippetChooserProps> = ({
                 >
                     {gettext('Choose a %s').replace(
                         '%s',
-                        snippetModel.verbose_name
+                        snippetModel.verbose_name,
                     )}
                 </button>
             </div>
