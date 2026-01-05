@@ -25,7 +25,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                 data-controller="w-progress"
                 data-action="w-progress#activate"
                 data-w-progress-active-value={gettext(
-                    'Stopping Synced translation'
+                    'Stopping Synced translation',
                 )}
             >
                 <Icon name="cross" />
@@ -47,7 +47,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     data-controller="w-progress"
                     data-action="w-progress#activate"
                     data-w-progress-active-value={gettext(
-                        'Converting to alias page'
+                        'Converting to alias page',
                     )}
                 >
                     <Icon name="wagtail-localize-convert" />
@@ -55,7 +55,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                         {gettext('Convert to alias page')}
                     </em>
                 </button>
-            </form>
+            </form>,
         );
     }
 
@@ -64,7 +64,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
             <a className="button action-secondary" href={links.deleteUrl}>
                 <Icon name="bin" />
                 {gettext('Delete')}
-            </a>
+            </a>,
         );
     }
 
@@ -84,13 +84,13 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     data-controller="w-progress"
                     data-action="w-progress#activate"
                     data-w-progress-active-value={gettext(
-                        'Applying editor lock'
+                        'Applying editor lock',
                     )}
                 >
                     <Icon name="lock" />
                     <em data-w-progress-target="label">{gettext('Lock')}</em>
                 </button>
-            </form>
+            </form>,
         );
     }
 
@@ -110,13 +110,13 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                     data-controller="w-progress"
                     data-action="w-progress#activate"
                     data-w-progress-active-value={gettext(
-                        'Removing editor lock'
+                        'Removing editor lock',
                     )}
                 >
                     <Icon name="lock-open" />
                     <em data-w-progress-target="label">{gettext('Unlock')}</em>
                 </button>
-            </form>
+            </form>,
         );
     }
 
@@ -125,7 +125,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
             <a className="button action-secondary" href={links.unpublishUrl}>
                 <Icon name="download" />
                 {gettext('Unpublish')}
-            </a>
+            </a>,
         );
     }
 
@@ -158,7 +158,7 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                         {gettext('Publish in ') + locale.displayName}
                     </em>
                 </button>
-            </form>
+            </form>,
         );
     }
 
