@@ -27,7 +27,7 @@ Wagtail Localize requires the following:
 - Python (3.10, 3.11, 3.12, 3.13, 3.14)
 - Django (4.2, 5.2, 6.0)
 - Wagtail (6.3 - 7.2) with [internationalisation enabled](https://docs.wagtail.org/en/stable/advanced_topics/i18n.html#configuration)
-- [wagtail-modeladmin](https://pypi.org/project/wagtail-modeladmin/) if `using wagtail_localize.modeladmin` and Wagtail >= 5.2
+- [wagtail-modeladmin](https://pypi.org/project/wagtail-modeladmin/) if `using wagtail_localize.modeladmin` and Wagtail >= 6.3
 
 ## Installation
 

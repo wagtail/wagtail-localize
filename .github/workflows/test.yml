@@ -71,11 +71,8 @@ jobs:
           PGDATA: /dev/shm/pgdata
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -d postgres -U postgres -p 5432"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        options: --health-cmd "pg_isready -d postgres -U postgres -p 5432" --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
