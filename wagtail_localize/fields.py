@@ -66,7 +66,7 @@ class TranslatableField(BaseTranslatableField):
 
         # We have a text field that has been cleared so we should mark it as synchronised
         if (
-            isinstance(field, (RichTextField, models.TextField, models.CharField))
+            isinstance(field, RichTextField | models.TextField | models.CharField)
             and getattr(source, field.attname) == ""
         ):
             return True
@@ -147,7 +147,7 @@ def get_translatable_fields(model):
         # URL, Email and choices fields are an exception to the rule below.
         # Text fields are translatable, but these are synchronised.
         if (
-            isinstance(field, (models.URLField, models.EmailField))
+            isinstance(field, models.URLField | models.EmailField)
             or isinstance(field, models.CharField)
             and field.choices
         ):
@@ -155,7 +155,7 @@ def get_translatable_fields(model):
 
         # Translatable text fields should be translatable
         elif isinstance(
-            field, (StreamField, RichTextField, models.TextField, models.CharField)
+            field, StreamField | RichTextField | models.TextField | models.CharField
         ):
             translatable_fields.append(TranslatableField(field.name))
 

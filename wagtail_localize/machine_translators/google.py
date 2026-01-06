@@ -45,7 +45,7 @@ class GoogleCloudTranslator(BaseMachineTranslator):
 
         return {
             string: StringValue(translation.translated_text)
-            for string, translation in zip(strings, response.translations)
+            for string, translation in zip(strings, response.translations, strict=True)
         }
 
     def can_translate(self, source_locale, target_locale):

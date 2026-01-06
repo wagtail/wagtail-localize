@@ -141,7 +141,7 @@ class StreamFieldSegmentsWriter:
 
         elif isinstance(
             block_type,
-            (blocks.CharBlock, blocks.TextBlock, blocks.URLBlock, blocks.EmailBlock),
+            blocks.CharBlock | blocks.TextBlock | blocks.URLBlock | blocks.EmailBlock,
         ):
             if len(segments) > 1:
                 raise ValueError(
@@ -316,7 +316,7 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
             html = restore_strings(template, strings)
             setattr(translated_obj, field_name, html)
 
-        elif isinstance(field, (models.TextField, models.CharField)):
+        elif isinstance(field, models.TextField | models.CharField):
             if len(field_segments) > 1:
                 raise ValueError(
                     f"TextField/CharField can only have a single segment. Found {len(field_segments)}"

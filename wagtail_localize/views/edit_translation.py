@@ -177,7 +177,7 @@ class TabHelper:
         # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
         # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
         # only interested in "tabbing"
-        is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
+        is_tabbed = isinstance(self.edit_handler, TabbedInterface | ObjectList)
 
         if is_tabbed:
             field_tabs = {}
@@ -207,7 +207,7 @@ class TabHelper:
         # ObjectList used to inherit from TabbedInterface pre 3.0. Now they both inherit from PanelGroup
         # Ideally we would check on PanelGroup, however FieldRowPanel and MultiRowPanel do so too, but we're
         # only interested in "tabbing"
-        is_tabbed = isinstance(self.edit_handler, (TabbedInterface, ObjectList))
+        is_tabbed = isinstance(self.edit_handler, TabbedInterface | ObjectList)
 
         if is_tabbed:
             field_orderings = {}
@@ -339,7 +339,7 @@ def get_segment_location_info(
 
         elif isinstance(
             field,
-            (models.CharField, models.TextField, models.EmailField, models.URLField),
+            models.CharField | models.TextField | models.EmailField | models.URLField,
         ):
             return {
                 "type": "text",
@@ -381,19 +381,17 @@ def get_segment_location_info(
 
         elif isinstance(
             block,
-            (
-                blocks.CharBlock,
-                blocks.TextBlock,
-                blocks.RichTextBlock,
-                blocks.EmailBlock,
-                blocks.URLBlock,
-            ),
+            blocks.CharBlock
+            | blocks.TextBlock
+            | blocks.RichTextBlock
+            | blocks.EmailBlock
+            | blocks.URLBlock,
         ):
             return {
                 "type": "text",
             }
         elif (
-            isinstance(block, (blocks.StructBlock, blocks.StreamBlock))
+            isinstance(block, blocks.StructBlock | blocks.StreamBlock)
             and content_components
             and isinstance(content_components, list)
         ):
@@ -412,7 +410,7 @@ def get_segment_location_info(
         block_type_name = field_path_components[1]
         block_type = field.stream_block.child_blocks[block_type_name]
 
-        if isinstance(block_type, (blocks.StructBlock, blocks.StreamBlock)):
+        if isinstance(block_type, blocks.StructBlock | blocks.StreamBlock):
             block_field_name = field_path_components[2]
             block_field = block_type.child_blocks[block_field_name].label
             content_components = field_path_components[2:]
@@ -420,7 +418,7 @@ def get_segment_location_info(
             block_field = None
             content_components = None
             if isinstance(
-                block_type.child_block, (blocks.StructBlock, blocks.StreamBlock)
+                block_type.child_block, blocks.StructBlock | blocks.StreamBlock
             ):
                 block_field_name = field_path_components[3]
                 block_field = block_type.child_block.child_blocks[

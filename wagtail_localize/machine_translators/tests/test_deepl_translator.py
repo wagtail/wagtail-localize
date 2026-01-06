@@ -74,6 +74,11 @@ class TestDeeplTranslator(TestCase):
     @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR=DEEPL_SETTINGS_WITH_FORMALITY)
     @patch("requests.post")
     def test_translate_with_formality_option(self, mock_post):
+        # Mock the response
+        mock_response = Mock()
+        mock_response.json.return_value = {"translations": [{"text": "Test-String"}]}
+        mock_post.return_value = mock_response
+
         translator = get_machine_translator()
         source_locale = Mock(language_code="en")
         target_locale = Mock(language_code="de")
@@ -89,6 +94,11 @@ class TestDeeplTranslator(TestCase):
     @override_settings(WAGTAILLOCALIZE_MACHINE_TRANSLATOR=DEEPL_SETTINGS_PAID_ENDPOINT)
     @patch("requests.post")
     def test_translate_without_formality_option(self, mock_post):
+        # Mock the response
+        mock_response = Mock()
+        mock_response.json.return_value = {"translations": [{"text": "Test-String"}]}
+        mock_post.return_value = mock_response
+
         translator = get_machine_translator()
         source_locale = Mock(language_code="en")
         target_locale = Mock(language_code="de")
@@ -106,6 +116,11 @@ class TestDeeplTranslator(TestCase):
     @patch("requests.post")
     @patch("warnings.warn")
     def test_translate_with_non_supported_formality_option(self, mock_warn, mock_post):
+        # Mock the response
+        mock_response = Mock()
+        mock_response.json.return_value = {"translations": [{"text": "Test-String"}]}
+        mock_post.return_value = mock_response
+
         translator = get_machine_translator()
         source_locale = Mock(language_code="en")
         target_locale = Mock(language_code="de")
@@ -148,6 +163,11 @@ class TestDeeplTranslator(TestCase):
     )
     @patch("requests.post")
     def test_translate_with_glossary_ids(self, mock_post):
+        # Mock the response
+        mock_response = Mock()
+        mock_response.json.return_value = {"translations": [{"text": "Test-String"}]}
+        mock_post.return_value = mock_response
+
         translator = get_machine_translator()
         source_locale = Mock(language_code="en")
         target_locale = Mock(language_code="de")
@@ -165,6 +185,11 @@ class TestDeeplTranslator(TestCase):
     )
     @patch("requests.post")
     def test_translate_with_missing_glossary_ids(self, mock_post):
+        # Mock the response
+        mock_response = Mock()
+        mock_response.json.return_value = {"translations": [{"text": "Test-String"}]}
+        mock_post.return_value = mock_response
+
         translator = get_machine_translator()
         source_locale = Mock(language_code="en")
         target_locale = Mock(language_code="es")

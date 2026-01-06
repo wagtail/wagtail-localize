@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add Python 3.14 to the test matrix
+- Add Wagtail 7.2 to the test matrix
+
+### Removed
+
+- Remove Python 3.9 from the test matrix
+
 ## [1.12.1] - 2025-05-08
 
 ### Changed

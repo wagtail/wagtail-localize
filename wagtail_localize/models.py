@@ -1582,7 +1582,7 @@ class TranslationContext(models.Model):
 
                         if isinstance(
                             block_def,
-                            (blocks.StructBlock, blocks.StreamBlock, blocks.ListBlock),
+                            blocks.StructBlock | blocks.StreamBlock | blocks.ListBlock,
                         ):
                             return [block_type] + get_field_path_from_streamfield_block(
                                 block_value, path_components[1:]

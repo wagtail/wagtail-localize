@@ -1,7 +1,8 @@
 # This file contains a very lightweight implementation of RFC 72: Background workers (https://github.com/wagtail/rfcs/pull/72)
 # This is only to be used by Wagtail Localize and will be replaced with the full Wagtail implementation later
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from django.conf import settings
 from django.utils.module_loading import import_string

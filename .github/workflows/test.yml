@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ['3.11', '3.12', '3.13']
+        python: ['3.11', '3.12', '3.13', '3.14']
         database: ['sqlite']
 
     steps:
@@ -58,12 +58,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
         database: ['postgres']
 
     services:
       postgres:
-        image: bitnami/postgresql:15
+        image: postgres:15
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
