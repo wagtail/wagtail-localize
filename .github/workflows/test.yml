@@ -68,9 +68,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
-          POSTGRESQL_PASSWORD: postgres
-          POSTGRESQL_FSYNC: 'off'
-          POSTGRESQL_DATA_DIR: /dev/shm/pgdata
+          PGDATA: /dev/shm/pgdata
         ports:
           - 5432:5432
         options: --health-cmd "pg_isready -d postgres -U postgres -p 5432" --health-interval 10s --health-timeout 5s --health-retries 5
