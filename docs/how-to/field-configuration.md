@@ -1,9 +1,5 @@
 # Configuring translatable fields
 
-!!! attention
-
-    It is not currently possible to configure `StructBlock` translatable fields. See [Issue #307](https://github.com/wagtail/wagtail-localize/issues/307) for more details.
-
 By default, Wagtail Localize will decide for you which fields are translatable and which fields should just be synchronised.
 This is decided by some simple rules described in the [Auto-generation of Translatable Fields](/concept/translatable-fields-autogen)
 explanation.
@@ -105,3 +101,48 @@ class BlogPage(Page):
         SynchronizedField("slug"),
     ]
 ```
+
+## Specifying Translatable Fields within a StructBlock
+
+**By default, all sub-fields within a StructBlock are included for translation.** However, there may be instances where certain fields within the StructBlock should be excluded from translation. To facilitate this, we've introduced the **`translatable_blocks`** parameter.
+
+The **`translatable_blocks`** parameter allows you to specify a list of block names that should be processed for translation. Any fields within the StructBlock that are not included in this list will be excluded from translation.
+
+For instance, consider a YouTubeBlock that contains a CharBlock for a video ID and a TextBlock for a video description. The video ID is not something we'd want to send for translation, but the description is. To exclude the video ID from translation, we would use the **`translatable_blocks`** parameter as follows:
+
+```python
+class YouTubeBlock(blocks.StructBlock):
+    video_id = blocks.CharBlock(
+        required=True, help_text="Add a YouTube video ID. You can find this in the url."
+    )
+    description = blocks.TextBlock(
+        required=False, help_text="Add a description for the video."
+    )
+
+    translatable_blocks = ["description"]
+```
+
+In this example, only the description field will be included for translation. The video_id field will be excluded from both the translation UI in Wagtail and the exported PO file.
+
+##### Managing Images and Overrideable Segments within a StructBlock
+
+When dealing with overrideable segments such as images within a StructBlock, it's important to note that ignoring these segments could result in losing the ability to use a different image for different languages. If you want to maintain the ability to override an image, include it in the list of translatable_blocks to preserve the default behavior.
+
+Consider the following example of a **`LocationImageBlock`** that contains an **`ImageChooserBlock`** for an image and a **`TextBlock`** for a caption, along with a **`TextBlock`** for an address:
+
+```python
+class LocationImageBlock(blocks.StructBlock):
+    """Location image block with caption."""
+
+    image = ImageChooserBlock(required=True, help_text="Add a banner image.")
+    caption = blocks.TextBlock(
+        required=False, help_text="Add a description for the image."
+    )
+    address = blocks.TextBlock(
+        required=True, help_text="Enter the address for this location."
+    )
+
+    translatable_blocks = ["caption", "image"]
+```
+
+In this example, the image is still overrideable, but the address, which is unique to this location, is locked in by translatable_blocks. This allows you to maintain the flexibility of using different images for different languages, while ensuring that certain unique information remains consistent across all translations.
