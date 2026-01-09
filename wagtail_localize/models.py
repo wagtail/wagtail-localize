@@ -1,4 +1,5 @@
 import json
+import re
 import uuid
 
 import polib
@@ -67,6 +68,9 @@ from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
 from .strings import StringValue, validate_translation_links
 from .tasks import background
+
+
+WHITESPACE_RE = re.compile(r"[ \t\n\f\r]+")
 
 
 def pk(obj):
@@ -1462,10 +1466,13 @@ class String(models.Model):
         Returns:
             String: The String instance that corresponds with the given stringvalue and locale.
         """
+
+        data = re.sub(WHITESPACE_RE, " ", stringvalue.data)
+
         string, created = cls.objects.get_or_create(
             locale_id=pk(locale),
-            data_hash=cls._get_data_hash(stringvalue.data),
-            defaults={"data": stringvalue.data},
+            data_hash=cls._get_data_hash(data),
+            defaults={"data": data},
         )
 
         return string
@@ -1713,6 +1720,11 @@ class StringTranslation(models.Model):
         Returns:
             String: The String instance that corresponds with the given stringvalue and locale.
         """
+
+        # normalise whitespace sequences to a single space unless whitespace is contained in <pre> tag,
+        # in which case, leave it alone
+        # This is in line with https://www.w3.org/TR/html4/struct/text.html#h-9.1
+
         segment, created = cls.objects.get_or_create(
             translation_of=translation_of,
             locale_id=pk(locale),
