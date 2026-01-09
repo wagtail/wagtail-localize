@@ -153,7 +153,10 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
     @transaction.atomic
     def form_valid(self, form):
-        self.object.update_from_db()
+        # To avoid the unintentional publication of draft content from the source, we only use live content if publication is requested.
+        self.object.update_from_db(
+            use_draft_content=not form.cleaned_data["publish_translations"]
+        )
 
         enabled_translations = self.object.translations.filter(enabled=True)
         if form.cleaned_data.get("use_machine_translation"):

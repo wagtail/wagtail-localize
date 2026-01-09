@@ -451,15 +451,25 @@ class TranslationSource(models.Model):
         return source, created
 
     @transaction.atomic
-    def update_from_db(self):
+    def update_from_db(self, use_draft_content=False):
         """
         Retrieves the source instance from the database and updates this TranslationSource
         with its current contents.
+
+        Args:
+            use_draft_content: If True and the source instance is a subclass of DraftStateMixin, the content is
+                retrieved from either the currently scheduled revision, or from the latest revision.
 
         Raises:
             Model.DoesNotExist: If the source instance has been deleted.
         """
         instance = self.get_source_instance()
+
+        if use_draft_content and isinstance(instance, DraftStateMixin):
+            instance = (
+                instance.get_scheduled_revision_as_object()
+                or instance.get_latest_revision_as_object()
+            )
 
         if isinstance(instance, ClusterableModel):
             self.content_json = instance.to_json()
