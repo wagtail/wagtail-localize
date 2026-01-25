@@ -91,6 +91,7 @@ const ActionMenu: FunctionComponent<ActionMenuProps> = ({
                     className="w-dropdown w-dropdown--dropdown-button"
                     data-w-dropdown-theme-value="dropdown-button"
                     data-w-dropdown-offset-value="[0, 0]"
+                    data-w-dropdown-keep-mounted-value="true"
                 >
                     <button
                         type="button"
