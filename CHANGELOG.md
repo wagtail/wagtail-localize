@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.13] - 2025-01-25
+
 ### Changed
 
-- Add Python 3.14 to the test matrix
-- Add Wagtail 7.2 to the test matrix
+- Add Python 3.14, Wagtail 7.2 and Django 6.0 to the test matrix ([#890](https://github.com/wagtail/wagtail-localize/pull/890)) @nickmoreton
+- Use the DeepL API key in the HTTP authorisation header ([#870](https://github.com/wagtail/wagtail-localize/pull/870)) @catilgan-nextension
 
 ### Removed
 
-- Remove Python 3.9 from the test matrix
+- Remove Python 3.9 from the test matrix ([#890](https://github.com/wagtail/wagtail-localize/pull/890)) @nickmoreton
+- Drop upper bound restriction for Django ([#894](https://github.com/wagtail/wagtail-localize/pull/894)) @Akay7
+
+### Fixed
+
+- UI issues with Wagtail 7.x ([#886](https://github.com/wagtail/wagtail-localize/pull/886)) @th3hamm0r
+- Resolve deprecation warnings of bs4 library ([#867](https://github.com/wagtail/wagtail-localize/pull/867)) @emmanuel-ferdman
 
 ## [1.12.1] - 2025-05-08
 
@@ -428,7 +436,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.12.1...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.13...HEAD
+[1.13]: https://github.com/wagtail/wagtail-localize/compare/v1.12.1...v1.13
 [1.12.1]: https://github.com/wagtail/wagtail-localize/compare/v1.12...v1.12.1
 [1.12]: https://github.com/wagtail/wagtail-localize/compare/v1.11.3...v1.12
 [1.11.3]: https://github.com/wagtail/wagtail-localize/compare/v1.11.2...v1.11.3
