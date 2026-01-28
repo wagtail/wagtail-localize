@@ -10,6 +10,7 @@ from wagtail.models import Locale, Page, PageLogEntry
 from wagtail_localize.models import (
     MissingRelatedObjectError,
     MissingTranslationError,
+    RelatedObjectSegment,
     SourceDeletedError,
     String,
     StringTranslation,
@@ -702,6 +703,111 @@ class TestCreateOrUpdateTranslationForPage(TestCase):
 
         self.assertEqual(translated_page.test_snippet, self.translated_snippet)
         self.assertEqual(translated_page.test_charfield, "Ceci est du contenu de test")
+
+    @override_settings(WAGTAILLOCALIZE_DISABLE_ON_DELETE=True)
+    def test_sync_translation_with_untranslated_snippet_in_streamfield(self):
+        """
+        Test that syncing a translation correctly updates a StreamField containing
+        a SnippetChooserBlock when the snippet doesn't have a translation.
+
+        This is a regression test for an issue where the RelatedObjectSegment for
+        an untranslated snippet was skipped entirely (instead of falling back to
+        the source snippet), causing StreamFields to not be updated during sync.
+
+        The scenario:
+        1. User has a page with a StreamField containing snippet A
+        2. User creates a translation of the page (StreamField has snippet A)
+        3. User updates the source page to use snippet B in the StreamField
+        4. Snippet B doesn't have a translation in the target locale
+        5. User syncs the translation
+        6. Expected: StreamField should be updated to contain snippet B (source fallback)
+        """
+        # Create a new snippet that will replace the old one
+        new_snippet = TestSnippet.objects.create(field="New snippet content")
+
+        # Create page with StreamField containing self.snippet
+        page = create_test_page(
+            title="Page to test sync",
+            slug="page-to-test-sync",
+            test_charfield="This is some test content",
+            test_streamfield=[
+                {
+                    "id": "snippet-block",
+                    "type": "test_snippetchooserblock",
+                    "value": self.snippet.pk,
+                }
+            ],
+        )
+
+        # Get the translation source
+        source, _ = TranslationSource.get_or_create_from_instance(page)
+
+        # Create a translation - this copies the StreamField with self.snippet
+        translated_page = page.copy_for_translation(self.dest_locale)
+        revision = translated_page.save_revision()
+        revision.publish()
+        translated_page.refresh_from_db()
+
+        # Verify translation has the original snippet
+        self.assertEqual(len(translated_page.test_streamfield), 1)
+        self.assertEqual(translated_page.test_streamfield[0].value.pk, self.snippet.pk)
+
+        # Update the source page - change the snippet to new_snippet
+        page.test_streamfield = StreamValue(
+            page.test_streamfield.stream_block,
+            [
+                {
+                    "id": "snippet-block",
+                    "type": "test_snippetchooserblock",
+                    "value": new_snippet.pk,
+                }
+            ],
+            is_lazy=True,
+        )
+        page_revision = page.save_revision()
+        page_revision.publish()
+        page.refresh_from_db()
+
+        # Update the translation source to capture the new StreamField content
+        source.update_from_db()
+
+        # Verify a RelatedObjectSegment was created for new_snippet
+        streamfield_segments = RelatedObjectSegment.objects.filter(
+            source=source, context__path__startswith="test_streamfield."
+        )
+        self.assertEqual(streamfield_segments.count(), 1)
+
+        # Ensure new_snippet does not have a translation in the target locale
+        self.assertFalse(
+            TestSnippet.objects.filter(
+                translation_key=new_snippet.translation_key, locale=self.dest_locale
+            ).exists()
+        )
+
+        # Make sure that a segment exists for the dest_locale.
+        segments = source._get_segments_for_translation(self.dest_locale, fallback=True)
+        streamfield_segment_paths = [
+            s.path for s in segments if s.path.startswith("test_streamfield.")
+        ]
+        self.assertEqual(
+            len(streamfield_segment_paths),
+            1,
+            "StreamField segment should not be skipped when snippet has no translation",
+        )
+
+        # Sync the translation
+        updated_page, created = source.create_or_update_translation(
+            self.dest_locale, fallback=True
+        )
+        self.assertFalse(created)
+
+        # Verify the StreamField was updated with the new snippet
+        self.assertEqual(len(updated_page.test_streamfield), 1)
+        self.assertEqual(
+            updated_page.test_streamfield[0].value.pk,
+            new_snippet.pk,
+            "StreamField should contain the new source snippet as fallback",
+        )
 
     def test_convert_alias(self):
         self.page.copy_for_translation(self.dest_locale, alias=True)
