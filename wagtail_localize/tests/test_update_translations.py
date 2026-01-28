@@ -729,3 +729,90 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
             context_id=string_segment.context_id,
         )
         self.assertEqual(string_translation.data, "post blog Edited")
+
+    def test_post_update_draft_page_translation(self):
+        self.en_blog_post.test_charfield = "Edited blog post"
+        self.en_blog_post.save_revision()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            )
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        # Check that the new string was submitted
+        string_segment = StringSegment.objects.get(context__path="test_charfield")
+        self.assertEqual(string_segment.string.data, "Edited blog post")
+
+        # The FR version shouldn't be updated yet
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "Test content")
+
+    def test_post_update_draft_page_translation_with_publish_translations(self):
+        self.en_blog_post.test_charfield = "Edited blog post"
+        self.en_blog_post.save_revision()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {
+                "publish_translations": "on",
+            },
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        # Check that the new string hasn't been submitted
+        string_segment = StringSegment.objects.get(context__path="test_charfield")
+        self.assertEqual(string_segment.string.data, "Test content")
+
+        # The FR version shouldn't be updated yet
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "Test content")
+
+    def test_post_update_draft_page_translation_with_use_machine_translation(self):
+        self.en_blog_post.test_charfield = "Edited blog post"
+        self.en_blog_post.save_revision()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            ),
+            {
+                "use_machine_translation": "on",
+            },
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_explore", args=[self.en_blog_index.id])
+        )
+
+        self.fr_blog_post.refresh_from_db()
+        self.assertEqual(self.fr_blog_post.test_charfield, "Test content")
+
+        # Check that the translation is done, awaiting publication
+        fr = Locale.objects.get(language_code="fr")
+        translation_source = TranslationSource.objects.get_for_instance_or_none(
+            self.en_blog_post
+        )
+        translation = translation_source.translations.get(target_locale=fr)
+
+        string_segment = translation.source.stringsegment_set.get(
+            string__data="Edited blog post"
+        )
+        string_translation = StringTranslation.objects.get(
+            translation_of_id=string_segment.string_id,
+            locale=fr,
+            context_id=string_segment.context_id,
+        )
+        self.assertEqual(string_translation.data, "post blog Edited")
