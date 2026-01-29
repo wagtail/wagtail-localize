@@ -23,6 +23,32 @@ from wagtail_localize.views.edit_translation import apply_machine_translation
 from wagtail_localize.views.submit_translations import TranslationComponentManager
 
 
+def update_translations(
+    request,
+    instance,
+    translations,
+    use_machine_translation=False,
+    publish_translations=False,
+):
+    instance.update_from_db()
+
+    if use_machine_translation:
+        machine_translator = get_machine_translator()
+        for translation in translations.select_related("target_locale"):
+            apply_machine_translation(translation.id, request.user, machine_translator)
+
+    if publish_translations:
+        for translation in translations.select_related("target_locale"):
+            with contextlib.suppress(ValidationError):
+                translation.save_target(user=request.user, publish=True)
+    else:
+        for translation in translations.select_related("source", "target_locale"):
+            with contextlib.suppress(ValidationError):
+                translation.source.update_target_view_restrictions(
+                    translation.target_locale
+                )
+
+
 class UpdateTranslationsForm(forms.Form):
     publish_translations = forms.BooleanField(
         label=gettext_lazy("Publish immediately"),
@@ -153,28 +179,17 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
     @transaction.atomic
     def form_valid(self, form):
-        self.object.update_from_db()
-
         enabled_translations = self.object.translations.filter(enabled=True)
-        if form.cleaned_data.get("use_machine_translation"):
-            machine_translator = get_machine_translator()
-            for translation in enabled_translations.select_related("target_locale"):
-                apply_machine_translation(
-                    translation.id, self.request.user, machine_translator
-                )
 
-        if form.cleaned_data["publish_translations"]:
-            for translation in enabled_translations.select_related("target_locale"):
-                with contextlib.suppress(ValidationError):
-                    translation.save_target(user=self.request.user, publish=True)
-        else:
-            for translation in enabled_translations.select_related(
-                "source", "target_locale"
-            ):
-                with contextlib.suppress(ValidationError):
-                    translation.source.update_target_view_restrictions(
-                        translation.target_locale
-                    )
+        update_translations(
+            self.request,
+            self.object,
+            enabled_translations,
+            use_machine_translation=form.cleaned_data.get(
+                "use_machine_translation", False
+            ),
+            publish_translations=form.cleaned_data["publish_translations"],
+        )
 
         self.components.save(
             self.object,
