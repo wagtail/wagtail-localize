@@ -21,7 +21,7 @@ from .utils import get_locale_usage
 @functools.lru_cache
 def get_locale_component_edit_handler(model):
     if hasattr(model, "edit_handler"):
-        # use the edit handler specified on the class
+        # use the edit handler specified on the model class
         return model.edit_handler
     else:
         panels = extract_panel_definitions_from_model_class(model, exclude=["locale"])
@@ -48,7 +48,9 @@ class ComponentManager(BaseComponentManager):
         is_valid = True
 
         for component, _component_instance, component_form in self.components:
-            if component["required"] or component_form["enabled"].value():
+            if component["required"] or (
+                not component["required"] and component_form["enabled"].value()
+            ):
                 component_form.full_clean()
 
                 try:
@@ -63,7 +65,9 @@ class ComponentManager(BaseComponentManager):
 
     def save(self, locale, *args, **kwargs):
         for component, component_instance, component_form in self.components:
-            if component["required"] or component_form["enabled"].value():
+            if component["required"] or (
+                not component["required"] and component_form["enabled"].value()
+            ):
                 component_instance = component_form.save(commit=False)
                 component_instance.locale = locale
                 component_instance.save()

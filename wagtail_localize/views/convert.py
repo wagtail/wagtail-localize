@@ -99,7 +99,7 @@ def convert_to_alias(request, page_id):
     )
 
 
-def sync_alias(source_page, alias_page, revision=None, _content_json=None):
+def sync_alias(source_page, alias_page, revision=None, _content_json=None, sync_page_status="MIRROR"):
     """
     Updates the page converted to an alias to be up-to-date with the source page.
     It will also update all aliases that follow this page with the latest content from this page.
@@ -127,8 +127,12 @@ def sync_alias(source_page, alias_page, revision=None, _content_json=None):
     # Copy field content
     alias_updated = alias_page.with_content_json(_content_json)
 
-    # Mirror the publishing status of the status page
-    alias_updated.live = source_page.live
+    # Apply status override based on sync_page_status
+    if sync_page_status == "DRAFT":
+        alias_updated.live = False
+    else:
+        # Mirror the publishing status of the source page
+        alias_updated.live = source_page.live
     alias_updated.has_unpublished_changes = False
 
     # Copy child relations
