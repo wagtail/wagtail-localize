@@ -48,7 +48,7 @@ class StreamFieldSegmentExtractor:
             from wagtail.embeds.blocks import EmbedBlock
 
             if isinstance(block_type, EmbedBlock):
-                if self.include_overridables:
+                if self.include_overridables and block_value:
                     return [OverridableSegmentValue("", block_value.url)]
                 else:
                     return []
