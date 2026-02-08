@@ -107,7 +107,7 @@ msgid "Preview"
 msgstr "Попередній перегляд"
 
 msgid "Publish in "
-msgstr "Опублікувати в"
+msgstr "Опублікувати в "
 
 msgid "Publishing..."
 msgstr "Публікація..."
