@@ -109,7 +109,7 @@ msgid "Preview"
 msgstr "Voorvertoning"
 
 msgid "Publish in "
-msgstr "Publiceer in"
+msgstr "Publiceer in "
 
 msgid "Publishing..."
 msgstr "Bezig met publiceren..."

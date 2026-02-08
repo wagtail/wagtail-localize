@@ -110,7 +110,7 @@ msgid "Preview"
 msgstr "Предварительный просмотр"
 
 msgid "Publish in "
-msgstr "Опубликовать в"
+msgstr "Опубликовать в "
 
 msgid "Publishing..."
 msgstr "Публикация..."

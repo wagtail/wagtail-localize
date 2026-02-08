@@ -100,7 +100,7 @@ msgid "Preview"
 msgstr "Förhandsgranska"
 
 msgid "Publish in "
-msgstr "Publicera på"
+msgstr "Publicera på "
 
 msgid "Publishing..."
 msgstr "Publicerar..."

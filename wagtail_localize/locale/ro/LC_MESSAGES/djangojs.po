@@ -103,7 +103,7 @@ msgid "Preview"
 msgstr "Examinare"
 
 msgid "Publish in "
-msgstr "Publică în"
+msgstr "Publică în "
 
 msgid "Publishing..."
 msgstr "Publicare..."

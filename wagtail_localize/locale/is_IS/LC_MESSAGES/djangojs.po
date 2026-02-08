@@ -106,7 +106,7 @@ msgid "Preview"
 msgstr "Forskoða"
 
 msgid "Publish in "
-msgstr "Birta í"
+msgstr "Birta í "
 
 msgid "Publishing..."
 msgstr "Set í birtingu..."

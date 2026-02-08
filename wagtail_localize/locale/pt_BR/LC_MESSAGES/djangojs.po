@@ -108,7 +108,7 @@ msgid "Preview"
 msgstr "Pré-visualizar"
 
 msgid "Publish in "
-msgstr "Publicar em"
+msgstr "Publicar em "
 
 msgid "Publishing..."
 msgstr "Publicando..."
