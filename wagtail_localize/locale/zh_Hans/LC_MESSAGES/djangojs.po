@@ -104,7 +104,7 @@ msgid "Preview"
 msgstr "预览"
 
 msgid "Publish in "
-msgstr "发布在"
+msgstr "发布在 "
 
 msgid "Publishing..."
 msgstr "正在发布……"

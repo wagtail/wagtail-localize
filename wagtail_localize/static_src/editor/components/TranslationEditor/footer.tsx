@@ -110,7 +110,10 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
                 <Icon name="upload" className={'button-longrunning__icon'} />
                 <Icon name="spinner" />
                 <em data-w-progress-target="label">
-                    {gettext('Publish in ') + locale.displayName}
+                    {gettext('Publish in %(language)s').replace(
+                        '%(language)s',
+                        locale.displayName
+                    )}
                 </em>
             </button>
         );
