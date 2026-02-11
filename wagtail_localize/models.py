@@ -65,6 +65,7 @@ from .segments import (
 )
 from .segments.extract import extract_segments
 from .segments.ingest import ingest_segments
+from .signals import post_source_update, process_string_segment
 from .strings import StringValue, validate_translation_links
 from .tasks import background
 
@@ -481,6 +482,9 @@ class TranslationSource(models.Model):
         )
         self.refresh_segments()
 
+        # Send a signal that update is complete
+        post_source_update.send(sender=self.__class__, source=self)
+
     def get_source_instance(self):
         """
         This gets the live version of instance that the source data was extracted from.
@@ -662,6 +666,22 @@ class TranslationSource(models.Model):
                 string = StringValue(string_segment.string.data)
             else:
                 raise MissingTranslationError(string_segment, locale)
+
+            # Send a signal that the segment is being processed, and catch the response.
+            # The signal allows any extra processing to be done for the string.
+            responses = process_string_segment.send(
+                sender=self.__class__,
+                string_segment=string_segment,
+                string_value=string,
+                locale=locale,
+                fallback=fallback,
+                source=self,
+            )
+            # Use the first non-None response, if any.
+            for _receiver, response in responses:
+                if response is not None:
+                    string = response
+                    break
 
             segment_value = StringSegmentValue(
                 string_segment.context.path,
