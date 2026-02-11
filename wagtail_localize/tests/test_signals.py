@@ -14,7 +14,7 @@ from wagtail_localize.models import (
 from wagtail_localize.segments import StringSegmentValue
 from wagtail_localize.signals import post_source_update, process_string_segment
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import TestPage, TestSnippet
+from wagtail_localize.test.models import TestPage
 
 
 def create_test_page(**kwargs):
@@ -36,9 +36,7 @@ class TestProcessStringSegmentSignal(TestCase):
             slug="test-page",
             test_charfield="This is some test content",
         )
-        self.source, created = TranslationSource.get_or_create_from_instance(
-            self.page
-        )
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
         # Add a string translation so _get_segments_for_translation doesn't raise
         self.string = String.from_value(
@@ -73,9 +71,7 @@ class TestProcessStringSegmentSignal(TestCase):
 
         process_string_segment.connect(handler)
         try:
-            self.source._get_segments_for_translation(
-                self.dest_locale, fallback=True
-            )
+            self.source._get_segments_for_translation(self.dest_locale, fallback=True)
         finally:
             process_string_segment.disconnect(handler)
 
@@ -112,9 +108,7 @@ class TestProcessStringSegmentSignal(TestCase):
             process_string_segment.disconnect(handler)
 
         # The results include the replacement value (for test_charfield).
-        string_segments = [
-            s for s in segments if isinstance(s, StringSegmentValue)
-        ]
+        string_segments = [s for s in segments if isinstance(s, StringSegmentValue)]
         modified = [s for s in string_segments if s.string == replacement]
         self.assertEqual(len(modified), 1)
 
@@ -122,6 +116,7 @@ class TestProcessStringSegmentSignal(TestCase):
         """
         If a process_string_segment signal handler returns None, then original is used.
         """
+
         # This handler returns None.
         def handler(sender, **kwargs):
             return None
@@ -134,17 +129,13 @@ class TestProcessStringSegmentSignal(TestCase):
         finally:
             process_string_segment.disconnect(handler)
 
-        string_segments = [
-            s for s in segments if isinstance(s, StringSegmentValue)
-        ]
+        string_segments = [s for s in segments if isinstance(s, StringSegmentValue)]
         # The original translation is used for the test_charfield.
-        charfield_segment = [
-            s
-            for s in string_segments
-            if s.path == "test_charfield"
-        ]
+        charfield_segment = [s for s in string_segments if s.path == "test_charfield"]
         self.assertEqual(len(charfield_segment), 1)
-        self.assertEqual(charfield_segment[0].string.data, "Ceci est du contenu de test")
+        self.assertEqual(
+            charfield_segment[0].string.data, "Ceci est du contenu de test"
+        )
 
     def test_first_non_none_response_wins(self):
         """
@@ -180,12 +171,8 @@ class TestProcessStringSegmentSignal(TestCase):
             process_string_segment.disconnect(handler_second)
             process_string_segment.disconnect(handler_third)
 
-        string_segments = [
-            s for s in segments if isinstance(s, StringSegmentValue)
-        ]
-        charfield_segment = [
-            s for s in string_segments if s.path == "test_charfield"
-        ]
+        string_segments = [s for s in segments if isinstance(s, StringSegmentValue)]
+        charfield_segment = [s for s in string_segments if s.path == "test_charfield"]
         self.assertEqual(len(charfield_segment), 1)
         # One of the handlers should have won (order depends on connection order)
         self.assertIn(
@@ -201,9 +188,7 @@ class TestPostSourceUpdateSignal(TestCase):
             slug="test-page",
             test_charfield="Original content",
         )
-        self.source, created = TranslationSource.get_or_create_from_instance(
-            self.page
-        )
+        self.source, created = TranslationSource.get_or_create_from_instance(self.page)
 
     def test_signal_is_fired_after_update_from_db(self):
         received = []

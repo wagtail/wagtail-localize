@@ -7,6 +7,7 @@ segment processing.
 
 from django.dispatch import Signal
 
+
 # Sent for each string segment during TranslationSource._get_segments_for_translation().
 # Receivers can return a modified StringValue to change the translation.
 #
