@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup, NavigableString, Tag
 from django.utils.translation import gettext_lazy as _
 
-from wagtail_localize.strings import StringValue, lstrip_keep, rstrip_keep
+from wagtail_localize.strings import StringValue, get_soup, lstrip_keep, rstrip_keep
 
 from .base import BaseMachineTranslator
 
@@ -21,7 +21,7 @@ def translate_string(string):
 
 
 def translate_html(html):
-    soup = BeautifulSoup(html, "html.parser")
+    soup = get_soup(html)
 
     def walk(soup):
         for child in soup.children:
@@ -36,7 +36,7 @@ def translate_html(html):
         # reverse the children
         reversed_contents = soup.contents[::-1]
 
-        soup = BeautifulSoup("", "html.parser")
+        soup = get_soup("")
         for content in reversed_contents:
             soup.append(content)
 
