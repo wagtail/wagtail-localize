@@ -30,16 +30,18 @@ class StreamFieldSegmentExtractor:
     A helper class to help traverse StreamField values and extract segments.
     """
 
-    def __init__(self, field, include_overridables=False):
+    def __init__(self, field, include_overridables=False, is_synchronized_field=False):
         """
         Initialises a StreamFieldSegmentExtractor.
 
         Args:
             field (StreamField): The StreamField to extract segments from.
             include_overridables (boolean, optional): Set this to True to extract overridable segments too.
+            is_synchronized_field (boolean, optional): True if this is an explicitly synchronized field (SynchronizedField).
         """
         self.field = field
         self.include_overridables = include_overridables
+        self.is_synchronized_field = is_synchronized_field
 
     def handle_block(self, block_type, block_value, raw_value=None):
         # Need to check if the app is installed before importing EmbedBlock
@@ -73,7 +75,10 @@ class StreamFieldSegmentExtractor:
         elif isinstance(
             block_type, blocks.CharBlock | blocks.TextBlock | blocks.BlockQuoteBlock
         ):
-            return [StringSegmentValue("", block_value)]
+            if self.is_synchronized_field and self.include_overridables:
+                return [OverridableSegmentValue("", block_value)]
+            else:
+                return [StringSegmentValue("", block_value)]
 
         elif isinstance(block_type, blocks.RichTextBlock):
             template, strings = extract_strings(block_value.source)
@@ -132,7 +137,15 @@ class StreamFieldSegmentExtractor:
     def handle_struct_block(self, struct_block, raw_value=None):
         segments = []
 
+        translatable_blocks = getattr(struct_block.block, "translatable_blocks", None)
+
         for field_name, block_value in struct_block.items():
+            if (
+                translatable_blocks is not None
+                and field_name not in translatable_blocks
+            ):
+                continue
+
             block_type = struct_block.block.child_blocks[field_name]
             try:
                 block_raw_value = raw_value["value"].get(field_name)
@@ -263,6 +276,11 @@ def extract_segments(instance):
         is_synchronized = translatable_field.is_synchronized(instance)
         is_overridable = translatable_field.is_overridable(instance)
         extract_overridables = is_synchronized and is_overridable
+        from wagtail_localize.fields import SynchronizedField
+
+        is_explicit_synchronized_field = isinstance(
+            translatable_field, SynchronizedField
+        )
 
         if hasattr(field, "get_translatable_segments"):
             if is_translatable:
@@ -274,11 +292,13 @@ def extract_segments(instance):
                 )
 
         elif isinstance(field, StreamField):
-            if is_translatable:
+            if is_translatable or extract_overridables:
                 segments.extend(
                     segment.wrap(field.name)
                     for segment in StreamFieldSegmentExtractor(
-                        field, include_overridables=extract_overridables
+                        field,
+                        include_overridables=extract_overridables,
+                        is_synchronized_field=is_explicit_synchronized_field,
                     ).handle_stream_block(field.value_from_object(instance))
                 )
 
