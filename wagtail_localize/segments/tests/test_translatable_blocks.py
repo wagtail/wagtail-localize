@@ -651,8 +651,8 @@ class TestTranslatableBlocksBackwardCompatibility(TestCase):
         segments = extract_segments(page)
 
         self.assertEqual(len(segments), 2)
-        self.assertTrue(any("Char content" in str(s.data) for s in segments))
-        self.assertTrue(any("Text content" in str(s.data) for s in segments))
+        self.assertTrue(any("Char content" in str(s.string) for s in segments))
+        self.assertTrue(any("Text content" in str(s.string) for s in segments))
 
     def test_imagechooserblock_still_extracted_as_overridable(self):
         """
