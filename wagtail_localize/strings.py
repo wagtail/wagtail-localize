@@ -1,6 +1,8 @@
+import warnings
+
 from collections import Counter
 
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning, NavigableString, Tag
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
@@ -10,7 +12,13 @@ INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong", "br"]
 
 
 def get_soup(html):
-    return BeautifulSoup(html, "html.parser", preserve_whitespace_tags=["pre", "textarea", "[document]"])
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
+        return BeautifulSoup(
+            html,
+            "html.parser",
+            preserve_whitespace_tags=["pre", "textarea", "[document]"],
+        )
 
 
 def lstrip_keep(text):
