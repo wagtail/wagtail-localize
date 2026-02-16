@@ -1,7 +1,7 @@
 """
 Comprehensive tests for the translatable_blocks feature on StructBlocks.
 
-These tests cover the ability to define `translatable_blocks` and `override_translatable_blocks`
+These tests cover the ability to define `translatable_blocks`
 on StructBlocks to control which sub-fields are translatable, addressing issue #307.
 
 Test scenarios include:

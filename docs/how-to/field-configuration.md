@@ -226,22 +226,6 @@ In this configuration:
 - In the `sidebar` field, the `description` will be an overridable segment (synchronized but can be customized per language)
 - In both cases, the `image` field is excluded from `translatable_blocks`, so it won't be extracted at all
 
-### Using `override_translatable_blocks` on child blocks
-
-Similar to `override_translatable_fields` at the model level, you can use `override_translatable_blocks` on a block to partially override the default behavior of a parent block:
-
-```python
-class BaseImageBlock(blocks.StructBlock):
-    image = ImageChooserBlock(required=False)
-    description = blocks.CharBlock(required=False)
-    caption = blocks.CharBlock(required=False)
-
-
-class CustomizedImageBlock(BaseImageBlock):
-    # Override to only make caption translatable
-    override_translatable_blocks = ["caption"]
-```
-
 !!! tip "Best practices"
 
     - Use `translatable_blocks = []` for technical blocks that should never be translated (code, URLs, identifiers)
