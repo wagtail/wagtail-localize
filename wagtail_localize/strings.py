@@ -1,8 +1,10 @@
+import hashlib
 import warnings
 
 from collections import Counter
 
 from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning, NavigableString, Tag
+from bs4.builder import HTMLParserTreeBuilder
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
@@ -11,14 +13,17 @@ from django.utils.translation import gettext as _
 INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong", "br"]
 
 
+class PreserveWhitespaceTags:
+    def __contains__(self, item):
+        return True
+
+
 def get_soup(html):
+    builder = HTMLParserTreeBuilder()
+    builder.preserve_whitespace_tags = PreserveWhitespaceTags()
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
-        return BeautifulSoup(
-            html,
-            "html.parser",
-            preserve_whitespace_tags=["pre", "textarea", "[document]"],
-        )
+        return BeautifulSoup(html, builder=builder)
 
 
 def lstrip_keep(text):

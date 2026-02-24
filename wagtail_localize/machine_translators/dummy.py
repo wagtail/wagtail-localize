@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import NavigableString, Tag
 from django.utils.translation import gettext_lazy as _
 
 from wagtail_localize.strings import StringValue, get_soup, lstrip_keep, rstrip_keep
@@ -11,7 +11,7 @@ def language_code(code):
 
 
 def translate_string(string):
-    # Preserve leading/trailing whitespace. This could be a segment of a sentence.
+    # Preserve leading/trailing whitespace. This could be a sentence segment.
     string, left_whitespace = lstrip_keep(string)
     string, right_whitespace = rstrip_keep(string)
 
