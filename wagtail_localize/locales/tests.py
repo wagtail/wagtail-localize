@@ -50,7 +50,7 @@ class TestLocaleIndexView(BaseLocaleTestCase):
         # Test if the index view renders successfully
         response = self.execute_request("GET", "wagtaillocales:index")
         self.assert_successful_response(response)
-        self.assertTemplateUsed(response, "wagtaillocales/index.html")
+        self.assertTemplateUsed(response, "wagtailadmin/generic/index.html")
 
     def test_context_variables(self):
         # Test if the context variables are present and have the expected types
