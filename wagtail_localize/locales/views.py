@@ -91,6 +91,7 @@ class IndexView(generic.IndexView):
 class CreateView(generic.CreateView):
     page_title = gettext_lazy("Add locale")
     template_name = "wagtaillocales/create.html"
+    produced_error_message = None
 
     @property
     def success_message(self):
@@ -132,6 +133,7 @@ class EditView(generic.EditView):
     context_object_name = "locale"
     template_name = "wagtaillocales/edit.html"
     queryset = Locale.all_objects.all()
+    produced_error_message = None
 
     @property
     def success_message(self):
