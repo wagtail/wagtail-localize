@@ -97,6 +97,36 @@ class TestLocaleIndexView(BaseLocaleTestCase):
         self.assert_successful_response(response)
         self.assertIn(locale, response.context["locales"])
 
+    @override_settings(
+    LANGUAGES=[
+        ("en", "English"), ("fr", "French"), ("de", "German"),
+        ("es", "Spanish"), ("it", "Italian"), ("nl", "Dutch"),
+        ("pl", "Polish"), ("sv", "Swedish"), ("da", "Danish"),
+        ("fi", "Finnish"), ("nb", "Norwegian"), ("cs", "Czech"),
+        ("sk", "Slovak"), ("hu", "Hungarian"), ("ro", "Romanian"),
+        ("bg", "Bulgarian"), ("hr", "Croatian"), ("sl", "Slovenian"),
+        ("lt", "Lithuanian"), ("lv", "Latvian"), ("et", "Estonian"),
+    ],
+    WAGTAIL_CONTENT_LANGUAGES=[
+        ("en", "English"), ("fr", "French"), ("de", "German"),
+        ("es", "Spanish"), ("it", "Italian"), ("nl", "Dutch"),
+        ("pl", "Polish"), ("sv", "Swedish"), ("da", "Danish"),
+        ("fi", "Finnish"), ("nb", "Norwegian"), ("cs", "Czech"),
+        ("sk", "Slovak"), ("hu", "Hungarian"), ("ro", "Romanian"),
+        ("bg", "Bulgarian"), ("hr", "Croatian"), ("sl", "Slovenian"),
+        ("lt", "Lithuanian"), ("lv", "Latvian"), ("et", "Estonian"),
+    ]
+)
+    def test_pagination(self):
+        # Test that pagination works when there are more than 20 locales
+        for lang in ["fr", "de", "es", "it", "nl", "pl", "sv", "da", "fi",
+                     "nb", "cs", "sk", "hu", "ro", "bg", "hr", "sl", "lt", "lv", "et"]:
+            Locale.objects.get_or_create(language_code=lang)
+
+        response = self.execute_request("GET", "wagtaillocales:index")
+        self.assert_successful_response(response)
+        self.assertTrue(response.context["page_obj"].paginator.num_pages > 1)
+
 
 class TestLocaleCreateView(BaseLocaleTestCase):
     def post(self, post_data=None):
