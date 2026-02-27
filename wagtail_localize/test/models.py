@@ -163,6 +163,20 @@ class TestNestedStreamBlock(blocks.StreamBlock):
     chooser_in_list = blocks.ListBlock(blocks.PageChooserBlock())
 
 
+class TestStructBlockOverride(blocks.StructBlock):
+    field_a = blocks.TextBlock()
+    field_b = blocks.TextBlock()
+
+    translatable_blocks = ["field_a"]
+
+
+class TestStructBlockIgnoreAll(blocks.StructBlock):
+    field_a = blocks.TextBlock()
+    field_b = blocks.TextBlock()
+
+    translatable_blocks = []
+
+
 class TestNestedChooserStructBlock(blocks.StructBlock):
     nested_page = TestChooserStructBlock()
 
@@ -253,6 +267,8 @@ class TestStreamBlock(blocks.StreamBlock):
     test_nestedstreamblock = TestNestedStreamBlock()
     test_streamblock_in_structblock = TestStreamBlockInStructBlock()
     test_customstructblock = CustomStructBlock()
+    test_structblockwithoverrides = TestStructBlockOverride()
+    test_structblockignoreall = TestStructBlockIgnoreAll()
     test_customblockwithoutextractmethod = CustomBlockWithoutExtractMethod()
     test_pagechooserblock = blocks.PageChooserBlock()
     test_pagechooserblock_with_restricted_types = blocks.PageChooserBlock(
