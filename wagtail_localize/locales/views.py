@@ -73,14 +73,13 @@ class ComponentManager(BaseComponentManager):
 
 
 class IndexView(generic.IndexView):
-    template_name = "wagtaillocales/index.html"
     page_title = gettext_lazy("Locales")
     add_item_label = gettext_lazy("Add a locale")
     context_object_name = "locales"
     queryset = Locale.all_objects.all()
 
-    def get_context_data(self):
-        context = super().get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context["wagtail_version"] = get_main_version()
 
         for locale in context["locales"]:
