@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import include, path, reverse
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
@@ -20,6 +23,7 @@ from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
 
 # Import synctree so it can register its signal handler
 from . import synctree  # noqa: F401
+from .machine_translators import get_machine_translator
 from .models import Translation, TranslationSource
 from .views import (
     convert,
@@ -258,6 +262,12 @@ def before_edit_page(request, page):
             return redirect(
                 reverse("wagtail_localize:convert_to_alias", args=[page.id])
             )
+        elif "localize-publish-with-machine-translation" in request.POST:
+            request.POST = request.POST.copy()
+            request.POST["action-publish"] = "action-publish"
+            # This field will be checked by the "after_publish_page" hook. Since the page instance gets reloaded
+            # before "after_publish_page" is called, we have to use the request object to keep the flag.
+            request._localize_machine_translation_on_publish = page.id
 
     # Overrides the edit page view if the page is the target of a translation
     try:
@@ -270,6 +280,51 @@ def before_edit_page(request, page):
 
     except Translation.DoesNotExist:
         pass
+
+
+@hooks.register("after_publish_page")
+def after_publish_page(request, page):
+    if getattr(request, "_localize_machine_translation_on_publish", None) == page.id:
+        # Note: Syncing the go-live-date to the translations is not supported yet. To avoid publishing the
+        # translations too early, we skip it.
+        # TODO: Remove/Adapt this code and PublishWithMachineTranslationPageActionMenuItem, when go_live_at is synced with translations.
+        go_live_at = page.go_live_at
+        if go_live_at and go_live_at > timezone.now():
+            return
+
+        if get_machine_translator() is None:
+            return
+
+        # This is executed after publication, so we don't have to check can_publish().
+        if not request.user.has_perm("wagtail_localize.submit_translation"):
+            return
+
+        source = TranslationSource.objects.get_for_instance_or_none(page)
+        if source is None or not source.translations.filter(enabled=True).exists():
+            return
+
+        with transaction.atomic():
+            update_translations.update_translations(
+                request,
+                source,
+                source.translations.filter(enabled=True),
+                use_machine_translation=True,
+                publish_translations=True,
+            )
+    elif getattr(settings, "WAGTAILLOCALIZE_UPDATE_TRANSLATIONS_ON_PUBLISH", False):
+        if not request.user.has_perm("wagtail_localize.submit_translation"):
+            return
+
+        source = TranslationSource.objects.get_for_instance_or_none(page)
+        if source is None or not source.translations.filter(enabled=True).exists():
+            return
+
+        with transaction.atomic():
+            update_translations.update_translations(
+                request,
+                source,
+                source.translations.filter(enabled=True),
+            )
 
 
 class RestartTranslationPageActionMenuItem(PageActionMenuItem):
@@ -326,6 +381,41 @@ class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
 @hooks.register("register_page_action_menu_item")
 def register_convert_back_to_alias_page_action_menu_item():
     return ConvertToAliasPageActionMenuItem(order=0)
+
+
+class PublishWithMachineTranslationPageActionMenuItem(PageActionMenuItem):
+    label = gettext_lazy("Publish & machine translate")
+    name = "localize-publish-with-machine-translation"
+    icon_name = "upload"
+    classname = "action-secondary"
+
+    def is_shown(self, context):
+        # We only support the edit view for now.
+        if context["view"] != "edit":
+            return False
+
+        # See note in "after_publish_page" hook above.
+        go_live_at = context["page"].go_live_at
+        if go_live_at and go_live_at > timezone.now():
+            return False
+
+        if get_machine_translator() is None:
+            return False
+
+        page_perms = self.get_user_page_permissions_tester(context)
+        if not page_perms.can_publish() or not context["request"].user.has_perm(
+            "wagtail_localize.submit_translation"
+        ):
+            return False
+
+        # As with the "Sync translated pages" button we only show this menu item, if enabled translations exist.
+        source = TranslationSource.objects.get_for_instance_or_none(context["page"])
+        return source is not None and source.translations.filter(enabled=True).exists()
+
+
+@hooks.register("register_page_action_menu_item")
+def register_publish_with_machine_translation_page_action_menu_item():
+    return PublishWithMachineTranslationPageActionMenuItem()
 
 
 @hooks.register("before_edit_snippet")
