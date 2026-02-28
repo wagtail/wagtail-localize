@@ -7,6 +7,7 @@ import Avatar from '../../../common/components/Avatar';
 
 import PageChooser from '../../../common/components/PageChooser';
 import ImageChooser from '../../../common/components/ImageChooser';
+import MediaChooser from '../../../common/components/MediaChooser';
 import DocumentChooser from '../../../common/components/DocumentChooser';
 import SnippetChooser from '../../../common/components/SnippetChooser';
 
@@ -705,6 +706,36 @@ const EditorSynchronisedValueSegment: FunctionComponent<
                 imageId={(override && override.value) || segment.value}
             />
         );
+    } else if (widget.type == 'media_chooser') {
+        const onClickChangeMedia = () => {
+            return (window as any).ModalWorkflow({
+                url: (window as any).chooserUrls.mediaChooser,
+                onload: (window as any).MEDIA_CHOOSER_MODAL_ONLOAD_HANDLERS,
+                responses: {
+                    mediaChosen: function (responseData: any) {
+                        saveOverride(
+                            segment,
+                            responseData.id,
+                            csrfToken,
+                            dispatch
+                        );
+                    },
+                },
+            });
+        };
+        if (!isLocked) {
+            buttons.push(
+                <ActionButton onClick={onClickChangeMedia}>
+                    {gettext('Change media')}
+                </ActionButton>
+            );
+        }
+        value = (
+            <MediaChooser
+                adminBaseUrl={adminBaseUrl}
+                mediaId={(override && override.value) || segment.value}
+            />
+        );
     } else if (widget.type == 'document_chooser') {
         const onClickChangeDocument = () => {
             (window as any).ModalWorkflow({
@@ -993,7 +1024,6 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
             );
         }
     );
-
     return <SegmentList>{segmentRendered}</SegmentList>;
 };
 

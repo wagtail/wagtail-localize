@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "wagtail.documents",
     "wagtail.images",
     "wagtail.search",
+    "wagtailmedia",
     "wagtail.admin",
     "wagtail.api.v2",
     "wagtail.contrib.routable_page",
