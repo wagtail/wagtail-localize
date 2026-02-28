@@ -1,12 +1,29 @@
+import hashlib
+import warnings
+
 from collections import Counter
 
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning, NavigableString, Tag
+from bs4.builder import HTMLParserTreeBuilder
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
 
 # List of tags that are allowed in segments
 INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong", "br"]
+
+
+class PreserveWhitespaceTags:
+    def __contains__(self, item):
+        return True
+
+
+def get_soup(html):
+    builder = HTMLParserTreeBuilder()
+    builder.preserve_whitespace_tags = PreserveWhitespaceTags()
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
+        return BeautifulSoup(html, builder=builder)
 
 
 def lstrip_keep(text):
@@ -100,7 +117,7 @@ class StringValue:
         elements.pop()
 
         # Join the elements then pass through beautiful soup to normalize the HTML
-        return cls(str(BeautifulSoup("".join(elements), "html.parser")))
+        return cls(str(get_soup("".join(elements))))
 
     @classmethod
     def from_source_html(cls, html):
@@ -118,7 +135,7 @@ class StringValue:
         """
         # Extracts attributes from any tags (eg, href from <a> tags) and stores a version
         # with just the translatable HTML
-        soup = BeautifulSoup(html, "html.parser")
+        soup = get_soup(html)
         attrs = {}
         counter = Counter()
 
@@ -158,7 +175,7 @@ class StringValue:
         Returns:
             StringValue: The initialised StringValue.
         """
-        soup = BeautifulSoup(html, "html.parser")
+        soup = get_soup(html)
 
         validate_element(soup)
 
@@ -173,7 +190,7 @@ class StringValue:
         Returns:
             str: The plain text representation of the string.
         """
-        soup = BeautifulSoup(self.data, "html.parser")
+        soup = get_soup(self.data)
         texts = []
 
         def walk(soup):
@@ -203,7 +220,7 @@ class StringValue:
         Returns:
             BeautifulSoup: A BeautifulSoup object representing the HTML of the string.
         """
-        soup = BeautifulSoup(self.data, "html.parser")
+        soup = get_soup(self.data)
 
         def walk(soup):
             for element in soup.children:
@@ -300,7 +317,7 @@ def extract_strings(html):
     if html is None:
         html = ""
 
-    soup = BeautifulSoup(html, "html.parser")
+    soup = get_soup(html)
 
     def wrap(elements):
         """
@@ -472,7 +489,7 @@ def restore_strings(template, strings):
     Returns:
         str: A HTML blob with the strings inserted into the template.
     """
-    soup = BeautifulSoup(template, "html.parser")
+    soup = get_soup(template)
     for text_element in soup.find_all("text"):
         string, attrs = strings[int(text_element.get("position"))]
         text_element.replace_with(string.render_soup(attrs))
@@ -482,7 +499,7 @@ def restore_strings(template, strings):
 
 def extract_ids(template):
     """Extract link ids from one template string and return it in a set."""
-    soup = BeautifulSoup(template, "html.parser")
+    soup = get_soup(template)
     ids = set()
     for element in soup.descendants:
         if not isinstance(element, Tag):

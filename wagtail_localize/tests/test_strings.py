@@ -432,3 +432,42 @@ class IDsValidationTestCase(TestCase):
         self.assertEqual(
             e.exception.args, ("Unrecognised id found in an <a> tag: a3, a4",)
         )
+
+class TestWhitespacePreservation(TestCase):
+    def test_double_whitespace_between_words_plaintext(self):
+        text = "Hello  world"
+        string_val = StringValue.from_plaintext(text)
+        self.assertEqual(string_val.render_text(), text)
+
+    def test_double_whitespace_between_words_html(self):
+        html = "<p>Hello  world</p>"
+        template, strings = extract_strings(html)
+        self.assertEqual(len(strings), 1)
+        self.assertEqual(strings[0][0].render_text(), "Hello  world")
+
+    def test_double_whitespace_between_tags(self):
+        html = "<b>Hello</b>  <b>world</b>"
+        template, strings = extract_strings(html)
+        self.assertEqual(len(strings), 1)
+        self.assertEqual(strings[0][0].render_text(), "Hello  world")
+
+    def test_double_whitespace_between_tags_inside_div(self):
+        html = "<div><b>a</b>  <b>b</b></div>"
+        template, strings = extract_strings(html)
+        self.assertEqual(len(strings), 1)
+        self.assertEqual(strings[0][0].render_text(), "a  b")
+
+    def test_leading_whitespace_in_block_tag(self):
+        html = "<p>  Hello</p>"
+        template, strings = extract_strings(html)
+        # Leading whitespace is moved to the template by extract_strings
+        self.assertIn("  ", template)
+        self.assertEqual(strings[0][0].render_text(), "Hello")
+        # Restored HTML should have it back
+        self.assertEqual(restore_strings(template, strings), html)
+
+    def test_whitespace_between_inline_tags_in_template(self):
+        html = "<div>Block 1</div>  <div>Block 2</div>"
+        template, strings = extract_strings(html)
+        self.assertIn("  ", template)
+        self.assertEqual(restore_strings(template, strings), html)
