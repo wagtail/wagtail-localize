@@ -693,8 +693,16 @@ class TranslationSource(models.Model):
                 segments.append(segment_value)
 
             elif fallback:
-                # Skip this segment, this will reuse what is already in the database
-                continue
+                # Use source locale object as fallback when target doesn't exist
+                source_instance = related_object_segment.object.get_instance(
+                    self.locale
+                )
+                segment_value = OverridableSegmentValue(
+                    related_object_segment.context.path,
+                    source_instance.pk,
+                    order=related_object_segment.order,
+                )
+                segments.append(segment_value)
             else:
                 raise MissingRelatedObjectError(related_object_segment, locale)
 
