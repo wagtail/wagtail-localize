@@ -3,10 +3,88 @@ from collections import Counter
 from bs4 import BeautifulSoup, NavigableString, Tag
 from django.utils.html import escape
 from django.utils.translation import gettext as _
+from wagtail.rich_text import features as feature_registry
 
 
 # List of tags that are allowed in segments
-INLINE_TAGS = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong", "br"]
+INLINE_TAGS = None
+
+
+def set_inline_tags():
+    global INLINE_TAGS
+    inline_tags = ["a", "abbr", "acronym", "b", "code", "em", "i", "strong", "br"]
+
+    if not feature_registry.has_scanned_for_features:
+        feature_registry._scan_for_features()
+
+    for editor in feature_registry.plugins_by_editor.keys():
+        # This method only supports draftail
+        if editor != "draftail":
+            continue
+
+        for feature in feature_registry.plugins_by_editor[editor].keys():
+            plugin = feature_registry.get_editor_plugin(editor, feature)
+            if plugin and plugin.option_name == "inlineStyles":
+                db_converter = feature_registry.get_converter_rule(
+                    "contentstate", feature
+                )
+                name = plugin.data["type"]
+                style = dict_to_css_selector(
+                    db_converter["to_database_format"]["style_map"][name]
+                )
+                if style not in inline_tags:
+                    inline_tags.append(style)
+
+    INLINE_TAGS = inline_tags
+
+
+def dict_to_css_selector(d):
+    """
+    Converts a dictionary to a CSS selector string.
+    """
+
+    if not isinstance(d, dict):
+        return d
+
+    if "element" not in d:
+        raise ValueError("Element key is required")
+
+    selector = d["element"]
+    if "props" in d:
+        tag_id = d["props"].pop("id", None)
+        if tag_id:
+            selector += f"#{tag_id}"
+        klass = d["props"].pop("class", None)
+        if klass:
+            selector += f".{klass}"
+        for key, value in d["props"].items():
+            selector += f"[{key}='{value}']"
+
+    return selector
+
+
+def bs4_to_css_selector(tag):
+    """
+    Converts a BeautifulSoup tag to a CSS selector string.
+    """
+
+    if not isinstance(tag, Tag):
+        return None
+
+    selector = tag.name
+    attrs = tag.attrs.copy()
+
+    if "id" in attrs:
+        selector += f"#{attrs['id']}"
+        del attrs["id"]
+    if "class" in attrs:
+        selector += f".{'.'.join(attrs['class'])}"
+        del attrs["class"]
+
+    for key, value in attrs.items():
+        selector += f"[{key}='{value}']"
+
+    return selector
 
 
 def lstrip_keep(text):
@@ -39,26 +117,33 @@ def validate_element(element):
     if isinstance(element, NavigableString):
         return
 
+    if INLINE_TAGS is None:
+        set_inline_tags()
+
     # Validate tag and attributes
     if isinstance(element, Tag) and element.name != "[document]":
         # Block tags are not allowed in strings
-        if element.name not in INLINE_TAGS:
+        if not (
+            element.name in INLINE_TAGS or bs4_to_css_selector(element) in INLINE_TAGS
+        ):
             raise ValueError(
                 _(
                     "<{}> tag is not allowed. Strings can only contain standard HTML inline tags (such as <b>, <a>)"
-                ).format(element.name)
+                ).format(bs4_to_css_selector(element))
             )
 
+        # This check is not necessary because we allowing attributes now
+
         # Elements can't have attributes, except for <a> tags
-        keys = set(element.attrs.keys())
-        if element.name == "a" and "id" in keys:
-            keys.remove("id")
-        if keys:
-            raise ValueError(
-                _(
-                    "Strings cannot have any HTML tags with attributes (except for 'id' in <a> tags)"
-                )
-            )
+        # keys = set(element.attrs.keys())
+        # if element.name == "a" and "id" in keys:
+        #     keys.remove("id")
+        # if keys:
+        #     raise ValueError(
+        #         _(
+        #             "Strings cannot have any HTML tags with attributes (except for 'id' in <a> tags)"
+        #         )
+        #     )
 
     # Traverse children
     for child_element in element.children:
@@ -129,7 +214,7 @@ class StringValue:
 
                 else:
                     # Extract HTML attributes replacing them with an ID
-                    if element.attrs:
+                    if element.name == "a" and element.attrs:
                         counter[element.name] += 1
                         element_id = element.name + str(counter[element.name])
                         attrs[element_id] = element.attrs
@@ -300,6 +385,9 @@ def extract_strings(html):
     if html is None:
         html = ""
 
+    if INLINE_TAGS is None:
+        set_inline_tags()
+
     soup = BeautifulSoup(html, "html.parser")
 
     def wrap(elements):
@@ -321,7 +409,10 @@ def extract_strings(html):
             len(elements) == 1
             and not isinstance(elements[0], NavigableString)
             and elements[0].name != "a"  # keep href translatable
-            and elements[0].name in INLINE_TAGS
+            and (
+                elements[0].name in INLINE_TAGS
+                or bs4_to_css_selector(elements[0]) in INLINE_TAGS
+            )
         ):
             wrap(elements[0].children)
             return
@@ -420,7 +511,9 @@ def extract_strings(html):
             buffer = []
             has_wrap = True
 
-        if element.name not in INLINE_TAGS:
+        if not (
+            element.name in INLINE_TAGS or bs4_to_css_selector(element) in INLINE_TAGS
+        ):
             if buffer:
                 wrap(buffer)
                 has_wrap = True
