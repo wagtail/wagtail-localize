@@ -1,3 +1,5 @@
+import contextlib
+
 from django import forms
 from django.contrib import messages
 from django.contrib.admin.utils import quote, unquote
@@ -147,9 +149,10 @@ class SubmitTranslationView(SingleObjectMixin, TemplateView):
         single_translated_object = None
         if len(form.cleaned_data["locales"]) == 1:
             locales = form.cleaned_data["locales"][0].get_display_name()
-            single_translated_object = self.object.get_translation(
-                form.cleaned_data["locales"][0]
-            )
+            with contextlib.suppress(self.object.__class__.DoesNotExist):
+                single_translated_object = self.object.get_translation(
+                    form.cleaned_data["locales"][0]
+                )
 
         else:
             # Note: always plural
