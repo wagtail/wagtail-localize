@@ -664,12 +664,15 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
         """Test that a warning is logged when a ValidationError occurs during translation."""
         from django.core.exceptions import ValidationError
 
-        with patch(
-            "wagtail_localize.operations.Translation.save_target",
-            side_effect=ValidationError("Test validation error"),
-        ), self.assertLogs(
-            "wagtail_localize.operations", level="WARNING"
-        ) as log_output:
+        with (
+            patch(
+                "wagtail_localize.operations.Translation.save_target",
+                side_effect=ValidationError("Test validation error"),
+            ),
+            self.assertLogs(
+                "wagtail_localize.operations", level="WARNING"
+            ) as log_output,
+        ):
             self.client.post(
                 reverse(
                     "wagtail_localize:submit_page_translation",
@@ -678,10 +681,7 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
                 {"locales": [self.fr_locale.id]},
             )
 
-        self.assertTrue(
-            any("ValidationError" in msg for msg in log_output.output)
-        )
-
+        self.assertTrue(any("ValidationError" in msg for msg in log_output.output))
 
     def test_post_submit_page_translation_from_draft_source_still_draft(self):
         custom_page = make_test_page(
