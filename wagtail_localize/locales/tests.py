@@ -1,4 +1,7 @@
+from unittest import mock
+
 from django.contrib.messages import get_messages
+from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -273,6 +276,35 @@ class TestLocaleCreateView(BaseLocaleTestCase):
         # Check that the locale was not created
         self.assertFalse(Locale.objects.filter(language_code="fr").exists())
 
+    def test_create_renders_non_field_errors_for_main_form(self):
+        with mock.patch(
+            "wagtail_localize.locales.forms.LocaleForm.clean",
+            side_effect=ValidationError("Main form non-field error"),
+        ):
+            response = self.post({"language_code": "fr"})
+
+        self.assert_successful_response(response)
+        self.assertContains(response, "Main form non-field error")
+        self.assertIn("__all__", response.context["form"].errors)
+
+    def test_create_renders_non_field_errors_for_component_form(self):
+        with mock.patch(
+            "wagtail_localize.models.LocaleSynchronizationModelForm.validate_with_locale",
+            side_effect=ValidationError("Component form non-field error"),
+        ):
+            response = self.post(
+                {
+                    "language_code": "fr",
+                    "component-wagtail_localize_localesynchronization-enabled": "on",
+                    "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                }
+            )
+
+        self.assert_successful_response(response)
+        self.assertContains(response, "Component form non-field error")
+        component_form = list(response.context["components"])[0][2]
+        self.assertIn("__all__", component_form.errors)
+
 
 class TestLocaleEditView(BaseLocaleTestCase):
     def post(self, post_data=None, locale=None):
@@ -476,6 +508,37 @@ class TestLocaleEditView(BaseLocaleTestCase):
             component_form.errors["sync_from"],
             ["This locale cannot be synced into itself."],
         )
+
+    def test_edit_renders_non_field_errors_for_main_form(self):
+        with mock.patch(
+            "wagtail_localize.locales.forms.LocaleForm.clean",
+            side_effect=ValidationError("Main form non-field error"),
+        ):
+            response = self.post({"language_code": "en"})
+
+        self.assert_successful_response(response)
+        self.assertContains(response, "Main form non-field error")
+        self.assertIn("__all__", response.context["form"].errors)
+
+    def test_edit_renders_non_field_errors_for_component_form(self):
+        french = Locale.objects.create(language_code="fr")
+        with mock.patch(
+            "wagtail_localize.models.LocaleSynchronizationModelForm.validate_with_locale",
+            side_effect=ValidationError("Component form non-field error"),
+        ):
+            response = self.post(
+                {
+                    "language_code": "fr",
+                    "component-wagtail_localize_localesynchronization-enabled": "on",
+                    "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                },
+                locale=french,
+            )
+
+        self.assert_successful_response(response)
+        self.assertContains(response, "Component form non-field error")
+        component_form = list(response.context["components"])[0][2]
+        self.assertIn("__all__", component_form.errors)
 
 
 class TestLocaleDeleteView(BaseLocaleTestCase):

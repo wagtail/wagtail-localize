@@ -5,6 +5,12 @@
         {% if component.help_text %}<p>{{ component.help_text }}</p>{% endif %}
 
         <ul class="fields component-form__fields">
+            {% for error in component_form.non_field_errors %}
+                <li class="error-message">
+                    <span>{{ error }}</span>
+                </li>
+            {% endfor %}
+
             {% for field in component_form.visible_fields %}
                 <li class="component-form__fieldname-{{ field.name }}">{% include "wagtailadmin/shared/field.html" %}</li>
             {% endfor %}
