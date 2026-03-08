@@ -4,6 +4,8 @@
         <h3>{{ component.heading }}</h3>
         {% if component.help_text %}<p>{{ component.help_text }}</p>{% endif %}
 
+        {% include "wagtailadmin/shared/non_field_errors.html" with form=component_form %}
+
         <ul class="fields component-form__fields">
             {% for field in component_form.visible_fields %}
                 <li class="component-form__fieldname-{{ field.name }}">{% include "wagtailadmin/shared/field.html" %}</li>

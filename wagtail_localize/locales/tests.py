@@ -1,4 +1,7 @@
+from unittest.mock import patch
+
 from django.contrib.messages import get_messages
+from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -83,6 +86,19 @@ class TestLocaleIndexView(BaseLocaleTestCase):
         self.assert_successful_response(response)
         expected_wagtail_version = get_main_version()
         self.assertEqual(response.context["wagtail_version"], expected_wagtail_version)
+
+    def test_pagination_displayed(self):
+        for index in range(21):
+            Locale.objects.create(language_code=f"zz{index:02d}")
+
+        response = self.execute_request("GET", "wagtaillocales:index")
+        self.assert_successful_response(response)
+        self.assertContains(response, "Page 1 of 2")
+        self.assertContains(response, "?p=2")
+
+        page_two = self.execute_request("GET", "wagtaillocales:index", params={"p": 2})
+        self.assert_successful_response(page_two)
+        self.assertContains(page_two, "Page 2 of 2")
 
     def test_get_locale_usage(self):
         # Test the get_locale_usage function with different scenarios
@@ -228,6 +244,28 @@ class TestLocaleCreateView(BaseLocaleTestCase):
 
         # Check that the locale was not created
         self.assertFalse(Locale.objects.filter(language_code="fr").exists())
+
+    def test_component_non_field_error_is_rendered(self):
+        with patch(
+            "wagtail_localize.models.LocaleSynchronizationModelForm.validate_with_locale",
+            side_effect=ValidationError("Component non-field issue"),
+        ):
+            response = self.post(
+                {
+                    "language_code": "fr",
+                    "component-wagtail_localize_localesynchronization-enabled": "on",
+                    "component-wagtail_localize_localesynchronization-sync_from": self.english.id,
+                }
+            )
+
+        self.assertEqual(response.status_code, 200)
+
+        component_errors = []
+        for _, _, component_form in response.context["components"]:
+            component_errors.extend(component_form.non_field_errors())
+
+        self.assertIn("Component non-field issue", component_errors)
+        self.assertContains(response, "Component non-field issue")
 
     def test_sync_from_not_required_when_disabled(self):
         # Test creating a locale with synchronization disabled
