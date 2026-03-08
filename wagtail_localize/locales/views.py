@@ -78,6 +78,7 @@ class IndexView(generic.IndexView):
     add_item_label = gettext_lazy("Add a locale")
     context_object_name = "locales"
     queryset = Locale.all_objects.all()
+    paginate_by = 20
 
     def get_context_data(self):
         context = super().get_context_data()
