@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from urllib.parse import urlencode
 
+from django.contrib import messages
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import Permission
 from django.db.models import Q
@@ -12,7 +13,12 @@ from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
-from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
+from wagtail.admin.action_menu import (
+    ActionMenuItem as PageActionMenuItem,
+)
+from wagtail.admin.action_menu import (
+    PublishMenuItem,
+)
 from wagtail.admin.menu import MenuItem
 from wagtail.log_actions import LogFormatter
 from wagtail.models import Locale, Page, TranslatableMixin
@@ -20,6 +26,7 @@ from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
 
 # Import synctree so it can register its signal handler
 from . import synctree  # noqa: F401
+from .bulk_actions import PublishAndSyncTranslationsBulkAction
 from .models import Translation, TranslationSource
 from .views import (
     convert,
@@ -29,6 +36,7 @@ from .views import (
     submit_translations,
     update_translations,
 )
+from .views.update_translations import sync_translation_source
 
 
 if WAGTAIL_VERSION >= (7, 0):
@@ -295,6 +303,75 @@ def register_restart_translation_page_action_menu_item():
     return RestartTranslationPageActionMenuItem(order=0)
 
 
+class PublishAndSyncTranslationsMenuItem(PublishMenuItem):
+    label = gettext_lazy("Publish & sync translations")
+    name = "localize-action-publish-and-sync"
+    template_name = "wagtail_localize/admin/action_menu/publish_and_sync.html"
+
+    def is_shown(self, context):
+        if context["view"] != "edit":
+            return False
+
+        if not super().is_shown(context):
+            return False
+
+        if not context["request"].user.has_perm("wagtail_localize.submit_translation"):
+            return False
+
+        page = context.get("page")
+        if not page:
+            return False
+
+        source = TranslationSource.objects.get_for_instance_or_none(page)
+        return source is not None and source.translations.filter(enabled=True).exists()
+
+    def get_context_data(self, parent_context):
+        context = super().get_context_data(parent_context)
+        context["submit_value"] = "action-publish-and-sync"
+        return context
+
+
+@hooks.register("register_page_action_menu_item")
+def register_publish_and_sync_menu_item():
+    return PublishAndSyncTranslationsMenuItem(order=61)
+
+
+@hooks.register("after_publish_page")
+def publish_page_sync_translations(request, page):
+    if request.POST.get("action-publish") != "action-publish-and-sync":
+        return
+
+    if not request.user.has_perm("wagtail_localize.submit_translation"):
+        return
+
+    source = TranslationSource.objects.get_for_instance_or_none(page)
+    if source is None:
+        messages.info(
+            request,
+            _("Published '%(title)s' (no translations to sync).")
+            % {"title": page.get_admin_display_title()},
+        )
+        return
+
+    result = sync_translation_source(source, user=request.user, publish=True)
+
+    if result.translations:
+        messages.success(
+            request,
+            _("Published '%(title)s' and synced %(count)d translations.")
+            % {
+                "title": page.get_admin_display_title(),
+                "count": len(result.translations),
+            },
+        )
+    else:
+        messages.info(
+            request,
+            _("Published '%(title)s' (no enabled translations to sync).")
+            % {"title": page.get_admin_display_title()},
+        )
+
+
 class ConvertToAliasPageActionMenuItem(PageActionMenuItem):
     label = gettext_lazy("Convert to alias page")
     name = "localize-convert-to-alias"
@@ -398,6 +475,9 @@ def register_wagtail_localize2_report_menu_item():
         icon_name="site",
         order=9000,
     )
+
+
+hooks.register("register_bulk_action", PublishAndSyncTranslationsBulkAction)
 
 
 @hooks.register("register_log_actions")
