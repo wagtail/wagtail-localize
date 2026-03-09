@@ -4,16 +4,14 @@ from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.exceptions import ValidationError
 from django.forms.widgets import CheckboxInput
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
-from wagtail_localize.bulk_actions import PublishAndSyncTranslationsBulkAction
 from wagtail_localize.models import (
     StringSegment,
     StringTranslation,
@@ -21,7 +19,6 @@ from wagtail_localize.models import (
     TranslationSource,
 )
 from wagtail_localize.test.models import NonTranslatableSnippet, TestSnippet
-from wagtail_localize.wagtail_hooks import publish_page_sync_translations
 
 from .utils import assert_permission_denied, make_test_page
 
@@ -119,28 +116,6 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
         )
 
         self.assertNotContains(response, "Sync translated pages")
-
-    def test_publish_and_sync_button_shown_on_edit_view(self):
-        response = self.client.get(
-            reverse("wagtailadmin_pages:edit", args=[self.en_blog_index.id])
-        )
-        self.assertContains(response, "Publish &amp; sync translations")
-
-    def test_publish_and_sync_button_hidden_without_translations(self):
-        self.source.delete()
-
-        response = self.client.get(
-            reverse("wagtailadmin_pages:edit", args=[self.en_blog_index.id])
-        )
-        self.assertNotContains(response, "Publish &amp; sync translations")
-
-    def test_publish_and_sync_button_hidden_without_permission(self):
-        strip_user_perms()
-
-        response = self.client.get(
-            reverse("wagtailadmin_pages:edit", args=[self.en_blog_index.id])
-        )
-        self.assertNotContains(response, "Publish &amp; sync translations")
 
 
 @override_settings(
@@ -754,128 +729,3 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
             context_id=string_segment.context_id,
         )
         self.assertEqual(string_translation.data, "post blog Edited")
-
-
-@override_settings(
-    LANGUAGES=[
-        ("en", "English"),
-        ("fr", "French"),
-        ("de", "German"),
-        ("es", "Spanish"),
-    ],
-    WAGTAIL_CONTENT_LANGUAGES=[
-        ("en", "English"),
-        ("fr", "French"),
-        ("de", "German"),
-        ("es", "Spanish"),
-    ],
-)
-class TestPublishAndSyncHooks(TestCase, WagtailTestUtils):
-    def setUp(self):
-        self.user = self.login()
-        self.factory = RequestFactory()
-
-        self.en_locale = Locale.objects.get()
-        self.fr_locale = Locale.objects.create(language_code="fr")
-
-        self.en_homepage = Page.objects.get(depth=2)
-        self.en_blog_index = make_test_page(
-            self.en_homepage, title="Blog", slug="blog-to-publish"
-        )
-        self.fr_blog_index = self.en_blog_index.copy_for_translation(self.fr_locale)
-        self.source = TranslationSource.objects.get_for_instance_or_none(
-            self.en_blog_index
-        )
-
-    def _build_request(self, post_data=None):
-        request = self.factory.post(
-            "/", data=post_data or {"action-publish": "action-publish-and-sync"}
-        )
-        request.user = self.user
-        request.session = self.client.session
-        storage = FallbackStorage(request)
-        request._messages = storage
-        return request, storage
-
-    @mock.patch("wagtail_localize.wagtail_hooks.sync_translation_source")
-    def test_after_publish_page_syncs_translations(self, mock_sync):
-        request, storage = self._build_request()
-
-        publish_page_sync_translations(request, self.en_blog_index)
-
-        mock_sync.assert_called_once_with(self.source, user=self.user, publish=True)
-        messages = list(storage)
-        self.assertTrue(messages)
-        self.assertIn("synced", messages[0].message)
-
-    @mock.patch("wagtail_localize.wagtail_hooks.sync_translation_source")
-    def test_after_publish_page_no_translations(self, mock_sync):
-        self.source.delete()
-        request, storage = self._build_request()
-
-        publish_page_sync_translations(request, self.en_blog_index)
-
-        mock_sync.assert_not_called()
-        messages = list(storage)
-        self.assertTrue(messages)
-        self.assertIn("no translations", messages[0].message.lower())
-
-    @mock.patch("wagtail_localize.wagtail_hooks.sync_translation_source")
-    def test_after_publish_requires_permission(self, mock_sync):
-        strip_user_perms()
-        request, storage = self._build_request()
-
-        publish_page_sync_translations(request, self.en_blog_index)
-
-        mock_sync.assert_not_called()
-        self.assertFalse(list(storage))
-
-
-@override_settings(
-    LANGUAGES=[
-        ("en", "English"),
-        ("fr", "French"),
-        ("de", "German"),
-        ("es", "Spanish"),
-    ],
-    WAGTAIL_CONTENT_LANGUAGES=[
-        ("en", "English"),
-        ("fr", "French"),
-        ("de", "German"),
-        ("es", "Spanish"),
-    ],
-)
-class TestPublishAndSyncBulkAction(TestCase, WagtailTestUtils):
-    def setUp(self):
-        self.user = self.login()
-        self.factory = RequestFactory()
-
-        self.en_locale = Locale.objects.get()
-        self.fr_locale = Locale.objects.create(language_code="fr")
-        self.en_homepage = Page.objects.get(depth=2)
-        self.en_blog_index = make_test_page(
-            self.en_homepage, title="Bulk blog", slug="bulk-blog"
-        )
-        self.en_blog_index.copy_for_translation(self.fr_locale)
-
-    @mock.patch("wagtail_localize.bulk_actions.sync_translation_source")
-    def test_execute_action_syncs_translations(self, mock_sync):
-        PublishAndSyncTranslationsBulkAction.execute_action(
-            [self.en_blog_index], include_descendants=False, user=self.user
-        )
-
-        self.assertTrue(mock_sync.called)
-
-    def test_check_perm_requires_publish_permission(self):
-        request = self.factory.post("/", data={"id": [self.en_blog_index.id]})
-        request.user = self.user
-        request.session = self.client.session
-        request.META["QUERY_STRING"] = ""
-
-        action = PublishAndSyncTranslationsBulkAction(request, Page)
-        self.assertTrue(action.check_perm(self.en_blog_index))
-
-        strip_user_perms()
-        request.user = get_user_model().objects.get()
-        action_no_perm = PublishAndSyncTranslationsBulkAction(request, Page)
-        self.assertFalse(action_no_perm.check_perm(self.en_blog_index))
