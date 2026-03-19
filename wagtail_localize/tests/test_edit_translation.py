@@ -1792,6 +1792,65 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             reverse("wagtail_localize:convert_to_alias", args=[de_page.id]),
         )
 
+    def test_segments_include_previous_translation_when_source_changes(self):
+        # Provide an initial human translation for the text field
+        original_string = String.objects.get(data="A text field")
+        context = TranslationContext.objects.get(
+            object=self.page_source.object,
+            path="test_textfield",
+        )
+        StringTranslation.objects.create(
+            translation_of=original_string,
+            context=context,
+            locale=self.fr_locale,
+            data="Un champ de texte",
+            translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL,
+            last_translated_by=self.user,
+        )
+
+        # Update the source content to trigger a new segment
+        self.page.test_textfield = "A text field updated"
+        self.page.save_revision().publish()
+        self.page_source.update_from_db()
+
+        response = self.client.get(
+            reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+        self.assertEqual(response.status_code, 200)
+
+        props = json.loads(response.context["props"])
+
+        target_segment = next(
+            segment
+            for segment in props["segments"]
+            if segment["contentPath"] == "test_textfield"
+        )
+
+        self.assertEqual(target_segment["source"], "A text field updated")
+        self.assertIsNone(target_segment["location"]["subField"])
+
+        # No translation exists yet for the updated string
+        self.assertIsNone(
+            next(
+                (
+                    translation
+                    for translation in props["initialStringTranslations"]
+                    if translation["segment_id"] == target_segment["id"]
+                ),
+                None,
+            )
+        )
+
+        previous_translation = target_segment["previousTranslation"]
+        self.assertIsNotNone(previous_translation)
+        self.assertEqual(previous_translation["value"], "Un champ de texte")
+        self.assertEqual(previous_translation["source"], "A text field")
+        self.assertIsNotNone(previous_translation["comment"])
+        self.assertEqual(
+            previous_translation["translatedBy"]["full_name"],
+            self.user.get_full_name(),
+        )
+
 
 @freeze_time("2020-08-21")
 class TestPublishTranslation(EditTranslationTestData, APITestCase):

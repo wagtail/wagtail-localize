@@ -610,8 +610,31 @@ def edit_translation(request, translation: Translation, instance):
 
         return redirect(request.path)
 
-    string_segments = translation.source.stringsegment_set.all().order_by("order")
-    string_translations = string_segments.get_translations(translation.target_locale)
+    string_segments_qs = (
+        translation.source.stringsegment_set.select_related("context", "string")
+        .all()
+        .order_by("order")
+    )
+    string_translations = string_segments_qs.get_translations(
+        translation.target_locale
+    ).select_related("last_translated_by", "translation_of")
+    string_segments = list(string_segments_qs)
+
+    segment_context_ids = [segment.context_id for segment in string_segments]
+    previous_translations_by_context = defaultdict(list)
+    if segment_context_ids:
+        historical_translations = (
+            StringTranslation.objects.filter(
+                locale=translation.target_locale,
+                context_id__in=segment_context_ids,
+            )
+            .select_related("translation_of", "last_translated_by")
+            .order_by("context_id", "-updated_at")
+        )
+        for historical_translation in historical_translations:
+            previous_translations_by_context[historical_translation.context_id].append(
+                historical_translation
+            )
 
     overridable_segments = translation.source.overridablesegment_set.all().order_by(
         "order"
@@ -648,8 +671,14 @@ def edit_translation(request, translation: Translation, instance):
 
         # Set to the ID of a string segment that represents the title.
         # If this segment has a translation, the title will be replaced with that translation.
-        with contextlib.suppress(StringSegment.DoesNotExist):
-            title_segment_id = string_segments.get(context__path="title").id
+        title_segment_id = next(
+            (
+                segment.id
+                for segment in string_segments
+                if segment.context.path == "title"
+            ),
+            None,
+        )
 
     machine_translator = None
     translator = get_machine_translator()
@@ -674,6 +703,30 @@ def edit_translation(request, translation: Translation, instance):
         except FieldHasNoEditPanelError:
             continue
 
+        previous_translation_data = None
+        for previous_translation in previous_translations_by_context.get(
+            segment.context_id, []
+        ):
+            if previous_translation.translation_of_id == segment.string_id:
+                continue
+
+            previous_translation_data = {
+                "value": previous_translation.data,
+                "source": previous_translation.translation_of.data,
+                "comment": previous_translation.get_comment(),
+                "translatedBy": UserSerializer(
+                    previous_translation.last_translated_by
+                ).data
+                if previous_translation.last_translated_by
+                else None,
+                "updatedAt": (
+                    previous_translation.updated_at.isoformat()
+                    if previous_translation.updated_at
+                    else None
+                ),
+            }
+            break
+
         segments.append(
             {
                 "type": "string",
@@ -689,6 +742,7 @@ def edit_translation(request, translation: Translation, instance):
                     },
                 ),
                 "order": segment.order,
+                "previousTranslation": previous_translation_data,
             }
         )
 
