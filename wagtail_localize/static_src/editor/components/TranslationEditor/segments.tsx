@@ -269,7 +269,6 @@ const BlockSegments = styled.ul`
     background-color: var(--w-color-surface-header, var(--w-color-grey-50));
     padding: 0;
     margin: 0;
-
     > li {
         &.errored {
             background-color: var(--w-color-critical-50, #fee7e8);
@@ -278,21 +277,17 @@ const BlockSegments = styled.ul`
             border: 1px solid var(--w-color-critical-100) !important;
             border-left-width: 5px !important;
         }
-
         &.incomplete {
             // !important required to override the border-bottom rule just below
             border-left: 5px solid var(--w-color-warning-100) !important;
         }
-
         &.complete {
             // !important required to override the border-bottom rule just below
             border-left: 5px solid var(--w-color-positive-100) !important;
         }
-
         &:not(:last-child) {
             border-bottom: 1px solid var(--w-color-border-furniture, #eeeeee);
         }
-
         &:after {
             content: '';
             display: table;
@@ -317,7 +312,6 @@ const SegmentFieldLabel = styled.h4`
 const SegmentSource = styled.p`
     padding: 15px 20px;
     font-style: italic;
-
     &.title {
         font-size: 1.875rem;
         font-weight: 800;
@@ -325,9 +319,50 @@ const SegmentSource = styled.p`
     }
 `;
 
+const PreviousTranslationNotice = styled.div`
+    padding: 12px 20px;
+    background-color: var(
+        --w-color-warning-50,
+        var(--w-color-secondary-50, #fef4e5)
+    );
+    border-top: 1px solid
+        var(--w-color-warning-100, var(--w-color-secondary-100, #f7d8a0));
+    border-bottom: 1px solid
+        var(--w-color-warning-100, var(--w-color-secondary-100, #f7d8a0));
+`;
+
+const PreviousTranslationHeading = styled.span`
+    display: block;
+    font-weight: 600;
+    color: var(--w-color-text-emphasis, var(--w-color-grey-700, #333333));
+`;
+
+const PreviousTranslationText = styled.p`
+    margin: 0.4em 0 0;
+    font-style: italic;
+    font-weight: 600;
+`;
+
+const PreviousTranslationMeta = styled.small`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    color: var(--w-color-text-subtle, var(--w-color-grey-600, #666666));
+    .avatar {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+`;
+
+const PreviousTranslationSource = styled.p`
+    margin: 0.5em 0 0;
+    font-size: 0.9em;
+    color: var(--w-color-text-subtle, var(--w-color-grey-600, #666666));
+`;
+
 const SegmentValue = styled.div`
     padding: 0.9em 1.2em;
-
     > p,
     > ${StyledTextArea} {
         font-size: 1.2em;
@@ -350,7 +385,6 @@ const ActionButton = styled.button`
         var(--w-color-surface-button-default, var(--w-color-secondary-100));
     border-radius: 2px;
     padding: 5px 10px;
-
     &:hover {
         background-color: var(
             --w-color-surface-button-hover,
@@ -365,21 +399,17 @@ const SegmentToolbar = styled.ul`
     text-align: right;
     padding: 10px;
     margin: 0;
-
     > li {
         display: inline-block;
-
         &:not(:first-child) {
             margin-left: 15px;
         }
     }
-
     .icon {
         width: 1.3em;
         height: 1.3em;
         vertical-align: text-bottom;
         margin-left: 10px;
-
         &--green {
             color: #15704d;
         }
@@ -467,6 +497,21 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
             setEditingValue((translation && translation.value) || '');
         };
 
+        if (!translation && segment.previousTranslation && !isLocked) {
+            const onClickReusePrevious = () => {
+                setEditingValue(segment.previousTranslation?.value || '');
+                setIsEditing(true);
+            };
+
+            buttons.push(
+                <li key="reuse">
+                    <ActionButton onClick={onClickReusePrevious}>
+                        {gettext('Reuse previous translation')}
+                    </ActionButton>
+                </li>
+            );
+        }
+
         if (translation && translation.comment) {
             comment = (
                 <>
@@ -520,6 +565,49 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
         valueClassName = 'title';
     }
 
+    let previousTranslationNotice = <></>;
+    if (!translation && segment.previousTranslation) {
+        const previous = segment.previousTranslation;
+        const commentText =
+            previous.comment ||
+            (previous.translatedBy
+                ? gettext('Previously translated by %s').replace(
+                      '%s',
+                      previous.translatedBy.full_name
+                  )
+                : null);
+
+        previousTranslationNotice = (
+            <PreviousTranslationNotice>
+                <PreviousTranslationHeading>
+                    {gettext('Previous translation')}
+                </PreviousTranslationHeading>
+                <PreviousTranslationText>
+                    {previous.value}
+                </PreviousTranslationText>
+                {previous.source && (
+                    <PreviousTranslationSource>
+                        {gettext('Source at the time: %s').replace(
+                            '%s',
+                            previous.source
+                        )}
+                    </PreviousTranslationSource>
+                )}
+                {(commentText || previous.translatedBy?.avatar_url) && (
+                    <PreviousTranslationMeta>
+                        {previous.translatedBy?.avatar_url ? (
+                            <Avatar
+                                username={previous.translatedBy.full_name}
+                                avatarUrl={previous.translatedBy.avatar_url}
+                            />
+                        ) : null}
+                        <span>{commentText}</span>
+                    </PreviousTranslationMeta>
+                )}
+            </PreviousTranslationNotice>
+        );
+    }
+
     return (
         <li className={className}>
             {segment.location.subField && (
@@ -530,6 +618,7 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
             <SegmentSource className={valueClassName}>
                 {segment.source}
             </SegmentSource>
+            {previousTranslationNotice}
             <SegmentValue>{value}</SegmentValue>
             <SegmentToolbar>
                 <li key="comment">{comment}</li>
