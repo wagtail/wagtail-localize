@@ -412,6 +412,7 @@ const SegmentToolbar = styled.ul`
         margin-left: 10px;
         &--green {
             color: #15704d;
+        }
 
         &--red {
             color: #cd3239;
