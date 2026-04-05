@@ -151,6 +151,20 @@ class TestCopySynchronisedFieldsWithManyToMany(TestCase):
         self.assertIn(self.snippet2, target.m2m_field.all())
         self.assertNotIn(self.snippet3, target.m2m_field.all())
 
+    def test_str_with_title(self):
+        snippet = TestM2MSnippet.objects.create(
+            title="My Snippet",
+            locale=self.src_locale,
+        )
+        self.assertEqual(str(snippet), "My Snippet")
+
+    def test_str_without_title(self):
+        snippet = TestM2MSnippet.objects.create(
+            title="",
+            locale=self.src_locale,
+        )
+        self.assertEqual(str(snippet), f"TestM2MSnippet ({snippet.pk})")
+
     def test_m2m_field_sync_with_empty_source(self):
         """
         Test that synchronizing clears target M2M relations when source has none.
