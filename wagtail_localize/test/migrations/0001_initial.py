@@ -2273,4 +2273,44 @@ class Migration(migrations.Migration):
                 "unique_together": {("translation_key", "locale")},
             },
         ),
+        migrations.CreateModel(
+            name="TestM2MSnippet",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "translation_key",
+                    models.UUIDField(default=uuid.uuid4, editable=False),
+                ),
+                ("title", models.CharField(blank=True, max_length=255)),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        editable=False,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="wagtailcore.locale",
+                    ),
+                ),
+                (
+                    "m2m_field",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="m2m_snippets",
+                        to="wagtail_localize_test.nontranslatablesnippet",
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
+                "unique_together": {("translation_key", "locale")},
+            },
+        ),
     ]
