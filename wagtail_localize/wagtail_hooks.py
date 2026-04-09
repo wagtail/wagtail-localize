@@ -181,10 +181,13 @@ def translation_buttons(page: Page, user, next_url=None, priority=60):
 
 
 def page_listing_more_buttons(page: Page, user, next_url=None):
+    # priority=35: after Delete (30), before Sort menu order (60)
     yield from translation_buttons(page, user, next_url, priority=35)
 
 
 def page_header_buttons(page: Page, user, view_name=None, next_url=None):
+    # view_name ("index" or "edit") is not used, both contexts share the same priority
+    # priority=55: after Delete (50), before Unpublish (60)
     yield from translation_buttons(page, user, next_url, priority=55)
 
 
