@@ -147,9 +147,8 @@ def register_submit_translation_permission():
     )
 
 
-def page_listing_more_buttons(page: Page, user, view_name=None, next_url=None):
+def translation_buttons(page: Page, user, next_url=None, priority=60):
     if not page.is_root() and user.has_perm("wagtail_localize.submit_translation"):
-        # If there's at least one locale that we haven't translated into yet, show "Translate this page" button
         has_locale_to_translate_to = Locale.objects.exclude(
             id__in=page.get_translations(inclusive=True)
             .exclude(alias_of__isnull=False)
@@ -166,7 +165,7 @@ def page_listing_more_buttons(page: Page, user, view_name=None, next_url=None):
             yield ListingButton(
                 _("Translate this page"),
                 url,
-                priority=60,
+                priority=priority,
                 icon_name="wagtail-localize-language",
             )
 
@@ -176,13 +175,23 @@ def page_listing_more_buttons(page: Page, user, view_name=None, next_url=None):
             url = reverse("wagtail_localize:update_translations", args=[source.id])
             if next_url is not None:
                 url += "?" + urlencode({"next": next_url})
-
             yield ListingButton(
-                _("Sync translated pages"), url, priority=60, icon_name="resubmit"
+                _("Sync translated pages"), url, priority=priority, icon_name="resubmit"
             )
 
 
-hooks.register("register_page_header_buttons", page_listing_more_buttons)
+def page_listing_more_buttons(page: Page, user, next_url=None):
+    # priority=35: after Delete (30), before Sort menu order (60)
+    yield from translation_buttons(page, user, next_url, priority=35)
+
+
+def page_header_buttons(page: Page, user, view_name=None, next_url=None):
+    # view_name ("index" or "edit") is not used, both contexts share the same priority
+    # priority=55: after Delete (50), before Unpublish (60)
+    yield from translation_buttons(page, user, next_url, priority=55)
+
+
+hooks.register("register_page_header_buttons", page_header_buttons)
 hooks.register("register_page_listing_more_buttons", page_listing_more_buttons)
 
 
