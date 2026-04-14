@@ -834,12 +834,12 @@ class TestSegmentExtractionWithStreamField(TestCase):
         extractor = StreamFieldSegmentExtractor(
             TestPage.test_streamfield.field, include_overridables=False
         )
-        result = extractor.handle_block(
-            blocks.ListBlock(blocks.CharBlock()), None
-        )
+        result = extractor.handle_block(blocks.ListBlock(blocks.CharBlock()), None)
         self.assertEqual(result, [])
 
-    @unittest.skipUnless(WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3")
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
+    )
     def test_imageblock_with_none_value(self):
         """
         If an ImageBlock with required=False produces a None value (when left empty),
