@@ -42,6 +42,9 @@ class StreamFieldSegmentExtractor:
         self.include_overridables = include_overridables
 
     def handle_block(self, block_type, block_value, raw_value=None):
+        if block_value is None:
+            return []
+
         # Need to check if the app is installed before importing EmbedBlock
         # See: https://github.com/wagtail/wagtail-localize/issues/309
         if apps.is_installed("wagtail.embeds"):
