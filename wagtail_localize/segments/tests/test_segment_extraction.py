@@ -4,8 +4,11 @@ import uuid
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 from wagtail import VERSION as WAGTAIL_VERSION
+from wagtail import blocks
 from wagtail.blocks import StreamValue
+from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images import get_image_model
+from wagtail.images.blocks import ImageBlock
 from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Page, Site
 
@@ -694,3 +697,156 @@ class TestSegmentExtractionWithStreamField(TestCase):
             "was registered as a translatable field but the model it points to "
             "`wagtailcore.Site` is not translatable",
         )
+
+    def test_charblock_with_none_value(self):
+        """
+        If a CharBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(blocks.CharBlock(required=False), None)
+        self.assertEqual(result, [])
+
+    def test_textblock_with_none_value(self):
+        """
+        If a TextBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(blocks.TextBlock(required=False), None)
+        self.assertEqual(result, [])
+
+    def test_blockquoteblock_with_none_value(self):
+        """
+        If a BlockQuoteBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(blocks.BlockQuoteBlock(required=False), None)
+        self.assertEqual(result, [])
+
+    def test_richtextblock_with_none_value(self):
+        """
+        If a a RichTextBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(blocks.RichTextBlock(required=False), None)
+        self.assertEqual(result, [])
+
+    def test_structblock_with_optional_charblock_none_value(self):
+        """
+        If a StructBlock that contains a CharBlock with required=False produces a None
+        value for that field (when left empty), extract_segments must
+        return only the non-empty fields rather than raising an error.
+        """
+        struct_block_type = blocks.StructBlock(
+            [
+                ("required_field", blocks.CharBlock()),
+                ("optional_field", blocks.CharBlock(required=False)),
+            ]
+        )
+        struct_value = struct_block_type.to_python(
+            {"required_field": "Hello", "optional_field": None}
+        )
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        segments = extractor.handle_struct_block(struct_value)
+        self.assertEqual(
+            segments,
+            [StringSegmentValue("required_field", "Hello")],
+        )
+
+    def test_embedblock_with_none_value(self):
+        """
+        If an EmbedBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=True
+        )
+        result = extractor.handle_block(EmbedBlock(), None)
+        self.assertEqual(result, [])
+
+    def test_structblock_with_none_block_value(self):
+        """
+        If a StructBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(
+            blocks.StructBlock([("field_a", blocks.CharBlock())]), None
+        )
+        self.assertEqual(result, [])
+
+    def test_urlblock_with_none_value(self):
+        """
+        If a URLBlock with required=False produces a None value when left empty),
+        when include_overridables=True, handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=True
+        )
+        result = extractor.handle_block(blocks.URLBlock(), None)
+        self.assertEqual(result, [])
+
+    def test_emailblock_with_none_value(self):
+        """
+        If an EmailBlock with required=False produces a None value (when left empty),
+        when include_overridables=True, handle_block should return [] rather than
+        producing a spurious OverridableSegmentValue("", None).
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=True
+        )
+        result = extractor.handle_block(blocks.EmailBlock(), None)
+        self.assertEqual(result, [])
+
+    def test_streamblock_with_none_value(self):
+        """
+        If a StreamBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(
+            blocks.StreamBlock([("text", blocks.CharBlock())]), None
+        )
+        self.assertEqual(result, [])
+
+    def test_listblock_with_none_value(self):
+        """
+        If a ListBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(
+            blocks.ListBlock(blocks.CharBlock()), None
+        )
+        self.assertEqual(result, [])
+
+    @unittest.skipUnless(WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3")
+    def test_imageblock_with_none_value(self):
+        """
+        If an ImageBlock with required=False produces a None value (when left empty),
+        handle_block should return [].
+        """
+        extractor = StreamFieldSegmentExtractor(
+            TestPage.test_streamfield.field, include_overridables=False
+        )
+        result = extractor.handle_block(ImageBlock(), None)
+        self.assertEqual(result, [])
