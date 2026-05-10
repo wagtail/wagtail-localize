@@ -5,7 +5,7 @@ This document describes how Wagtail Localize automatically generates translatabl
 ## 1. Check if `translatable_fields` attribute is defined
 
 If the `translatable_fields` attribute is defined on the model, this whole process is bypassed.
-See the [Configuring translatable fields](/how-to/field-configuration) guide for more information on how to set this attribute.
+See the [Configuring translatable fields](../how-to/field-configuration.md) guide for more information on how to set this attribute.
 
 ## 2. Discover fields on the model
 

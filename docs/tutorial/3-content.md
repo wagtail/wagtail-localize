@@ -154,8 +154,8 @@ String segments are translatable pieces of text which are extracted from text fi
 broken down into smaller segments to make it easier for translators to translate them.
 
 String segments can be individually translated through this UI, by downloading/uploading PO files (using the buttons at
-the top of the editor), using a [machine translation service](/how-to/integrations/machine-translation) or an
-[external translation tool](/how-to/integrations/pontoon).
+the top of the editor), using a [machine translation service](../how-to/integrations/machine-translation.md) or an
+[external translation tool](../how-to/integrations/pontoon.md).
 
 ![A translated string segment](../assets/tutorial/wagtail-translated-segment.png)
 

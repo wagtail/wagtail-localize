@@ -43,12 +43,15 @@ google = [
     "google-cloud-translate>=3.0.0"
 ]
 documentation = [
-    "mkdocs==1.4.3",
-    "mkdocs-material>=9.1,<10",
-    "mkdocstrings[python]==0.22.0",
-    "mkdocs-autorefs>=0.4.0,<0.5",
-    "mkdocs-include-markdown-plugin>=4.0.4,<5",
-    "pygments>=2.15,<2.16",
+    "mkdocs>=1.6,<2",
+    "mkdocs-material>=9.7,<12",
+    "mkdocstrings[python]>=1.0.0,<2",
+    "mkdocs-autorefs>=1.4.4,<2",
+    "mkdocs-include-markdown-plugin>=7.0.0,<8",
+    "pymdown-extensions>=10.21,<11",
+    "pygments>=2.16,<3",
+    "dj-database-url>=2.1.0,<3",
+    
 ]
 testing = [
     "dj-database-url>=2.1.0,<3",

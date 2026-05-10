@@ -11,9 +11,4 @@ A[LocaleSynchronization] --> B[wagtail.Locale]
 style B stroke-dasharray: 5 5
 ```
 
-::: wagtail_localize.models
-    selection:
-        members:
-            - LocaleSynchronization
-        filters:
-            - "!^save$"
+::: wagtail_localize.models.LocaleSynchronization

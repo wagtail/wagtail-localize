@@ -15,12 +15,10 @@ style B stroke-dasharray: 5 5
 style E stroke-dasharray: 5 5
 ```
 
-::: wagtail_localize.models
-    selection:
-        members:
-            - String
-            - TranslationContext
-            - Template
-            - StringTranslation
-        filters:
-            - "!^save$"
+::: wagtail_localize.models.String
+
+::: wagtail_localize.models.TranslationContext
+
+::: wagtail_localize.models.Template
+
+::: wagtail_localize.models.StringTranslation

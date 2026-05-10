@@ -21,13 +21,12 @@ style H stroke-dasharray: 5 5
 style I stroke-dasharray: 5 5
 ```
 
-::: wagtail_localize.models
-    selection:
-        members:
-            - SegmentOverride
-            - StringSegment
-            - TemplateSegment
-            - RelatedObjectSegment
-            - OverridableSegment
-        filters:
-            - "!^save$"
+::: wagtail_localize.models.SegmentOverride
+
+::: wagtail_localize.models.StringSegment
+
+::: wagtail_localize.models.TemplateSegment
+
+::: wagtail_localize.models.RelatedObjectSegment
+
+::: wagtail_localize.models.OverridableSegment
