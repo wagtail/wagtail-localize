@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.contenttypes.models import ContentType
 
 from wagtail_localize.strings import StringValue
@@ -96,7 +98,7 @@ class StringSegmentValue(BaseValue):
 
         super().__init__(path, **kwargs)
 
-    def clone(self):
+    def clone(self) -> "StringSegmentValue":
         """
         Makes an exact copy of this StringSegmentValue.
 
@@ -110,7 +112,7 @@ class StringSegmentValue(BaseValue):
         )
 
     @classmethod
-    def from_source_html(cls, path, html, **kwargs):
+    def from_source_html(cls, path, html, **kwargs) -> "StringSegmentValue":
         """
         Initialises a StringSegmentValue from a HTML string.
 
@@ -122,7 +124,7 @@ class StringSegmentValue(BaseValue):
         string, attrs = StringValue.from_source_html(html)
         return cls(path, string, attrs=attrs, **kwargs)
 
-    def render_text(self):
+    def render_text(self) -> str:
         """
         Returns a plain text representation of the segment value.
 
@@ -133,7 +135,7 @@ class StringSegmentValue(BaseValue):
         """
         return self.string.render_text()
 
-    def render_html(self):
+    def render_html(self) -> str:
         """
         Returns a HTML representation of the segment value.
 
@@ -144,12 +146,12 @@ class StringSegmentValue(BaseValue):
         """
         return self.string.render_html(self.attrs)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Returns True if the StringValue is blank.
 
         Returns:
-            boolean: True if the StringValue is blank.
+            bool: True if the StringValue is blank.
         """
         return self.string.data in ["", None]
 
@@ -194,7 +196,7 @@ class TemplateSegmentValue(BaseValue):
 
         super().__init__(path, **kwargs)
 
-    def clone(self):
+    def clone(self) -> "TemplateSegmentValue":
         """
         Makes an exact copy of this TemplateSegmentValue.
 
@@ -207,12 +209,12 @@ class TemplateSegmentValue(BaseValue):
             self.path, self.format, self.template, self.string_count, order=self.order
         )
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Returns True if the template is blank.
 
         Returns:
-            boolean: True if the template is blank.
+            bool: True if the template is blank.
         """
         return self.template in ["", None]
 
@@ -256,7 +258,7 @@ class RelatedObjectSegmentValue(BaseValue):
         super().__init__(path, **kwargs)
 
     @classmethod
-    def from_instance(cls, path, instance):
+    def from_instance(cls, path, instance) -> "RelatedObjectSegmentValue":
         """
         Initialises a new RelatedObjectSegmentValue from a model instance.
 
@@ -278,7 +280,7 @@ class RelatedObjectSegmentValue(BaseValue):
             path, ContentType.objects.get_for_model(model), instance.translation_key
         )
 
-    def get_instance(self, locale):
+    def get_instance(self, locale) -> Any:
         """
         Gets an instance of the referenced translatable object for the given locale.
 
@@ -294,7 +296,7 @@ class RelatedObjectSegmentValue(BaseValue):
             translation_key=self.translation_key, locale_id=pk(locale)
         )
 
-    def clone(self):
+    def clone(self) -> "RelatedObjectSegmentValue":
         """
         Makes an exact copy of this RelatedObjectSegmentValue.
 
@@ -307,12 +309,12 @@ class RelatedObjectSegmentValue(BaseValue):
             self.path, self.content_type, self.translation_key, order=self.order
         )
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Returns True if the related object is null.
 
         Returns:
-            boolean: True if the related object is null.
+            bool: True if the related object is null.
         """
         return self.content_type is None and self.translation_key is None
 
@@ -335,7 +337,7 @@ class OverridableSegmentValue(BaseValue):
     Attributes:
         path (str): The content path of the segment.
         data (any): The value of the field in the source. Must be JSON-serializable.
-        order (int): The index that this segment appears on a page.
+        order (int, optional): The index that this segment appears on a page.
     """
 
     def __init__(self, path, data, **kwargs):
@@ -351,7 +353,7 @@ class OverridableSegmentValue(BaseValue):
 
         super().__init__(path, **kwargs)
 
-    def clone(self):
+    def clone(self) -> "OverridableSegmentValue":
         """
         Makes an exact copy of this OverridableSegmentValue.
 
@@ -362,12 +364,12 @@ class OverridableSegmentValue(BaseValue):
         """
         return OverridableSegmentValue(self.path, self.data, order=self.order)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Returns True if the data is empty.
 
         Returns:
-            boolean: True if the data is empty.
+            bool: True if the data is empty.
         """
         return self.data in ["", None]
 

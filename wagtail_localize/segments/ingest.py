@@ -22,7 +22,7 @@ def unquote_path_component(text):
     return text[1:-1].replace("\\'", "'").replace("\\\\", "\\")
 
 
-def organise_template_segments(segments):
+def organise_template_segments(segments) -> tuple[str, str, list[tuple[str, dict]]]:
     """
     Organises the segments for a RichTextField or RichTextBlock to prepare them for recombining.
 
@@ -67,7 +67,9 @@ def organise_template_segments(segments):
     )
 
 
-def handle_related_object(related_model, src_locale, tgt_locale, segments):
+def handle_related_object(
+    related_model, src_locale, tgt_locale, segments
+) -> models.Model:
     """
     Returns the instance of the related object that is referenced by the given segments.
 
@@ -279,7 +281,7 @@ def ingest_segments(original_obj, translated_obj, src_locale, tgt_locale, segmen
     Args:
         original_obj (Model): The original instance that the segments were extracted from.
         translated_obj (Model): The translated instance that we are ingesting segments into.
-        src_local (Locale): The locale of the source instance.
+        src_locale (Locale): The locale of the source instance.
         tgt_locale (Locale): The locale of the translated instance
         segments (list[StringSegmentValue, TemplateSegmentValue, RelatedObjectSegmentValue, or OverridableSegmentValue]):
             The segment values to ingest

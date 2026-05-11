@@ -27,10 +27,12 @@ To configure any other queueing system, create a subclass of `wagtail_localize.t
 
 ```python
 from wagtail_localize.tasks import BaseJobBackend
+
 class MyJobBackend(BaseJobBackend):
     def __init__(self, options):
         # Any set up code goes here. Note that the 'options' parameter contains the value of WAGTAILLOCALIZE_JOBS["OPTIONS"]
         pass
+
     def enqueue(self, func, args, kwargs):
         # func is a function object to call
         # args is a list of positional arguments to pass into the function when it's called

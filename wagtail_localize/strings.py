@@ -77,7 +77,7 @@ class StringValue:
         self.data = data
 
     @classmethod
-    def from_plaintext(cls, text):
+    def from_plaintext(cls, text) -> "StringValue":
         """
         Initialises a StringValue from a plain text string.
 
@@ -103,7 +103,7 @@ class StringValue:
         return cls(str(BeautifulSoup("".join(elements), "html.parser")))
 
     @classmethod
-    def from_source_html(cls, html):
+    def from_source_html(cls, html) -> tuple["StringValue", dict]:
         """
         Initialises a StringValue from a HTML string.
 
@@ -145,7 +145,7 @@ class StringValue:
         return cls(str(soup)), attrs
 
     @classmethod
-    def from_translated_html(cls, html):
+    def from_translated_html(cls, html) -> "StringValue":
         """
         Initialises a StringValue from a HTML string.
 
@@ -164,7 +164,7 @@ class StringValue:
 
         return cls(str(soup))
 
-    def render_text(self):
+    def render_text(self) -> str:
         """
         Returns a plain text representation of the string.
 
@@ -191,7 +191,7 @@ class StringValue:
 
         return "".join(texts)
 
-    def render_soup(self, attrs):
+    def render_soup(self, attrs) -> BeautifulSoup:
         """
         Returns a BeautifulSoup instance containing the string.
 
@@ -222,7 +222,7 @@ class StringValue:
 
         return soup
 
-    def render_html(self, attrs):
+    def render_html(self, attrs) -> str:
         """
         Returns a HTML representation of the string.
 
@@ -233,7 +233,7 @@ class StringValue:
         """
         return str(self.render_soup(attrs))
 
-    def get_translatable_html(self):
+    def get_translatable_html(self) -> str:
         """
         Returns a HTML string without restoring any HTML attributes.
 
@@ -254,7 +254,7 @@ class StringValue:
         return hash(self.data)
 
 
-def extract_strings(html):
+def extract_strings(html) -> tuple[str, list[tuple[StringValue, dict]]]:
     """
     This function extracts translatable strings from an HTML fragment.
 
@@ -458,7 +458,7 @@ def extract_strings(html):
     return str(soup), strings
 
 
-def restore_strings(template, strings):
+def restore_strings(template, strings) -> str:
     """
     Inserts a list of strings into the template.
 

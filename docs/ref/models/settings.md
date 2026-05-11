@@ -12,3 +12,5 @@ style B stroke-dasharray: 5 5
 ```
 
 ::: wagtail_localize.models.LocaleSynchronization
+    options:
+      show_root_heading: true

@@ -98,7 +98,7 @@ class SynchronizedField(BaseTranslatableField):
         return f"<SynchronizedField {self.field_name}>"
 
 
-def get_translatable_fields(model):
+def get_translatable_fields(model) -> list:
     """
     Derives a list of translatable fields from the given model class.
 

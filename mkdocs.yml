@@ -34,8 +34,12 @@ plugins:
       handlers:
         python:
           options:
+            show_root_heading: false
             show_root_toc_entry: false
             show_signature_annotations: true
+            show_root_full_path: false
+            docstring_section_style: table
+            show_symbol_type_heading: true
   - include-markdown
 nav:
   - Home: index.md

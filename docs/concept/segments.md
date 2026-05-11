@@ -92,5 +92,5 @@ to be changed and they also don't have to be text fields either. By default, the
 but a user can optionally override them with something else. When they are overridden, any changes to the original
 page are ignored.
 
-All fields configured with the [`SynchronisedField`](../ref/translatable-fields.md#wagtail_localize.fields.SynchronizedField)
+All fields configured with the [`SynchronizedField`](../ref/translatable-fields.md#wagtail_localize.fields.SynchronizedField)
 field type will be extracted as an overridable segment.

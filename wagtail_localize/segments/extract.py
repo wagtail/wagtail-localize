@@ -244,7 +244,7 @@ class StreamFieldSegmentExtractor:
         return segments
 
 
-def extract_segments(instance):
+def extract_segments(instance) -> list:
     """
     Extracts segments from the given model instance.
 
