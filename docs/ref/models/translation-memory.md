@@ -18,15 +18,23 @@ style E stroke-dasharray: 5 5
 ::: wagtail_localize.models.String
     options:
       show_root_heading: true
+      filters:
+        - "!^save$"
 
 ::: wagtail_localize.models.TranslationContext
     options:
       show_root_heading: true
+      filters:
+        - "!^save$"
 
 ::: wagtail_localize.models.Template
     options:
       show_root_heading: true
+      filters:
+        - "!^save$"
 
 ::: wagtail_localize.models.StringTranslation
     options:
       show_root_heading: true
+      filters:
+        - "!^save$"

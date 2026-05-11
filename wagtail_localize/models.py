@@ -1441,7 +1441,7 @@ class String(models.Model):
         return super().save(*args, **kwargs)
 
     @classmethod
-    def _get_data_hash(cls, data):
+    def _get_data_hash(cls, data) -> "uuid.UUID":
         """
         Generates a UUID from the given string.
 
@@ -1519,7 +1519,7 @@ class TranslationContext(models.Model):
         return super().save(*args, **kwargs)
 
     @classmethod
-    def _get_path_id(cls, path):
+    def _get_path_id(cls, path) -> "uuid.UUID":
         """
         Generates a UUID from the given content path.
 
