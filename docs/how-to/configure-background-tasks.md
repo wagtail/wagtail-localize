@@ -26,8 +26,7 @@ The `OPTIONS` => `QUEUE` key configures the Django RQ queue to push tasks to.
 To configure any other queueing system, create a subclass of `wagtail_localize.tasks.BaseJobBackend` somewhere in your project and override the `__init__` and `enqueue` methods:
 
 ```python
-from wagtail_localize.tasks import BaseJobBacked
-
+from wagtail_localize.tasks import BaseJobBackend
 
 class MyJobBackend(BaseJobBackend):
     def __init__(self, options):

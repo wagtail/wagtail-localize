@@ -191,7 +191,7 @@ class TranslatableObject(models.Model):
     def __str__(self):
         return f"TranslatableObject: {self.translation_key}, {self.content_type_id}"
 
-    def has_translation(self, locale):
+    def has_translation(self, locale) -> bool:
         """
         Returns True if there is an instance of this object in the given Locale.
 
@@ -205,7 +205,7 @@ class TranslatableObject(models.Model):
             translation_key=self.translation_key, locale_id=pk(locale)
         ).exists()
 
-    def get_instance(self, locale):
+    def get_instance(self, locale) -> models.Model:
         """
         Returns a model instance for this object in the given locale.
 
@@ -222,7 +222,7 @@ class TranslatableObject(models.Model):
             translation_key=self.translation_key, locale_id=pk(locale)
         )
 
-    def get_instance_or_none(self, locale):
+    def get_instance_or_none(self, locale) -> models.Model | None:
         """
         Returns a model instance for this object in the given locale.
 
@@ -335,7 +335,7 @@ class TranslationSource(models.Model):
         return f"TranslationSource: {self.object_id}, {self.specific_content_type_id}, {self.locale}"
 
     @classmethod
-    def get_or_create_from_instance(cls, instance):
+    def get_or_create_from_instance(cls, instance) -> tuple["TranslationSource", bool]:
         """
         Creates or gets a TranslationSource for the given instance.
 
@@ -348,7 +348,7 @@ class TranslationSource(models.Model):
                 instance for.
 
         Returns:
-            tuple[TranslationSource, boolean]: A two-tuple, the first component is the TranslationSource object, and
+            tuple[TranslationSource, bool]: A two-tuple, the first component is the TranslationSource object, and
                 the second component is a boolean that is True if the TranslationSource was created.
         """
         # Make sure we're using the specific version of pages
@@ -394,7 +394,9 @@ class TranslationSource(models.Model):
         return source, created
 
     @classmethod
-    def update_or_create_from_instance(cls, instance):
+    def update_or_create_from_instance(
+        cls, instance
+    ) -> tuple["TranslationSource", bool]:
         """
         Creates or updates a TranslationSource for the given instance.
 
@@ -406,7 +408,7 @@ class TranslationSource(models.Model):
                 from.
 
         Returns:
-            tuple[TranslationSource, boolean]: A two-tuple, the first component is the TranslationSource object, and
+            tuple[TranslationSource, bool]: A two-tuple, the first component is the TranslationSource object, and
                 the second component is a boolean that is True if the TranslationSource was created.
         """
         # Make sure we're using the specific version of pages
@@ -481,7 +483,7 @@ class TranslationSource(models.Model):
         )
         self.refresh_segments()
 
-    def get_source_instance(self):
+    def get_source_instance(self) -> models.Model:
         """
         This gets the live version of instance that the source data was extracted from.
 
@@ -512,7 +514,7 @@ class TranslationSource(models.Model):
             translation_key=self.object_id, locale_id=pk(locale)
         )
 
-    def as_instance(self):
+    def as_instance(self) -> models.Model:
         """
         Builds an instance of the object with the content of this source.
 
@@ -586,7 +588,7 @@ class TranslationSource(models.Model):
             id__in=seen_overridable_segment_ids
         ).delete()
 
-    def export_po(self):
+    def export_po(self) -> polib.POFile:
         """
         Exports all translatable strings from this source.
 
@@ -595,6 +597,7 @@ class TranslationSource(models.Model):
         Returns:
             polib.POFile: A POFile object containing the source translatable strings.
         """
+
         # Get messages
         messages = []
 
@@ -710,7 +713,7 @@ class TranslationSource(models.Model):
 
     def create_or_update_translation(
         self, locale, user=None, publish=True, copy_parent_pages=False, fallback=False
-    ):
+    ) -> models.Model:
         """
         Creates/updates a translation of the object into the specified locale
         based on the content of this source and the translated strings
@@ -876,7 +879,7 @@ class TranslationSource(models.Model):
 
         return translation, created
 
-    def get_ephemeral_translated_instance(self, locale, fallback=False):
+    def get_ephemeral_translated_instance(self, locale, fallback=False) -> models.Model:
         """
         Returns an instance with the translations added which is not intended to be saved.
 
@@ -1092,7 +1095,7 @@ class Translation(models.Model):
     def __str__(self):
         return f"Translation: {self.uuid}, {self.source_id}, {self.target_locale_id}, (enabled: {self.enabled})"
 
-    def get_target_instance(self):
+    def get_target_instance(self) -> models.Model:
         """
         Fetches the translated instance from the database.
 
@@ -1104,7 +1107,7 @@ class Translation(models.Model):
         """
         return self.source.get_translated_instance(self.target_locale)
 
-    def get_target_instance_edit_url(self):
+    def get_target_instance_edit_url(self) -> str:
         """
         Returns the URL to edit the target instance.
 
@@ -1116,11 +1119,11 @@ class Translation(models.Model):
         """
         return get_edit_url(self.get_target_instance())
 
-    def get_progress(self):
+    def get_progress(self) -> tuple[int, int]:
         """
         Gets the current translation progress.
 
-        Returns
+        Returns:
             tuple[int, int]: A two-tuple of integers. First integer is the total number of string segments to be translated.
                 The second integer is the number of string segments that have been translated so far.
         """
@@ -1154,7 +1157,7 @@ class Translation(models.Model):
 
         return aggs["total_segments"], aggs["translated_segments"]
 
-    def get_status_display(self):
+    def get_status_display(self) -> str:
         """
         Returns a string to describe the current status of this translation to a user.
 
@@ -1167,7 +1170,7 @@ class Translation(models.Model):
         else:
             return _("Waiting for translations")
 
-    def export_po(self):
+    def export_po(self) -> polib.POFile:
         """
         Exports all translatable strings with any translations that have already been made.
 
@@ -1241,7 +1244,7 @@ class Translation(models.Model):
     @transaction.atomic
     def import_po(
         self, po, delete=False, user=None, translation_type="manual", tool_name=""
-    ):
+    ) -> list:
         """
         Imports all translatable strings with any translations that have already been made.
 
@@ -1334,7 +1337,7 @@ class Translation(models.Model):
 
         return warnings
 
-    def save_target(self, user=None, publish=True):
+    def save_target(self, user=None, publish=True) -> models.Model:
         """
         Saves the target page/snippet using the current translations.
 
@@ -1351,7 +1354,7 @@ class Translation(models.Model):
         Returns:
             Model: The translated instance.
         """
-        self.source.create_or_update_translation(
+        return self.source.create_or_update_translation(
             self.target_locale,
             user=user,
             publish=publish,
@@ -1393,7 +1396,7 @@ class TranslationLog(models.Model):
             f"TranslationLog: {self.source_id}, {self.locale_id}, {self.revision_id} "
         )
 
-    def get_instance(self):
+    def get_instance(self) -> "models.Model":
         """
         Gets the instance of the translated object, if it still exists.
 
@@ -1401,7 +1404,7 @@ class TranslationLog(models.Model):
             Model.DoesNotExist: if the translated object no longer exists.
 
         Returns:
-            The translated object.
+            models.Model: The translated object.
         """
         return self.source.object.get_instance(self.locale)
 
@@ -1438,7 +1441,7 @@ class String(models.Model):
         return super().save(*args, **kwargs)
 
     @classmethod
-    def _get_data_hash(cls, data):
+    def _get_data_hash(cls, data) -> "uuid.UUID":
         """
         Generates a UUID from the given string.
 
@@ -1451,12 +1454,12 @@ class String(models.Model):
         return uuid.uuid5(cls.UUID_NAMESPACE, data)
 
     @classmethod
-    def from_value(cls, locale, stringvalue):
+    def from_value(cls, locale, stringvalue) -> "String":
         """
         Gets or creates a String instance from a StringValue object.
 
         Args:
-            locale (ForeignKey to Locale) The locale of the string.
+            locale (ForeignKey to Locale): The locale of the string.
             stringvalue (StringValue): The value of the string.
 
         Returns:
@@ -1470,7 +1473,7 @@ class String(models.Model):
 
         return string
 
-    def as_value(self):
+    def as_value(self) -> StringValue:
         """
         Creates a StringValue object from the contents of this string.
 
@@ -1516,7 +1519,7 @@ class TranslationContext(models.Model):
         return super().save(*args, **kwargs)
 
     @classmethod
-    def _get_path_id(cls, path):
+    def _get_path_id(cls, path) -> "uuid.UUID":
         """
         Generates a UUID from the given content path.
 
@@ -1699,7 +1702,7 @@ class StringTranslation(models.Model):
                 self.save(update_fields=["has_error"])
 
     @classmethod
-    def from_text(cls, translation_of, locale, context, data):
+    def from_text(cls, translation_of, locale, context, data) -> "StringTranslation":
         """
         Gets or creates a StringTranslation instance from the given parameters.
 
@@ -1711,7 +1714,7 @@ class StringTranslation(models.Model):
             data (TextField): The translation.
 
         Returns:
-            String: The String instance that corresponds with the given stringvalue and locale.
+            StringTranslation: The StringTranslation instance that corresponds with the given parameters.
         """
         segment, created = cls.objects.get_or_create(
             translation_of=translation_of,
@@ -1738,7 +1741,7 @@ class StringTranslation(models.Model):
         self.field_error = error[0].messages[0]
         self.save(update_fields=["has_error", "field_error"])
 
-    def get_error(self):
+    def get_error(self) -> str | None:
         """
         Returns a string containing any validation errors on the saved value.
 
@@ -1760,7 +1763,7 @@ class StringTranslation(models.Model):
         if self.context is not None and self.field_error:
             return self.field_error
 
-    def get_comment(self):
+    def get_comment(self) -> str | None:
         """
         Returns a comment to display to the user containing info on how and when the string was translated.
 
@@ -1829,7 +1832,7 @@ class Template(models.Model):
         return f"Template: {self.uuid}, {self.template_format}, {self.string_count}"
 
     @classmethod
-    def from_value(cls, template_value):
+    def from_value(cls, template_value) -> "Template":
         """
         Gets or creates a Template instance from a TemplateValue object.
 
@@ -1910,18 +1913,14 @@ class SegmentOverride(models.Model):
 
     def set_field_error(self, error):
         """
-        Returns a string containing any validation errors on the saved value.
-
-        Returns:
-            str: The validation error if there is one.
-            None: If there isn't an error.
+        Sets a validation error on this segment override.
         """
         self.has_error = True
         # TODO (someday): We currently only support one error at a time
         self.field_error = error[0].messages[0]
         self.save(update_fields=["has_error", "field_error"])
 
-    def get_error(self):
+    def get_error(self) -> str | None:
         """
         Returns a string containing any validation errors on the saved value.
 
@@ -2031,16 +2030,16 @@ class StringSegment(BaseSegment):
         return f"StringSegment from String({self.string_id})"
 
     @classmethod
-    def from_value(cls, source, language, value):
+    def from_value(cls, source, language, value) -> "StringSegment":
         """
-        Gets or creates a TemplateSegment instance from a TemplateValue object.
+        Gets or creates a StringSegment instance from a StringSegmentValue object.
 
         Args:
-            source (TranslationSource): The source the template value was extracted from.
-            template_value (TemplateValue): The value of the template.
+            source (TranslationSource): The source the string value was extracted from.
+            value (StringValue): The value of the string.
 
         Returns:
-            TemplateSegment: The TemplateSegment instance that corresponds with the given template_value and source.
+            StringSegment: The StringSegment instance that corresponds with the given value and source.
         """
         string = String.from_value(language, value.string)
         context, context_created = TranslationContext.objects.get_or_create(
@@ -2078,13 +2077,13 @@ class TemplateSegment(BaseSegment):
         return f"TemplateSegment({self.pk}) from Template({self.template_id})"
 
     @classmethod
-    def from_value(cls, source, value):
+    def from_value(cls, source, value) -> "TemplateSegment":
         """
         Gets or creates a TemplateSegment instance from a TemplateValue object.
 
         Args:
             source (TranslationSource): The source the template value was extracted from.
-            template_value (TemplateValue): The value of the template.
+            value (TemplateValue): The value of the template.
 
         Returns:
             TemplateSegment: The TemplateSegment instance that corresponds with the given template_value and source.

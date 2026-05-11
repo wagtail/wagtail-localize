@@ -34,13 +34,12 @@ plugins:
       handlers:
         python:
           options:
+            show_root_heading: false
             show_root_toc_entry: false
             show_signature_annotations: true
-          setup_commands:
-            - import os
-            - import django
-            - os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wagtail_localize.test.settings")
-            - django.setup()
+            show_root_full_path: false
+            docstring_section_style: table
+            show_symbol_type_heading: true
   - include-markdown
 nav:
   - Home: index.md
@@ -54,6 +53,7 @@ nav:
       - Configuring translatable fields: how-to/field-configuration.md
       - Translatable ModelAdmin: how-to/modeladmin.md
       - Configuring background tasks: how-to/configure-background-tasks.md
+      - Tips: how-to/tips.md
       - Integrations:
           - Pontoon: how-to/integrations/pontoon.md
           - Machine Translation: how-to/integrations/machine-translation.md

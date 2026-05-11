@@ -17,12 +17,18 @@ style E stroke-dasharray: 5 5
 style F stroke-dasharray: 5 5
 ```
 
-::: wagtail_localize.models
-    selection:
-        members:
-            - TranslatableObject
-            - TranslationSource
-            - Translation
-            - TranslationLog
-        filters:
-            - "!^save$"
+::: wagtail_localize.models.TranslatableObject
+    options:
+      show_root_heading: true
+
+::: wagtail_localize.models.TranslationSource
+    options:
+      show_root_heading: true
+
+::: wagtail_localize.models.Translation
+    options:
+      show_root_heading: true
+
+::: wagtail_localize.models.TranslationLog
+    options:
+      show_root_heading: true

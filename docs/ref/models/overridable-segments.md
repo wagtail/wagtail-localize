@@ -18,10 +18,10 @@ style D stroke-dasharray: 5 5
 style E stroke-dasharray: 5 5
 ```
 
-::: wagtail_localize.models
-    selection:
-        members:
-            - SegmentOverride
-            - OverridableSegment
-        filters:
-            - "!^save$"
+::: wagtail_localize.models.SegmentOverride
+    options:
+      show_root_heading: true
+
+::: wagtail_localize.models.OverridableSegment
+    options:
+      show_root_heading: true
