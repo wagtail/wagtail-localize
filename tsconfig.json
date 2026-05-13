@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "lib": ["es2015", "dom"],
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2020", "dom"],
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "files": [
     "src/wagtail_localize/static_src/main.tsx",
