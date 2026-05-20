@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.13] - 2025-01-25
+## [1.13.1] - 2026-05-20
+
+### Fixed
+
+- Fix compatibility with Wagtail 7.3.x: add produced_error_message attribute ([#905](https://github.com/wagtail/wagtail-localize/pull/905)) @Marvinrose
+
+## [1.13] - 2026-01-25
 
 ### Changed
 
@@ -436,7 +442,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Make sure field level validation runs when translating snippets](https://github.com/wagtail/wagtail-localize/pull/427)
 
-[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.13...HEAD
+[unreleased]: https://github.com/wagtail/wagtail-localize/compare/v1.13.1...HEAD
+[1.13.1]: https://github.com/wagtail/wagtail-localize/compare/v1.13...v1.13.1
 [1.13]: https://github.com/wagtail/wagtail-localize/compare/v1.12.1...v1.13
 [1.12.1]: https://github.com/wagtail/wagtail-localize/compare/v1.12...v1.12.1
 [1.12]: https://github.com/wagtail/wagtail-localize/compare/v1.11.3...v1.12
