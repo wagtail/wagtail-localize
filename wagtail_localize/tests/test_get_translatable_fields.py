@@ -190,3 +190,24 @@ class TestCopySynchronisedFieldsWithManyToMany(TestCase):
 
         # Verify M2M relations were cleared
         self.assertEqual(target.m2m_field.count(), 0)
+
+    def test_m2m_field_sync_skips_unsaved_target(self):
+        """
+        Test that synchronizing does not error when target has not been saved yet.
+        """
+        source = TestM2MSnippet.objects.create(
+            title="Source Snippet",
+            locale=self.src_locale,
+        )
+        source.m2m_field.set([self.snippet1, self.snippet2])
+
+        # Create an unsaved target instance.
+        target = TestM2MSnippet(
+            title="Unsaved target",
+            locale=self.dest_locale,
+            translation_key=source.translation_key,
+        )
+        self.assertIsNone(target.pk)
+
+        # Before the early exit, this raised ValueError from M2M manager usage.
+        copy_synchronised_fields(source, target)
