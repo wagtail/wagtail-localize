@@ -7,3 +7,4 @@ venv
 !.eslintrc.js
 webpack.config.js
 scripts/extract-translatable-strings.js
+demo/
