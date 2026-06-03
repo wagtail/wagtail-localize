@@ -1,5 +1,9 @@
+import time
+
 from django.contrib.contenttypes.models import ContentType
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from wagtail.models import Locale, Page
 from wagtail.test.utils import WagtailTestUtils
@@ -263,3 +267,67 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         self.assertTrue(new_en_homepage.has_translation(self.fr_locale))
         self.assertTrue(new_en_homepage.has_translation(self.fr_ca_locale))
         self.assertTrue(new_en_homepage.has_translation(self.es_locale))
+
+
+class TestPageIndexQueryCount(TestCase):
+    def setUp(self):
+        self.en_locale = Locale.objects.get(language_code="en")
+        self.fr_locale = Locale.objects.create(language_code="fr")
+        self.fr_ca_locale = Locale.objects.create(language_code="fr-CA")
+        self.es_locale = Locale.objects.create(language_code="es")
+
+        root_page = Page.objects.get(id=1)
+        root_page.get_children().delete()
+        root_page.refresh_from_db()
+        self.en_homepage = root_page.add_child(instance=TestHomePage(title="Home"))
+
+    def test_from_database_query_count_single_page(self):
+        # Clear ContentType cache to ensure consistent query count regardless of test execution order
+        ContentType.objects.clear_cache()
+        with CaptureQueriesContext(connection) as ctx:
+            start = time.perf_counter()
+            PageIndex.from_database()
+            elapsed = time.perf_counter() - start
+
+        print(f"from_database() baseline (single page): {elapsed:.4f}s")
+
+        # 5 queries: fetch all pages, content type lookup, locale lookup, locales, aliases
+        self.assertEqual(len(ctx.captured_queries), 5)
+
+    def test_from_database_query_count_multiple_pages(self):
+        fr_homepage = self.en_homepage.copy_for_translation(self.fr_locale)
+        fr_ca_homepage = fr_homepage.copy_for_translation(self.fr_ca_locale)
+
+        en_aboutpage = self.en_homepage.add_child(
+            instance=TestPage(
+                title="About",
+                slug="about",
+            )
+        )
+
+        fr_aboutpage = en_aboutpage.copy_for_translation(self.fr_locale)
+        fr_aboutpage.copy_for_translation(self.fr_ca_locale, alias=True)
+
+        fr_ca_homepage.refresh_from_db()
+        fr_ca_homepage.add_child(
+            instance=TestPage(
+                title="Only Canada",
+                slug="only-canada",
+                locale=self.fr_ca_locale,
+            )
+        )
+
+        ContentType.objects.clear_cache()
+        with CaptureQueriesContext(connection) as ctx:
+            start = time.perf_counter()
+            PageIndex.from_database()
+            elapsed = time.perf_counter() - start
+
+        print(f"from_database() baseline (multiple pages): {elapsed:.4f}s")
+
+        # Baseline query count for 6 non-alias pages (3 at depth=2, 3 at depth=3):
+        # 1 (fetch all pages)
+        # + 3 * 4 (depth=2 pages: content type + locale + locales + aliased_locales)
+        # + 3 * 5 (depth=3 pages: get_parent + content type + locale + locales + aliased_locales)
+        # = 28
+        self.assertEqual(len(ctx.captured_queries), 28)
