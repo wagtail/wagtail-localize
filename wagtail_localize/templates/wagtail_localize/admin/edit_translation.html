@@ -47,7 +47,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    {% include "wagtailadmin/pages/_editor_js.html" %}
+    {% hook_output 'insert_editor_js' %}
     <script>
         if (typeof window.chooserUrls === "undefined") {
             window.chooserUrls = {
