@@ -132,10 +132,15 @@ class StreamFieldSegmentExtractor:
     def handle_struct_block(self, struct_block, raw_value=None):
         segments = []
 
+        # Normalise the envelope ({"type","value","id"}) to its value dict so
+        # nested blocks receive their raw value instead of None.
+        if raw_value and raw_value.get("type") and raw_value.get("value"):
+            raw_value = raw_value["value"]
+
         for field_name, block_value in struct_block.items():
             block_type = struct_block.block.child_blocks[field_name]
             try:
-                block_raw_value = raw_value["value"].get(field_name)
+                block_raw_value = raw_value.get(field_name)
             except (KeyError, TypeError):
                 # e.g. raw_value is None, or is that from chooser
                 block_raw_value = None

@@ -481,6 +481,43 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
+    @unittest.skipUnless(
+        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
+    )
+    def test_imageblock_in_nested_structblock(self):
+        block_id = uuid.uuid4()
+        test_image = get_image_model().objects.create(
+            title="Test image", file=get_test_image_file()
+        )
+        page = make_test_page_with_streamfield_block(
+            str(block_id),
+            "test_imageblock_in_nested_structblock",
+            {
+                "nested": {
+                    "the_image": {
+                        "image": test_image.pk,
+                        "decorative": False,
+                        "alt_text": "The Alt text",
+                    }
+                }
+            },
+        )
+
+        segments = extract_segments(page)
+        self.assertEqual(
+            segments,
+            [
+                OverridableSegmentValue(
+                    f"test_streamfield.{block_id}.nested.the_image.image",
+                    test_image.pk,
+                ),
+                StringSegmentValue(
+                    f"test_streamfield.{block_id}.nested.the_image.alt_text",
+                    "The Alt text",
+                ),
+            ],
+        )
+
     def test_listblock(self):
         block_id = uuid.uuid4()
         page = make_test_page_with_streamfield_block(
