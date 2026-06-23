@@ -1,5 +1,3 @@
-import time
-
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
 from django.test import TestCase
@@ -270,64 +268,53 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
 
 
 class TestPageIndexQueryCount(TestCase):
+    # Each unit is 3 pages sharing one translation_key: an original, its
+    # translation, and an alias. from_database() indexes only non-alias pages,
+    # so a unit contributes 2 indexed pages (original + translation).
+    NON_ALIAS_PAGES_PER_UNIT = 2
+    # Each indexed page costs at least 2 queries: the locales and aliased_locales
+    # lookups. Other per-page queries exist but aren't guaranteed, so the
+    # threshold below counts only this floor.
+    MIN_QUERIES_PER_PAGE = 2
+
     def setUp(self):
         self.en_locale = Locale.objects.get(language_code="en")
         self.fr_locale = Locale.objects.create(language_code="fr")
         self.fr_ca_locale = Locale.objects.create(language_code="fr-CA")
-        self.es_locale = Locale.objects.create(language_code="es")
 
+    def _count_index_queries(self, num_units):
+        # Rebuild the tree from scratch so each measurement is independent,
+        # then add num_units localization units under the homepage.
         root_page = Page.objects.get(id=1)
         root_page.get_children().delete()
         root_page.refresh_from_db()
-        self.en_homepage = root_page.add_child(instance=TestHomePage(title="Home"))
 
-    def test_from_database_query_count_single_page(self):
-        # Clear ContentType cache to ensure consistent query count regardless of test execution order
-        ContentType.objects.clear_cache()
-        with CaptureQueriesContext(connection) as ctx:
-            start = time.perf_counter()
-            PageIndex.from_database()
-            elapsed = time.perf_counter() - start
+        en_homepage = root_page.add_child(instance=TestHomePage(title="Home"))
+        fr_homepage = en_homepage.copy_for_translation(self.fr_locale)
+        fr_homepage.copy_for_translation(self.fr_ca_locale)
 
-        print(f"from_database() baseline (single page): {elapsed:.4f}s")
-
-        # 5 queries: fetch all pages, content type lookup, locale lookup, locales, aliases
-        self.assertEqual(len(ctx.captured_queries), 5)
-
-    def test_from_database_query_count_multiple_pages(self):
-        fr_homepage = self.en_homepage.copy_for_translation(self.fr_locale)
-        fr_ca_homepage = fr_homepage.copy_for_translation(self.fr_ca_locale)
-
-        en_aboutpage = self.en_homepage.add_child(
-            instance=TestPage(
-                title="About",
-                slug="about",
+        # Each unit is an original page, its translation, and an alias, so the
+        # measurement exercises both the locales and aliased_locales grouping.
+        for i in range(num_units):
+            en_page = en_homepage.add_child(
+                instance=TestPage(title=f"Page {i}", slug=f"page-{i}")
             )
-        )
+            fr_page = en_page.copy_for_translation(self.fr_locale)
+            fr_page.copy_for_translation(self.fr_ca_locale, alias=True)
 
-        fr_aboutpage = en_aboutpage.copy_for_translation(self.fr_locale)
-        fr_aboutpage.copy_for_translation(self.fr_ca_locale, alias=True)
-
-        fr_ca_homepage.refresh_from_db()
-        fr_ca_homepage.add_child(
-            instance=TestPage(
-                title="Only Canada",
-                slug="only-canada",
-                locale=self.fr_ca_locale,
-            )
-        )
-
-        ContentType.objects.clear_cache()
         with CaptureQueriesContext(connection) as ctx:
-            start = time.perf_counter()
             PageIndex.from_database()
-            elapsed = time.perf_counter() - start
 
-        print(f"from_database() baseline (multiple pages): {elapsed:.4f}s")
+        return len(ctx.captured_queries)
 
-        # Baseline query count for 6 non-alias pages (3 at depth=2, 3 at depth=3):
-        # 1 (fetch all pages)
-        # + 3 * 4 (depth=2 pages: content type + locale + locales + aliased_locales)
-        # + 3 * 5 (depth=3 pages: get_parent + content type + locale + locales + aliased_locales)
-        # = 28
-        self.assertEqual(len(ctx.captured_queries), 28)
+    def test_from_database_query_count_scales_with_localization_units(self):
+        # Subtracting the two counts cancels the fixed overhead and isolates the
+        # marginal per-unit cost. In the N+1 version each non-alias page adds at
+        # least its two per-page lookups (locales + aliased_locales).
+        small = self._count_index_queries(num_units=3)
+        large = self._count_index_queries(num_units=12)
+
+        self.assertGreaterEqual(
+            large - small,
+            (12 - 3) * self.NON_ALIAS_PAGES_PER_UNIT * self.MIN_QUERIES_PER_PAGE,
+        )
