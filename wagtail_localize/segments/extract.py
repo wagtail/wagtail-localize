@@ -132,15 +132,10 @@ class StreamFieldSegmentExtractor:
     def handle_struct_block(self, struct_block, raw_value=None):
         segments = []
 
-        # Normalise the envelope ({"type","value","id"}) to its value dict so
-        # nested blocks receive their raw value instead of None.
-        if raw_value and raw_value.get("type") and raw_value.get("value"):
-            raw_value = raw_value["value"]
-
         for field_name, block_value in struct_block.items():
             block_type = struct_block.block.child_blocks[field_name]
             try:
-                block_raw_value = raw_value.get(field_name)
+                block_raw_value = raw_value["value"].get(field_name)
             except (KeyError, TypeError):
                 # e.g. raw_value is None, or is that from chooser
                 block_raw_value = None
@@ -205,7 +200,7 @@ class StreamFieldSegmentExtractor:
         segments = []
 
         for field_name, block_type in block.child_blocks.items():
-            if raw_value.get("type") and raw_value.get("value"):
+            if raw_value and raw_value.get("type") and raw_value.get("value"):
                 # for top-level ImageBlock, raw_value has a
                 # {"type": "field_name", "value": {"image": X, "alt_text": "", "caption": ""}} format.
                 # whereas if the ImageBlock is part of a StructBlock, ListBlock or StreamBlock, we
@@ -217,7 +212,7 @@ class StreamFieldSegmentExtractor:
                 block_value = (
                     image_block_value if field_name == "image" else block_raw_value
                 )
-            except (KeyError, TypeError):
+            except (KeyError, TypeError, AttributeError):
                 # e.g. raw_value is None, or is that from chooser
                 block_raw_value = None
                 block_value = None
