@@ -7,6 +7,14 @@ from django.utils import timezone
 from wagtail.blocks import StreamValue
 from wagtail.models import Locale, Page, PageLogEntry
 
+from tests.testapp.models import (
+    TestChildObject,
+    TestNonParentalChildObject,
+    TestPage,
+    TestRevisionsButNoDraftModel,
+    TestSnippet,
+    TestSynchronizedChildObject,
+)
 from wagtail_localize.models import (
     MissingRelatedObjectError,
     MissingTranslationError,
@@ -18,14 +26,6 @@ from wagtail_localize.models import (
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import (
-    TestChildObject,
-    TestNonParentalChildObject,
-    TestPage,
-    TestRevisionsButNoDraftModel,
-    TestSnippet,
-    TestSynchronizedChildObject,
-)
 
 
 def create_test_page(**kwargs):

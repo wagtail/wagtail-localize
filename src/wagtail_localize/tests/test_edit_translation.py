@@ -33,6 +33,18 @@ from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Locale, Page, Revision
 from wagtail.test.utils import WagtailTestUtils
 
+from tests.testapp.models import (
+    Header,
+    NavigationLink,
+    NonTranslatableSnippet,
+    PageWithCustomEditHandler,
+    PageWithCustomEditHandlerChildObject,
+    SubNavigationLink,
+    TestHomePage,
+    TestPage,
+    TestSnippet,
+    TestSnippetOrderable,
+)
 from wagtail_localize.machine_translators.dummy import translate_html
 from wagtail_localize.models import (
     OverridableSegment,
@@ -45,18 +57,6 @@ from wagtail_localize.models import (
     TranslationSource,
 )
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import (
-    Header,
-    NavigationLink,
-    NonTranslatableSnippet,
-    PageWithCustomEditHandler,
-    PageWithCustomEditHandlerChildObject,
-    SubNavigationLink,
-    TestHomePage,
-    TestPage,
-    TestSnippet,
-    TestSnippetOrderable,
-)
 from wagtail_localize.views.edit_translation import (
     edit_override,
     edit_string_translation,

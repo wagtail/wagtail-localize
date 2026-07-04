@@ -1,13 +1,13 @@
 from django.test import TestCase
 
+from tests.testapp.models import (
+    TestGenerateTranslatableFieldsPage,
+    TestOverrideTranslatableFieldsPage,
+)
 from wagtail_localize.fields import (
     SynchronizedField,
     TranslatableField,
     get_translatable_fields,
-)
-from wagtail_localize.test.models import (
-    TestGenerateTranslatableFieldsPage,
-    TestOverrideTranslatableFieldsPage,
 )
 
 

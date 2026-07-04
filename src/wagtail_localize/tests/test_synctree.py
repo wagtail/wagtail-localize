@@ -4,9 +4,9 @@ from django.urls import reverse
 from wagtail.models import Locale, Page
 from wagtail.test.utils import WagtailTestUtils
 
+from tests.testapp.models import TestHomePage, TestPage
 from wagtail_localize.models import LocaleSynchronization
 from wagtail_localize.synctree import PageIndex
-from wagtail_localize.test.models import TestHomePage, TestPage
 
 
 class TestPageIndex(TestCase):

@@ -19,8 +19,8 @@ extractor
             },
         }),
     ])
-    .parseFilesGlob('./wagtail_localize/static_src/**/*.@(ts|js|tsx|jsx)');
+    .parseFilesGlob('./src/wagtail_localize/static_src/**/*.@(ts|js|tsx|jsx)');
 
-extractor.savePotFile('wagtail_localize/locale/en/LC_MESSAGES/djangojs.po');
+extractor.savePotFile('src/wagtail_localize/locale/en/LC_MESSAGES/djangojs.po');
 
 extractor.printStats();

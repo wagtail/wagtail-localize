@@ -8,6 +8,7 @@ from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Locale, Page
 
+from tests.testapp.models import TestChildObject, TestPage, TestSnippet
 from wagtail_localize.fields import copy_synchronised_fields
 from wagtail_localize.segments import (
     OverridableSegmentValue,
@@ -17,7 +18,6 @@ from wagtail_localize.segments import (
 )
 from wagtail_localize.segments.ingest import ingest_segments
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import TestChildObject, TestPage, TestSnippet
 
 
 def make_test_page(**kwargs):

@@ -22,4 +22,4 @@ jobs:
 
       - name: Run ruff
         working-directory: .
-        run: ruff check --output-format=github wagtail_localize
+        run: ruff check --output-format=github src/wagtail_localize tests

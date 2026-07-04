@@ -4,9 +4,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: './wagtail_localize/static_src/main.tsx',
+        main: './src/wagtail_localize/static_src/main.tsx',
         'component-form':
-            './wagtail_localize/static_src/component_form/main.tsx',
+            './src/wagtail_localize/static_src/component_form/main.tsx',
     },
     module: {
         rules: [
@@ -38,24 +38,24 @@ module.exports = {
                 {
                     from: path.resolve(
                         __dirname,
-                        'wagtail_localize/static_src/component_form',
+                        'src/wagtail_localize/static_src/component_form',
                         'main.css'
                     ),
                     to: path.resolve(
                         __dirname,
-                        'wagtail_localize/static/wagtail_localize/css',
+                        'src/wagtail_localize/static/wagtail_localize/css',
                         'wagtail-localize-component-form.css'
                     ),
                 },
                 {
                     from: path.resolve(
                         __dirname,
-                        'wagtail_localize/static_src/editor',
+                        'src/wagtail_localize/static_src/editor',
                         'main.css'
                     ),
                     to: path.resolve(
                         __dirname,
-                        'wagtail_localize/static/wagtail_localize/css',
+                        'src/wagtail_localize/static/wagtail_localize/css',
                         'wagtail-localize-editor-form.css'
                     ),
                 },
@@ -71,7 +71,7 @@ module.exports = {
     output: {
         path: path.resolve(
             __dirname,
-            'wagtail_localize/static/wagtail_localize/js'
+            'src/wagtail_localize/static/wagtail_localize/js'
         ),
         filename: (pathData) => {
             return pathData.chunk.name === 'main'

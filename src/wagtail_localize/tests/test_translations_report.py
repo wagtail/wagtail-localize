@@ -4,6 +4,7 @@ from django.urls import reverse
 from wagtail.models import Locale, Page
 from wagtail.test.utils import WagtailTestUtils
 
+from tests.testapp.models import TestSnippet
 from wagtail_localize.models import (
     String,
     StringTranslation,
@@ -11,7 +12,6 @@ from wagtail_localize.models import (
     TranslationContext,
     TranslationSource,
 )
-from wagtail_localize.test.models import TestSnippet
 
 from .utils import make_test_page
 
