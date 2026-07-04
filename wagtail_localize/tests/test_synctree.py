@@ -268,15 +268,6 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
 
 
 class TestPageIndexQueryCount(TestCase):
-    # Each unit is 3 pages sharing one translation_key: an original, its
-    # translation, and an alias. from_database() indexes only non-alias pages,
-    # so a unit contributes 2 indexed pages (original + translation).
-    NON_ALIAS_PAGES_PER_UNIT = 2
-    # Each indexed page costs at least 2 queries: the locales and aliased_locales
-    # lookups. Other per-page queries exist but aren't guaranteed, so the
-    # threshold below counts only this floor.
-    MIN_QUERIES_PER_PAGE = 2
-
     def setUp(self):
         self.en_locale = Locale.objects.get(language_code="en")
         self.fr_locale = Locale.objects.create(language_code="fr")
@@ -307,14 +298,10 @@ class TestPageIndexQueryCount(TestCase):
 
         return len(ctx.captured_queries)
 
-    def test_from_database_query_count_scales_with_localization_units(self):
-        # Subtracting the two counts cancels the fixed overhead and isolates the
-        # marginal per-unit cost. In the N+1 version each non-alias page adds at
-        # least its two per-page lookups (locales + aliased_locales).
+    def test_from_database_query_count_is_constant_with_localization_units(self):
+        # from_database() should issue the same number of queries regardless
+        # of how many localization units exist in the tree.
         small = self._count_index_queries(num_units=3)
         large = self._count_index_queries(num_units=12)
 
-        self.assertGreaterEqual(
-            large - small,
-            (12 - 3) * self.NON_ALIAS_PAGES_PER_UNIT * self.MIN_QUERIES_PER_PAGE,
-        )
+        self.assertEqual(small, large)
