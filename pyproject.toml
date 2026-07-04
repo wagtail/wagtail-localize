@@ -71,10 +71,10 @@ name = "wagtail_localize"
 
 [tool.flit.sdist]
 exclude = [
-    "wagtail_localize/static_src",
-    "wagtail_localize/test",
-    "wagtail_localize/**/tests",
-    "wagtail_localize/static/.gitignore",
+    "src/wagtail_localize/static_src",
+    "src/wagtail_localize/test",
+    "src/wagtail_localize/**/tests",
+    "src/wagtail_localize/static/.gitignore",
     "Makefile",
     "scripts",
     "docs",
@@ -91,5 +91,5 @@ exclude = [
     "testmanage.py",
 ]
 include = [
-    "wagtail_localize/static"
+    "src/wagtail_localize/static"
 ]

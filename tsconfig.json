@@ -9,7 +9,7 @@
     "esModuleInterop": true
   },
   "files": [
-    "wagtail_localize/static_src/main.tsx",
-    "wagtail_localize/static_src/custom.d.ts"
+    "src/wagtail_localize/static_src/main.tsx",
+    "src/wagtail_localize/static_src/custom.d.ts"
   ]
 }

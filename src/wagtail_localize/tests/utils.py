@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.urls import reverse
 
-from wagtail_localize.test.models import TestPage
+from tests.testapp.models import TestPage
 
 
 def assert_permission_denied(self, response):

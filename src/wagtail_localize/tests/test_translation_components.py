@@ -3,7 +3,7 @@ from django.urls import reverse
 from wagtail.models import Locale, Page
 from wagtail.test.utils import WagtailTestUtils
 
-from wagtail_localize.test.models import (
+from tests.testapp.models import (
     CustomButSimpleTranslationData,
     CustomTranslationData,
 )

@@ -22,13 +22,13 @@ dev: npm_deps ## 🧰 - Build front-end assets and watch for changes in developm
 
 messages:  ## 🔨 - Make messages
 	node ./scripts/extract-translatable-strings.js
-	cd wagtail_localize && python ../testmanage.py makemessages --locale=en
+	cd src/wagtail_localize && python ../../testmanage.py makemessages --locale=en
 
 fetch-translations:  ## 🔨 - Fetch new translations
 	./scripts/fetch-translations.sh
 
 compile-messages:  ## 🔨 - Compile messages
-	cd wagtail_localize && python ../testmanage.py compilemessages
+	cd src/wagtail_localize && python ../../testmanage.py compilemessages
 
 translations: build messages fetch-translations compile-messages  ## 🌍 - Prepare translations
 

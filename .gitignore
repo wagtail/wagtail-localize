@@ -2,7 +2,7 @@ __pycache__/
 *.py[co]
 /build
 /dist
-/wagtail_localize.egg-info
+/src/wagtail_localize.egg-info
 /.coverage
 /htmlcov
 /.tox
@@ -11,7 +11,7 @@ __pycache__/
 /.vscode
 /site
 /test_*.db
-/wagtail_localize/static/wagtail_localize/js/wagtail-localize.js
+/src/wagtail_localize/static/wagtail_localize/js/wagtail-localize.js
 /node_modules
 /test-static
 /test-media

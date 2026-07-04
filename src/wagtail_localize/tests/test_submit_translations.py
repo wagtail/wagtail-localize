@@ -11,14 +11,14 @@ from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.models import Locale, Page, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
-from wagtail_localize.models import Translation, TranslationSource
-from wagtail_localize.test.models import (
+from tests.testapp.models import (
     NonTranslatableSnippet,
     TestPage,
     TestSnippet,
     TestWithTranslationModeDisabledPage,
     TestWithTranslationModeEnabledPage,
 )
+from wagtail_localize.models import Translation, TranslationSource
 
 from .utils import assert_permission_denied, make_test_page
 

@@ -14,7 +14,7 @@ import wagtail.snippets.blocks
 
 from django.db import migrations, models
 
-import wagtail_localize.test.models
+import tests.testapp.models
 
 
 class Migration(migrations.Migration):
@@ -351,7 +351,7 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_customblockwithoutextractmethod",
-                                wagtail_localize.test.models.CustomBlockWithoutExtractMethod(),
+                                tests.testapp.models.CustomBlockWithoutExtractMethod(),
                             ),
                             (
                                 "test_pagechooserblock",
@@ -377,13 +377,13 @@ class Migration(migrations.Migration):
                             (
                                 "test_snippetchooserblock",
                                 wagtail.snippets.blocks.SnippetChooserBlock(
-                                    wagtail_localize.test.models.TestSnippet
+                                    tests.testapp.models.TestSnippet
                                 ),
                             ),
                             (
                                 "test_nontranslatablesnippetchooserblock",
                                 wagtail.snippets.blocks.SnippetChooserBlock(
-                                    wagtail_localize.test.models.NonTranslatableSnippet
+                                    tests.testapp.models.NonTranslatableSnippet
                                 ),
                             ),
                             ("test_embedblock", wagtail.embeds.blocks.EmbedBlock()),
@@ -527,7 +527,7 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_imageblock_in_listblock",
-                                wagtail_localize.test.models.ImageBlockInListBlock(),
+                                tests.testapp.models.ImageBlockInListBlock(),
                             ),
                             (
                                 "test_imageblock_in_streamblock",
@@ -571,7 +571,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "test_customfield",
-                    wagtail_localize.test.models.TestCustomField(blank=True),
+                    tests.testapp.models.TestCustomField(blank=True),
                 ),
                 (
                     "test_nontranslatablesnippet",
@@ -820,7 +820,7 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_customblockwithoutextractmethod",
-                                wagtail_localize.test.models.CustomBlockWithoutExtractMethod(),
+                                tests.testapp.models.CustomBlockWithoutExtractMethod(),
                             ),
                             (
                                 "test_pagechooserblock",
@@ -846,13 +846,13 @@ class Migration(migrations.Migration):
                             (
                                 "test_snippetchooserblock",
                                 wagtail.snippets.blocks.SnippetChooserBlock(
-                                    wagtail_localize.test.models.TestSnippet
+                                    tests.testapp.models.TestSnippet
                                 ),
                             ),
                             (
                                 "test_nontranslatablesnippetchooserblock",
                                 wagtail.snippets.blocks.SnippetChooserBlock(
-                                    wagtail_localize.test.models.NonTranslatableSnippet
+                                    tests.testapp.models.NonTranslatableSnippet
                                 ),
                             ),
                             ("test_embedblock", wagtail.embeds.blocks.EmbedBlock()),
@@ -996,7 +996,7 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_imageblock_in_listblock",
-                                wagtail_localize.test.models.ImageBlockInListBlock(),
+                                tests.testapp.models.ImageBlockInListBlock(),
                             ),
                             (
                                 "test_imageblock_in_streamblock",
@@ -1040,7 +1040,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "test_customfield",
-                    wagtail_localize.test.models.TestCustomField(blank=True),
+                    tests.testapp.models.TestCustomField(blank=True),
                 ),
                 (
                     "test_synchronized_charfield",
@@ -1204,7 +1204,7 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_customblockwithoutextractmethod",
-                                wagtail_localize.test.models.CustomBlockWithoutExtractMethod(),
+                                tests.testapp.models.CustomBlockWithoutExtractMethod(),
                             ),
                             (
                                 "test_pagechooserblock",
@@ -1230,13 +1230,13 @@ class Migration(migrations.Migration):
                             (
                                 "test_snippetchooserblock",
                                 wagtail.snippets.blocks.SnippetChooserBlock(
-                                    wagtail_localize.test.models.TestSnippet
+                                    tests.testapp.models.TestSnippet
                                 ),
                             ),
                             (
                                 "test_nontranslatablesnippetchooserblock",
                                 wagtail.snippets.blocks.SnippetChooserBlock(
-                                    wagtail_localize.test.models.NonTranslatableSnippet
+                                    tests.testapp.models.NonTranslatableSnippet
                                 ),
                             ),
                             ("test_embedblock", wagtail.embeds.blocks.EmbedBlock()),
@@ -1380,7 +1380,7 @@ class Migration(migrations.Migration):
                             ),
                             (
                                 "test_imageblock_in_listblock",
-                                wagtail_localize.test.models.ImageBlockInListBlock(),
+                                tests.testapp.models.ImageBlockInListBlock(),
                             ),
                             (
                                 "test_imageblock_in_streamblock",
@@ -1424,7 +1424,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "test_synchronized_customfield",
-                    wagtail_localize.test.models.TestCustomField(blank=True),
+                    tests.testapp.models.TestCustomField(blank=True),
                 ),
                 (
                     "test_page",

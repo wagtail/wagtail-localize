@@ -8,6 +8,13 @@ from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Page, Site
 
+from tests.testapp.models import (
+    TestChildObject,
+    TestModelWithInvalidForeignKey,
+    TestNonParentalChildObject,
+    TestPage,
+    TestSnippet,
+)
 from wagtail_localize.segments import (
     OverridableSegmentValue,
     RelatedObjectSegmentValue,
@@ -19,13 +26,6 @@ from wagtail_localize.segments.extract import (
     extract_segments,
 )
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import (
-    TestChildObject,
-    TestModelWithInvalidForeignKey,
-    TestNonParentalChildObject,
-    TestPage,
-    TestSnippet,
-)
 
 
 def make_test_page(**kwargs):

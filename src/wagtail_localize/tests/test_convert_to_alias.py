@@ -3,8 +3,8 @@ from django.urls import reverse
 from wagtail.models import Locale, Page, PageLogEntry
 from wagtail.test.utils import WagtailTestUtils
 
+from tests.testapp.models import TestPage
 from wagtail_localize.models import LocaleSynchronization, Translation
-from wagtail_localize.test.models import TestPage
 from wagtail_localize.wagtail_hooks import ConvertToAliasPageActionMenuItem
 
 

@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     "wagtail_localize",
     "wagtail_localize.locales",
     "wagtail_localize.modeladmin",
-    "wagtail_localize.test",
+    "tests.testapp",
     "wagtail.contrib.search_promotions",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -92,7 +92,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-ROOT_URLCONF = "wagtail_localize.test.urls"
+ROOT_URLCONF = "tests.testapp.urls"
 
 TEMPLATES = [
     {
