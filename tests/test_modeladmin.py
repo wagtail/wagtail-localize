@@ -12,6 +12,7 @@ from wagtail.test.utils import WagtailTestUtils
 
 from tests.testapp.models import NonTranslatableModel, TestModel, TestPage
 from tests.testapp.wagtail_hooks import TestModelAdmin, TestPageAdmin
+from tests.utils import assert_permission_denied
 from wagtail_localize.modeladmin import helpers
 from wagtail_localize.modeladmin.options import ModelAdmin, TranslatableModelAdmin
 from wagtail_localize.modeladmin.views import (
@@ -19,7 +20,6 @@ from wagtail_localize.modeladmin.views import (
     TranslatableInspectView,
 )
 from wagtail_localize.models import Translation, TranslationSource
-from wagtail_localize.tests.utils import assert_permission_denied
 
 
 def strip_user_perms():

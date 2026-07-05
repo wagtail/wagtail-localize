@@ -72,8 +72,6 @@ name = "wagtail_localize"
 [tool.flit.sdist]
 exclude = [
     "src/wagtail_localize/static_src",
-    "src/wagtail_localize/test",
-    "src/wagtail_localize/**/tests",
     "src/wagtail_localize/static/.gitignore",
     "Makefile",
     "scripts",
