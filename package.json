@@ -10,7 +10,8 @@
   "main": "src/main.ts",
   "scripts": {
     "build": "webpack --mode=production",
-    "start": "webpack --mode=development --watch"
+    "start": "webpack --mode=development --watch",
+    "test": "node scripts/test-image-chooser.js"
   },
   "author": "",
   "license": "ISC",
