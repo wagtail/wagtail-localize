@@ -6,6 +6,8 @@ import os
 import sys
 import tempfile
 
+from unittest import mock
+
 from django.test import SimpleTestCase
 
 
@@ -291,3 +293,87 @@ class TestHarnessSettings(SimpleTestCase):
         import benchmarks.settings
 
         self.assertFalse(benchmarks.settings.DEBUG)
+
+
+class TestReservedCatalogNames(SimpleTestCase):
+    def test_no_flow_is_called_all(self):
+        self.assertNotIn(run.ALL, catalog.BY_NAME)
+
+
+class TestExecutionSelection(SimpleTestCase):
+    def test_all_selects_the_whole_catalog_in_order(self):
+        self.assertEqual(run._executions_for(run.ALL, None), list(catalog.executions()))
+
+    def test_all_refuses_a_size(self):
+        with self.assertRaises(ValueError) as raised:
+            run._executions_for(run.ALL, "small")
+        self.assertIn("cannot be used with all", str(raised.exception))
+
+    def test_a_scaled_flow_without_a_size_selects_every_point(self):
+        flow = catalog.BY_NAME["edit_translation_get"]
+        self.assertEqual(
+            run._executions_for("edit_translation_get", None),
+            [(flow, "small"), (flow, "large")],
+        )
+
+    def test_a_scaled_flow_with_a_size_selects_only_that_point(self):
+        flow = catalog.BY_NAME["edit_translation_get"]
+        self.assertEqual(
+            run._executions_for("edit_translation_get", "large"), [(flow, "large")]
+        )
+
+    def test_a_flow_without_scale_points_selects_one_sizeless_execution(self):
+        flow = catalog.BY_NAME["submit_page_post"]
+        self.assertEqual(run._executions_for("submit_page_post", None), [(flow, None)])
+
+    def test_a_flow_without_scale_points_refuses_a_size(self):
+        with self.assertRaises(ValueError) as raised:
+            run._executions_for("submit_page_post", "small")
+        self.assertIn("takes no size", str(raised.exception))
+
+    def test_an_unknown_name_lists_the_valid_ones(self):
+        with self.assertRaises(ValueError) as raised:
+            run._executions_for("no_such_flow", None)
+        message = str(raised.exception)
+        self.assertIn("edit_translation_get", message)
+        self.assertIn(run.ALL, message)
+
+
+class TestOrchestration(SimpleTestCase):
+    """A failing execution must not stop the ones after it."""
+
+    def _run_all(self, failing_index):
+        attempted = []
+
+        def fake_execute(name, size, template, directory, index, token):
+            attempted.append((name, size))
+            if index == failing_index:
+                return {"process": name, "size": size, "error": "deliberate"}
+            return {
+                "process": name,
+                "size": size,
+                "queries": 1,
+                "seconds": 0.0,
+                "workload_unit": None,
+                "expected_workload": None,
+                "observed_workload": None,
+            }
+
+        with (
+            mock.patch.object(run, "_build_template", return_value="template"),
+            mock.patch.object(run, "execute", side_effect=fake_execute),
+            mock.patch.object(sys, "argv", ["run.py", run.ALL]),
+            mock.patch("sys.stdout"),
+            mock.patch("sys.stderr"),
+        ):
+            return run.main(), attempted
+
+    def test_every_execution_is_attempted_and_the_run_reports_failure(self):
+        code, attempted = self._run_all(failing_index=0)
+        self.assertEqual(code, 1)
+        self.assertEqual(len(attempted), len(catalog.executions()))
+
+    def test_a_run_with_no_failures_reports_success(self):
+        code, attempted = self._run_all(failing_index=None)
+        self.assertEqual(code, 0)
+        self.assertEqual(len(attempted), len(catalog.executions()))

@@ -3,6 +3,7 @@
     python benchmarks/run.py --list
     python benchmarks/run.py edit_translation_get
     python benchmarks/run.py edit_translation_get --size small
+    python benchmarks/run.py all
 
 Every execution runs in its own child process against its own fresh copy of an
 empty migrated database. That is what makes two executions comparable: copying
@@ -41,6 +42,9 @@ TOKEN_ENV_VAR = "WL_BENCHMARK_TOKEN"  # noqa: S105
 TOKEN_FILENAME = ".wl-benchmark-token"  # noqa: S105
 
 CHILD_FLAG = "--execute-in-child"
+
+# Reserved: it selects the whole catalog, so no flow may be called this.
+ALL = "all"
 
 # The child writes its result on one line with this prefix, so the parent reads
 # a line it can identify rather than guessing from the shape of the output.
@@ -288,6 +292,39 @@ def execute(name, size, template, directory, index, token):
     }
 
 
+def _executions_for(name, size):
+    """The (flow, size) pairs a command line selects, in catalog order.
+
+    Raises ValueError with the message the CLI should show. Kept apart from
+    main() so a selection can be checked without creating a database or a
+    process.
+    """
+    import catalog
+
+    if name == ALL:
+        if size is not None:
+            raise ValueError(f"--size cannot be used with {ALL}")
+        return list(catalog.executions())
+
+    if name not in catalog.BY_NAME:
+        raise ValueError(
+            f"unknown flow {name!r}. "
+            f"Known: {', '.join(sorted(catalog.BY_NAME))}, or {ALL}"
+        )
+
+    flow = catalog.BY_NAME[name]
+    if size is None:
+        return [(flow, declared) for declared in flow.sizes()]
+    if not flow.scale_points:
+        raise ValueError(f"{flow.name} takes no size")
+    if size not in flow.sizes():
+        raise ValueError(
+            f"{flow.name} has no size {size!r}. "
+            f"Declared: {', '.join(str(s) for s in flow.sizes())}"
+        )
+    return [(flow, size)]
+
+
 def print_catalog():
     import catalog
 
@@ -331,7 +368,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Measure wagtail-localize flows.",
     )
-    parser.add_argument("flow", nargs="?", help="flow name; omit with --list")
+    parser.add_argument("flow", nargs="?", help=f"flow name or {ALL}; omit with --list")
     parser.add_argument("--size", help="run only this scale point")
     parser.add_argument("--list", action="store_true", help="print the catalog")
     parser.add_argument(CHILD_FLAG, action="store_true", help=argparse.SUPPRESS)
@@ -352,34 +389,24 @@ def main():
         print_catalog()
         return 0
 
-    import catalog
-
     if not arguments.flow:
-        parser.error("give a flow name, or use --list")
-    if arguments.flow not in catalog.BY_NAME:
-        parser.error(
-            f"unknown flow {arguments.flow!r}. "
-            f"Known: {', '.join(sorted(catalog.BY_NAME))}"
-        )
+        parser.error(f"give a flow name or {ALL}, or use --list")
 
-    flow = catalog.BY_NAME[arguments.flow]
-    sizes = flow.sizes()
-    if arguments.size is not None:
-        if not flow.scale_points:
-            parser.error(f"{flow.name} takes no size")
-        if arguments.size not in sizes:
-            parser.error(
-                f"{flow.name} has no size {arguments.size!r}. "
-                f"Declared: {', '.join(str(s) for s in sizes)}"
-            )
-        sizes = (arguments.size,)
+    # Resolved before anything is created, so an impossible selection costs no
+    # temporary directory and no migration.
+    try:
+        plan = _executions_for(arguments.flow, arguments.size)
+    except ValueError as error:
+        parser.error(str(error))
 
     directory = tempfile.mkdtemp(prefix="wl-benchmark-")
     ok = True
     try:
         token = _own_directory(directory)
+        # One template per invocation; every execution copies it. The index is
+        # unique across the whole run, so no two executions share a database.
         template = _build_template(directory, token)
-        for index, size in enumerate(sizes):
+        for index, (flow, size) in enumerate(plan):
             ok &= report(execute(flow.name, size, template, directory, index, token))
     finally:
         shutil.rmtree(directory)
