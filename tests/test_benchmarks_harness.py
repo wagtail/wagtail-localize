@@ -10,17 +10,10 @@ from unittest import mock
 
 from django.test import SimpleTestCase
 
+from benchmarks import catalog, run
 
-BENCHMARKS = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "benchmarks"
-)
 
-# Import the harness the way `python benchmarks/run.py` does.
-if BENCHMARKS not in sys.path:
-    sys.path.insert(0, BENCHMARKS)
-
-import catalog  # noqa: E402
-import run  # noqa: E402
+BENCHMARKS = os.path.dirname(os.path.abspath(run.__file__))
 
 
 @contextlib.contextmanager
@@ -42,9 +35,32 @@ def environment(**values):
                 os.environ[key] = value
 
 
+DJANGO = ("django", "wagtail")
+# Any harness sibling. Forbidden at module level in run.py, where importing one
+# would run its imports too; allowed inside parent functions when the sibling is
+# Django-free, which benchmarks.catalog is and benchmarks.env is not.
+HARNESS = ("benchmarks",)
+BOOTSTRAP = (*DJANGO, "benchmarks.env", "benchmarks.settings")
+
+
 def _source_of(filename):
     with open(os.path.join(BENCHMARKS, filename)) as handle:
         return handle.read()
+
+
+def _imported_names(node):
+    """Every module path an import node names, or () if it is not an import.
+
+    `from benchmarks import env` and `from benchmarks.env import bootstrap`
+    both have to be read as naming benchmarks.env, and one statement can carry
+    several aliases.
+    """
+    if isinstance(node, ast.Import):
+        return tuple(alias.name for alias in node.names)
+    if isinstance(node, ast.ImportFrom):
+        module = node.module or ""
+        return (module, *(f"{module}.{alias.name}" for alias in node.names))
+    return ()
 
 
 class TestFlowModel(SimpleTestCase):
@@ -139,15 +155,11 @@ class TestCatalogIntegrity(SimpleTestCase):
 
 class TestCatalogNeedsNoDjango(SimpleTestCase):
     def test_the_catalog_module_imports_no_django_at_module_level(self):
-        source = ast.parse(_source_of("catalog.py"))
-        for node in source.body:
-            if isinstance(node, ast.Import | ast.ImportFrom):
-                module = getattr(node, "module", "") or ""
-                names = [alias.name for alias in node.names]
+        for node in ast.parse(_source_of("catalog.py")).body:
+            for name in _imported_names(node):
                 self.assertFalse(
-                    module.startswith(("django", "wagtail"))
-                    or any(n.startswith(("django", "wagtail")) for n in names),
-                    f"catalog.py imports {module or names} at module level",
+                    name.startswith(DJANGO),
+                    f"catalog.py imports {name} at module level",
                 )
 
 
@@ -155,18 +167,11 @@ class TestRunnerParentNeverImportsDjango(SimpleTestCase):
     """The parent must not open a Django connection before copying SQLite."""
 
     def test_run_py_imports_no_django_at_module_level(self):
-        source = ast.parse(_source_of("run.py"))
-        for node in source.body:
-            if isinstance(node, ast.Import | ast.ImportFrom):
-                module = getattr(node, "module", "") or ""
-                names = [alias.name for alias in node.names]
+        for node in ast.parse(_source_of("run.py")).body:
+            for name in _imported_names(node):
                 self.assertFalse(
-                    module.startswith(("django", "wagtail", "env", "catalog"))
-                    or any(
-                        n.startswith(("django", "wagtail", "env", "catalog"))
-                        for n in names
-                    ),
-                    f"run.py imports {module or names} at module level",
+                    name.startswith(DJANGO + HARNESS),
+                    f"run.py imports {name} at module level",
                 )
 
     def test_the_parent_code_path_defers_every_django_import(self):
@@ -177,15 +182,10 @@ class TestRunnerParentNeverImportsDjango(SimpleTestCase):
             if not isinstance(node, ast.FunctionDef) or node.name in child_side:
                 continue
             for inner in ast.walk(node):
-                if isinstance(inner, ast.Import | ast.ImportFrom):
-                    module = getattr(inner, "module", "") or ""
-                    names = [alias.name for alias in inner.names]
+                for name in _imported_names(inner):
                     self.assertFalse(
-                        module.startswith(("django", "wagtail", "env"))
-                        or any(
-                            n.startswith(("django", "wagtail", "env")) for n in names
-                        ),
-                        f"parent function {node.name}() imports {module or names}",
+                        name.startswith(BOOTSTRAP),
+                        f"parent function {node.name}() imports {name}",
                     )
 
 
@@ -376,4 +376,92 @@ class TestOrchestration(SimpleTestCase):
     def test_a_run_with_no_failures_reports_success(self):
         code, attempted = self._run_all(failing_index=None)
         self.assertEqual(code, 0)
+        self.assertEqual(len(attempted), len(catalog.executions()))
+
+
+class TestSingleModuleIdentity(SimpleTestCase):
+    """Loaded flat and as a package, a harness module becomes two objects with
+    separate state. Everything imports it one way."""
+
+    def test_the_harness_modules_are_package_qualified(self):
+        for module in (catalog, run):
+            with self.subTest(module=module.__name__):
+                self.assertTrue(module.__name__.startswith("benchmarks."))
+
+    def test_no_harness_module_imports_a_sibling_by_bare_name(self):
+        siblings = {"catalog", "env", "run", "seed", "settings"}
+        for filename in ("run.py", "catalog.py", "env.py", "seed.py"):
+            for node in ast.walk(ast.parse(_source_of(filename))):
+                for name in _imported_names(node):
+                    with self.subTest(file=filename, imported=name):
+                        self.assertNotIn(name.split(".")[0], siblings)
+
+
+class TestCatalogInvariants(SimpleTestCase):
+    def test_a_flow_declaring_a_workload_unit_declares_scale_points(self):
+        """Without scale points there is no expected_workload to compare an
+        observed one against, so the unit would measure nothing."""
+        for flow in catalog.CATALOG:
+            with self.subTest(flow=flow.name):
+                if flow.workload_unit:
+                    self.assertTrue(flow.scale_points)
+
+
+class TestUnusableChildResult(SimpleTestCase):
+    """A child that prints something the parent cannot read is that execution's
+    failure. The run continues and ends non-zero."""
+
+    def _execute_with_stdout(self, stdout):
+        completed = mock.Mock(returncode=0, stdout=stdout, stderr="")
+        with (
+            mock.patch.object(run, "_child", return_value=completed),
+            mock.patch("shutil.copy"),
+        ):
+            return run.execute(
+                "a_flow", None, "template", "unused-directory", 0, "token"
+            )
+
+    def test_malformed_json_becomes_a_failed_result(self):
+        result = self._execute_with_stdout(f"{run.RESULT_PREFIX}{{not json")
+        self.assertIn("error", result)
+        self.assertNotIn("queries", result)
+
+    def test_a_result_missing_a_field_becomes_a_failed_result(self):
+        result = self._execute_with_stdout(f'{run.RESULT_PREFIX}{{"pid": 1}}')
+        self.assertIn("error", result)
+
+    def test_a_json_value_that_is_not_an_object_becomes_a_failed_result(self):
+        result = self._execute_with_stdout(f"{run.RESULT_PREFIX}[1, 2, 3]")
+        self.assertIn("error", result)
+
+    def test_a_well_formed_result_is_returned(self):
+        payload = (
+            '{"pid": 1, "database": "d", "queries": 7, "seconds": 0.5, '
+            '"observed_workload": null, "expected_workload": null, '
+            '"workload_unit": null}'
+        )
+        result = self._execute_with_stdout(run.RESULT_PREFIX + payload)
+        self.assertNotIn("error", result)
+        self.assertEqual(result["queries"], 7)
+
+    def test_an_unusable_result_does_not_stop_the_rest_of_the_run(self):
+        attempted = []
+
+        def fake_child(args, database, token):
+            attempted.append(args)
+            return mock.Mock(
+                returncode=0, stdout=f"{run.RESULT_PREFIX}{{broken", stderr=""
+            )
+
+        with (
+            mock.patch.object(run, "_build_template", return_value="template"),
+            mock.patch.object(run, "_child", side_effect=fake_child),
+            mock.patch("shutil.copy"),
+            mock.patch.object(sys, "argv", ["run.py", run.ALL]),
+            mock.patch("sys.stdout"),
+            mock.patch("sys.stderr"),
+        ):
+            code = run.main()
+
+        self.assertEqual(code, 1)
         self.assertEqual(len(attempted), len(catalog.executions()))
