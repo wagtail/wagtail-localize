@@ -262,7 +262,11 @@ def prepare():
 
 
 # ---------------------------------------------------------------------------
-# submit_page_post
+# Translation state, named per object rather than counted
+#
+# prepare() creates several translations, so every check has to identify the
+# object, its own locale and the target locale. A count would pass whatever the
+# flow did.
 # ---------------------------------------------------------------------------
 
 
@@ -366,6 +370,11 @@ def _submit_page_verify(ctx, size, response):
         )
 
 
+# ---------------------------------------------------------------------------
+# submit_page_post
+# ---------------------------------------------------------------------------
+
+
 SUBMIT_PAGE_POST = Flow(
     name="submit_page_post",
     group="creation",
@@ -384,6 +393,210 @@ SUBMIT_PAGE_POST = Flow(
     setup=_submit_page_setup,
     run=_submit_page_run,
     verify=_submit_page_verify,
+)
+
+
+# ---------------------------------------------------------------------------
+# submit_page_get
+# ---------------------------------------------------------------------------
+
+
+def _locale_choices(body):
+    """The locale ids offered as translation targets in a rendered form.
+
+    A small regex rather than a parser: the form renders the choices as
+    checkboxes named "locales", and nothing else in the page uses that name.
+    One check on one form does not justify a reusable HTML helper.
+    """
+    import re
+
+    return {
+        int(match.group(1))
+        for tag in re.findall(r"<input[^>]*name=\"locales\"[^>]*>", body)
+        if (match := re.search(r'value="(\d+)"', tag))
+    }
+
+
+def _submit_page_get_setup(ctx, size):
+    """Assert the page is still untranslated, so the form offers every target.
+
+    Shares nothing with the POST's setup beyond the idea: this flow does not
+    care about the related snippet, because rendering the form does not reach
+    it.
+    """
+    if size is not None:
+        raise RuntimeError(f"submit_page_get takes no size; got {size!r}.")
+
+    page = ctx.submit_page
+    if _translation_source(page) is not None:
+        raise RuntimeError(
+            "submit_page is already translated, so the form would offer fewer "
+            "locales than the scenario expects."
+        )
+    for code in ("fr", "es"):
+        if page.get_translation_or_none(ctx.locales[code]) is not None:
+            raise RuntimeError(f"submit_page already has a {code} target.")
+
+
+def _submit_page_get_run(ctx, size):
+    """GET the submit-translation form, and return the response unexamined."""
+    from django.urls import reverse
+
+    return ctx.client.get(
+        reverse(
+            "wagtail_localize:submit_page_translation",
+            args=[ctx.submit_page.id],
+        )
+    )
+
+
+def _submit_page_get_verify(ctx, size, response):
+    """Check the form rendered, offered the right locales, and wrote nothing."""
+    if response.status_code != 200:
+        raise RuntimeError(f"the submit form returned {response.status_code}, not 200")
+
+    body = response.content.decode()
+    offered = _locale_choices(body)
+    if not offered:
+        raise RuntimeError(
+            "the response carries no locale checkboxes, so the submit form did "
+            "not render"
+        )
+
+    expected = {ctx.locales["fr"].id, ctx.locales["es"].id}
+    if offered != expected:
+        raise RuntimeError(
+            f"the form offered locales {sorted(offered)}, expected {sorted(expected)}"
+        )
+    if ctx.submit_page.locale_id in offered:
+        raise RuntimeError(
+            "the form offered the page's own locale as a translation target"
+        )
+
+    # A GET must not write. Without this the flow would still pass if the view
+    # started creating state on render, so it checks every locale the form just
+    # offered, not one of them.
+    page = ctx.submit_page
+    if _translation_source(page) is not None:
+        raise RuntimeError("rendering the form created a TranslationSource.")
+    for code in ("fr", "es"):
+        locale = ctx.locales[code]
+        if _translation_to(page, locale) is not None:
+            raise RuntimeError(f"rendering the form created a {code} Translation.")
+        if page.get_translation_or_none(locale) is not None:
+            raise RuntimeError(f"rendering the form created a {code} target.")
+
+
+SUBMIT_PAGE_GET = Flow(
+    name="submit_page_get",
+    group="creation",
+    why=(
+        "Rendering the form that starts a page translation: what an editor "
+        "sees before anything is created."
+    ),
+    entrypoint="SubmitPageTranslationView.get/get_context_data",
+    covers=(
+        "SubmitTranslationForm construction",
+        "available target locale query",
+    ),
+    setup=_submit_page_get_setup,
+    run=_submit_page_get_run,
+    verify=_submit_page_get_verify,
+)
+
+
+# ---------------------------------------------------------------------------
+# submit_snippet_post
+# ---------------------------------------------------------------------------
+
+
+def _snippet_url_parts(snippet):
+    """The app label, model name and pk the snippet admin URLs are built from."""
+    meta = type(snippet)._meta
+    return meta.app_label, meta.model_name, snippet.pk
+
+
+def _submit_snippet_setup(ctx, size):
+    """Assert the snippet starts untranslated, so the POST creates rather than
+    reconciles."""
+    if size is not None:
+        raise RuntimeError(f"submit_snippet_post takes no size; got {size!r}.")
+
+    snippet, french = ctx.submit_snippet, ctx.locales["fr"]
+    if _translation_source(snippet) is not None:
+        raise RuntimeError("submit_snippet already has a TranslationSource.")
+    if _translation_to(snippet, french) is not None:
+        raise RuntimeError("submit_snippet is already translated into French.")
+    if snippet.get_translation_or_none(french) is not None:
+        raise RuntimeError("submit_snippet already has a French target.")
+
+
+def _submit_snippet_run(ctx, size):
+    """POST the snippet submit form, and return the response unexamined."""
+    from django.urls import reverse
+
+    app_label, model_name, pk = _snippet_url_parts(ctx.submit_snippet)
+    return ctx.client.post(
+        reverse(
+            "wagtail_localize:submit_snippet_translation",
+            args=[app_label, model_name, pk],
+        ),
+        {"locales": [ctx.locales["fr"].id]},
+    )
+
+
+def _submit_snippet_verify(ctx, size, response):
+    """Check the snippet was translated and the redirect names that translation."""
+    from django.contrib.admin.utils import quote
+    from django.urls import reverse
+
+    if response.status_code != 302:
+        raise RuntimeError(
+            f"the submit view returned {response.status_code}, not a redirect"
+        )
+
+    snippet, french = ctx.submit_snippet, ctx.locales["fr"]
+    if _translation_source(snippet) is None:
+        raise RuntimeError("no TranslationSource was created for the snippet.")
+    if _translation_to(snippet, french) is None:
+        raise RuntimeError("the snippet was not translated into French.")
+
+    target = snippet.get_translation_or_none(french)
+    if target is None:
+        raise RuntimeError("the snippet has no French target.")
+    if target.field != snippet.field:
+        raise RuntimeError(
+            f"the French target carries {target.field!r}, not the source's "
+            f"{snippet.field!r}: the content was not copied across."
+        )
+
+    app_label, model_name, _pk = _snippet_url_parts(snippet)
+    expected = reverse(
+        f"wagtailsnippets_{app_label}_{model_name}:edit", args=[quote(target.pk)]
+    )
+    if response.url != expected:
+        raise RuntimeError(
+            f"the redirect went to {response.url}, not to the editor of the "
+            f"translation it created ({expected})"
+        )
+
+
+SUBMIT_SNIPPET_POST = Flow(
+    name="submit_snippet_post",
+    group="creation",
+    why=(
+        "Creating a snippet translation from the admin: the same translation "
+        "core reached from a different entry point than pages."
+    ),
+    entrypoint="SubmitSnippetTranslationView.post/form_valid",
+    covers=(
+        "TranslationCreator.create_translations",
+        "TranslationSource.get_or_create_from_instance",
+        "Translation.save_target",
+    ),
+    setup=_submit_snippet_setup,
+    run=_submit_snippet_run,
+    verify=_submit_snippet_verify,
 )
 
 
@@ -475,8 +688,15 @@ EDIT_TRANSLATION_GET = Flow(
 )
 
 
-# Creation before editing: a page is submitted before it is translated.
-CATALOG = (SUBMIT_PAGE_POST, EDIT_TRANSLATION_GET)
+# Grouped by what a flow does, creation entrypoints before the editor. Not a
+# sequence: every execution runs against a fresh database, so no flow's result
+# feeds the next.
+CATALOG = (
+    SUBMIT_PAGE_GET,
+    SUBMIT_PAGE_POST,
+    SUBMIT_SNIPPET_POST,
+    EDIT_TRANSLATION_GET,
+)
 
 BY_NAME = {flow.name: flow for flow in CATALOG}
 

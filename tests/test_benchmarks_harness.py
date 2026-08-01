@@ -136,8 +136,8 @@ class TestCatalogIntegrity(SimpleTestCase):
 
     def test_the_catalog_expands_to_the_executions_it_claims(self):
         expanded = catalog.executions()
-        self.assertEqual(len(catalog.CATALOG), 2)
-        self.assertEqual(len(expanded), 3)
+        self.assertEqual(len(catalog.CATALOG), 4)
+        self.assertEqual(len(expanded), 5)
         self.assertEqual(
             len(expanded), sum(len(flow.sizes()) for flow in catalog.CATALOG)
         )
@@ -465,3 +465,24 @@ class TestUnusableChildResult(SimpleTestCase):
 
         self.assertEqual(code, 1)
         self.assertEqual(len(attempted), len(catalog.executions()))
+
+
+class TestCatalogOrder(SimpleTestCase):
+    def test_creation_processes_come_before_the_editor(self):
+        """Relative order only. Asserting the whole shape of the list would
+        break as soon as flows from other groups are added."""
+        order = [flow.name for flow in catalog.CATALOG]
+        editor = order.index("edit_translation_get")
+
+        self.assertLess(order.index("submit_page_get"), order.index("submit_page_post"))
+        for name in ("submit_page_get", "submit_page_post", "submit_snippet_post"):
+            with self.subTest(flow=name):
+                self.assertLess(order.index(name), editor)
+
+    def test_the_sizeless_processes_each_expand_to_one_execution(self):
+        for name in ("submit_page_get", "submit_page_post", "submit_snippet_post"):
+            with self.subTest(flow=name):
+                flow = catalog.BY_NAME[name]
+                self.assertEqual(flow.scale_points, ())
+                self.assertIsNone(flow.workload_unit)
+                self.assertEqual(run._executions_for(name, None), [(flow, None)])
