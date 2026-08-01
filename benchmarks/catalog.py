@@ -177,7 +177,7 @@ def prepare():
                   [1]        extra report-only translation
                   [3]        submit_snippet, left untranslated
     """
-    from seed import build_snippet_pool, build_tree, ensure_locales
+    from benchmarks.seed import build_snippet_pool, build_tree, ensure_locales
 
     locales = ensure_locales()
     snippets = build_snippet_pool(SNIPPETS, locales["en"])

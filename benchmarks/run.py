@@ -33,6 +33,17 @@ import sys
 import tempfile
 
 
+if __name__ == "__main__":
+    # Running this file directly puts benchmarks/ on sys.path, not the repo
+    # root, so `benchmarks.*` would not resolve. Imported as a package the root
+    # is already reachable, and inserting it would change sys.path for whoever
+    # imported us. The single identity matters: loaded flat and as a package,
+    # `catalog` and `benchmarks.catalog` are two objects with separate state.
+    _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if _REPO_ROOT not in sys.path:
+        sys.path.insert(0, _REPO_ROOT)
+
+
 # The env var env.bootstrap() reads. Named here so the parent, which must not
 # import anything Django-adjacent, does not have to import env to set it.
 DB_ENV_VAR = "WL_BENCHMARK_DB"
@@ -100,7 +111,7 @@ def guard_database():
 
 def _select(name, size):
     """Validate and resolve a catalog selection before building the fixture."""
-    import catalog
+    from benchmarks import catalog
 
     if name not in catalog.BY_NAME:
         raise SystemExit(
@@ -140,7 +151,7 @@ def run_in_child(name, size):
     guard_database()
     catalog, flow, point = _select(name, size)
 
-    from env import bootstrap
+    from benchmarks.env import bootstrap
 
     bootstrap()
 
@@ -155,9 +166,10 @@ def run_in_child(name, size):
 
     # CaptureQueriesContext enables its own debug cursor, so DEBUG remains off
     # and the code under measurement runs under the benchmark's own settings.
-    # Clear the log first: connection.queries_log is a deque(maxlen=9000); once
-    # fixture setup fills it, captured positions can coincide and report zero
-    # queries with only a UserWarning.
+    # Under those settings the fixture does not fill connection.queries_log;
+    # this clears it in case setup or optional instrumentation turned query
+    # logging on, because the log is a deque(maxlen=9000) and a full one makes
+    # the captured positions coincide and report zero with only a UserWarning.
     reset_queries()
 
     with CaptureQueriesContext(connection) as captured:
@@ -237,9 +249,7 @@ def _build_template(directory, token):
 def build_template_in_child():
     guard_database()
 
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-    from env import bootstrap
+    from benchmarks.env import bootstrap
 
     bootstrap()
 
@@ -278,18 +288,27 @@ def execute(name, size, template, directory, index, token):
             ),
         }
 
-    payload = json.loads(lines[-1])
-    return {
-        "process": name,
-        "size": size,
-        "queries": payload["queries"],
-        "seconds": payload["seconds"],
-        "workload_unit": payload["workload_unit"],
-        "expected_workload": payload["expected_workload"],
-        "observed_workload": payload["observed_workload"],
-        "pid": payload["pid"],
-        "database": payload["database"],
-    }
+    # A child that printed something unusable is this execution's failure, not
+    # the whole run's: `all` has to reach the executions after it.
+    try:
+        payload = json.loads(lines[-1])
+        return {
+            "process": name,
+            "size": size,
+            "queries": payload["queries"],
+            "seconds": payload["seconds"],
+            "workload_unit": payload["workload_unit"],
+            "expected_workload": payload["expected_workload"],
+            "observed_workload": payload["observed_workload"],
+            "pid": payload["pid"],
+            "database": payload["database"],
+        }
+    except (ValueError, TypeError, KeyError) as error:
+        return {
+            "process": name,
+            "size": size,
+            "error": f"unusable {RESULT_PREFIX} line: {error}\n{lines[-1]}",
+        }
 
 
 def _executions_for(name, size):
@@ -299,7 +318,7 @@ def _executions_for(name, size):
     main() so a selection can be checked without creating a database or a
     process.
     """
-    import catalog
+    from benchmarks import catalog
 
     if name == ALL:
         if size is not None:
@@ -326,7 +345,7 @@ def _executions_for(name, size):
 
 
 def print_catalog():
-    import catalog
+    from benchmarks import catalog
 
     flows = catalog.CATALOG
     print(f"{len(flows)} process(es), {len(catalog.executions())} execution(s)\n")
@@ -374,8 +393,6 @@ def main():
     parser.add_argument(CHILD_FLAG, action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--build-template", action="store_true", help=argparse.SUPPRESS)
     arguments = parser.parse_args()
-
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
     if arguments.build_template:
         build_template_in_child()
