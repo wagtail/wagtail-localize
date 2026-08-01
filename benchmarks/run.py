@@ -365,6 +365,8 @@ def main():
     flow = catalog.BY_NAME[arguments.flow]
     sizes = flow.sizes()
     if arguments.size is not None:
+        if not flow.scale_points:
+            parser.error(f"{flow.name} takes no size")
         if arguments.size not in sizes:
             parser.error(
                 f"{flow.name} has no size {arguments.size!r}. "

@@ -118,10 +118,21 @@ class TestCatalogIntegrity(SimpleTestCase):
 
     def test_the_catalog_expands_to_the_executions_it_claims(self):
         expanded = catalog.executions()
+        self.assertEqual(len(catalog.CATALOG), 2)
+        self.assertEqual(len(expanded), 3)
         self.assertEqual(
             len(expanded), sum(len(flow.sizes()) for flow in catalog.CATALOG)
         )
         self.assertIn((catalog.BY_NAME["edit_translation_get"], "large"), expanded)
+
+    def test_a_flow_without_scale_points_expands_to_a_single_sizeless_execution(self):
+        flow = catalog.BY_NAME["submit_page_post"]
+        self.assertEqual(flow.scale_points, ())
+        self.assertIsNone(flow.workload_unit)
+        self.assertEqual(
+            [pair for pair in catalog.executions() if pair[0] is flow],
+            [(flow, None)],
+        )
 
 
 class TestCatalogNeedsNoDjango(SimpleTestCase):
@@ -258,6 +269,16 @@ class TestChildSelectionGuard(SimpleTestCase):
         with self.assertRaises(SystemExit) as raised:
             run._select("edit_translation_get", None)
         self.assertIn("needs a size", str(raised.exception))
+
+    def test_a_flow_without_scale_points_is_accepted_without_a_size(self):
+        _catalog, flow, point = run._select("submit_page_post", None)
+        self.assertEqual(flow.name, "submit_page_post")
+        self.assertIsNone(point)
+
+    def test_a_size_on_a_flow_without_scale_points_is_refused(self):
+        with self.assertRaises(SystemExit) as raised:
+            run._select("submit_page_post", "small")
+        self.assertIn("takes no size", str(raised.exception))
 
     def test_a_declared_size_is_accepted(self):
         _catalog, flow, point = run._select("edit_translation_get", "large")

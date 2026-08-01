@@ -262,6 +262,132 @@ def prepare():
 
 
 # ---------------------------------------------------------------------------
+# submit_page_post
+# ---------------------------------------------------------------------------
+
+
+def _translation_source(instance):
+    """The instance's TranslationSource, or None."""
+    from wagtail_localize.models import TranslationSource
+
+    return TranslationSource.objects.filter(
+        object_id=instance.translation_key, locale=instance.locale
+    ).first()
+
+
+def _translation_to(instance, locale):
+    """The instance's Translation into `locale`, or None.
+
+    Translated variants share a translation_key, so the source locale has to be
+    named too, or this matches a translation made from a different variant.
+    """
+    from wagtail_localize.models import Translation
+
+    return Translation.objects.filter(
+        source__object_id=instance.translation_key,
+        source__locale=instance.locale,
+        target_locale=locale,
+    ).first()
+
+
+def _submit_page_setup(ctx, size):
+    """Assert the state the flow starts from, without changing it.
+
+    The page and its snippet must be untranslated, or the POST reconciles an
+    existing translation instead of creating one and the flow measures a
+    different operation than it names.
+    """
+    if size is not None:
+        raise RuntimeError(f"submit_page_post takes no size; got {size!r}.")
+
+    page, snippet, french = ctx.submit_page, ctx.submit_snippet, ctx.locales["fr"]
+
+    if page.test_snippet_id != snippet.pk:
+        raise RuntimeError(
+            f"submit_page references snippet {page.test_snippet_id}, not "
+            f"submit_snippet ({snippet.pk}). The flow measures the related "
+            f"object fan-out, so the two have to be connected."
+        )
+
+    for label, instance in (("page", page), ("snippet", snippet)):
+        if _translation_source(instance) is not None:
+            raise RuntimeError(f"the {label} already has a TranslationSource.")
+        if _translation_to(instance, french) is not None:
+            raise RuntimeError(f"the {label} is already translated into French.")
+        if instance.get_translation_or_none(french) is not None:
+            raise RuntimeError(f"the {label} already has a French target.")
+
+
+def _submit_page_run(ctx, size):
+    """POST the submit-translation form, and return the response unexamined."""
+    from django.urls import reverse
+
+    return ctx.client.post(
+        reverse(
+            "wagtail_localize:submit_page_translation",
+            args=[ctx.submit_page.id],
+        ),
+        {"locales": [ctx.locales["fr"].id]},
+    )
+
+
+def _submit_page_verify(ctx, size, response):
+    """Check the page and its related snippet were both translated.
+
+    Queries name the object and locale rather than counting rows: prepare()
+    creates other translations, so a global count would pass whatever this POST
+    did. Returns None — the flow declares no workload, and the objects created
+    here are the shape of the operation, not a scale dimension.
+    """
+    from django.urls import reverse
+
+    if response.status_code != 302:
+        raise RuntimeError(
+            f"the submit view returned {response.status_code}, not a redirect, "
+            f"so the form was not accepted"
+        )
+
+    page, snippet, french = ctx.submit_page, ctx.submit_snippet, ctx.locales["fr"]
+
+    for label, instance in (("page", page), ("snippet", snippet)):
+        if _translation_source(instance) is None:
+            raise RuntimeError(f"no TranslationSource was created for the {label}.")
+        if _translation_to(instance, french) is None:
+            raise RuntimeError(f"the {label} was not translated into French.")
+        if instance.get_translation_or_none(french) is None:
+            raise RuntimeError(f"the {label} has no French target.")
+
+    target = page.get_translation(french)
+    expected = reverse("wagtailadmin_pages:edit", args=[target.id])
+    if response.url != expected:
+        raise RuntimeError(
+            f"the redirect went to {response.url}, not to the editor of the "
+            f"page it created ({expected})"
+        )
+
+
+SUBMIT_PAGE_POST = Flow(
+    name="submit_page_post",
+    group="creation",
+    why=(
+        "Creating a translation from the admin: the entry point an editor uses "
+        "to put a page into another locale for the first time."
+    ),
+    entrypoint="SubmitPageTranslationView.post/form_valid",
+    covers=(
+        "TranslationCreator.create_translations",
+        "TranslationSource.get_or_create_from_instance",
+        "TranslationSource.refresh_segments",
+        "Translation.save_target",
+        "related snippet translation",
+    ),
+    setup=_submit_page_setup,
+    run=_submit_page_run,
+    verify=_submit_page_verify,
+)
+
+
+# ---------------------------------------------------------------------------
 # edit_translation_get
 # ---------------------------------------------------------------------------
 
@@ -349,7 +475,8 @@ EDIT_TRANSLATION_GET = Flow(
 )
 
 
-CATALOG = (EDIT_TRANSLATION_GET,)
+# Creation before editing: a page is submitted before it is translated.
+CATALOG = (SUBMIT_PAGE_POST, EDIT_TRANSLATION_GET)
 
 BY_NAME = {flow.name: flow for flow in CATALOG}
 
