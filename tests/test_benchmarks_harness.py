@@ -136,8 +136,8 @@ class TestCatalogIntegrity(SimpleTestCase):
 
     def test_the_catalog_expands_to_the_executions_it_claims(self):
         expanded = catalog.executions()
-        self.assertEqual(len(catalog.CATALOG), 4)
-        self.assertEqual(len(expanded), 5)
+        self.assertEqual(len(catalog.CATALOG), 7)
+        self.assertEqual(len(expanded), 11)
         self.assertEqual(
             len(expanded), sum(len(flow.sizes()) for flow in catalog.CATALOG)
         )
@@ -475,9 +475,19 @@ class TestCatalogOrder(SimpleTestCase):
         editor = order.index("edit_translation_get")
 
         self.assertLess(order.index("submit_page_get"), order.index("submit_page_post"))
-        for name in ("submit_page_get", "submit_page_post", "submit_snippet_post"):
+        for name in (
+            "submit_page_get",
+            "submit_page_post",
+            "submit_snippet_post",
+            "translate_page_subtree",
+        ):
             with self.subTest(flow=name):
                 self.assertLess(order.index(name), editor)
+
+        # Updating an existing translation only makes sense once one exists.
+        for name in ("update_translations_get", "update_translations_post_publish"):
+            with self.subTest(flow=name):
+                self.assertGreater(order.index(name), editor)
 
     def test_the_sizeless_processes_each_expand_to_one_execution(self):
         for name in ("submit_page_get", "submit_page_post", "submit_snippet_post"):
