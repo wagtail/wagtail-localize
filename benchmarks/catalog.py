@@ -181,7 +181,7 @@ def prepare():
 
     locales = ensure_locales()
     snippets = build_snippet_pool(SNIPPETS, locales["en"])
-    _home, pages = build_tree(PAGES, locales["en"], snippets)
+    home, pages = build_tree(PAGES, locales["en"], snippets)
     client, user = _admin_client()
 
     existing_page = pages[0]
@@ -255,6 +255,10 @@ def prepare():
         large_target_page_id=_target_page_id(heavy_page_translation),
         small_segment_ids=small_segment_ids,
         large_segment_ids=large_segment_ids,
+        # Subtree roots. Leaf pages have no children, so the flows that walk a
+        # subtree need the home page or one of its categories.
+        subtree_root_large=home,
+        subtree_root_small=home.get_children().first(),
         submit_page=pages[-1],
         submit_snippet=snippets[-1],
         core_pages=pages[5 : 5 + CORE_PAGES],
@@ -601,6 +605,447 @@ SUBMIT_SNIPPET_POST = Flow(
 
 
 # ---------------------------------------------------------------------------
+# update_translations_get
+# ---------------------------------------------------------------------------
+
+
+def _enabled_translations(source):
+    """The source's enabled translations, ordered so comparisons are stable."""
+    return list(source.translations.filter(enabled=True).order_by("target_locale_id"))
+
+
+def _target_state(translations):
+    """Enough of each target's state to notice any write to it.
+
+    latest_revision_id and live catch a new revision and a change of live
+    state, but not republishing when the target was already live: Wagtail then
+    moves live_revision_id and last_published_at while those two stay put.
+    """
+    state = {}
+    for translation in translations:
+        target = translation.get_target_instance()
+        state[translation.id] = (
+            target.pk,
+            target.live,
+            target.latest_revision_id,
+            target.live_revision_id,
+            target.last_published_at,
+        )
+    return state
+
+
+def _update_translations_get_setup(ctx, size):
+    """Put the source at the number of enabled translations this size measures.
+
+    The view calls get_target_instance() twice per translation and that method
+    does not cache, so the cost tracks the count. `large` creates the second
+    translation here, outside the measured region, rather than in prepare():
+    it belongs to this size, and building it globally would change `small`.
+    """
+    source = ctx.existing_page_source
+    spanish = ctx.locales["es"]
+
+    if _translation_to(ctx.existing_page, spanish) is not None:
+        raise RuntimeError("the source already has a Spanish translation.")
+    if size == "large":
+        _create_translation(ctx.existing_page, spanish, user=ctx.user)
+
+    expected = 1 if size == "small" else 2
+    enabled = _enabled_translations(source)
+    if len(enabled) != expected:
+        raise RuntimeError(
+            f"the source has {len(enabled)} enabled translations, not the "
+            f"{expected} this size measures."
+        )
+
+    # Snapshot for the no-write check: counting revisions on the source would
+    # not notice a target being revised or republished. Verification state, not
+    # workload.
+    ctx.translations_before = {translation.id for translation in enabled}
+    ctx.targets_before = _target_state(enabled)
+
+
+def _update_translations_get_run(ctx, size):
+    """GET the update-translations screen, and return the response unexamined."""
+    from django.urls import reverse
+
+    return ctx.client.get(
+        reverse(
+            "wagtail_localize:update_translations",
+            args=[ctx.existing_page_source.id],
+        )
+    )
+
+
+def _update_translations_get_verify(ctx, size, response):
+    """Check every enabled translation is listed, and that nothing was written."""
+    from django.urls import reverse
+
+    if response.status_code != 200:
+        raise RuntimeError(
+            f"the update screen returned {response.status_code}, not 200"
+        )
+
+    body = response.content.decode()
+    enabled = _enabled_translations(ctx.existing_page_source)
+
+    # The screen links to each target's editor, which is what proves it listed
+    # the translation rather than merely rendering the page.
+    for translation in enabled:
+        target = translation.get_target_instance()
+        if reverse("wagtailadmin_pages:edit", args=[target.id]) not in body:
+            raise RuntimeError(
+                f"the screen does not link to the {translation.target_locale} "
+                f"target, so it did not list that translation."
+            )
+
+    if {translation.id for translation in enabled} != ctx.translations_before:
+        raise RuntimeError("opening the screen changed the set of translations.")
+
+    after = _target_state(enabled)
+    if after != ctx.targets_before:
+        raise RuntimeError(
+            f"opening the screen changed a target: {ctx.targets_before} became "
+            f"{after}. A GET must not revise or publish anything."
+        )
+
+    return len(enabled)
+
+
+UPDATE_TRANSLATIONS_GET = Flow(
+    name="update_translations_get",
+    group="updating",
+    why=(
+        "Opening the screen that lists a source's existing translations, the "
+        "step before deciding whether to republish them."
+    ),
+    entrypoint="UpdateTranslationsView.get/get_context_data",
+    covers=(
+        "enabled translation listing",
+        "Translation.get_target_instance per translation",
+        "target edit URL construction",
+    ),
+    workload_unit="enabled_translations",
+    scale_points=(
+        ScalePoint(
+            label="small",
+            why="One translation: the fixed cost of the screen.",
+            expected_workload=1,
+        ),
+        ScalePoint(
+            label="large",
+            why=(
+                "Two translations, so the per-translation cost of resolving "
+                "each target separates from the fixed cost."
+            ),
+            expected_workload=2,
+        ),
+    ),
+    setup=_update_translations_get_setup,
+    run=_update_translations_get_run,
+    verify=_update_translations_get_verify,
+)
+
+
+# ---------------------------------------------------------------------------
+# update_translations_post_publish
+# ---------------------------------------------------------------------------
+
+# Deterministic, so a failure names the value it expected rather than a
+# timestamp nobody can predict.
+UPDATE_MARKERS = {
+    "small": "benchmark-update-small",
+    "large": "benchmark-update-large",
+}
+
+
+def _update_source(size, ctx):
+    """The page and source this size updates."""
+    if size == "small":
+        return ctx.existing_page, ctx.existing_page_source
+    return ctx.heavy_page, ctx.heavy_page_source
+
+
+def _update_translations_post_setup(ctx, size):
+    """Make the source stale, so the POST has real reconciliation to do.
+
+    The marker goes in a synchronized field: those are copied to the target
+    verbatim by copy_synchronised_fields, so it arrives without needing a
+    translation. A translatable field would become a segment and stay in the
+    source language.
+    """
+    page, source = _update_source(size, ctx)
+    marker = UPDATE_MARKERS[size]
+
+    # The POST republishes every enabled translation, so its cost tracks that
+    # number too. The declared workload is segments, so the count is pinned
+    # here rather than left to whatever the fixture happens to hold.
+    enabled = _enabled_translations(source)
+    if len(enabled) != 1:
+        raise RuntimeError(
+            f"the source has {len(enabled)} enabled translations; this flow "
+            f"measures updating exactly one."
+        )
+    if enabled[0].target_locale_id != ctx.locales["fr"].id:
+        raise RuntimeError(
+            f"the enabled translation targets {enabled[0].target_locale}, not French."
+        )
+
+    target = page.get_translation_or_none(ctx.locales["fr"])
+    if target is None:
+        raise RuntimeError("the page has no French target to republish.")
+    if target.test_synchronized_charfield == marker:
+        raise RuntimeError("the target already carries the marker.")
+
+    page.test_synchronized_charfield = marker
+    page.save_revision().publish()
+
+
+def _update_translations_post_run(ctx, size):
+    """POST the update form with publish, and return the response unexamined."""
+    from django.urls import reverse
+
+    _page, source = _update_source(size, ctx)
+    return ctx.client.post(
+        reverse("wagtail_localize:update_translations", args=[source.id]),
+        {"publish_translations": "on"},
+    )
+
+
+def _update_translations_post_verify(ctx, size, response):
+    """Check the source was refreshed and the marker reached the live target."""
+    if response.status_code != 302:
+        raise RuntimeError(
+            f"the update view returned {response.status_code}, not a redirect"
+        )
+
+    page, source = _update_source(size, ctx)
+    marker = UPDATE_MARKERS[size]
+
+    target = page.get_translation_or_none(ctx.locales["fr"])
+    if target is None:
+        raise RuntimeError("the French target disappeared.")
+    if target.test_synchronized_charfield != marker:
+        raise RuntimeError(
+            f"the target carries {target.test_synchronized_charfield!r}, not "
+            f"{marker!r}: the source change was not copied across."
+        )
+    if not target.live:
+        raise RuntimeError("the target was not published.")
+
+    source.refresh_from_db()
+    return source.stringsegment_set.count()
+
+
+UPDATE_TRANSLATIONS_POST_PUBLISH = Flow(
+    name="update_translations_post_publish",
+    group="updating",
+    why=(
+        "Pushing a change made to the original out to its translations and "
+        "publishing them, the update half of the translation cycle."
+    ),
+    entrypoint="UpdateTranslationsView.form_valid",
+    covers=(
+        "TranslationSource.update_from_db",
+        "TranslationSource.refresh_segments",
+        "Translation.save_target",
+        "copy_synchronised_fields",
+    ),
+    workload_unit="string_segments",
+    scale_points=(
+        ScalePoint(
+            label="small",
+            why="An ordinary page: the fixed cost of refreshing and publishing.",
+            expected_workload=1,
+        ),
+        ScalePoint(
+            label="large",
+            why=(
+                "The StreamField-heavy page, where re-extracting segments "
+                "dominates the fixed cost."
+            ),
+            expected_workload=41,
+        ),
+    ),
+    setup=_update_translations_post_setup,
+    run=_update_translations_post_run,
+    verify=_update_translations_post_verify,
+)
+
+
+# ---------------------------------------------------------------------------
+# translate_page_subtree
+# ---------------------------------------------------------------------------
+
+
+def _subtree_root(ctx, size):
+    return ctx.subtree_root_small if size == "small" else ctx.subtree_root_large
+
+
+def _french_state(page, french):
+    """Classify a page's French state from all three facts at once.
+
+    The target alone does not say what Localize knows about the page, so the
+    TranslationSource and the Translation are read with it. Only three
+    combinations are states the subtree flow understands; anything else means
+    the fixture is not what the scenario assumes, and is raised rather than
+    quietly counted as one of them.
+    """
+    specific = page.specific
+    target = specific.get_translation_or_none(french)
+    source = _translation_source(specific) is not None
+    translation = _translation_to(specific, french) is not None
+
+    if target is not None and not target.alias_of_id and source and translation:
+        return "translated"
+    if target is not None and target.alias_of_id and not source and not translation:
+        return "alias"
+    if target is None and not source and not translation:
+        return "untranslated"
+
+    raise RuntimeError(
+        f"{page.slug} is in no state this flow recognises: "
+        f"target={'alias' if target is not None and target.alias_of_id else target is not None}, "
+        f"source={source}, translation={translation}."
+    )
+
+
+# The mix prepare() leaves under each root. Frozen because the cost of the walk
+# depends on it: a subtree of already-translated pages is not the same work as
+# one of untranslated pages, and a run against a different mix would measure
+# something else under the same name.
+SUBTREE_MIX = {
+    "small": {"translated": 2, "alias": 0, "untranslated": 1},
+    "large": {"translated": 6, "alias": 4, "untranslated": 6},
+}
+
+
+def _submit_subtree_setup(ctx, size):
+    """Freeze the scenario: the root, its size, and the mix underneath it."""
+    root, french = _subtree_root(ctx, size), ctx.locales["fr"]
+
+    descendants = list(root.get_descendants())
+    expected = sum(SUBTREE_MIX[size].values())
+    if len(descendants) != expected:
+        raise RuntimeError(
+            f"the {size} root has {len(descendants)} descendants, not the "
+            f"{expected} this size measures."
+        )
+
+    if _translation_source(root.specific) is not None:
+        raise RuntimeError("the root is already a translation source.")
+    if _french_state(root, french) != "alias":
+        raise RuntimeError(
+            "the root's French counterpart is not an alias, so this run would "
+            "not measure converting one into a real translation."
+        )
+
+    observed = {"translated": 0, "alias": 0, "untranslated": 0}
+    for page in descendants:
+        observed[_french_state(page, french)] += 1
+    if observed != SUBTREE_MIX[size]:
+        raise RuntimeError(
+            f"the {size} subtree holds {observed}, not {SUBTREE_MIX[size]}. "
+            f"The cost of the walk depends on this mix."
+        )
+
+
+def _submit_subtree_run(ctx, size):
+    """POST the submit form with the subtree included.
+
+    There is no URL of its own: translate_page_subtree is enqueued by the
+    submit view, and the harness settings leave the job backend on
+    ImmediateBackend, so the walk runs inside this request.
+    """
+    from django.urls import reverse
+
+    root = _subtree_root(ctx, size)
+    return ctx.client.post(
+        reverse("wagtail_localize:submit_page_translation", args=[root.id]),
+        {"locales": [ctx.locales["fr"].id], "include_subtree": "on"},
+    )
+
+
+def _submit_subtree_verify(ctx, size, response):
+    """Check the root and every descendant came out really translated."""
+    from django.urls import reverse
+
+    if response.status_code != 302:
+        raise RuntimeError(
+            f"the submit view returned {response.status_code}, not a redirect"
+        )
+
+    root, french = _subtree_root(ctx, size), ctx.locales["fr"]
+
+    for label, page in [
+        ("root", root),
+        *[("descendant", p) for p in root.get_descendants()],
+    ]:
+        specific = page.specific
+        if _translation_source(specific) is None:
+            raise RuntimeError(f"a {label} has no TranslationSource: {page.slug}")
+        if _translation_to(specific, french) is None:
+            raise RuntimeError(f"a {label} was not translated: {page.slug}")
+        target = specific.get_translation_or_none(french)
+        if target is None:
+            raise RuntimeError(f"a {label} has no French target: {page.slug}")
+        if target.alias_of_id:
+            raise RuntimeError(
+                f"a {label} is still an alias rather than a real translation: "
+                f"{page.slug}"
+            )
+        if not target.live:
+            raise RuntimeError(f"a {label}'s target is not published: {page.slug}")
+
+    translated_root = root.specific.get_translation(french)
+    expected = reverse("wagtailadmin_pages:edit", args=[translated_root.id])
+    if response.url != expected:
+        raise RuntimeError(
+            f"the redirect went to {response.url}, not to the editor of the "
+            f"translated root ({expected})"
+        )
+
+    # The root is fixed cost measured alongside the walk, so it is not counted.
+    return root.get_descendants().count()
+
+
+TRANSLATE_PAGE_SUBTREE = Flow(
+    name="translate_page_subtree",
+    group="creation",
+    why=(
+        "Translating a page together with everything under it: one click that "
+        "walks a whole branch of the tree."
+    ),
+    entrypoint="SubmitPageTranslationView.form_valid -> translate_page_subtree",
+    covers=(
+        "translate_object on the root",
+        "translate_page_subtree recursive walk",
+        "TranslationCreator.create_translations per descendant",
+        "alias conversion into a real translation",
+    ),
+    workload_unit="pages_in_subtree",
+    scale_points=(
+        ScalePoint(
+            label="small",
+            why="A single category: three pages under one parent.",
+            expected_workload=3,
+        ),
+        ScalePoint(
+            label="large",
+            why=(
+                "The whole benchmark tree, where the walk crosses two levels "
+                "and a mix of translated, aliased and untouched pages."
+            ),
+            expected_workload=16,
+        ),
+    ),
+    setup=_submit_subtree_setup,
+    run=_submit_subtree_run,
+    verify=_submit_subtree_verify,
+)
+
+
+# ---------------------------------------------------------------------------
 # edit_translation_get
 # ---------------------------------------------------------------------------
 
@@ -695,7 +1140,10 @@ CATALOG = (
     SUBMIT_PAGE_GET,
     SUBMIT_PAGE_POST,
     SUBMIT_SNIPPET_POST,
+    TRANSLATE_PAGE_SUBTREE,
     EDIT_TRANSLATION_GET,
+    UPDATE_TRANSLATIONS_GET,
+    UPDATE_TRANSLATIONS_POST_PUBLISH,
 )
 
 BY_NAME = {flow.name: flow for flow in CATALOG}
