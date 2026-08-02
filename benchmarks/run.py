@@ -24,8 +24,11 @@ parent, and a machine-readable output mode is a separate concern.
 """
 
 import argparse
+import datetime
+import importlib.metadata
 import json
 import os
+import platform
 import secrets
 import shutil
 import subprocess
@@ -60,6 +63,10 @@ ALL = "all"
 # The child writes its result on one line with this prefix, so the parent reads
 # a line it can identify rather than guessing from the shape of the output.
 RESULT_PREFIX = "WL_BENCHMARK_RESULT="
+
+# Bump when the shape of the --json file changes, so a reader can tell whether
+# it understands a file before trusting it.
+SCHEMA_VERSION = 1
 
 
 # ---------------------------------------------------------------------------
@@ -311,6 +318,140 @@ def execute(name, size, template, directory, index, token):
         }
 
 
+def _git(*arguments):
+    """A short git query.
+
+    Raises RuntimeError when git cannot answer: a document that says which
+    commit was measured is the point, and a null there would be a run nobody
+    can place.
+    """
+    # Partial path on purpose: the harness records whichever git the developer
+    # is already using, and a wrong answer only affects provenance, never a
+    # measurement.
+    try:
+        result = subprocess.run(  # noqa: S603
+            ["git", *arguments],  # noqa: S607
+            cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as error:
+        raise RuntimeError(f"cannot run git: {error}") from error
+
+    if result.returncode != 0:
+        detail = result.stderr.strip() or f"exit status {result.returncode}"
+        raise RuntimeError(f"git {' '.join(arguments)}: {detail}")
+    return result.stdout.strip()
+
+
+# Public key in the document, and the distribution name the environment
+# records it under. The parent reads metadata rather than importing these, so
+# it still never initialises Django.
+MEASURED_PACKAGES = {
+    "django": "Django",
+    "wagtail": "wagtail",
+    "wagtail_localize": "wagtail-localize",
+}
+
+
+def _versions():
+    """The versions of the packages under measurement.
+
+    Raises LookupError naming what is missing: provenance that cannot say what
+    was measured is worse than no file at all.
+    """
+    versions = {"python": platform.python_version()}
+    missing = []
+    for key, distribution in MEASURED_PACKAGES.items():
+        try:
+            versions[key] = importlib.metadata.version(distribution)
+        except importlib.metadata.PackageNotFoundError:
+            missing.append(distribution)
+    if missing:
+        raise LookupError(
+            f"no installed metadata for {', '.join(missing)}, so the run cannot "
+            f"record what it measured"
+        )
+    return versions
+
+
+def _check_json_path(path):
+    """Raise ValueError unless the run could write its results to `path`."""
+    if os.path.isdir(path):
+        raise ValueError(f"{path} is a directory")
+
+    parent = os.path.dirname(os.path.abspath(path))
+    if not os.path.isdir(parent):
+        raise ValueError(f"no directory {parent}")
+    if not os.access(parent, os.W_OK):
+        raise ValueError(f"{parent} is not writable")
+    if os.path.exists(path) and not os.access(path, os.W_OK):
+        raise ValueError(f"{path} is not writable")
+
+
+def _provenance(selection):
+    """What a reader needs to know before trusting the numbers."""
+    dirty = _git("status", "--porcelain")
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "run_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "commit": _git("rev-parse", "HEAD"),
+        "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+        # Whatever git status reports for this checkout, under the ignore
+        # rules in force there: anything ignored is invisible here.
+        "working_tree_clean": dirty == "",
+        "versions": _versions(),
+        "selection": selection,
+    }
+
+
+def _public_result(result):
+    """One execution, reduced to what belongs in a shared file.
+
+    The database path and the child's pid are private to a run, and timings
+    from a single execution are not a signal this format publishes.
+    """
+    if "error" in result:
+        return {
+            "flow": result["process"],
+            "size": result["size"],
+            "status": "failed",
+            "queries": None,
+            "workload_unit": None,
+            "expected_workload": None,
+            "observed_workload": None,
+        }
+    return {
+        "flow": result["process"],
+        "size": result["size"],
+        "status": "ok",
+        "queries": result["queries"],
+        "workload_unit": result["workload_unit"],
+        "expected_workload": result["expected_workload"],
+        "observed_workload": result["observed_workload"],
+    }
+
+
+def _write_json(path, provenance, results):
+    """Write the run to `path`.
+
+    A run with a failed execution is written, but marked incomplete: it is a
+    record of what happened, never a baseline to compare against.
+    """
+    executions = [_public_result(result) for result in results]
+    document = {
+        **provenance,
+        "status": (
+            "complete" if all(e["status"] == "ok" for e in executions) else "incomplete"
+        ),
+        "executions": executions,
+    }
+    with open(path, "w") as handle:
+        json.dump(document, handle, indent=2, sort_keys=False)
+        handle.write("\n")
+
+
 def _executions_for(name, size):
     """The (flow, size) pairs a command line selects, in catalog order.
 
@@ -390,6 +531,9 @@ def main():
     parser.add_argument("flow", nargs="?", help=f"flow name or {ALL}; omit with --list")
     parser.add_argument("--size", help="run only this scale point")
     parser.add_argument("--list", action="store_true", help="print the catalog")
+    parser.add_argument(
+        "--json", dest="json_path", metavar="PATH", help="also write the run to PATH"
+    )
     parser.add_argument(CHILD_FLAG, action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--build-template", action="store_true", help=argparse.SUPPRESS)
     arguments = parser.parse_args()
@@ -403,6 +547,8 @@ def main():
         return 0
 
     if arguments.list:
+        if arguments.json_path:
+            parser.error("--json has nothing to write with --list")
         print_catalog()
         return 0
 
@@ -416,17 +562,37 @@ def main():
     except ValueError as error:
         parser.error(str(error))
 
+    # Everything about --json is settled before anything runs: a path that
+    # cannot be written should cost a message, not a run whose results are then
+    # thrown away.
+    provenance = None
+    if arguments.json_path:
+        try:
+            _check_json_path(arguments.json_path)
+            provenance = _provenance({"flow": arguments.flow, "size": arguments.size})
+        except (ValueError, LookupError, RuntimeError) as error:
+            parser.error(f"--json: {error}")
+
     directory = tempfile.mkdtemp(prefix="wl-benchmark-")
     ok = True
+    results = []
     try:
         token = _own_directory(directory)
         # One template per invocation; every execution copies it. The index is
         # unique across the whole run, so no two executions share a database.
         template = _build_template(directory, token)
         for index, (flow, size) in enumerate(plan):
-            ok &= report(execute(flow.name, size, template, directory, index, token))
+            result = execute(flow.name, size, template, directory, index, token)
+            results.append(result)
+            ok &= report(result)
     finally:
         shutil.rmtree(directory)
+
+    # Written from the results the run already produced: nothing is executed
+    # twice and the measured region is untouched.
+    if arguments.json_path:
+        _write_json(arguments.json_path, provenance, results)
+        print(f"wrote {arguments.json_path}", file=sys.stderr)
 
     return 0 if ok else 1
 

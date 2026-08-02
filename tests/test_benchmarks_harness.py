@@ -2,7 +2,10 @@
 
 import ast
 import contextlib
+import importlib.metadata
+import json
 import os
+import subprocess
 import sys
 import tempfile
 
@@ -496,3 +499,271 @@ class TestCatalogOrder(SimpleTestCase):
                 self.assertEqual(flow.scale_points, ())
                 self.assertIsNone(flow.workload_unit)
                 self.assertEqual(run._executions_for(name, None), [(flow, None)])
+
+
+class TestPublicResult(SimpleTestCase):
+    """The JSON is shared and archived, so it carries what a reader needs and
+    nothing that belongs to one run on one machine."""
+
+    def _result(self, **overrides):
+        result = {
+            "process": "a_flow",
+            "size": "large",
+            "queries": 42,
+            "seconds": 0.5,
+            "workload_unit": "things",
+            "expected_workload": 7,
+            "observed_workload": 7,
+            "pid": 1234,
+            "database": "/tmp/whatever/run-00.sqlite3",  # noqa: S108
+        }
+        result.update(overrides)
+        return result
+
+    def test_private_fields_are_dropped(self):
+        public = run._public_result(self._result())
+        for field in ("pid", "database", "seconds"):
+            with self.subTest(field=field):
+                self.assertNotIn(field, public)
+
+    def test_the_measurement_is_kept(self):
+        public = run._public_result(self._result())
+        self.assertEqual(public["queries"], 42)
+        self.assertEqual(public["workload_unit"], "things")
+        self.assertEqual(public["expected_workload"], 7)
+        self.assertEqual(public["observed_workload"], 7)
+        self.assertEqual(public["status"], "ok")
+
+    def test_a_failed_execution_reports_no_numbers(self):
+        public = run._public_result(
+            {"process": "a_flow", "size": None, "error": "it broke"}
+        )
+        self.assertEqual(public["status"], "failed")
+        self.assertIsNone(public["queries"])
+        self.assertIsNone(public["observed_workload"])
+
+
+class TestJsonDocument(SimpleTestCase):
+    def _write(self, results):
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "run.json")
+            run._write_json(path, {"schema_version": run.SCHEMA_VERSION}, results)
+            with open(path) as handle:
+                return json.load(handle)
+
+    def test_a_run_where_everything_passed_is_complete(self):
+        document = self._write(
+            [
+                {
+                    "process": "a",
+                    "size": None,
+                    "queries": 1,
+                    "seconds": 0.0,
+                    "workload_unit": None,
+                    "expected_workload": None,
+                    "observed_workload": None,
+                    "pid": 1,
+                    "database": "d",
+                }
+            ]
+        )
+        self.assertEqual(document["status"], "complete")
+        self.assertEqual(document["schema_version"], run.SCHEMA_VERSION)
+
+    def test_one_failure_makes_the_whole_run_incomplete(self):
+        """A run with a hole in it is a record of what happened, never a
+        baseline something else can be compared against."""
+        document = self._write(
+            [
+                {
+                    "process": "a",
+                    "size": None,
+                    "queries": 1,
+                    "seconds": 0.0,
+                    "workload_unit": None,
+                    "expected_workload": None,
+                    "observed_workload": None,
+                    "pid": 1,
+                    "database": "d",
+                },
+                {"process": "b", "size": None, "error": "boom"},
+            ]
+        )
+        self.assertEqual(document["status"], "incomplete")
+        self.assertEqual(document["executions"][1]["status"], "failed")
+
+
+class TestJsonRun(SimpleTestCase):
+    """main() end to end with --json, with the executions faked so no database
+    is built."""
+
+    def _run(self, argv, failing=()):
+        def fake_execute(name, size, template, directory, index, token):
+            if (name, size) in failing:
+                return {"process": name, "size": size, "error": "deliberate"}
+            return {
+                "process": name,
+                "size": size,
+                "queries": 10 + index,
+                "seconds": 0.1,
+                "workload_unit": None,
+                "expected_workload": None,
+                "observed_workload": None,
+                "pid": 100 + index,
+                "database": f"/tmp/x/run-{index}.sqlite3",  # noqa: S108
+            }
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "run.json")
+            with (
+                mock.patch.object(run, "_build_template", return_value="template"),
+                mock.patch.object(run, "execute", side_effect=fake_execute),
+                mock.patch.object(
+                    run, "_provenance", return_value={"schema_version": 1}
+                ),
+                mock.patch.object(sys, "argv", ["run.py", *argv, "--json", path]),
+                mock.patch("sys.stdout"),
+                mock.patch("sys.stderr"),
+            ):
+                code = run.main()
+            with open(path) as handle:
+                return code, json.load(handle)
+
+    def test_all_writes_one_entry_per_execution_in_catalog_order(self):
+        code, document = self._run([run.ALL])
+        self.assertEqual(code, 0)
+        self.assertEqual(document["status"], "complete")
+        self.assertEqual(
+            [(e["flow"], e["size"]) for e in document["executions"]],
+            [(flow.name, size) for flow, size in catalog.executions()],
+        )
+
+    def test_a_flow_without_scale_points_records_a_null_size(self):
+        _code, document = self._run(["submit_page_post"])
+        self.assertEqual(document["executions"], [document["executions"][0]])
+        self.assertIsNone(document["executions"][0]["size"])
+
+    def test_a_failed_execution_is_written_and_marks_the_run_incomplete(self):
+        code, document = self._run([run.ALL], failing={("submit_page_post", None)})
+        self.assertEqual(code, 1)
+        self.assertEqual(document["status"], "incomplete")
+        failed = [e for e in document["executions"] if e["status"] == "failed"]
+        self.assertEqual([e["flow"] for e in failed], ["submit_page_post"])
+        # The rest still ran and were recorded.
+        self.assertEqual(len(document["executions"]), len(catalog.executions()))
+
+
+class TestJsonPathIsCheckedFirst(SimpleTestCase):
+    """A path that cannot be written is worth a message, not a run whose
+    results are then discarded."""
+
+    def test_a_directory_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(ValueError) as raised:
+                run._check_json_path(directory)
+            self.assertIn("is a directory", str(raised.exception))
+
+    def test_a_missing_parent_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(ValueError) as raised:
+                run._check_json_path(os.path.join(directory, "nope", "run.json"))
+            self.assertIn("no directory", str(raised.exception))
+
+    def test_an_unwritable_parent_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            parent = os.path.join(directory, "locked")
+            os.mkdir(parent, mode=0o500)
+            try:
+                with self.assertRaises(ValueError) as raised:
+                    run._check_json_path(os.path.join(parent, "run.json"))
+                self.assertIn("not writable", str(raised.exception))
+            finally:
+                os.chmod(parent, 0o700)
+
+    def test_an_unwritable_existing_file_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "run.json")
+            with open(path, "w") as handle:
+                handle.write("{}")
+            os.chmod(path, 0o400)
+            try:
+                with self.assertRaises(ValueError) as raised:
+                    run._check_json_path(path)
+                self.assertIn("not writable", str(raised.exception))
+            finally:
+                os.chmod(path, 0o600)
+
+    def test_a_writable_new_path_is_accepted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            run._check_json_path(os.path.join(directory, "run.json"))
+
+
+class TestVersionsComeFromMetadata(SimpleTestCase):
+    """Read from the environment's metadata, so the parent still never imports
+    Django and no extra process is spawned."""
+
+    def test_every_measured_package_is_reported(self):
+        versions = run._versions()
+        for name in (*run.MEASURED_PACKAGES, "python"):
+            with self.subTest(package=name):
+                self.assertTrue(versions[name])
+
+    def test_the_public_keys_do_not_follow_distribution_names(self):
+        # A reader indexes this document; it should not have to know that the
+        # environment spells the distributions Django and wagtail-localize.
+        self.assertEqual(
+            list(run._versions()),
+            ["python", "django", "wagtail", "wagtail_localize"],
+        )
+
+    def test_missing_metadata_stops_the_run_and_names_the_package(self):
+        real = importlib.metadata.version
+
+        def fake(name):
+            if name == "wagtail-localize":
+                raise importlib.metadata.PackageNotFoundError(name)
+            return real(name)
+
+        with (
+            mock.patch.object(importlib.metadata, "version", side_effect=fake),
+            self.assertRaises(LookupError) as raised,
+        ):
+            run._versions()
+        self.assertIn("wagtail-localize", str(raised.exception))
+
+
+class TestProvenanceNeedsGit(SimpleTestCase):
+    """A complete document names the commit it measured. When git cannot say
+    which one, the run stops rather than writing a null."""
+
+    def test_a_failed_command_is_an_error_carrying_what_git_said(self):
+        failure = subprocess.CompletedProcess(
+            args=[], returncode=128, stdout="", stderr="fatal: not a git repository\n"
+        )
+        with (
+            mock.patch.object(subprocess, "run", return_value=failure),
+            self.assertRaises(RuntimeError) as raised,
+        ):
+            run._git("rev-parse", "HEAD")
+        self.assertIn("not a git repository", str(raised.exception))
+
+    def test_a_missing_executable_is_an_error(self):
+        with (
+            mock.patch.object(subprocess, "run", side_effect=FileNotFoundError("git")),
+            self.assertRaises(RuntimeError) as raised,
+        ):
+            run._git("rev-parse", "HEAD")
+        self.assertIn("cannot run git", str(raised.exception))
+
+    def test_provenance_does_not_survive_a_git_failure(self):
+        with (
+            mock.patch.object(run, "_git", side_effect=RuntimeError("no git")),
+            self.assertRaises(RuntimeError),
+        ):
+            run._provenance({"flow": "all", "size": None})
+
+    def test_a_working_run_records_git_facts_rather_than_nulls(self):
+        provenance = run._provenance({"flow": "all", "size": None})
+        for key in ("commit", "branch", "working_tree_clean"):
+            with self.subTest(key=key):
+                self.assertIsNotNone(provenance[key])
