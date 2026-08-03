@@ -139,8 +139,8 @@ class TestCatalogIntegrity(SimpleTestCase):
 
     def test_the_catalog_expands_to_the_executions_it_claims(self):
         expanded = catalog.executions()
-        self.assertEqual(len(catalog.CATALOG), 8)
-        self.assertEqual(len(expanded), 13)
+        self.assertEqual(len(catalog.CATALOG), 9)
+        self.assertEqual(len(expanded), 15)
         self.assertEqual(
             len(expanded), sum(len(flow.sizes()) for flow in catalog.CATALOG)
         )
