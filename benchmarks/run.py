@@ -4,6 +4,7 @@
     python benchmarks/run.py edit_translation_get
     python benchmarks/run.py edit_translation_get --size small
     python benchmarks/run.py all
+    python benchmarks/run.py all --repeat 5
 
 Every execution runs in its own child process against its own fresh copy of an
 empty migrated database. That is what makes two executions comparable: copying
@@ -31,6 +32,7 @@ import os
 import platform
 import secrets
 import shutil
+import statistics
 import subprocess
 import sys
 import tempfile
@@ -66,7 +68,17 @@ RESULT_PREFIX = "WL_BENCHMARK_RESULT="
 
 # Bump when the shape of the --json file changes, so a reader can tell whether
 # it understands a file before trusting it.
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+
+# What every repetition of one (flow, size) has to agree on. Time is expected to
+# move between repetitions; these are not. A flow whose measurement moves is a
+# finding about that flow, so the run says so instead of averaging it away.
+STABLE_ACROSS_REPETITIONS = (
+    "queries",
+    "workload_unit",
+    "expected_workload",
+    "observed_workload",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -318,6 +330,73 @@ def execute(name, size, template, directory, index, token):
         }
 
 
+def _aggregate(name, size, results):
+    """One (flow, size) reduced from its repetitions to a single result.
+
+    Nothing is discarded and nothing is averaged: either every repetition
+    agreed on what it measured, in which case the time is summarised, or the
+    disagreement is the result.
+    """
+    repeats = len(results)
+    errors = [result["error"] for result in results if "error" in result]
+    if errors:
+        detail = "\n".join(errors)
+        return {
+            "process": name,
+            "size": size,
+            "repeats": repeats,
+            "error": f"{len(errors)} of {repeats} repetition(s) failed:\n{detail}",
+        }
+
+    for field in STABLE_ACROSS_REPETITIONS:
+        values = [result[field] for result in results]
+        if any(value != values[0] for value in values):
+            return {
+                "process": name,
+                "size": size,
+                "repeats": repeats,
+                "error": (
+                    f"{field} was not identical across {repeats} repetitions: "
+                    f"{values}. The flow is not deterministic, which is a "
+                    f"finding rather than noise to average."
+                ),
+            }
+
+    seconds = [result["seconds"] for result in results]
+    first = results[0]
+    return {
+        "process": name,
+        "size": size,
+        "repeats": repeats,
+        "queries": first["queries"],
+        "workload_unit": first["workload_unit"],
+        "expected_workload": first["expected_workload"],
+        "observed_workload": first["observed_workload"],
+        "seconds_median": statistics.median(seconds),
+        "seconds_min": min(seconds),
+        "seconds_max": max(seconds),
+    }
+
+
+def repeat(name, size, template, directory, index, token, repeats):
+    """Measure one (flow, size) `repeats` times, and aggregate.
+
+    A repetition is a whole execution: its own copy of the template, its own
+    child, its own setup and verify. There is no warm-up, because for a flow
+    that changes data a second pass over the same state would measure
+    reconciling rather than creating, and the harness makes every process cold
+    on purpose.
+    """
+    return _aggregate(
+        name,
+        size,
+        [
+            execute(name, size, template, directory, index + offset, token)
+            for offset in range(repeats)
+        ],
+    )
+
+
 def _git(*arguments):
     """A short git query.
 
@@ -407,29 +486,40 @@ def _provenance(selection):
 
 
 def _public_result(result):
-    """One execution, reduced to what belongs in a shared file.
+    """One (flow, size) reduced to what belongs in a shared file.
 
-    The database path and the child's pid are private to a run, and timings
-    from a single execution are not a signal this format publishes.
+    The database path and the child's pid are private to a run. So are the
+    individual timings: what this format publishes is the summary across
+    repetitions, and `repeats` says how many observations it stands on.
     """
     if "error" in result:
         return {
             "flow": result["process"],
             "size": result["size"],
             "status": "failed",
+            "repeats": result.get("repeats"),
             "queries": None,
             "workload_unit": None,
             "expected_workload": None,
             "observed_workload": None,
+            "seconds_median": None,
+            "seconds_min": None,
+            "seconds_max": None,
         }
     return {
         "flow": result["process"],
         "size": result["size"],
         "status": "ok",
+        "repeats": result["repeats"],
         "queries": result["queries"],
         "workload_unit": result["workload_unit"],
         "expected_workload": result["expected_workload"],
         "observed_workload": result["observed_workload"],
+        # Microseconds: finer than anything this measurement can distinguish,
+        # and it keeps the file readable.
+        "seconds_median": round(result["seconds_median"], 6),
+        "seconds_min": round(result["seconds_min"], 6),
+        "seconds_max": round(result["seconds_max"], 6),
     }
 
 
@@ -513,8 +603,14 @@ def report(result):
     size = result["size"] or "-"
     line = (
         f"{result['process']} [{size}]  "
-        f"{result['queries']} queries  {result['seconds'] * 1000:.1f} ms"
+        f"{result['queries']} queries  {result['seconds_median'] * 1000:.1f} ms"
     )
+    if result["repeats"] > 1:
+        line += (
+            f" median (min {result['seconds_min'] * 1000:.1f}, "
+            f"max {result['seconds_max'] * 1000:.1f}, "
+            f"{result['repeats']} repeats)"
+        )
     if result["workload_unit"]:
         line += (
             f"  {result['observed_workload']} {result['workload_unit']}"
@@ -524,6 +620,17 @@ def report(result):
     return True
 
 
+def _positive(value):
+    """An argparse type for a count that has to be at least one."""
+    try:
+        number = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value!r} is not an integer") from None
+    if number < 1:
+        raise argparse.ArgumentTypeError(f"{number} is not at least 1")
+    return number
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Measure wagtail-localize flows.",
@@ -531,6 +638,13 @@ def main():
     parser.add_argument("flow", nargs="?", help=f"flow name or {ALL}; omit with --list")
     parser.add_argument("--size", help="run only this scale point")
     parser.add_argument("--list", action="store_true", help="print the catalog")
+    parser.add_argument(
+        "--repeat",
+        type=_positive,
+        default=1,
+        metavar="N",
+        help="run each execution N times and summarise the time (default 1)",
+    )
     parser.add_argument(
         "--json", dest="json_path", metavar="PATH", help="also write the run to PATH"
     )
@@ -569,7 +683,13 @@ def main():
     if arguments.json_path:
         try:
             _check_json_path(arguments.json_path)
-            provenance = _provenance({"flow": arguments.flow, "size": arguments.size})
+            provenance = _provenance(
+                {
+                    "flow": arguments.flow,
+                    "size": arguments.size,
+                    "repeat": arguments.repeat,
+                }
+            )
         except (ValueError, LookupError, RuntimeError) as error:
             parser.error(f"--json: {error}")
 
@@ -578,11 +698,20 @@ def main():
     results = []
     try:
         token = _own_directory(directory)
-        # One template per invocation; every execution copies it. The index is
-        # unique across the whole run, so no two executions share a database.
+        # One template per invocation; every execution copies it. Indices are
+        # reserved in blocks of `--repeat`, so no two executions anywhere in the
+        # run share a database.
         template = _build_template(directory, token)
-        for index, (flow, size) in enumerate(plan):
-            result = execute(flow.name, size, template, directory, index, token)
+        for position, (flow, size) in enumerate(plan):
+            result = repeat(
+                flow.name,
+                size,
+                template,
+                directory,
+                position * arguments.repeat,
+                token,
+                arguments.repeat,
+            )
             results.append(result)
             ok &= report(result)
     finally:

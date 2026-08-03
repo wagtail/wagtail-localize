@@ -1,5 +1,6 @@
 """Structural tests for the benchmark harness."""
 
+import argparse
 import ast
 import contextlib
 import importlib.metadata
@@ -509,13 +510,14 @@ class TestPublicResult(SimpleTestCase):
         result = {
             "process": "a_flow",
             "size": "large",
+            "repeats": 1,
             "queries": 42,
-            "seconds": 0.5,
             "workload_unit": "things",
             "expected_workload": 7,
             "observed_workload": 7,
-            "pid": 1234,
-            "database": "/tmp/whatever/run-00.sqlite3",  # noqa: S108
+            "seconds_median": 0.5,
+            "seconds_min": 0.5,
+            "seconds_max": 0.5,
         }
         result.update(overrides)
         return result
@@ -533,14 +535,25 @@ class TestPublicResult(SimpleTestCase):
         self.assertEqual(public["expected_workload"], 7)
         self.assertEqual(public["observed_workload"], 7)
         self.assertEqual(public["status"], "ok")
+        self.assertEqual(public["repeats"], 1)
+        self.assertEqual(public["seconds_median"], 0.5)
+        self.assertEqual(public["seconds_min"], 0.5)
+        self.assertEqual(public["seconds_max"], 0.5)
 
     def test_a_failed_execution_reports_no_numbers(self):
         public = run._public_result(
             {"process": "a_flow", "size": None, "error": "it broke"}
         )
         self.assertEqual(public["status"], "failed")
-        self.assertIsNone(public["queries"])
-        self.assertIsNone(public["observed_workload"])
+        for field in (
+            "queries",
+            "observed_workload",
+            "seconds_median",
+            "seconds_min",
+            "seconds_max",
+        ):
+            with self.subTest(field=field):
+                self.assertIsNone(public[field])
 
 
 class TestJsonDocument(SimpleTestCase):
@@ -557,13 +570,14 @@ class TestJsonDocument(SimpleTestCase):
                 {
                     "process": "a",
                     "size": None,
+                    "repeats": 1,
                     "queries": 1,
-                    "seconds": 0.0,
                     "workload_unit": None,
                     "expected_workload": None,
                     "observed_workload": None,
-                    "pid": 1,
-                    "database": "d",
+                    "seconds_median": 0.0,
+                    "seconds_min": 0.0,
+                    "seconds_max": 0.0,
                 }
             ]
         )
@@ -578,13 +592,14 @@ class TestJsonDocument(SimpleTestCase):
                 {
                     "process": "a",
                     "size": None,
+                    "repeats": 1,
                     "queries": 1,
-                    "seconds": 0.0,
                     "workload_unit": None,
                     "expected_workload": None,
                     "observed_workload": None,
-                    "pid": 1,
-                    "database": "d",
+                    "seconds_median": 0.0,
+                    "seconds_min": 0.0,
+                    "seconds_max": 0.0,
                 },
                 {"process": "b", "size": None, "error": "boom"},
             ]
@@ -597,14 +612,16 @@ class TestJsonRun(SimpleTestCase):
     """main() end to end with --json, with the executions faked so no database
     is built."""
 
-    def _run(self, argv, failing=()):
+    def _run(self, argv, failing=(), stable=False):
         def fake_execute(name, size, template, directory, index, token):
             if (name, size) in failing:
                 return {"process": name, "size": size, "error": "deliberate"}
             return {
                 "process": name,
                 "size": size,
-                "queries": 10 + index,
+                # Unstable on purpose unless asked: the index differs per
+                # repetition, so a repeated run has to notice.
+                "queries": 10 if stable else 10 + index,
                 "seconds": 0.1,
                 "workload_unit": None,
                 "expected_workload": None,
@@ -619,7 +636,9 @@ class TestJsonRun(SimpleTestCase):
                 mock.patch.object(run, "_build_template", return_value="template"),
                 mock.patch.object(run, "execute", side_effect=fake_execute),
                 mock.patch.object(
-                    run, "_provenance", return_value={"schema_version": 1}
+                    run,
+                    "_provenance",
+                    return_value={"schema_version": run.SCHEMA_VERSION},
                 ),
                 mock.patch.object(sys, "argv", ["run.py", *argv, "--json", path]),
                 mock.patch("sys.stdout"),
@@ -651,6 +670,28 @@ class TestJsonRun(SimpleTestCase):
         self.assertEqual([e["flow"] for e in failed], ["submit_page_post"])
         # The rest still ran and were recorded.
         self.assertEqual(len(document["executions"]), len(catalog.executions()))
+
+    def test_repeated_executions_publish_their_summary(self):
+        code, document = self._run([run.ALL, "--repeat", "3"], stable=True)
+        self.assertEqual(code, 0)
+        self.assertEqual(document["status"], "complete")
+        self.assertEqual(document["schema_version"], 2)
+        for execution in document["executions"]:
+            with self.subTest(flow=execution["flow"], size=execution["size"]):
+                self.assertEqual(execution["repeats"], 3)
+                self.assertEqual(execution["seconds_median"], 0.1)
+                self.assertEqual(execution["seconds_min"], 0.1)
+                self.assertEqual(execution["seconds_max"], 0.1)
+                for field in ("pid", "database", "seconds"):
+                    self.assertNotIn(field, execution)
+
+    def test_a_measurement_that_moves_makes_the_whole_run_incomplete(self):
+        code, document = self._run([run.ALL, "--repeat", "3"])
+        self.assertEqual(code, 1)
+        self.assertEqual(document["status"], "incomplete")
+        self.assertEqual(
+            {execution["status"] for execution in document["executions"]}, {"failed"}
+        )
 
 
 class TestJsonPathIsCheckedFirst(SimpleTestCase):
@@ -767,3 +808,136 @@ class TestProvenanceNeedsGit(SimpleTestCase):
         for key in ("commit", "branch", "working_tree_clean"):
             with self.subTest(key=key):
                 self.assertIsNotNone(provenance[key])
+
+
+class TestRepeatedExecutions(SimpleTestCase):
+    """A repetition is a whole execution: fresh database, fresh child. The
+    parent summarises the time and refuses to summarise anything else."""
+
+    def _result(self, seconds, **overrides):
+        result = {
+            "process": "a_flow",
+            "size": "large",
+            "queries": 42,
+            "seconds": seconds,
+            "workload_unit": "things",
+            "expected_workload": 7,
+            "observed_workload": 7,
+        }
+        result.update(overrides)
+        return result
+
+    def test_a_repeat_below_one_or_not_a_number_is_refused(self):
+        for value in ("0", "-3", "two", "1.5"):
+            with (
+                self.subTest(value=value),
+                self.assertRaises(argparse.ArgumentTypeError),
+            ):
+                run._positive(value)
+
+    def test_an_invalid_repeat_costs_no_database_and_no_child(self):
+        with (
+            mock.patch.object(run, "_build_template") as build,
+            mock.patch.object(run, "execute") as execute,
+            mock.patch.object(sys, "argv", ["run.py", run.ALL, "--repeat", "0"]),
+            mock.patch("sys.stderr"),
+            self.assertRaises(SystemExit),
+        ):
+            run.main()
+        build.assert_not_called()
+        execute.assert_not_called()
+
+    def test_each_repetition_gets_its_own_database_index(self):
+        indices = []
+
+        def fake_execute(name, size, template, directory, index, token):
+            indices.append(index)
+            return self._result(0.1)
+
+        with mock.patch.object(run, "execute", side_effect=fake_execute):
+            result = run.repeat("a_flow", "large", "t", "d", 5, "token", 3)
+
+        self.assertEqual(indices, [5, 6, 7])
+        self.assertEqual(result["repeats"], 3)
+
+    def test_the_default_runs_each_execution_once(self):
+        calls = []
+
+        def fake_execute(name, size, template, directory, index, token):
+            calls.append(index)
+            return self._result(0.1)
+
+        with (
+            mock.patch.object(run, "_build_template", return_value="template"),
+            mock.patch.object(run, "execute", side_effect=fake_execute),
+            mock.patch.object(sys, "argv", ["run.py", "submit_page_post"]),
+            mock.patch("sys.stdout"),
+            mock.patch("sys.stderr"),
+        ):
+            code = run.main()
+
+        self.assertEqual(code, 0)
+        self.assertEqual(calls, [0])
+
+    def test_the_time_is_summarised_over_every_repetition(self):
+        aggregate = run._aggregate(
+            "a_flow",
+            "large",
+            [self._result(0.3), self._result(0.1), self._result(0.2)],
+        )
+        self.assertEqual(aggregate["repeats"], 3)
+        self.assertEqual(aggregate["seconds_median"], 0.2)
+        self.assertEqual(aggregate["seconds_min"], 0.1)
+        self.assertEqual(aggregate["seconds_max"], 0.3)
+        self.assertEqual(aggregate["queries"], 42)
+        self.assertNotIn("error", aggregate)
+
+    def test_a_measurement_that_moves_between_repetitions_fails(self):
+        for field, moved in (
+            ("queries", 43),
+            ("workload_unit", "others"),
+            ("expected_workload", 8),
+            ("observed_workload", 8),
+        ):
+            with self.subTest(field=field):
+                aggregate = run._aggregate(
+                    "a_flow",
+                    "large",
+                    [self._result(0.1), self._result(0.1, **{field: moved})],
+                )
+                self.assertIn("error", aggregate)
+                self.assertIn(field, aggregate["error"])
+                self.assertNotIn("queries", aggregate)
+
+    def test_one_failed_repetition_fails_the_whole_aggregate(self):
+        aggregate = run._aggregate(
+            "a_flow",
+            "large",
+            [
+                self._result(0.1),
+                {"process": "a_flow", "size": "large", "error": "deliberate"},
+            ],
+        )
+        self.assertIn("deliberate", aggregate["error"])
+        self.assertEqual(run._public_result(aggregate)["status"], "failed")
+
+    def test_the_document_records_the_repeat_the_command_asked_for(self):
+        provenance = mock.Mock(return_value={"schema_version": run.SCHEMA_VERSION})
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "run.json")
+            with (
+                mock.patch.object(run, "_build_template", return_value="t"),
+                mock.patch.object(
+                    run, "execute", side_effect=lambda *args: self._result(0.1)
+                ),
+                mock.patch.object(run, "_provenance", provenance),
+                mock.patch.object(
+                    sys,
+                    "argv",
+                    ["run.py", "submit_page_post", "--repeat", "4", "--json", path],
+                ),
+                mock.patch("sys.stdout"),
+                mock.patch("sys.stderr"),
+            ):
+                run.main()
+        self.assertEqual(provenance.call_args.args[0]["repeat"], 4)
