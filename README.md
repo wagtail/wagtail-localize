@@ -106,6 +106,11 @@ or, you can run them for a specific environment `tox -e python3.13-django5.2-wag
 
 To run the test app interactively, use `tox -e interactive`, visit `http://127.0.0.1:8020/admin/` and log in with `admin`/`changeme`.
 
+### Performance benchmarks
+
+See [`benchmarks/README.md`](benchmarks/README.md) for the benchmark catalog,
+methodology, and commands for reproducible before/after measurements.
+
 ## Support
 
 For support, please use [GitHub Discussions](https://github.com/wagtail/wagtail-localize/discussions) or ask a question on the `#multi-language` channel on [Wagtail's Slack instance](https://wagtail.org/slack/).
