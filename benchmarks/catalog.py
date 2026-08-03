@@ -1261,6 +1261,172 @@ CORE_REFRESH_SEGMENTS = Flow(
 )
 
 
+# ---------------------------------------------------------------------------
+# core_page_index
+#
+# The index reads the whole page table, so its scale cannot be chosen with a
+# root: the large size adds pages to the site instead.
+# ---------------------------------------------------------------------------
+
+# Plain pages the large size adds so the two sizes differ by a known amount.
+# Local to this probe: the shared fixture constants describe content the admin
+# flows act on, and these pages exist only to be counted.
+INDEX_FILLER_PAGES = 40
+
+
+def _indexable_pages():
+    """The pages PageIndex.from_database() walks: every page below the root
+    that is not an alias."""
+    from wagtail.models import Page
+
+    return Page.objects.filter(alias_of__isnull=True, depth__gt=1)
+
+
+def _index_entry(index, page):
+    """The index entry built from `page`, or None.
+
+    Matched on locale as well as translation key, because translated variants
+    share a key and the index holds one entry per variant.
+    """
+    for entry in index.pages:
+        if (
+            entry.translation_key == page.translation_key
+            and entry.source_locale.id == page.locale_id
+        ):
+            return entry
+    return None
+
+
+def _core_page_index_setup(ctx, size):
+    """Bring the site to the size being measured, and freeze what verify needs.
+
+    The large size creates its pages here, outside the measured region: the
+    probe measures reading the page table, not writing to it.
+    """
+    from wagtail.models import Page
+
+    from tests.testapp.models import TestPage
+
+    if size == "large":
+        # prepare() exports the English home as the large subtree root.
+        home = ctx.subtree_root_large
+        for number in range(INDEX_FILLER_PAGES):
+            home.add_child(
+                instance=TestPage(
+                    title=f"Index filler {number}",
+                    slug=f"bench-index-filler-{number}",
+                    locale=ctx.locales["en"],
+                )
+            )
+
+    expected = 24 if size == "small" else 24 + INDEX_FILLER_PAGES
+    indexable = _indexable_pages().count()
+    if indexable != expected:
+        raise RuntimeError(
+            f"the {size} size holds {indexable} indexable pages, not the "
+            f"{expected} it measures. The index reads the whole page table, so "
+            f"anything that creates or removes pages changes this number."
+        )
+
+    if not Page.objects.filter(alias_of__isnull=False).exists():
+        raise RuntimeError(
+            "the fixture holds no alias pages, so the index would never fill "
+            "aliased_locales and the scenario would be a weaker one than named."
+        )
+
+    # Read here rather than in verify so the expectation comes from the fixture
+    # and not from the index being checked against itself.
+    ctx.core_index_parent_key = ctx.existing_page.get_parent().translation_key
+
+
+def _core_page_index_run(ctx, size):
+    """Build the index. This is the whole measured region."""
+    from wagtail_localize.synctree import PageIndex
+
+    return PageIndex.from_database()
+
+
+def _core_page_index_verify(ctx, size, index):
+    """Check the index describes the site it was built from.
+
+    The three properties below are the ones 719447f stops computing per page
+    and starts resolving from preloaded maps, so an arm that reduced the query
+    count by losing information fails here rather than looking like a win.
+    """
+    indexable = _indexable_pages().count()
+    if len(index.pages) != indexable:
+        raise RuntimeError(
+            f"the index holds {len(index.pages)} entries for {indexable} "
+            f"indexable pages."
+        )
+
+    english, french = ctx.locales["en"], ctx.locales["fr"]
+
+    entry = _index_entry(index, ctx.existing_page)
+    if entry is None:
+        raise RuntimeError("the index has no entry for the translated page.")
+    if set(entry.locales) != {english.id, french.id}:
+        raise RuntimeError(
+            f"the translated page's entry lists locales {entry.locales}, not "
+            f"the English and French ones it exists in."
+        )
+    if entry.parent_translation_key != ctx.core_index_parent_key:
+        raise RuntimeError(
+            f"the translated page's entry points at parent "
+            f"{entry.parent_translation_key}, not at {ctx.core_index_parent_key}."
+        )
+
+    home_entry = _index_entry(index, ctx.subtree_root_large)
+    if home_entry is None:
+        raise RuntimeError("the index has no entry for the home page.")
+    if french.id not in home_entry.aliased_locales:
+        raise RuntimeError(
+            f"the home entry lists aliased locales {home_entry.aliased_locales}, "
+            f"without the French alias the fixture created."
+        )
+
+    return len(index.pages)
+
+
+CORE_PAGE_INDEX = Flow(
+    name="core_page_index",
+    group="core",
+    why=(
+        "Building the page index synchronize_tree walks. Inside the full sync "
+        "the index is a small part of a much larger copy operation, so on its "
+        "own is the only place where a per-page cost in the index is visible "
+        "at all."
+    ),
+    entrypoint="PageIndex.from_database",
+    covers=(
+        "PageIndex.from_database",
+        "PageIndex.Entry.from_page_instance per indexed page",
+        "the locales and aliased_locales lookups behind each entry",
+        "the parent lookup behind each entry",
+    ),
+    workload_unit="indexed_pages",
+    scale_points=(
+        ScalePoint(
+            label="small",
+            why="The benchmark site as the fixture builds it.",
+            expected_workload=24,
+        ),
+        ScalePoint(
+            label="large",
+            why=(
+                "The same site with forty more pages under the home, which is "
+                "the only difference between the two sizes, so the subtraction "
+                "leaves the per-page cost alone."
+            ),
+            expected_workload=24 + INDEX_FILLER_PAGES,
+        ),
+    ),
+    setup=_core_page_index_setup,
+    run=_core_page_index_run,
+    verify=_core_page_index_verify,
+)
+
+
 # Grouped by what a flow does, creation entrypoints before the editor, and the
 # core probes last. Not a sequence: every execution runs against a fresh
 # database, so no flow's result feeds the next.
@@ -1273,6 +1439,7 @@ CATALOG = (
     UPDATE_TRANSLATIONS_GET,
     UPDATE_TRANSLATIONS_POST_PUBLISH,
     CORE_REFRESH_SEGMENTS,
+    CORE_PAGE_INDEX,
 )
 
 BY_NAME = {flow.name: flow for flow in CATALOG}
