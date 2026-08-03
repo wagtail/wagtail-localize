@@ -1133,9 +1133,137 @@ EDIT_TRANSLATION_GET = Flow(
 )
 
 
-# Grouped by what a flow does, creation entrypoints before the editor. Not a
-# sequence: every execution runs against a fresh database, so no flow's result
-# feeds the next.
+# ---------------------------------------------------------------------------
+# core_refresh_segments
+#
+# A core probe rather than an admin flow: it calls one model method directly,
+# because the question is about that method and nothing else.
+# ---------------------------------------------------------------------------
+
+
+def _refresh_source(ctx, size):
+    return ctx.existing_page_source if size == "small" else ctx.heavy_page_source
+
+
+def _refresh_segment_state(source):
+    """Every segment row the source owns, per type, as ids in order.
+
+    Ids rather than counts, because the postcondition is that reconciling an
+    unchanged source leaves the rows alone: a count would pass a run that
+    deleted a segment and created another one in its place. Local to this
+    probe — the other flows check the objects they act on, not this shape.
+    """
+    from wagtail_localize.models import (
+        OverridableSegment,
+        RelatedObjectSegment,
+        StringSegment,
+        TemplateSegment,
+    )
+
+    return {
+        model.__name__: list(
+            model.objects.filter(source=source)
+            .order_by("order", "id")
+            .values_list("id", flat=True)
+        )
+        for model in (
+            StringSegment,
+            TemplateSegment,
+            RelatedObjectSegment,
+            OverridableSegment,
+        )
+    }
+
+
+def _core_refresh_setup(ctx, size):
+    """Freeze the state the refresh is supposed to reconcile against.
+
+    The source must already exist with its segments written: this probe
+    measures re-extraction over a source that is already reconciled, which is
+    the variant the characterization test covers. A first extraction is a
+    different operation, and submit_page_post already measures it.
+    """
+    source = _refresh_source(ctx, size)
+    if source is None or source.pk is None:
+        raise RuntimeError(f"prepare() left no saved {size} source to refresh.")
+
+    state = _refresh_segment_state(source)
+    if not state["StringSegment"]:
+        raise RuntimeError(
+            f"the {size} source holds no string segments, so refreshing it "
+            f"would measure a first extraction instead of a reconciliation."
+        )
+    ctx.core_refresh_state = state
+
+
+def _core_refresh_run(ctx, size):
+    """Reconcile the source's segments, and nothing else."""
+    _refresh_source(ctx, size).refresh_segments()
+
+
+def _core_refresh_verify(ctx, size, artifacts):
+    """Check the reconciliation left every segment row where it was.
+
+    Refreshing a source whose content has not changed has to be a no-op in the
+    data: the same rows, in the same order, none deleted and none recreated.
+    Returns the string segments the source holds, which is what the measured
+    queries scale with.
+    """
+    before = ctx.core_refresh_state
+    after = _refresh_segment_state(_refresh_source(ctx, size))
+
+    for name, ids in before.items():
+        if after[name] != ids:
+            raise RuntimeError(
+                f"reconciling an unchanged source changed its {name} rows: "
+                f"{ids} before, {after[name]} after."
+            )
+
+    return len(after["StringSegment"])
+
+
+CORE_REFRESH_SEGMENTS = Flow(
+    name="core_refresh_segments",
+    group="core",
+    why=(
+        "Re-extracting the segments of a source that already has them. It runs "
+        "inside submit, update and subtree translation, where its cost arrives "
+        "mixed with content extraction and target saving; called on its own it "
+        "shows the per-segment persistence on its own."
+    ),
+    entrypoint="TranslationSource.refresh_segments",
+    covers=(
+        "TranslationSource.as_instance",
+        "extract_segments over the stored content",
+        "String, TranslationContext and StringSegment get_or_create per segment",
+        "deletion of the segments the extraction no longer mentions",
+    ),
+    workload_unit="string_segments",
+    scale_points=(
+        ScalePoint(
+            label="small",
+            why="An ordinary page: one string segment, so the fixed cost dominates.",
+            expected_workload=1,
+        ),
+        ScalePoint(
+            label="large",
+            why=(
+                "The StreamField-heavy page, whose segments are the only "
+                "difference from the small one, so the subtraction leaves the "
+                "per-segment cost alone."
+            ),
+            expected_workload=41,
+        ),
+    ),
+    setup=_core_refresh_setup,
+    run=_core_refresh_run,
+    verify=_core_refresh_verify,
+)
+
+
+# Grouped by what a flow does, creation entrypoints before the editor, and the
+# core probes last. Not a sequence: every execution runs against a fresh
+# database, so no flow's result feeds the next.
 CATALOG = (
     SUBMIT_PAGE_GET,
     SUBMIT_PAGE_POST,
@@ -1144,6 +1272,7 @@ CATALOG = (
     EDIT_TRANSLATION_GET,
     UPDATE_TRANSLATIONS_GET,
     UPDATE_TRANSLATIONS_POST_PUBLISH,
+    CORE_REFRESH_SEGMENTS,
 )
 
 BY_NAME = {flow.name: flow for flow in CATALOG}
