@@ -100,6 +100,14 @@ REFRESH_SEGMENT_BLOCKS = 40
 # How many segments the per-segment save flow writes at each size.
 STRING_SAVES_SMALL = 5
 STRING_SAVES_LARGE = REFRESH_SEGMENT_BLOCKS
+# The page-submission flow keeps two distinct related snippets at both sizes
+# and changes only how many times they are referenced. That separates repeated
+# related-object work from the fixed cost of translating another distinct
+# object.
+SUBMIT_RELATED_REFERENCES = {
+    "small": 2,
+    "large": REFRESH_SEGMENT_BLOCKS,
+}
 
 
 def _admin_client():
@@ -261,6 +269,10 @@ def prepare():
         subtree_root_small=home.get_children().first(),
         submit_page=pages[-1],
         submit_snippet=snippets[-1],
+        # Both are untouched by prepare(): the submit-page flow must create
+        # their sources and French targets inside its measured POST. Keeping
+        # this set fixed is what makes 2 vs 40 references a clean scale.
+        submit_related_snippets=(snippets[-2], snippets[-1]),
         core_pages=pages[5 : 5 + CORE_PAGES],
     )
 
@@ -299,25 +311,63 @@ def _translation_to(instance, locale):
 
 
 def _submit_page_setup(ctx, size):
-    """Assert the state the flow starts from, without changing it.
+    """Build the related-reference workload and freeze its starting state.
 
-    The page and its snippet must be untranslated, or the POST reconciles an
-    existing translation instead of creating one and the flow measures a
-    different operation than it names.
+    Both sizes reference the same two snippets. Only repetitions change, so
+    the query difference belongs to the related-object loops rather than to
+    translating more distinct dependencies. Publishing the workload belongs
+    in setup: the measured operation is submitting that stored page, not
+    editing it.
     """
-    if size is not None:
-        raise RuntimeError(f"submit_page_post takes no size; got {size!r}.")
+    expected = SUBMIT_RELATED_REFERENCES.get(size)
+    if expected is None:
+        raise RuntimeError(f"submit_page_post has no size {size!r}.")
 
-    page, snippet, french = ctx.submit_page, ctx.submit_snippet, ctx.locales["fr"]
+    page = ctx.submit_page
+    snippets = ctx.submit_related_snippets
+    french = ctx.locales["fr"]
 
-    if page.test_snippet_id != snippet.pk:
+    if page.test_snippet_id != snippets[-1].pk:
         raise RuntimeError(
             f"submit_page references snippet {page.test_snippet_id}, not "
-            f"submit_snippet ({snippet.pk}). The flow measures the related "
-            f"object fan-out, so the two have to be connected."
+            f"submit_snippet ({snippets[-1].pk})."
         )
 
-    for label, instance in (("page", page), ("snippet", snippet)):
+    # The direct FK is one reference; StreamField supplies the rest. Start the
+    # alternating sequence with the other snippet so small contains both.
+    page.test_streamfield = [
+        ("test_snippetchooserblock", snippets[number % len(snippets)])
+        for number in range(expected - 1)
+    ]
+    page.save_revision().publish()
+    page.refresh_from_db()
+
+    stream_references = [
+        block.value
+        for block in page.test_streamfield
+        if block.block_type == "test_snippetchooserblock"
+    ]
+    references = [page.test_snippet, *stream_references]
+    if len(references) != expected:
+        raise RuntimeError(
+            f"the {size} page holds {len(references)} related references, not "
+            f"the {expected} this scale measures."
+        )
+    expected_keys = {snippet.translation_key for snippet in snippets}
+    actual_keys = {snippet.translation_key for snippet in references}
+    if actual_keys != expected_keys:
+        raise RuntimeError(
+            f"the {size} page references objects {actual_keys}, not the fixed "
+            f"two-object pool {expected_keys}."
+        )
+
+    for label, instance in (
+        ("page", page),
+        *(
+            (f"related snippet {number}", snippet)
+            for number, snippet in enumerate(snippets)
+        ),
+    ):
         if _translation_source(instance) is not None:
             raise RuntimeError(f"the {label} already has a TranslationSource.")
         if _translation_to(instance, french) is not None:
@@ -340,13 +390,15 @@ def _submit_page_run(ctx, size):
 
 
 def _submit_page_verify(ctx, size, response):
-    """Check the page and its related snippet were both translated.
+    """Check every source reference became the corresponding French one.
 
     Queries name the object and locale rather than counting rows: prepare()
     creates other translations, so a global count would pass whatever this POST
-    did. Returns None — the flow declares no workload, and the objects created
-    here are the shape of the operation, not a scale dimension.
+    did. The returned workload is the source's related segment count, while the
+    target checks prevent a faster run that simply stopped ingesting them.
     """
+    from collections import Counter
+
     from django.urls import reverse
 
     if response.status_code != 302:
@@ -355,9 +407,17 @@ def _submit_page_verify(ctx, size, response):
             f"so the form was not accepted"
         )
 
-    page, snippet, french = ctx.submit_page, ctx.submit_snippet, ctx.locales["fr"]
+    page = ctx.submit_page
+    snippets = ctx.submit_related_snippets
+    french = ctx.locales["fr"]
 
-    for label, instance in (("page", page), ("snippet", snippet)):
+    for label, instance in (
+        ("page", page),
+        *(
+            (f"related snippet {number}", snippet)
+            for number, snippet in enumerate(snippets)
+        ),
+    ):
         if _translation_source(instance) is None:
             raise RuntimeError(f"no TranslationSource was created for the {label}.")
         if _translation_to(instance, french) is None:
@@ -365,13 +425,64 @@ def _submit_page_verify(ctx, size, response):
         if instance.get_translation_or_none(french) is None:
             raise RuntimeError(f"the {label} has no French target.")
 
-    target = page.get_translation(french)
+    source = _translation_source(page)
+    related_segments = list(
+        source.relatedobjectsegment_set.select_related("object").order_by("order", "id")
+    )
+    expected = SUBMIT_RELATED_REFERENCES[size]
+    if len(related_segments) != expected:
+        raise RuntimeError(
+            f"the submitted source holds {len(related_segments)} related "
+            f"segments, not the {expected} declared by {size}."
+        )
+    source_stream_references = [
+        block.value
+        for block in page.test_streamfield
+        if block.block_type == "test_snippetchooserblock"
+    ]
+    source_references = [page.test_snippet, *source_stream_references]
+    source_reference_keys = [snippet.translation_key for snippet in source_references]
+    segment_keys = [segment.object.translation_key for segment in related_segments]
+    if Counter(segment_keys) != Counter(source_reference_keys):
+        raise RuntimeError(
+            "the source's related segments do not preserve its references: "
+            f"{segment_keys} versus {source_reference_keys}."
+        )
+
+    target = page.get_translation(french).specific
+    if not target.live or target.alias_of_id:
+        raise RuntimeError(
+            "the French page was not published as a real translated page."
+        )
+
+    stream_references = [
+        block.value
+        for block in target.test_streamfield
+        if block.block_type == "test_snippetchooserblock"
+    ]
+    target_references = [target.test_snippet, *stream_references]
+    if len(target_references) != expected:
+        raise RuntimeError(
+            f"the French target holds {len(target_references)} related "
+            f"references, not the source's {expected}."
+        )
+    if any(snippet.locale_id != french.id for snippet in target_references):
+        raise RuntimeError("the French page still references a source-locale snippet.")
+    target_reference_keys = [snippet.translation_key for snippet in target_references]
+    if target_reference_keys != source_reference_keys:
+        raise RuntimeError(
+            "the French page changed the order or identity of its related "
+            f"references: {target_reference_keys} versus {source_reference_keys}."
+        )
+
     expected = reverse("wagtailadmin_pages:edit", args=[target.id])
     if response.url != expected:
         raise RuntimeError(
             f"the redirect went to {response.url}, not to the editor of the "
             f"page it created ({expected})"
         )
+
+    return len(related_segments)
 
 
 # ---------------------------------------------------------------------------
@@ -384,7 +495,9 @@ SUBMIT_PAGE_POST = Flow(
     group="creation",
     why=(
         "Creating a translation from the admin: the entry point an editor uses "
-        "to put a page into another locale for the first time."
+        "to put a page into another locale for the first time. Repeating a "
+        "fixed set of related snippets exposes both the creation fan-out and "
+        "the related-object checks while saving the target."
     ),
     entrypoint="SubmitPageTranslationView.post/form_valid",
     covers=(
@@ -392,120 +505,27 @@ SUBMIT_PAGE_POST = Flow(
         "TranslationSource.get_or_create_from_instance",
         "TranslationSource.refresh_segments",
         "Translation.save_target",
-        "related snippet translation",
+        "related snippet fan-out and target ingestion",
+    ),
+    workload_unit="related_object_segments",
+    scale_points=(
+        ScalePoint(
+            label="small",
+            why="Two distinct snippets, each referenced once.",
+            expected_workload=SUBMIT_RELATED_REFERENCES["small"],
+        ),
+        ScalePoint(
+            label="large",
+            why=(
+                "The same two snippets repeated forty times, so the difference "
+                "is repeated related-object work rather than more dependencies."
+            ),
+            expected_workload=SUBMIT_RELATED_REFERENCES["large"],
+        ),
     ),
     setup=_submit_page_setup,
     run=_submit_page_run,
     verify=_submit_page_verify,
-)
-
-
-# ---------------------------------------------------------------------------
-# submit_page_get
-# ---------------------------------------------------------------------------
-
-
-def _locale_choices(body):
-    """The locale ids offered as translation targets in a rendered form.
-
-    A small regex rather than a parser: the form renders the choices as
-    checkboxes named "locales", and nothing else in the page uses that name.
-    One check on one form does not justify a reusable HTML helper.
-    """
-    import re
-
-    return {
-        int(match.group(1))
-        for tag in re.findall(r"<input[^>]*name=\"locales\"[^>]*>", body)
-        if (match := re.search(r'value="(\d+)"', tag))
-    }
-
-
-def _submit_page_get_setup(ctx, size):
-    """Assert the page is still untranslated, so the form offers every target.
-
-    Shares nothing with the POST's setup beyond the idea: this flow does not
-    care about the related snippet, because rendering the form does not reach
-    it.
-    """
-    if size is not None:
-        raise RuntimeError(f"submit_page_get takes no size; got {size!r}.")
-
-    page = ctx.submit_page
-    if _translation_source(page) is not None:
-        raise RuntimeError(
-            "submit_page is already translated, so the form would offer fewer "
-            "locales than the scenario expects."
-        )
-    for code in ("fr", "es"):
-        if page.get_translation_or_none(ctx.locales[code]) is not None:
-            raise RuntimeError(f"submit_page already has a {code} target.")
-
-
-def _submit_page_get_run(ctx, size):
-    """GET the submit-translation form, and return the response unexamined."""
-    from django.urls import reverse
-
-    return ctx.client.get(
-        reverse(
-            "wagtail_localize:submit_page_translation",
-            args=[ctx.submit_page.id],
-        )
-    )
-
-
-def _submit_page_get_verify(ctx, size, response):
-    """Check the form rendered, offered the right locales, and wrote nothing."""
-    if response.status_code != 200:
-        raise RuntimeError(f"the submit form returned {response.status_code}, not 200")
-
-    body = response.content.decode()
-    offered = _locale_choices(body)
-    if not offered:
-        raise RuntimeError(
-            "the response carries no locale checkboxes, so the submit form did "
-            "not render"
-        )
-
-    expected = {ctx.locales["fr"].id, ctx.locales["es"].id}
-    if offered != expected:
-        raise RuntimeError(
-            f"the form offered locales {sorted(offered)}, expected {sorted(expected)}"
-        )
-    if ctx.submit_page.locale_id in offered:
-        raise RuntimeError(
-            "the form offered the page's own locale as a translation target"
-        )
-
-    # A GET must not write. Without this the flow would still pass if the view
-    # started creating state on render, so it checks every locale the form just
-    # offered, not one of them.
-    page = ctx.submit_page
-    if _translation_source(page) is not None:
-        raise RuntimeError("rendering the form created a TranslationSource.")
-    for code in ("fr", "es"):
-        locale = ctx.locales[code]
-        if _translation_to(page, locale) is not None:
-            raise RuntimeError(f"rendering the form created a {code} Translation.")
-        if page.get_translation_or_none(locale) is not None:
-            raise RuntimeError(f"rendering the form created a {code} target.")
-
-
-SUBMIT_PAGE_GET = Flow(
-    name="submit_page_get",
-    group="creation",
-    why=(
-        "Rendering the form that starts a page translation: what an editor "
-        "sees before anything is created."
-    ),
-    entrypoint="SubmitPageTranslationView.get/get_context_data",
-    covers=(
-        "SubmitTranslationForm construction",
-        "available target locale query",
-    ),
-    setup=_submit_page_get_setup,
-    run=_submit_page_get_run,
-    verify=_submit_page_get_verify,
 )
 
 
@@ -1431,7 +1451,6 @@ CORE_PAGE_INDEX = Flow(
 # core probes last. Not a sequence: every execution runs against a fresh
 # database, so no flow's result feeds the next.
 CATALOG = (
-    SUBMIT_PAGE_GET,
     SUBMIT_PAGE_POST,
     SUBMIT_SNIPPET_POST,
     TRANSLATE_PAGE_SUBTREE,

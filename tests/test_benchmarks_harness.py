@@ -140,20 +140,25 @@ class TestCatalogIntegrity(SimpleTestCase):
 
     def test_the_catalog_expands_to_the_executions_it_claims(self):
         expanded = catalog.executions()
-        self.assertEqual(len(catalog.CATALOG), 9)
+        self.assertEqual(len(catalog.CATALOG), 8)
         self.assertEqual(len(expanded), 15)
         self.assertEqual(
             len(expanded), sum(len(flow.sizes()) for flow in catalog.CATALOG)
         )
         self.assertIn((catalog.BY_NAME["edit_translation_get"], "large"), expanded)
 
-    def test_a_flow_without_scale_points_expands_to_a_single_sizeless_execution(self):
+    def test_submit_page_post_expands_over_related_object_references(self):
         flow = catalog.BY_NAME["submit_page_post"]
-        self.assertEqual(flow.scale_points, ())
-        self.assertIsNone(flow.workload_unit)
+        self.assertEqual(
+            [point.label for point in flow.scale_points], ["small", "large"]
+        )
+        self.assertEqual(
+            [point.expected_workload for point in flow.scale_points], [2, 40]
+        )
+        self.assertEqual(flow.workload_unit, "related_object_segments")
         self.assertEqual(
             [pair for pair in catalog.executions() if pair[0] is flow],
-            [(flow, None)],
+            [(flow, "small"), (flow, "large")],
         )
 
 
@@ -277,19 +282,19 @@ class TestChildSelectionGuard(SimpleTestCase):
         self.assertIn("needs a size", str(raised.exception))
 
     def test_a_flow_without_scale_points_is_accepted_without_a_size(self):
-        _catalog, flow, point = run._select("submit_page_post", None)
-        self.assertEqual(flow.name, "submit_page_post")
+        _catalog, flow, point = run._select("submit_snippet_post", None)
+        self.assertEqual(flow.name, "submit_snippet_post")
         self.assertIsNone(point)
 
     def test_a_size_on_a_flow_without_scale_points_is_refused(self):
         with self.assertRaises(SystemExit) as raised:
-            run._select("submit_page_post", "small")
+            run._select("submit_snippet_post", "small")
         self.assertIn("takes no size", str(raised.exception))
 
     def test_a_declared_size_is_accepted(self):
-        _catalog, flow, point = run._select("edit_translation_get", "large")
-        self.assertEqual(flow.name, "edit_translation_get")
-        self.assertEqual(point.expected_workload, 42)
+        _catalog, flow, point = run._select("submit_page_post", "large")
+        self.assertEqual(flow.name, "submit_page_post")
+        self.assertEqual(point.expected_workload, 40)
 
 
 class TestHarnessSettings(SimpleTestCase):
@@ -327,12 +332,14 @@ class TestExecutionSelection(SimpleTestCase):
         )
 
     def test_a_flow_without_scale_points_selects_one_sizeless_execution(self):
-        flow = catalog.BY_NAME["submit_page_post"]
-        self.assertEqual(run._executions_for("submit_page_post", None), [(flow, None)])
+        flow = catalog.BY_NAME["submit_snippet_post"]
+        self.assertEqual(
+            run._executions_for("submit_snippet_post", None), [(flow, None)]
+        )
 
     def test_a_flow_without_scale_points_refuses_a_size(self):
         with self.assertRaises(ValueError) as raised:
-            run._executions_for("submit_page_post", "small")
+            run._executions_for("submit_snippet_post", "small")
         self.assertIn("takes no size", str(raised.exception))
 
     def test_an_unknown_name_lists_the_valid_ones(self):
@@ -478,9 +485,7 @@ class TestCatalogOrder(SimpleTestCase):
         order = [flow.name for flow in catalog.CATALOG]
         editor = order.index("edit_translation_get")
 
-        self.assertLess(order.index("submit_page_get"), order.index("submit_page_post"))
         for name in (
-            "submit_page_get",
             "submit_page_post",
             "submit_snippet_post",
             "translate_page_subtree",
@@ -494,7 +499,7 @@ class TestCatalogOrder(SimpleTestCase):
                 self.assertGreater(order.index(name), editor)
 
     def test_the_sizeless_processes_each_expand_to_one_execution(self):
-        for name in ("submit_page_get", "submit_page_post", "submit_snippet_post"):
+        for name in ("submit_snippet_post",):
             with self.subTest(flow=name):
                 flow = catalog.BY_NAME[name]
                 self.assertEqual(flow.scale_points, ())
@@ -658,12 +663,12 @@ class TestJsonRun(SimpleTestCase):
         )
 
     def test_a_flow_without_scale_points_records_a_null_size(self):
-        _code, document = self._run(["submit_page_post"])
+        _code, document = self._run(["submit_snippet_post"])
         self.assertEqual(document["executions"], [document["executions"][0]])
         self.assertIsNone(document["executions"][0]["size"])
 
     def test_a_failed_execution_is_written_and_marks_the_run_incomplete(self):
-        code, document = self._run([run.ALL], failing={("submit_page_post", None)})
+        code, document = self._run([run.ALL], failing={("submit_page_post", "small")})
         self.assertEqual(code, 1)
         self.assertEqual(document["status"], "incomplete")
         failed = [e for e in document["executions"] if e["status"] == "failed"]
@@ -877,7 +882,7 @@ class TestRepeatedExecutions(SimpleTestCase):
             code = run.main()
 
         self.assertEqual(code, 0)
-        self.assertEqual(calls, [0])
+        self.assertEqual(calls, [0, 1])
 
     def test_the_time_is_summarised_over_every_repetition(self):
         aggregate = run._aggregate(
