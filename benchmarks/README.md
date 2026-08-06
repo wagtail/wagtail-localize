@@ -98,6 +98,69 @@ absolute totals. Timings are machine-dependent and noisier. Compare timing
 with adjacent A and B runs on the same machine, using the same repeat count,
 fixture, and dependency versions.
 
+## Explaining a result with Django Query Doctor
+
+The harness says how much work a flow does. It does not say why: a query count
+is a total, and a total does not name the loop that produced it.
+`run_query_doctor.py` is a separate, manual command for that second question.
+It runs a flow from the same catalog, against the same fixture, with the same
+process isolation, but inside
+[Django Query Doctor](https://pypi.org/project/django-query-doctor/) instead of
+inside a stopwatch. What it prints is a diagnosis: N+1 patterns, duplicate
+queries, and the call sites they came from.
+
+It is deliberately a second command rather than a flag on the first.
+`benchmarks/run.py` does not import Query Doctor, does not know this file
+exists, and runs unchanged in an environment where the tool is not installed.
+Nothing in CI uses it.
+
+### The optional diagnostic environment
+
+Query Doctor is not a project dependency: nothing in the package, the test
+suite, or CI installs or imports it, and it is needed only to run or debug this
+benchmark's diagnostic command. Install it into a separate environment, so the
+environment the benchmarks run in stays the environment the project declares:
+
+```console
+python3 -m venv .venv-query-doctor
+.venv-query-doctor/bin/python -m pip install -e ".[testing]"
+.venv-query-doctor/bin/python -m pip install -r benchmarks/requirements-query-doctor.txt
+```
+
+`benchmarks/requirements-query-doctor.txt` pins the version the harness was
+verified against, so a diagnosis run later reproduces the one run today.
+
+Running the diagnostic command from an environment without the tool prints
+what is missing and stops before creating a database.
+
+### Running a diagnosis
+
+```console
+.venv-query-doctor/bin/python benchmarks/run_query_doctor.py --list
+.venv-query-doctor/bin/python benchmarks/run_query_doctor.py core_page_index --size small
+.venv-query-doctor/bin/python benchmarks/run_query_doctor.py all
+```
+
+Flow names, sizes, and selection rules are the harness's own: `--list` prints
+the same catalog, a scaled flow diagnoses every size when `--size` is omitted,
+and `all` covers the same executions in the same order. `--list` needs neither
+Django nor Query Doctor.
+
+Each execution builds the fixture, runs the flow's `setup`, diagnoses only the
+flow's `run`, and then verifies. As in the harness, an execution whose observed
+workload differs from the catalog's expected workload fails: a diagnosis of a
+scenario that did not build explains something else.
+
+### Reading the output
+
+Output is diagnostic, not a baseline. Query Doctor wraps every cursor and walks
+the stack for each query, so its timings include that overhead and are not
+comparable with `run.py`'s. Its query total is real, but the numbers that
+belong in a before/after comparison are the harness's.
+
+A prescription is a hypothesis with a call site attached, not a verdict. Use it
+to find where to look; use `run.py` to show that a change moved the number.
+
 ## Scope and limitations
 
 - The fixture is deliberately fixed and synthetic. Results describe these
@@ -111,7 +174,8 @@ fixture, and dependency versions.
 - Core probes exist only when they isolate a selected optimization that a full
   process would hide. They are not a second catalog of internal functions.
 - The harness detects a scaling result but does not attribute its cause. Use
-  query inspection or a diagnostic tool for that separate task.
+  query inspection or a diagnostic tool for that separate task, such as the
+  Query Doctor command described above.
 
 ## Changing the catalog
 
@@ -130,4 +194,7 @@ the runner, fixture, or catalog:
 
 ```console
 python testmanage.py test tests.test_benchmarks_harness
+python testmanage.py test tests.test_benchmarks_query_doctor
 ```
+
+Both suites run without Query Doctor installed.

@@ -1,0 +1,10 @@
+# Optional diagnostic dependency for benchmarks/run_query_doctor.py.
+#
+# Not a project dependency: nothing in wagtail-localize, its test suite, or CI
+# installs or imports this. It is needed only to run or debug the benchmark's
+# diagnostic command, in the separate environment described in
+# benchmarks/README.md.
+#
+# Pinned to the version the harness was verified against, so a diagnosis run
+# later reproduces the one run today.
+django-query-doctor==2.1.1
