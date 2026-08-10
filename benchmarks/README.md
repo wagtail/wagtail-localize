@@ -13,7 +13,10 @@ the effect of a change at a stable boundary.
 ## Running the benchmarks
 
 Run the harness from the repository root in an environment where
-wagtail-localize and its testing dependencies are installed.
+wagtail-localize and its testing dependencies are installed, with the project
+installed editable (`pip install -e ".[testing]"`). The harness measures the
+checkout, but a report's versions come from the installed package's metadata:
+a non-editable install can name one version while another is being measured.
 
 List the catalog without setting up Django or creating a database:
 
@@ -122,10 +125,16 @@ benchmark's diagnostic command. Install it into a separate environment, so the
 environment the benchmarks run in stays the environment the project declares:
 
 ```console
-python3 -m venv .venv-query-doctor
-.venv-query-doctor/bin/python -m pip install -e ".[testing]"
-.venv-query-doctor/bin/python -m pip install -r benchmarks/requirements-query-doctor.txt
+python3 -m venv ~/.venvs/wl-query-doctor
+~/.venvs/wl-query-doctor/bin/python -m pip install -e ".[testing]"
+~/.venvs/wl-query-doctor/bin/python -m pip install -r benchmarks/requirements-query-doctor.txt
 ```
+
+The location and name are yours to choose; what matters is that it is a
+separate environment and that it does not live inside the checkout. An
+untracked directory in the repository would leave `git status` dirty, and with
+it the `working_tree_clean` field that decides whether a report can serve as a
+baseline.
 
 `benchmarks/requirements-query-doctor.txt` pins the version the harness was
 verified against, so a diagnosis run later reproduces the one run today.
@@ -136,9 +145,9 @@ what is missing and stops before creating a database.
 ### Running a diagnosis
 
 ```console
-.venv-query-doctor/bin/python benchmarks/run_query_doctor.py --list
-.venv-query-doctor/bin/python benchmarks/run_query_doctor.py core_page_index --size small
-.venv-query-doctor/bin/python benchmarks/run_query_doctor.py all
+~/.venvs/wl-query-doctor/bin/python benchmarks/run_query_doctor.py --list
+~/.venvs/wl-query-doctor/bin/python benchmarks/run_query_doctor.py core_page_index --size small
+~/.venvs/wl-query-doctor/bin/python benchmarks/run_query_doctor.py all
 ```
 
 Flow names, sizes, and selection rules are the harness's own: `--list` prints
