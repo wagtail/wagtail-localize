@@ -12,7 +12,8 @@ import tempfile
 
 from unittest import mock
 
-from django.test import SimpleTestCase
+from django.core.management import call_command
+from django.test import SimpleTestCase, TransactionTestCase
 
 from benchmarks import catalog, run
 
@@ -946,3 +947,38 @@ class TestRepeatedExecutions(SimpleTestCase):
             ):
                 run.main()
         self.assertEqual(provenance.call_args.args[0]["repeat"], 4)
+
+
+class TestSmokeFixtureAndFlow(TransactionTestCase):
+    """The one test that builds the fixture and runs a flow for real.
+
+    Every other test here is structural: they read the catalog, the runner's
+    AST, or mocked results, so a change to `tests/testapp`'s models could break
+    `prepare()` or a flow's invariants while CI stays green, and the breakage
+    would only surface the next time somebody ran the harness by hand. This
+    test closes that gap with the cheapest flow in the catalog.
+
+    It is a `TransactionTestCase`, unlike the rest of the suite, because the
+    harness runs in autocommit: under `TestCase`'s wrapping transaction any
+    `on_commit` hooks would be deferred instead of firing where they do in a
+    real run, and the fixture would build under transactional conditions the
+    harness never runs in.
+    """
+
+    def setUp(self):
+        # The testapp settings use DatabaseCache, the test runner does not
+        # create its table, and a Locale receiver touches the cache when the
+        # first locale is created -- the same reason run.py's template build
+        # creates it.
+        call_command("createcachetable", verbosity=0)
+
+    def test_the_cheapest_flow_completes_its_declared_workload(self):
+        context = catalog.prepare()
+        flow = catalog.BY_NAME["core_page_index"]
+
+        if flow.setup:
+            flow.setup(context, "small")
+        artifacts = flow.run(context, "small")
+        observed = flow.verify(context, "small", artifacts)
+
+        self.assertEqual(observed, flow.scale_point("small").expected_workload)
