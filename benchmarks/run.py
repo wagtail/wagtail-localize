@@ -590,6 +590,9 @@ def print_catalog():
             for point in flow.scale_points:
                 print(f"      {point.label:8}expects {point.expected_workload}")
         print(f"    entrypoint {flow.entrypoint}")
+        for index, covered in enumerate(flow.covers):
+            label = "covers" if index == 0 else ""
+            print(f"    {label:10} {covered}")
         print(f"    why        {flow.why}")
         print()
 
@@ -661,6 +664,8 @@ def main():
         return 0
 
     if arguments.list:
+        if arguments.flow:
+            parser.error("--list takes no flow name")
         if arguments.json_path:
             parser.error("--json has nothing to write with --list")
         print_catalog()

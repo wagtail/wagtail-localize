@@ -351,6 +351,34 @@ class TestExecutionSelection(SimpleTestCase):
         self.assertIn(run.ALL, message)
 
 
+class TestListTakesNoSelection(SimpleTestCase):
+    """`--list` prints the catalog and nothing else, so an argument that asks
+    for something it cannot do is an error rather than a silent omission."""
+
+    def _main_with(self, argv):
+        with (
+            mock.patch.object(sys, "argv", ["run.py", *argv]),
+            mock.patch("sys.stdout"),
+            mock.patch("sys.stderr"),
+            self.assertRaises(SystemExit) as raised,
+        ):
+            run.main()
+        return raised.exception
+
+    def test_a_flow_name_is_refused(self):
+        self.assertEqual(self._main_with(["submit_page_post", "--list"]).code, 2)
+
+    def test_a_json_path_is_refused(self):
+        self.assertEqual(self._main_with(["--list", "--json", "run.json"]).code, 2)
+
+    def test_the_bare_flag_still_prints(self):
+        with (
+            mock.patch.object(sys, "argv", ["run.py", "--list"]),
+            mock.patch("sys.stdout"),
+        ):
+            self.assertEqual(run.main(), 0)
+
+
 class TestOrchestration(SimpleTestCase):
     """A failing execution must not stop the ones after it."""
 

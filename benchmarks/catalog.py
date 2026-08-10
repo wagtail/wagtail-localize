@@ -88,9 +88,6 @@ class Flow:
 
 PAGES = 12
 SNIPPETS = 4
-# Extra pages the core operations flows walk, kept disjoint from the pages the
-# admin flows act on so they do not collide with each other's preconditions.
-CORE_PAGES = 5
 # Page translations pre-created so the report view renders several rows.
 REPORT_PAGE_TRANSLATIONS = 5
 # StreamField blocks loaded onto the dedicated heavy page, so the flows that
@@ -178,12 +175,14 @@ def prepare():
 
         pages:    [0]        existing_page
                   [1:5]      extra report-only translations
-                  [5:10]     core_pages, untouched by the admin flows
+                  [5:10]     tree filler; named by no flow, but counted by
+                             core_page_index and walked by the subtree flow
                   [10]       heavy StreamField page, shared by every `large`
                   [11]       submit_page, left untranslated
         snippets: [0]        existing_snippet
                   [1]        extra report-only translation
-                  [3]        submit_snippet, left untranslated
+                  [2]        submit_related_snippets, with [3]
+                  [3]        submit_snippet, also in submit_related_snippets
     """
     from benchmarks.seed import build_snippet_pool, build_tree, ensure_locales
 
@@ -273,7 +272,6 @@ def prepare():
         # their sources and French targets inside its measured POST. Keeping
         # this set fixed is what makes 2 vs 40 references a clean scale.
         submit_related_snippets=(snippets[-2], snippets[-1]),
-        core_pages=pages[5 : 5 + CORE_PAGES],
     )
 
 
