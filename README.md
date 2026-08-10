@@ -108,8 +108,9 @@ To run the test app interactively, use `tox -e interactive`, visit `http://127.0
 
 ### Performance benchmarks
 
-See [`benchmarks/README.md`](benchmarks/README.md) for the benchmark catalog,
-methodology, and commands for reproducible before/after measurements.
+See [`benchmarks/README.md`](https://github.com/wagtail/wagtail-localize/blob/main/benchmarks/README.md)
+for the benchmark catalog, methodology, and commands for reproducible
+before/after measurements.
 
 ## Support
 
