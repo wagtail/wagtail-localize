@@ -77,6 +77,8 @@ exclude = [
     "Makefile",
     "scripts",
     "docs",
+    "demo",
+    "tests",
     ".*",
     "*.db",
     "*.js",
