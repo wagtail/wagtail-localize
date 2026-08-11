@@ -121,6 +121,28 @@ jobs:
       - run: ./scripts/extract-translatable-strings.js
       - run: git diff --exit-code src/wagtail_localize/locale/en/LC_MESSAGES/djangojs.po
 
+  demo:
+    runs-on: ubuntu-26.04-arm
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up Python ${{ env.PYTHON_LATEST }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_LATEST }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade uv
+          python -m uv pip install --system -e .
+      - name: Check the demo project
+        run: python demo/manage.py check
+      - name: Check for missing demo migrations
+        run: python demo/manage.py makemigrations --check --noinput
+      - name: Run the demo tests
+        run: python demo/manage.py test home
+
   coverage:
     runs-on: ubuntu-26.04-arm
     needs:
