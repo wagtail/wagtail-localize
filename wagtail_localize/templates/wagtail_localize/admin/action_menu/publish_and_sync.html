@@ -1,0 +1,22 @@
+{% load i18n wagtailadmin_tags %}
+<button
+    type="submit"
+    name="action-publish"
+    value="{{ submit_value|default:'action-publish-and-sync' }}"
+    class="button button-longrunning"
+    data-controller="w-progress"
+    data-action="w-progress#activate"
+    data-w-progress-active-value="{% if is_scheduled %}{% trans 'Scheduling and syncing…' %}{% else %}{% trans 'Publishing and syncing…' %}{% endif %}"
+>
+    {% if icon_name %}{% icon name=icon_name classname="button-longrunning__icon" %}{% endif %}
+    {% icon name="spinner" %}
+    <em data-w-progress-target="label">
+        {% if is_scheduled %}
+            {% trans "Schedule to publish & sync" %}
+        {% elif is_revision %}
+            {% trans "Publish this version & sync" %}
+        {% else %}
+            {{ label }}
+        {% endif %}
+    </em>
+</button>

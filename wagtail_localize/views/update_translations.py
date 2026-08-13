@@ -1,5 +1,7 @@
 import contextlib
 
+from dataclasses import dataclass
+
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -21,6 +23,69 @@ from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import TranslationSource
 from wagtail_localize.views.edit_translation import apply_machine_translation
 from wagtail_localize.views.submit_translations import TranslationComponentManager
+
+
+@dataclass
+class SyncTranslationsResult:
+    translations: list
+    published: int = 0
+    machine_translated: int = 0
+
+
+def sync_translation_source(
+    translation_source,
+    *,
+    user,
+    publish: bool = False,
+    use_machine_translation: bool = False,
+    machine_translator=None,
+    components=None,
+):
+    """
+    Synchronise translations for the given source. Optionally publish the updated targets
+    and/or run machine translation beforehand.
+    """
+    translation_source.update_from_db()
+
+    enabled_translations_qs = translation_source.translations.filter(enabled=True)
+    translations = list(enabled_translations_qs.select_related("target_locale"))
+
+    if not translations:
+        return SyncTranslationsResult(translations=[])
+
+    machine_translated = 0
+    if use_machine_translation:
+        if machine_translator is None:
+            machine_translator = get_machine_translator()
+        if machine_translator is not None:
+            for translation in translations:
+                apply_machine_translation(translation.id, user, machine_translator)
+                machine_translated += 1
+
+    published = 0
+    if publish:
+        for translation in translations:
+            with contextlib.suppress(ValidationError):
+                translation.save_target(user=user, publish=True)
+                published += 1
+    else:
+        for translation in translations:
+            with contextlib.suppress(ValidationError):
+                translation.source.update_target_view_restrictions(
+                    translation.target_locale
+                )
+
+    if components is not None:
+        components.save(
+            translation_source,
+            sources_and_translations={translation_source: translations},
+        )
+
+    return SyncTranslationsResult(
+        translations=translations,
+        published=published,
+        machine_translated=machine_translated,
+    )
 
 
 class UpdateTranslationsForm(forms.Form):
@@ -153,32 +218,15 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
 
     @transaction.atomic
     def form_valid(self, form):
-        self.object.update_from_db()
-
-        enabled_translations = self.object.translations.filter(enabled=True)
-        if form.cleaned_data.get("use_machine_translation"):
-            machine_translator = get_machine_translator()
-            for translation in enabled_translations.select_related("target_locale"):
-                apply_machine_translation(
-                    translation.id, self.request.user, machine_translator
-                )
-
-        if form.cleaned_data["publish_translations"]:
-            for translation in enabled_translations.select_related("target_locale"):
-                with contextlib.suppress(ValidationError):
-                    translation.save_target(user=self.request.user, publish=True)
-        else:
-            for translation in enabled_translations.select_related(
-                "source", "target_locale"
-            ):
-                with contextlib.suppress(ValidationError):
-                    translation.source.update_target_view_restrictions(
-                        translation.target_locale
-                    )
-
-        self.components.save(
+        use_machine_translation = form.cleaned_data.get(
+            "use_machine_translation", False
+        )
+        sync_translation_source(
             self.object,
-            sources_and_translations={self.object: list(enabled_translations)},
+            user=self.request.user,
+            publish=form.cleaned_data["publish_translations"],
+            use_machine_translation=use_machine_translation,
+            components=self.components,
         )
 
         # TODO: Button that links to page in translations report when we have it
