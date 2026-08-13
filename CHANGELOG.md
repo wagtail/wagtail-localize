@@ -10,22 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Wagtail 7.3 and 7.4 (LTS) to the test matrix.
-- Django 5.1 to the test matrix.
+- Django 5.2 to the test matrix.
 
 ### Changed
 
 - Minimum supported Wagtail is now 7.0.
-- Minimum supported Django is now 5.1.
-
-### Fixed
-
-- `Translation.save_target()` no longer raises an `IntegrityError` on the `(translation_key, locale_id)` unique constraint when translating a snippet whose cluster contains nested `TranslatableMixin` grandchildren. Wagtail's `copy_for_translation` only re-locales the top level of the returned cluster, so the fixup is applied here as well.
+- Minimum supported Django is now 5.2.
 
 ### Removed
 
-- Support for Wagtail 6.3 (reached end of life on 2026-05-01).
-- Support for Django 4.2 (reached end of life in April 2026).
-- Stale `WAGTAIL_VERSION` and `DJANGO_VERSION` compatibility guards for versions outside the supported range.
+- Support for Wagtail < 7.0
+- Support for Django 4.2
 
 ## [1.13] - 2025-01-25
 
