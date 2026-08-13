@@ -831,7 +831,7 @@ class TranslationSource(models.Model):
                     self.sync_view_restrictions(original, translation)
 
                     if publish:
-                        transaction.on_commit(new_revision.publish)
+                        transaction.on_commit(lambda: new_revision.publish(user=user))
 
                 elif isinstance(translation, DraftStateMixin):
                     # We copied another instance which may be live, so we make sure this one matches the desired state
@@ -842,7 +842,7 @@ class TranslationSource(models.Model):
                     new_revision = translation.save_revision(user=user)
 
                     if publish:
-                        transaction.on_commit(new_revision.publish)
+                        transaction.on_commit(lambda: new_revision.publish(user=user))
 
                 elif isinstance(translation, RevisionMixin):
                     translation.save()
