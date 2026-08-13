@@ -19,6 +19,10 @@ from wagtail_localize.test.models import (
     TestWithTranslationModeDisabledPage,
     TestWithTranslationModeEnabledPage,
 )
+from wagtail_localize.wagtail_hooks import (
+    page_header_buttons,
+    page_listing_more_buttons,
+)
 
 from .utils import assert_permission_denied, make_test_page
 
@@ -992,3 +996,28 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
         )
 
         assert_permission_denied(self, response)
+
+
+class TestTranslationButtonPriority(WagtailTestUtils, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.en_locale = Locale.objects.get()
+        cls.fr_locale = Locale.objects.create(language_code="fr")
+        cls.de_locale = Locale.objects.create(language_code="de")
+
+        cls.en_homepage = Page.objects.get(depth=2)
+
+        cls.en_blog_index = make_test_page(cls.en_homepage, title="Blog", slug="blog")
+
+    def setUp(self):
+        self.user = self.login()
+
+    def test_listing_buttons_priority(self):
+        buttons = list(page_listing_more_buttons(self.en_blog_index, self.user))
+        translate_button = next(b for b in buttons if b.label == "Translate this page")
+        self.assertEqual(translate_button.priority, 35)
+
+    def test_page_header_buttons_priority(self):
+        buttons = list(page_header_buttons(self.en_blog_index, self.user))
+        translate_button = next(b for b in buttons if b.label == "Translate this page")
+        self.assertEqual(translate_button.priority, 55)
