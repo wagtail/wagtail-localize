@@ -1,4 +1,4 @@
-import contextlib
+import logging
 
 from collections import defaultdict
 
@@ -8,6 +8,9 @@ from django.db import transaction
 from wagtail.models import DraftStateMixin, Page
 
 from wagtail_localize.models import Translation, TranslationSource
+
+
+logger = logging.getLogger(__name__)
 
 
 class TranslationCreator:
@@ -85,8 +88,15 @@ class TranslationCreator:
                 # If the model can't be saved as a draft, then we have to publish it
                 publish = not isinstance(instance, DraftStateMixin)
 
-            with contextlib.suppress(ValidationError):
+            try:
                 translation.save_target(user=self.user, publish=publish)
+            except ValidationError as e:
+                logger.warning(
+                    "Failed to save translation of %r into %s due to a ValidationError: %s",
+                    instance,
+                    target_locale,
+                    e.messages,
+                )
 
 
 @transaction.atomic
