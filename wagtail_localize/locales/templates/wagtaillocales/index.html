@@ -44,4 +44,8 @@
 
         </div>
     </div>
+    {% if is_paginated %}
+    {% include "wagtailadmin/shared/pagination_nav.html" with page_obj=page_obj %}
+    {% endif %}
+
 {% endblock %}
