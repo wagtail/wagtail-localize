@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # Delete old translation files (except "en" which is the source translation)
 find ../wagtail-localize -iname *.po ! -iwholename */en/* -delete
