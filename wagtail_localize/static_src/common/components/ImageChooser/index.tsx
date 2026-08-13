@@ -1,15 +1,13 @@
+/* eslint-disable react/prop-types */
+
 import React, { FunctionComponent } from 'react';
+// gettext is provided as a Wagtail runtime external.
+// eslint-disable-next-line import/no-unresolved
 import gettext from 'gettext';
 
-interface ImageAPI {
-    id: number;
-    title: string;
-    thumbnail: {
-        url: string;
-        width: number;
-        height: number;
-    };
-}
+// TypeScript resolves the directory's index module.
+// eslint-disable-next-line import/extensions
+import { fetchImageInfo, ImageAPI } from './api';
 
 interface ImageChooserProps {
     adminBaseUrl: string;
@@ -21,22 +19,43 @@ const ImageChooser: FunctionComponent<ImageChooserProps> = ({
     imageId,
 }) => {
     const [imageInfo, setImageInfo] = React.useState<ImageAPI | null>(null);
+    const [imageInfoUnavailable, setImageInfoUnavailable] =
+        React.useState(false);
 
     React.useEffect(() => {
+        let cancelled = false;
+
         setImageInfo(null);
+        setImageInfoUnavailable(false);
 
         if (imageId) {
-            fetch(`${adminBaseUrl}api/main/images/${imageId}/`)
-                .then((response) => response.json())
-                .then(setImageInfo);
+            fetchImageInfo(adminBaseUrl, imageId).then((image) => {
+                if (!cancelled) {
+                    setImageInfo(image);
+                    setImageInfoUnavailable(image === null);
+                }
+            });
         }
-    }, [imageId]);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [adminBaseUrl, imageId]);
 
     // Render
-    let classNames = ['chooser', 'image-chooser'];
+    const classNames = ['chooser', 'image-chooser'];
     let inner;
     if (imageId) {
-        if (imageInfo) {
+        if (imageInfoUnavailable) {
+            inner = (
+                <p>
+                    {gettext('Image %s no longer exists.').replace(
+                        '%s',
+                        imageId.toString()
+                    )}
+                </p>
+            );
+        } else if (imageInfo) {
             inner = (
                 <div className="chosen">
                     <div className="preview-image">
