@@ -80,6 +80,7 @@ export interface StringSegment extends SegmentCommon {
     type: 'string';
     source: string;
     editUrl: string;
+    previousTranslation?: PreviousTranslation;
 }
 
 export interface SynchronisedValueSegment extends SegmentCommon {
@@ -129,6 +130,14 @@ export interface StringTranslation {
     isErrored: boolean;
     comment: string;
     translatedBy: User | null;
+}
+
+export interface PreviousTranslation {
+    value: string;
+    source: string | null;
+    comment: string | null;
+    translatedBy: User | null;
+    updatedAt: string | null;
 }
 
 export interface SegmentOverrideAPI {
