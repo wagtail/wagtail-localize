@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail import blocks, telepath
+from wagtail import blocks
 from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
@@ -32,6 +32,12 @@ from wagtail_localize.components import register_translation_component
 from wagtail_localize.fields import SynchronizedField, TranslatableField
 from wagtail_localize.models import TranslationSource
 from wagtail_localize.segments import StringSegmentValue
+
+
+try:
+    from wagtail.admin import telepath
+except ImportError:  # Wagtail <7.1
+    from wagtail import telepath
 
 
 if WAGTAIL_VERSION >= (6, 3):
