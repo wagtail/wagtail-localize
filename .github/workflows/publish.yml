@@ -10,12 +10,12 @@ jobs:
     permissions:
       contents: read # to fetch code (actions/checkout)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
 
@@ -25,7 +25,7 @@ jobs:
       - name: Build static files
         run: ./node_modules/.bin/webpack --mode production
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
           cache: 'pip'
@@ -38,7 +38,7 @@ jobs:
       - name: 🏗️ Build
         run: python -m flit build
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           path: ./dist
 
@@ -53,7 +53,7 @@ jobs:
       # Mandatory for trusted publishing
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
 
       - name: 🚀 Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

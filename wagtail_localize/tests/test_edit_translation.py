@@ -24,7 +24,6 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.panels import FieldPanel, TitleFieldPanel
 from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
@@ -131,14 +130,9 @@ class EditTranslationTestData(WagtailTestUtils):
         cls.home_page = Page.objects.get(depth=2)
         cls.fr_locale = Locale.objects.create(language_code="fr")
 
-        if WAGTAIL_VERSION >= (6, 4, 0, "alpha", 0):
-            cls.avatar_url = (
-                "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?d=mp&s=50"
-            )
-        else:
-            cls.avatar_url = (
-                "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?s=50&d=mm"
-            )
+        cls.avatar_url = (
+            "//www.gravatar.com/avatar/93942e96f5acd83e2e047ad8fe03114d?d=mp&s=50"
+        )
 
     def setUp(self):
         self.login(username=self.user.username)

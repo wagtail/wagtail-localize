@@ -2,7 +2,6 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page, TranslatableMixin
@@ -53,7 +52,7 @@ class StreamFieldSegmentExtractor:
                 else:
                     return []
 
-        if WAGTAIL_VERSION >= (6, 3) and apps.is_installed("wagtail.images"):
+        if apps.is_installed("wagtail.images"):
             from wagtail.images.blocks import ImageBlock
 
             if isinstance(block_type, ImageBlock):

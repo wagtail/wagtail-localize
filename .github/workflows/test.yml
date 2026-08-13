@@ -30,11 +30,11 @@ jobs:
         database: ['sqlite']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -46,7 +46,7 @@ jobs:
         env:
           DATABASE: sqlite
       - name: ⬆️ Upload coverage data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-data-${{ matrix.python }}-sqlite
           path: .coverage.*
@@ -75,13 +75,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Set up Python
         id: setup-python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
 
@@ -96,7 +96,7 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
           DATABASE: postgres
       - name: ⬆️ Upload coverage data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-data-${{ matrix.python }}-postgres
           path: .coverage.*
@@ -114,11 +114,11 @@ jobs:
         python: ['3.13']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           # Use latest Python, so it understands all syntax.
           python-version: ${{env.PYTHON_LATEST}}
@@ -129,7 +129,7 @@ jobs:
           python -Im uv pip install "coverage>=7.0,<8.0"
 
       - name: ⬇️ Download coverage data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: coverage-data-*
           merge-multiple: true
@@ -141,7 +141,7 @@ jobs:
           python -Im coverage report
 
       - name: 'Upload coverage to Codecov'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true

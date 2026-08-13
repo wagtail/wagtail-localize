@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       # keep in sync with .pre-commit-config.yaml
-      - run: python -Im pip install --user ruff==0.11.8
+      - run: python -Im pip install --user ruff==0.15.12
 
       - name: Run ruff
         working-directory: .

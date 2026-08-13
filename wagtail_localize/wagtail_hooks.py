@@ -10,10 +10,11 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.widgets.button import Button as ListingButton
+from wagtail.admin.widgets.button import Button as SnippetListingButton
 from wagtail.log_actions import LogFormatter
 from wagtail.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
@@ -29,14 +30,6 @@ from .views import (
     submit_translations,
     update_translations,
 )
-
-
-if WAGTAIL_VERSION >= (7, 0):
-    from wagtail.admin.widgets.button import Button as ListingButton
-    from wagtail.admin.widgets.button import Button as SnippetListingButton
-else:
-    from wagtail.admin.widgets import ListingButton
-    from wagtail.snippets.widgets import SnippetListingButton
 
 
 @hooks.register("register_admin_urls")

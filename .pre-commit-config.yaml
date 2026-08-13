@@ -4,7 +4,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -18,9 +18,9 @@ repos:
       - id: trailing-whitespace
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # keep in sync with .github/workflows/ruff.yml
-    rev: 'v0.11.8'
+    rev: 'v0.15.12'
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-prettier
@@ -29,7 +29,7 @@ repos:
       - id: prettier
         types_or: [markdown, css, scss, javascript, json, yaml, ts, tsx]
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: 'v8.1.0'
+    rev: 'v10.3.0'
     hooks:
       - id: eslint
         additional_dependencies:

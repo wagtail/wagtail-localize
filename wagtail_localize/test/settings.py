@@ -14,8 +14,6 @@ import os
 
 import dj_database_url
 
-from django import VERSION as DJANGO_VERSION
-
 
 modeladmin_app = ""
 try:
@@ -157,9 +155,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 
 USE_I18N = True
-
-if DJANGO_VERSION < (4, 0):
-    USE_L10N = True
 
 USE_TZ = True
 

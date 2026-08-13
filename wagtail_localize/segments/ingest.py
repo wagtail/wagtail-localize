@@ -2,7 +2,6 @@ from collections import defaultdict
 
 from django.apps import apps
 from django.db import models
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.fields import RichTextField, StreamField
 from wagtail.rich_text import RichText
@@ -130,7 +129,7 @@ class StreamFieldSegmentsWriter:
                 if isinstance(segment, OverridableSegmentValue):
                     return EmbedValue(segment.data)
 
-        if WAGTAIL_VERSION >= (6, 3) and apps.is_installed("wagtail.images"):
+        if apps.is_installed("wagtail.images"):
             from wagtail.images.blocks import ImageBlock
 
             if isinstance(block_type, ImageBlock):

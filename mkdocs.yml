@@ -36,11 +36,8 @@ plugins:
           options:
             show_root_toc_entry: false
             show_signature_annotations: true
-          setup_commands:
-            - import os
-            - import django
-            - os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wagtail_localize.test.settings")
-            - django.setup()
+          paths:
+            - wagtail_localize
   - include-markdown
 nav:
   - Home: index.md

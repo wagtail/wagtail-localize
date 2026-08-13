@@ -3,7 +3,6 @@ import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.blocks import StreamValue
 from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
@@ -346,9 +345,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
-    )
     def test_imageblock(self):
         block_id = uuid.uuid4()
         test_image = get_image_model().objects.create(
@@ -377,9 +373,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
-    )
     def test_imageblock_in_structblock(self):
         block_id = uuid.uuid4()
         test_image = get_image_model().objects.create(
@@ -410,9 +403,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
-    )
     def test_imageblock_in_listblock(self):
         block_id = uuid.uuid4()
         test_image = get_image_model().objects.create(
@@ -445,9 +435,6 @@ class TestSegmentExtractionWithStreamField(TestCase):
             ],
         )
 
-    @unittest.skipUnless(
-        WAGTAIL_VERSION >= (6, 3), "ImageBlock was added in Wagtail 6.3"
-    )
     def test_imageblock_in_streamblock(self):
         block_id = uuid.uuid4()
         nested_block_id = uuid.uuid4()
