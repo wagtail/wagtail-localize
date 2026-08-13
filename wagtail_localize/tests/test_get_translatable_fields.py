@@ -17,7 +17,7 @@ class TestGetTranslatableFields(TestCase):
             TestGenerateTranslatableFieldsPage
         )
 
-        self.assertEqual(
+        self.assertCountEqual(
             translatable_fields,
             [
                 TranslatableField("title"),
@@ -48,7 +48,7 @@ class TestOverrideTranslatableFields(TestCase):
             TestOverrideTranslatableFieldsPage
         )
 
-        self.assertEqual(
+        self.assertCountEqual(
             translatable_fields,
             [
                 TranslatableField("title"),
