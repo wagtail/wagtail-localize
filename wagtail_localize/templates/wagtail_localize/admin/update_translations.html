@@ -34,6 +34,8 @@
 
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
 
+            {% include "wagtailadmin/shared/non_field_errors.html" %}
+
             <ul class="fields">
                 {% block visible_fields %}
                     {% for field in form.visible_fields %}

@@ -3,45 +3,54 @@
 
 {% block listing %}
     <div class="nice-padding">
-        <div id="locales-list">
-            <table class="listing">
-                <thead>
-                    <tr>
-                        <th class="hostname">
-                            {% if ordering == "name" %}
-                                <a href="{% url 'wagtaillocales:index' %}" class="icon icon-arrow-down-after teal">
-                                    {% trans "Language" %}
-                                </a>
-                            {% else %}
-                                <a href="{% url 'wagtaillocales:index' %}?ordering=name" class="icon icon-arrow-down-after">
-                                    {% trans "Language" %}
-                                </a>
-                            {% endif %}
-                        </th>
-                        <th>{% trans "Usage" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for locale in locales %}
+        {% if locales %}
+            <div id="locales-list">
+                <table class="listing">
+                    <thead>
                         <tr>
-                            <td class="hostname title">
-                                <div class="title-wrapper">
-                                    <a href="{% url 'wagtaillocales:edit' locale.id %}">{{ locale }}</a>
-                                    {% if not locale.language_code_is_valid %}
-                                        {% trans "This locale's language code is not supported" as error %}
-                                          {% include "wagtaillocales/_icon.html" with error=error only %}
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td>
-                                {# TODO Make this translatable #}
-                                {{ locale.num_pages }} pages{% if locale.num_others %} + {{ locale.num_others }} others{% endif %}
-                            </td>
+                            <th class="hostname">
+                                {% if ordering == "name" %}
+                                    <a href="{% url 'wagtaillocales:index' %}" class="icon icon-arrow-down-after teal">
+                                        {% trans "Language" %}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'wagtaillocales:index' %}?ordering=name" class="icon icon-arrow-down-after">
+                                        {% trans "Language" %}
+                                    </a>
+                                {% endif %}
+                            </th>
+                            <th>{% trans "Usage" %}</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        </div>
+                    </thead>
+                    <tbody>
+                        {% for locale in locales %}
+                            <tr>
+                                <td class="hostname title">
+                                    <div class="title-wrapper">
+                                        <a href="{% url 'wagtaillocales:edit' locale.id %}">{{ locale }}</a>
+                                        {% if not locale.language_code_is_valid %}
+                                            {% trans "This locale's language code is not supported" as error %}
+                                            {% include "wagtaillocales/_icon.html" with error=error only %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {# TODO Make this translatable #}
+                                    {{ locale.num_pages }} pages{% if locale.num_others %} + {{ locale.num_others }} others{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="w-mt-8">{% trans "No locales have been created yet." %}</p>
+        {% endif %}
     </div>
+
+    {% if locales and is_paginated %}
+        <div class="nice-padding">
+            {% include "wagtailadmin/shared/pagination_nav.html" with items=page_obj linkurl=index_url %}
+        </div>
+    {% endif %}
 {% endblock %}

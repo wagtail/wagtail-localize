@@ -4,6 +4,7 @@ from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -277,6 +278,22 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
         self.assertRedirects(
             response, reverse("wagtailadmin_pages:edit", args=[translated_page.id])
         )
+
+    @patch("wagtail_localize.views.submit_translations.SubmitTranslationForm.clean")
+    def test_submit_translation_form_non_field_error_is_rendered(self, mock_clean):
+        mock_clean.side_effect = ValidationError("Form level problem")
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_index.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Form level problem", response.context["form"].non_field_errors())
+        self.assertContains(response, "Form level problem")
 
     @override_settings(WAGTAILLOCALIZE_SYNC_LIVE_STATUS_ON_TRANSLATE=False)
     def test_post_submit_page_translation_draft(self):

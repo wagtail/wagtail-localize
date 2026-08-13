@@ -5,7 +5,8 @@ from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail import blocks, telepath
+from wagtail import blocks
+from wagtail.admin import telepath
 from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
