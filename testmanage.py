@@ -6,6 +6,7 @@ import shutil
 import sys
 import warnings
 
+from bs4 import MarkupResemblesLocatorWarning
 from django.core.management import execute_from_command_line
 
 
@@ -50,6 +51,8 @@ def runtests():
     elif args.deprecation == "none":
         # Deprecation warnings are ignored by default
         pass
+
+    warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
     argv = [sys.argv[0]] + rest
 
