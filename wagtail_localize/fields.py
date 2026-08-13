@@ -237,6 +237,10 @@ def _update_descendants_locale(obj, target_locale):
     """
     Recursively sets the locale on every TranslatableMixin descendant of obj.
     """
+    # FIXME: this is a workaround for an upstream issue in Wagtail:
+    # https://github.com/wagtail/wagtail/issues/14425 This might be removed in
+    # the future if the upstream issue is fixed, but for now we need to ship our
+    # own workaround.
     for child_relation in get_all_child_relations(obj):
         accessor = child_relation.get_accessor_name()
         for descendant in getattr(obj, accessor).all():

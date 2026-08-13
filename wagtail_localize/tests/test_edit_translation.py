@@ -1743,6 +1743,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_resync_nested_snippet_translation_keeps_locale(self):
+        # This tests the implementation of `wagtail_localize.fields._update_descendants_locale`
         # Re-syncing a translation whose nested tree already exists must keep the
         # deeply-nested SubNavigationLink in the target locale (it is copied
         # again but its locale must still be updated).
