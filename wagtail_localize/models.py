@@ -3,6 +3,7 @@ import uuid
 
 import polib
 
+from django import forms
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import quote
@@ -82,7 +83,7 @@ def pk(obj):
         return Translation.objects.filter(target_locale=pk(target_locale))
 
 
-    # Both of these would be valid calls
+    # Both of these would be valid function calls
     get_translations(Locale.objects.get(id=1))
     get_translations(1)
     ```
@@ -2323,6 +2324,24 @@ def register_post_delete_signal_handlers():
 
 
 class LocaleSynchronizationModelForm(LocaleComponentModelForm):
+    SYNC_PAGE_STATUS_CHOICES = [
+        ("MIRROR", _("Mirror source status")),
+        ("DRAFT", _("Draft (always unpublished)")),
+    ]
+
+    sync_page_status = forms.ChoiceField(
+        choices=SYNC_PAGE_STATUS_CHOICES,
+        widget=forms.RadioSelect,
+        label=_("Page status for synced pages"),
+        help_text=_(
+            "Choose how synced pages should be published. 'Draft' keeps all synced pages "
+            "unpublished until manually reviewed. 'Mirror' matches the source page's live/draft status."
+        ),
+    )
+
+    class Meta:
+        fields = ["sync_from", "sync_page_status"]
+
     def validate_with_locale(self, locale):
         # Note: we must compare the language_codes as it may be the same locale record,
         # but the language_code was updated in this request
@@ -2342,6 +2361,7 @@ class LocaleSynchronizationModelForm(LocaleComponentModelForm):
         "Any existing and future content authored in the selected locale will "
         "be automatically copied to this one."
     ),
+    required=True,
 )
 class LocaleSynchronization(models.Model):
     """
@@ -2352,6 +2372,7 @@ class LocaleSynchronization(models.Model):
     Attributes:
         locale (ForeignKey to Locale): The destination Locale of the synchronisation
         sync_from (ForeignKey to Locale): The source Locale of the synchronisation
+        sync_page_status (CharField): Controls whether synced pages are created as draft or mirror source status
     """
 
     locale = models.OneToOneField(
@@ -2359,6 +2380,16 @@ class LocaleSynchronization(models.Model):
     )
     sync_from = models.ForeignKey(
         "wagtailcore.Locale", on_delete=models.CASCADE, related_name="+"
+    )
+    sync_page_status = models.CharField(
+        max_length=10,
+        choices=LocaleSynchronizationModelForm.SYNC_PAGE_STATUS_CHOICES,
+        default="MIRROR",
+        verbose_name=_("Page status for synced pages"),
+        help_text=_(
+            "Choose how synced pages should be published. 'Draft' keeps all synced pages "
+            "unpublished until manually reviewed. 'Mirror' matches the source page's live/draft status."
+        ),
     )
 
     base_form_class = LocaleSynchronizationModelForm
@@ -2372,8 +2403,15 @@ class LocaleSynchronization(models.Model):
         background.enqueue(
             synchronize_tree,
             args=[self.sync_from, self.locale],
-            kwargs={"page_index": page_index},
+            kwargs={
+                "page_index": page_index,
+                "sync_page_status": self.sync_page_status,
+            },
         )
+
+
+# Set the model for the form after the class is defined
+LocaleSynchronizationModelForm.Meta.model = LocaleSynchronization
 
 
 @receiver(post_save, sender=LocaleSynchronization)
