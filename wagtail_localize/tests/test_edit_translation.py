@@ -1742,6 +1742,33 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_resync_nested_snippet_translation_keeps_locale(self):
+        # This tests the implementation of `wagtail_localize.fields._update_descendants_locale`
+        # Re-syncing a translation whose nested tree already exists must keep the
+        # deeply-nested SubNavigationLink in the target locale (it is copied
+        # again but its locale must still be updated).
+        snippet = Header.objects.create(name="Test header snippet")
+        nav_link = NavigationLink(label="Nav", page=self.page)
+        nav_link.sub_navigation_links = [
+            SubNavigationLink(label="SubNav", page=self.home_page)
+        ]
+        snippet.navigation_links = [nav_link]
+        snippet.save()
+
+        snippet_source, _ = TranslationSource.update_or_create_from_instance(snippet)
+        snippet_translation = Translation.objects.create(
+            source=snippet_source,
+            target_locale=self.fr_locale,
+        )
+
+        # First sync creates the FR tree.
+        snippet_translation.save_target()
+        # Second sync re-copies the already-existing FR tree.
+        snippet_translation.save_target()
+
+        fr_subs = SubNavigationLink.objects.filter(locale=self.fr_locale)
+        self.assertEqual(fr_subs.count(), 1)
+
     def test_edit_translation_when_block_deleted_from_source_page(self):
         # Tests for #433 - If a streamfield block that contained translatable text was deleted
         # from the source page after submission, the translation editor would crash.

@@ -35,7 +35,6 @@ from django.utils.translation import gettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import (
     ClusterableModel,
-    get_all_child_relations,
     get_serializable_data_for_fields,
     model_from_serializable_data,
 )
@@ -269,28 +268,6 @@ class MissingRelatedObjectError(Exception):
         self.locale = locale
 
         super().__init__()
-
-
-def _set_locale_on_nested_translatable_children(instance, locale):
-    """
-    Recursively walk every ParentalKey child relation on a cluster and set
-    `locale` on each `TranslatableMixin` descendant.
-
-    Wagtail's `copy_for_translation` only re-locales the direct entries in the
-    top-level `child_object_map`, leaving grandchildren of nested
-    `ClusterableModel` children at the source locale. Without this fixup, the
-    `(translation_key, locale_id)` unique constraint on those grandchildren
-    collides with the source rows on save.
-    """
-    if not isinstance(instance, ClusterableModel):
-        return
-
-    for child_relation in get_all_child_relations(instance):
-        accessor_name = child_relation.get_accessor_name()
-        for child in getattr(instance, accessor_name).all():
-            if isinstance(child, TranslatableMixin):
-                child.locale = locale
-            _set_locale_on_nested_translatable_children(child, locale)
 
 
 class TranslationSourceQuerySet(models.QuerySet):
@@ -772,14 +749,6 @@ class TranslationSource(models.Model):
                 )
             else:
                 translation = original.copy_for_translation(locale)
-
-            # Wagtail's `copy_for_translation` only switches the locale of
-            # direct child objects in the returned cluster. Grandchildren of
-            # nested `ClusterableModel` children keep the source locale, which
-            # collides on the `(translation_key, locale_id)` unique constraint
-            # when saved. Walk the cluster and re-assign the target locale on
-            # every nested translatable child.
-            _set_locale_on_nested_translatable_children(translation, locale)
 
             created = True
 

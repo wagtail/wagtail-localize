@@ -233,6 +233,23 @@ def get_translatable_fields(model):
         return translatable_fields
 
 
+def _update_descendants_locale(obj, target_locale):
+    """
+    Recursively sets the locale on every TranslatableMixin descendant of obj.
+    """
+    # FIXME: this is a workaround for an upstream issue in Wagtail:
+    # https://github.com/wagtail/wagtail/issues/14425 This might be removed in
+    # the future if the upstream issue is fixed, but for now we need to ship our
+    # own workaround.
+    for child_relation in get_all_child_relations(obj):
+        accessor = child_relation.get_accessor_name()
+        for descendant in getattr(obj, accessor).all():
+            if isinstance(descendant, TranslatableMixin):
+                descendant.locale = target_locale
+            if isinstance(descendant, ClusterableModel):
+                _update_descendants_locale(descendant, target_locale)
+
+
 def copy_synchronised_fields(source, target):
     """
     Copies data in synchronised fields from the source instance to the target instance.
@@ -274,6 +291,10 @@ def copy_synchronised_fields(source, target):
                                     child_object.translation_key
                                 )
                                 child_object.locale = target.locale
+                                if isinstance(child_object, ClusterableModel):
+                                    _update_descendants_locale(
+                                        child_object, target.locale
+                                    )
                         else:
                             child_object = child_objects
 
@@ -281,6 +302,8 @@ def copy_synchronised_fields(source, target):
                                 child_object.translation_key
                             )
                             child_object.locale = target.locale
+                            if isinstance(child_object, ClusterableModel):
+                                _update_descendants_locale(child_object, target.locale)
 
                 else:
                     source.copy_child_relation(field.name, target)
