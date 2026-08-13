@@ -1,4 +1,3 @@
-#
 # Translators:
 # benny_AT_it_digin.com <benny@it-digin.com>, 2021
 # mahulst, 2021
@@ -20,9 +19,6 @@ msgstr "[VERWIJDERD]"
 
 msgid "Actions"
 msgstr "Acties"
-
-msgid "Apply editor lock"
-msgstr "Bewerkingsvergrendeling inschakelen"
 
 msgid "Applying editor lock"
 msgstr "Bewerkingsvergrendeling aan het inschakelen"
@@ -113,9 +109,6 @@ msgstr "Publiceer in"
 
 msgid "Publishing..."
 msgstr "Bezig met publiceren..."
-
-msgid "Remove editor lock"
-msgstr "Verwijder bewerkingsblokkade"
 
 msgid "Removing editor lock"
 msgstr "Bewerkingsvergrendeling aan het uitschakelen"

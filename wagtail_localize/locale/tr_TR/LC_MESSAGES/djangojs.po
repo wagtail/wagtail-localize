@@ -1,4 +1,3 @@
-#
 # Translators:
 # José Luis <alagunajs@gmail.com>, 2021
 # Ragıp Ünal <ragip@ragipunal.com>, 2021
@@ -52,9 +51,6 @@ msgstr "Kilitle"
 
 msgid "Preview"
 msgstr "Önizleme"
-
-msgid "Remove editor lock"
-msgstr "Editör kilidini kaldır"
 
 msgid "Save"
 msgstr "Kaydet"

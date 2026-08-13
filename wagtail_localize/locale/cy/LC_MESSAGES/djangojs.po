@@ -1,4 +1,3 @@
-#
 # Translators:
 # Adam Hughes <adamhughes31@gmail.com>, 2021
 # Philip Crisp, 2024
@@ -18,9 +17,6 @@ msgstr "[WEDI'I DILEU]"
 
 msgid "Actions"
 msgstr "Gweithredoedd"
-
-msgid "Apply editor lock"
-msgstr "Cymhwyso clo golygydd"
 
 msgid "Applying editor lock"
 msgstr "Cymhwyso clo golygydd"
@@ -111,9 +107,6 @@ msgstr "Cyhoeddi yn "
 
 msgid "Publishing..."
 msgstr "Wrthi'n cyhoeddi..."
-
-msgid "Remove editor lock"
-msgstr "Dileu clo'r golygydd"
 
 msgid "Removing editor lock"
 msgstr "Yn tynnu clo golygydd"

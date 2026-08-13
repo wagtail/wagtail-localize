@@ -1,20 +1,41 @@
-#
 # Translators:
-# Peter Coward <peter@catalpa.io>, 2021
+# Peter Coward <peter@catalpa.io>, 2026
+# Mario <mario@catalpa.io>, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Peter Coward <peter@catalpa.io>, 2021\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Mario <mario@catalpa.io>, 2026\n"
 "Language-Team: Tetum (Tetun) (https://app.transifex.com/torchbox/teams/8009/"
 "tet/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tet\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+msgid "Disable"
+msgstr "Desativa"
+
+msgid "Enable"
+msgstr "Ativa"
+
+msgid "Yes, convert it"
+msgstr "Los, konverte"
+
+msgid "Go back"
+msgstr "Fila"
+
 msgid "Status"
 msgstr "Status"
 
 msgid "Content"
 msgstr "Konteudu"
+
+msgid "All"
+msgstr "Hotu"
+
+msgid "Select all"
+msgstr "Hili hotu"
+
+msgid "Sync translated snippets"
+msgstr "Sink tradusaun ba fragmentu sira"

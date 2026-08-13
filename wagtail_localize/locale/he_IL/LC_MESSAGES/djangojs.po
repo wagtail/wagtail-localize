@@ -1,4 +1,3 @@
-#
 # Translators:
 # Karl Hobley <karl@torchbox.com>, 2021
 # Adi Ron <adi@bnop.co>, 2021

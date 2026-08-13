@@ -1,15 +1,14 @@
-#
 # Translators:
 # Jihan Chung <jihanchung20@gmail.com>, 2021
-# Kyu Choi, 2022
 # Dan Braghis, 2022
 # Kyungil Choi <hanpama@gmail.com>, 2023
+# Kyu Choi, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Kyungil Choi <hanpama@gmail.com>, 2023\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Kyu Choi, 2026\n"
 "Language-Team: Korean (https://app.transifex.com/torchbox/teams/8009/ko/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ko\n"
@@ -30,6 +29,10 @@ msgstr "가능한"
 
 msgid "Yes, convert it"
 msgstr "네, 변환하십시오."
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "%(object_type)s%(title)s를 수정하는 중"
 
 msgid "Submit"
 msgstr "제출하다"

@@ -1,15 +1,13 @@
-#
 # Translators:
-# Marco Lerco <marcolerco@gmail.com>, 2021
 # andrea tagliazucchi <andreatagliazucchi@gmail.com>, 2021
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
-# Marco Badan <marco.badan@gmail.com>, 2022
 # Stefano Marchetto <airbatum@gmail.com>, 2024
 # tognee, 2024
+# Marco Badan <marco.badan@gmail.com>, 2026
 #
 msgid ""
 msgstr ""
-"Last-Translator: tognee, 2024\n"
+"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
@@ -22,8 +20,8 @@ msgstr "[DELETED]"
 msgid "Actions"
 msgstr "Azioni"
 
-msgid "Apply editor lock"
-msgstr "Applica il blocco dell'editor"
+msgid "Applying editor lock"
+msgstr "Applicazione blocco editor"
 
 msgid "Cancel"
 msgstr "Annulla"
@@ -57,6 +55,9 @@ msgstr "Scegli una immagine"
 
 msgid "Convert to alias page"
 msgstr "Converti in pagina alias"
+
+msgid "Converting to alias page"
+msgstr "Conversione in pagina alias"
 
 msgid "Delete"
 msgstr "Elimina"
@@ -109,9 +110,6 @@ msgstr "Pubblica in "
 msgid "Publishing..."
 msgstr "Pubblicazione in corso..."
 
-msgid "Remove editor lock"
-msgstr "Rimuovi blocco editor"
-
 msgid "Removing editor lock"
 msgstr "Rimuovendo blocco editor"
 
@@ -132,6 +130,9 @@ msgstr "Errore del Server"
 
 msgid "Stop Synced translation"
 msgstr "Interrompi traduzione sincronizzata"
+
+msgid "Stopping Synced translation"
+msgstr "Arresto della traduzione sincronizzata"
 
 msgid "There are unsaved segments. Please save or cancel them before leaving."
 msgstr ""

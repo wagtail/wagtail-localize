@@ -1,4 +1,3 @@
-#
 # Translators:
 # hanfeng <appweb.cn@gmail.com>, 2021
 # Orangle Liu <orangleliu@gmail.com>, 2021

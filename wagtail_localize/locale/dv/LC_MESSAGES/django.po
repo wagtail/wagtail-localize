@@ -1,12 +1,11 @@
-#
 # Translators:
-# Fauzaan Gasim, 2024
+# Fauzaan Gasim, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Fauzaan Gasim, 2024\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Fauzaan Gasim, 2026\n"
 "Language-Team: Divehi (https://app.transifex.com/torchbox/teams/8009/dv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: dv\n"
@@ -17,6 +16,10 @@ msgstr "ޑިޒޭބަލް"
 
 msgid "Translate"
 msgstr "ތަރުޖަމާ ކުރޭ"
+
+#, python-brace-format
+msgid "Translate {model_name}"
+msgstr "{model_name}ތަރުޖަމާ ކުރޭ"
 
 msgid "Enable"
 msgstr "އެނޭބަލް"

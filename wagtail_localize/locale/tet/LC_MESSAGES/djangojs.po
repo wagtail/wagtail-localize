@@ -1,13 +1,13 @@
-#
 # Translators:
 # Onorio de Jesus Afonso <onorio@catalpa.io>, 2021
 # Joanico Barros <joanico@catalpa.io>, 2021
 # Mariano de Deus <dedeus_mariano@yahoo.com>, 2021
 # Peter Coward <peter@catalpa.io>, 2024
+# Mario <mario@catalpa.io>, 2026
 #
 msgid ""
 msgstr ""
-"Last-Translator: Peter Coward <peter@catalpa.io>, 2024\n"
+"Last-Translator: Mario <mario@catalpa.io>, 2026\n"
 "Language-Team: Tetum (Tetun) (https://app.transifex.com/torchbox/teams/8009/"
 "tet/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,8 +17,14 @@ msgstr ""
 msgid "Actions"
 msgstr "Asaun sira"
 
+msgid "Cancel"
+msgstr "Kansela"
+
 msgid "Change image"
 msgstr "Troka imajen"
+
+msgid "Choose a document"
+msgstr "Hili dokumentu ida"
 
 msgid "Choose a page"
 msgstr "Hili pajina ida"
@@ -52,6 +58,12 @@ msgstr "Pré-visualizasaun"
 
 msgid "Save"
 msgstr "Rai"
+
+msgid "Saving..."
+msgstr "Salva hela..."
+
+msgid "Unlock"
+msgstr "Loke"
 
 msgid "Unpublish"
 msgstr "La publika "

@@ -1,4 +1,3 @@
-#
 # Translators:
 # Reinis Rozenbergs <reinisr@gmail.com>, 2021
 # Maris Serzans <maris.serzans@gmail.com>, 2024
@@ -14,9 +13,6 @@ msgstr ""
 
 msgid "Actions"
 msgstr "Darbības"
-
-msgid "Apply editor lock"
-msgstr "Pielietot redaktora slēgšanu"
 
 msgid "Choose a document"
 msgstr "Izvēlēties dokumentu"

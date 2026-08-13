@@ -1,4 +1,3 @@
-#
 # Translators:
 # 79353a696ad19dc202b261b3067b7640_bec941e, 2021
 # Nick Mavrakis <mavrakis.n@gmail.com>, 2021
@@ -16,9 +15,6 @@ msgstr ""
 
 msgid "Actions"
 msgstr "Ενέργειες"
-
-msgid "Apply editor lock"
-msgstr "Κλείδωμα επεξεργαστή κειμένου"
 
 msgid "Cancel"
 msgstr "Ακύρωση"

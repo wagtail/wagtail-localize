@@ -1,11 +1,11 @@
-#
 # Translators:
 # Lyuboslav  Petrov <petrov.lyuboslav@gmail.com>, 2021
 # Karl Hobley <karl@torchbox.com>, 2021
+# Maria Mitova, 2026
 #
 msgid ""
 msgstr ""
-"Last-Translator: Karl Hobley <karl@torchbox.com>, 2021\n"
+"Last-Translator: Maria Mitova, 2026\n"
 "Language-Team: Bulgarian (https://app.transifex.com/torchbox/teams/8009/"
 "bg/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,11 +30,17 @@ msgstr "Редакция"
 msgid "Edit this page"
 msgstr "Редактирайте тази страница"
 
+msgid "Lock"
+msgstr "Заключи"
+
 msgid "Preview"
 msgstr "Преглед"
 
 msgid "Save"
 msgstr "Запази"
+
+msgid "Unlock"
+msgstr "Отключи"
 
 msgid "Unpublish"
 msgstr "Отмени публикуването"

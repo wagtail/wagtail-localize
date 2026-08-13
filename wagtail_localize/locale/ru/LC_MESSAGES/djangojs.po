@@ -1,4 +1,3 @@
-#
 # Translators:
 # 2a01ec1f91c141c338f53ad8cc23abc6_8deca2d, 2021
 # Mikalai Radchuk <radchuk.m@gmail.com>, 2021
@@ -21,9 +20,6 @@ msgstr "[УДАЛЕНО]"
 
 msgid "Actions"
 msgstr "Действия"
-
-msgid "Apply editor lock"
-msgstr "Применить блокировку редактора"
 
 msgid "Applying editor lock"
 msgstr "Применение блокировки редактора"
@@ -114,9 +110,6 @@ msgstr "Опубликовать в"
 
 msgid "Publishing..."
 msgstr "Публикация..."
-
-msgid "Remove editor lock"
-msgstr "Убрать блокировку редактора"
 
 msgid "Removing editor lock"
 msgstr "Снятие блокировки редактора"

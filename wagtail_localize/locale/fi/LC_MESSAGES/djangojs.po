@@ -1,4 +1,3 @@
-#
 # Translators:
 # Aarni Koskela, 2021
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2022
@@ -17,9 +16,6 @@ msgstr "[POISTETTU]"
 
 msgid "Actions"
 msgstr "Toimet"
-
-msgid "Apply editor lock"
-msgstr "Toteuta editorin lukitus"
 
 msgid "Cancel"
 msgstr "Peruuta"
@@ -98,9 +94,6 @@ msgstr "Esikatsele"
 
 msgid "Publishing..."
 msgstr "Julkaistaan..."
-
-msgid "Remove editor lock"
-msgstr "Poista editorin lukitus"
 
 msgid "Save"
 msgstr "Tallenna"

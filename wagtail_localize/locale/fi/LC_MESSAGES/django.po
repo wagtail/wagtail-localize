@@ -1,15 +1,14 @@
-#
 # Translators:
 # Aarni Koskela, 2021
 # Glen Somerville <glen.somerville@gmail.com>, 2021
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2022
 # Valter Maasalo <vmaasalo@gmail.com>, 2023
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Valter Maasalo <vmaasalo@gmail.com>, 2023\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2026\n"
 "Language-Team: Finnish (https://app.transifex.com/torchbox/teams/8009/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fi\n"
@@ -56,6 +55,10 @@ msgstr "Käännä tämä sivu"
 
 msgid "Translations"
 msgstr "Käännökset"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Muokataan %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Lähetä"

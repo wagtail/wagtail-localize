@@ -1,4 +1,3 @@
-#
 # Translators:
 # Antoni Aloy <aaloy@apsl.net>, 2021
 # David Llop, 2021
@@ -17,9 +16,6 @@ msgstr "[ESBORRAT]"
 
 msgid "Actions"
 msgstr "Accions"
-
-msgid "Apply editor lock"
-msgstr "Aplica bloqueig d'editor"
 
 msgid "Applying editor lock"
 msgstr "Aplicant bloqueig d'editor"
@@ -110,9 +106,6 @@ msgstr "Publicar en "
 
 msgid "Publishing..."
 msgstr "Publicant..."
-
-msgid "Remove editor lock"
-msgstr "Esborrar bloqueig d'editor"
 
 msgid "Removing editor lock"
 msgstr "Eliminant bloqueig d'editor"

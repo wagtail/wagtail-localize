@@ -1,12 +1,11 @@
-#
 # Translators:
-# Dino Aljević <dino8890@protonmail.com>, 2023
+# Dino Aljević <dino8890@protonmail.com>, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2023\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Dino Aljević <dino8890@protonmail.com>, 2026\n"
 "Language-Team: Croatian (Croatia) (https://app.transifex.com/torchbox/teams/"
 "8009/hr_HR/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,6 +31,10 @@ msgstr "Da, pretvori"
 
 msgid "Translate this page"
 msgstr "Prevedi ovu stranicu"
+
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Uređivanje %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Prevedi"

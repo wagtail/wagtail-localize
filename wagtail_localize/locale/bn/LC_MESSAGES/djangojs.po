@@ -1,4 +1,3 @@
-#
 # Translators:
 # MA Rahman <ugikot@gmail.com>, 2021
 # Mahmud Abdur Rahman <clanlord.ikot@gmail.com>, 2021
@@ -10,9 +9,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: bn\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "Apply editor lock"
-msgstr "এডিটর লক প্রয়োগ করুন"
 
 msgid "Delete"
 msgstr "মুছে ফেলুন "

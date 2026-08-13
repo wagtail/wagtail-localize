@@ -1,4 +1,3 @@
-#
 # Translators:
 # Amós Oviedo <amos.oviedo@gmail.com>, 2024
 # X Bello <xbello@gmail.com>, 2024
@@ -16,9 +15,6 @@ msgstr "[ELIMINADO]"
 
 msgid "Actions"
 msgstr "Accións"
-
-msgid "Apply editor lock"
-msgstr "Aplicar bloqueo de editor"
 
 msgid "Applying editor lock"
 msgstr "Aplicando bloqueo de editor"
@@ -109,9 +105,6 @@ msgstr "Publicar en "
 
 msgid "Publishing..."
 msgstr "Publicando..."
-
-msgid "Remove editor lock"
-msgstr "Quitar bloqueo do editor"
 
 msgid "Removing editor lock"
 msgstr "Quitando bloqueo do editor"

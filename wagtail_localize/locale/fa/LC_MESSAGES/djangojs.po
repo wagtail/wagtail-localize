@@ -1,4 +1,3 @@
-#
 # Translators:
 # Mostafa Heidarian <tabvar@gmail.com>, 2020
 # Mohammad Hossein Mojtahedi <Mhm5000@gmail.com>, 2021
@@ -18,9 +17,6 @@ msgstr "[حذف شده]"
 
 msgid "Actions"
 msgstr "اعمال"
-
-msgid "Apply editor lock"
-msgstr "گذاشتن قفل ویراستاری"
 
 msgid "Cancel"
 msgstr "انصراف"
@@ -66,9 +62,6 @@ msgstr "پیش‌نمایش"
 
 msgid "Publishing..."
 msgstr "درحال انتشار..."
-
-msgid "Remove editor lock"
-msgstr "حذف قفل ویراستار"
 
 msgid "Save"
 msgstr "ذخیره"

@@ -1,4 +1,3 @@
-#
 # Translators:
 # Iuri L. Machado, 2021
 # Rodrigo Sottomaior Macedo <sottomaiormacedotec@sottomaiormacedo.tech>, 2022
@@ -19,9 +18,6 @@ msgstr "[REMOVIDO]"
 
 msgid "Actions"
 msgstr "Ações"
-
-msgid "Apply editor lock"
-msgstr "Aplicar bloqueio do editor"
 
 msgid "Applying editor lock"
 msgstr "Aplicando bloqueio de editor"
@@ -112,9 +108,6 @@ msgstr "Publicar em"
 
 msgid "Publishing..."
 msgstr "Publicando..."
-
-msgid "Remove editor lock"
-msgstr "Remover bloqueio do editor"
 
 msgid "Removing editor lock"
 msgstr "Removendo bloqueio do editor"

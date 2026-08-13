@@ -1,4 +1,3 @@
-#
 # Translators:
 # Mirek Zvolský <zvolsky@seznam.cz>, 2021
 # IT Management <hudan@itmanagement.cz>, 2024
@@ -17,9 +16,6 @@ msgstr "[ZRUŠENO]"
 
 msgid "Actions"
 msgstr "Akce"
-
-msgid "Apply editor lock"
-msgstr "Uzamknout pro úpravy"
 
 msgid "Cancel"
 msgstr "Storno"
@@ -92,9 +88,6 @@ msgstr "Publikovat"
 
 msgid "Publishing..."
 msgstr "Publikování..."
-
-msgid "Remove editor lock"
-msgstr "Zrušit uzamčení pro úpravy"
 
 msgid "Save"
 msgstr "Uložit"

@@ -1,4 +1,3 @@
-#
 # Translators:
 # Luka Matijević <lumatijev@gmail.com>, 2021
 # Dino Aljević <dino8890@protonmail.com>, 2024

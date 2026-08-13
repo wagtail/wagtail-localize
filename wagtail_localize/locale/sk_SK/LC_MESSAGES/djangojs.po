@@ -1,4 +1,3 @@
-#
 # Translators:
 # Martin Janšto <mato@jansto.sk>, 2021
 # dellax <michalnebbia@gmail.com>, 2024

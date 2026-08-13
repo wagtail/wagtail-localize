@@ -1,14 +1,14 @@
-#
 # Translators:
 # Cihad GÜNDOĞDU <cihadgundogdu@gmail.com>, 2021
 # Ragıp Ünal <ragip@ragipunal.com>, 2021
 # Halim Turan <halim_turan_61@hotmail.com>, 2021
 # Basitlik İyidir, 2021
 # Py Data Geek <pydatageek@gmail.com>, 2024
+# LB (Ben Johnston) <mail@lb.ee>, 2025
 #
 msgid ""
 msgstr ""
-"Last-Translator: Py Data Geek <pydatageek@gmail.com>, 2024\n"
+"Last-Translator: LB (Ben Johnston) <mail@lb.ee>, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/torchbox/teams/8009/tr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: tr\n"
@@ -17,8 +17,8 @@ msgstr ""
 msgid "Actions"
 msgstr "Eylemler"
 
-msgid "Apply editor lock"
-msgstr "Editör kilidini kaldır"
+msgid "Cancel"
+msgstr "İptal"
 
 msgid "Change image"
 msgstr "Resmi değiştir"
@@ -56,14 +56,14 @@ msgstr "Kilitle"
 msgid "Preview"
 msgstr "Önizleme"
 
-msgid "Remove editor lock"
-msgstr "Editör kilidini kaldır"
-
 msgid "Save"
 msgstr "Kaydet"
 
 msgid "Saving..."
 msgstr "Kaydediliyor"
+
+msgid "Translate"
+msgstr "Çevir"
 
 msgid "Unlock"
 msgstr "Kilidini aç"

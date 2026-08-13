@@ -1,15 +1,14 @@
-#
 # Translators:
 # Giacomo Ghizzani <giacomo.ghz@gmail.com>, 2021
 # Marco Lerco <marcolerco@gmail.com>, 2023
-# Marco Badan <marco.badan@gmail.com>, 2024
 # tognee, 2024
+# Marco Badan <marco.badan@gmail.com>, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: tognee, 2024\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Marco Badan <marco.badan@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/torchbox/teams/8009/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: it\n"
@@ -145,6 +144,10 @@ msgstr "Traduzione di %(instance)s in %(locale)s"
 msgid "Translations"
 msgstr "Traduzioni"
 
+#, python-format
+msgid "Editing %(object_type)s %(title)s"
+msgstr "Modifica di %(object_type)s %(title)s"
+
 msgid "Submit"
 msgstr "Invia"
 
@@ -278,6 +281,27 @@ msgstr ""
 
 msgid "Publish immediately"
 msgstr "Pubblica immediatamente"
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
+msgstr ""
+"Applica gli aggiornamenti e pubblica immediatamente. Le modifiche useranno "
+"la lingua originale fino alla traduzione, a meno che non si selezioni anche "
+"\"Usa traduzione automatica\"."
+
+msgid "Use machine translation"
+msgstr "Usa traduzione automatica"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Applica le traduzioni automatiche alle modifiche in arrivo."
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Applica gli aggiornamenti e pubblica immediatamente. Le modifiche useranno "
+"la lingua originale finché non saranno tradotte."
 
 msgid "Update existing translations"
 msgstr "Aggiorna traduzioni esistenti"

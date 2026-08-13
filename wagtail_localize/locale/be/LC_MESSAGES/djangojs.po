@@ -1,4 +1,3 @@
-#
 # Translators:
 # Stas Rudakou <stas@garage22.net>, 2021
 # Tatsiana Tsygan <art.tatsiana@gmail.com>, 2024
@@ -20,9 +19,6 @@ msgstr "[ВЫДАЛЕНЫ]"
 
 msgid "Actions"
 msgstr "Дзеянні"
-
-msgid "Apply editor lock"
-msgstr "Заблакаваць рэдактар"
 
 msgid "Applying editor lock"
 msgstr "Прымяненне блакавання рэдактара"
@@ -113,9 +109,6 @@ msgstr "Публікаваць у"
 
 msgid "Publishing..."
 msgstr "Публікацыя..."
-
-msgid "Remove editor lock"
-msgstr "Выдаліць блакаванне рэдактара"
 
 msgid "Removing editor lock"
 msgstr "Зняцце блакавання рэдактара"

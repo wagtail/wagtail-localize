@@ -1,4 +1,3 @@
-#
 # Translators:
 # Martin Sandström <martin@marteinn.se>, 2021
 # Thomas Kunambi <kunambi@gmail.com>, 2021
@@ -17,9 +16,6 @@ msgstr "[RADERAD]"
 
 msgid "Actions"
 msgstr "Handlingar"
-
-msgid "Apply editor lock"
-msgstr "Tillämpa redaktörslås"
 
 msgid "Cancel"
 msgstr "Avbryt"
@@ -104,9 +100,6 @@ msgstr "Publicera på"
 
 msgid "Publishing..."
 msgstr "Publicerar..."
-
-msgid "Remove editor lock"
-msgstr "Ta bort redaktörslås"
 
 msgid "Revert to %s version"
 msgstr "Återställ till %s version"

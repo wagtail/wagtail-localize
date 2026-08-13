@@ -1,13 +1,12 @@
-#
 # Translators:
-# saevarom <saevar@saevar.is>, 2022
 # Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2023
+# saevarom <saevar@saevar.is>, 2025
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Arnar Tumi Þorsteinsson <arnartumi@gmail.com>, 2023\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: saevarom <saevar@saevar.is>, 2025\n"
 "Language-Team: Icelandic (Iceland) (https://app.transifex.com/torchbox/teams/"
 "8009/is_IS/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -270,6 +269,27 @@ msgstr "Tókst að senda inn síðuna '{page_title}' í þýðingu fyrir {locale
 
 msgid "Publish immediately"
 msgstr "Setja í birtingu strax"
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
+msgstr ""
+"Vista breytingar og setja í loftið nú þegar. Breytingarnar munu nota "
+"upprunalega tungumálið þar til þýðingar hafa verið gerðar nema þú veljir "
+"líka „Nota vélþýðingu“."
+
+msgid "Use machine translation"
+msgstr "Nota vélþýðingu"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Nota vélþýðingu fyrir nýjar breytingar"
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Vista breytingar og birta nú þegar. Breytingarnar munu nota upprunalega "
+"tungumálið þar til þýðingar hafa verið gerðar."
 
 msgid "Update existing translations"
 msgstr "Uppfæra núverandi þýðingar"

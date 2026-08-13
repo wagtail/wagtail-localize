@@ -1,4 +1,3 @@
-#
 # Translators:
 # Istvan Farkas <istvan.farkas@gmail.com>, 2025
 #
@@ -16,9 +15,6 @@ msgstr "[TÖRÖLT]"
 
 msgid "Actions"
 msgstr "Akciók"
-
-msgid "Apply editor lock"
-msgstr "Szerkesztési zárolás"
 
 msgid "Applying editor lock"
 msgstr "Szerkesztési zár alkalmazása"
@@ -109,9 +105,6 @@ msgstr "Közzététel: "
 
 msgid "Publishing..."
 msgstr "Közzététel..."
-
-msgid "Remove editor lock"
-msgstr "Szerkesztési zár feloldása"
 
 msgid "Removing editor lock"
 msgstr "Szerkesztési zár feloldása"

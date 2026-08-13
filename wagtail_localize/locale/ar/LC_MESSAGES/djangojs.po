@@ -1,31 +1,52 @@
-#
 # Translators:
+# abdulaziz alfuhigi <abajall@gmail.com>, 2021
 # ROGER MICHAEL ASHLEY ALLEN <rogermaallen@gmail.com>, 2021
 # Ahmad Kiswani <kiswani.ahmad@gmail.com>, 2021
-# abdulaziz alfuhigi <abajall@gmail.com>, 2021
-# Ahmed Miske Sidi Med <boutien321@gmail.com>, 2024
+# Ahmed Miske Sidi Med <boutien321@gmail.com>, 2021
 # Tarek Berkane, 2025
+# Abdullah Bamuhrez <bamuhrez@gmail.com>, 2025
 #
 msgid ""
 msgstr ""
-"Last-Translator: Tarek Berkane, 2025\n"
+"Last-Translator: Abdullah Bamuhrez <bamuhrez@gmail.com>, 2025\n"
 "Language-Team: Arabic (https://app.transifex.com/torchbox/teams/8009/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
+msgid "[DELETED]"
+msgstr "[محذوف]"
+
 msgid "Actions"
-msgstr "النشاطات"
+msgstr "الإجراءات"
+
+msgid "Applying editor lock"
+msgstr "تطبيق قفل المحرر"
 
 msgid "Cancel"
 msgstr "إلغاء"
 
+msgid "Change %s"
+msgstr "تغيير %s"
+
+msgid "Change document"
+msgstr "تغيير المستند"
+
 msgid "Change image"
-msgstr "تغير الصورة"
+msgstr "تغيير الصورة"
+
+msgid "Change page"
+msgstr "تغيير الصفحة"
+
+msgid "Changed"
+msgstr "تم التغيير"
+
+msgid "Choose a %s"
+msgstr "اختر %s"
 
 msgid "Choose a document"
-msgstr "احتر وثيقة"
+msgstr "اختر مستندًا"
 
 msgid "Choose a page"
 msgstr "اختر صفحة"
@@ -33,41 +54,110 @@ msgstr "اختر صفحة"
 msgid "Choose an image"
 msgstr "اختر صورة"
 
+msgid "Convert to alias page"
+msgstr "تحويل إلى صفحة بديلة"
+
+msgid "Converting to alias page"
+msgstr "جارٍ التحويل إلى صفحة بديلة"
+
 msgid "Delete"
 msgstr "حذف"
+
+msgid "Download PO file"
+msgstr "تنزيل ملف PO"
+
+msgid "Download PO file and input translations offline"
+msgstr "تنزيل ملف PO وإدخال الترجمات دون اتصال"
 
 msgid "Edit"
 msgstr "تحرير"
 
 msgid "Edit this %s"
-msgstr "تحرير هذا %s"
+msgstr "تحرير %s هذا"
 
 msgid "Edit this document"
-msgstr "تحرير هذه الوثيقة"
+msgstr "تحرير هذا المستند"
 
 msgid "Edit this image"
-msgstr "حرر هذه الصورة"
+msgstr "تحرير هذه الصورة"
 
 msgid "Edit this page"
-msgstr "حرر هذه الصفحة"
+msgstr "تحرير هذه الصفحة"
+
+msgid "Fetching %s information..."
+msgstr "جارٍ جلب معلومات %s..."
+
+msgid "Fetching document information..."
+msgstr "جارٍ جلب معلومات المستند..."
+
+msgid "Fetching image information..."
+msgstr "جارٍ جلب معلومات الصورة..."
+
+msgid "Fetching page information..."
+msgstr "جارٍ جلب معلومات الصفحة..."
 
 msgid "Lock"
 msgstr "قفل"
 
+msgid "Not translated"
+msgstr "غير مترجم"
+
 msgid "Preview"
-msgstr "نظر مقدم"
+msgstr "معاينة"
+
+msgid "Publish in "
+msgstr "نشر في "
 
 msgid "Publishing..."
-msgstr "يتم النشر..."
+msgstr "جارٍ النشر..."
+
+msgid "Removing editor lock"
+msgstr "إزالة قفل المحرر"
+
+msgid "Revert to %s version"
+msgstr "الرجوع إلى الإصدار %s"
 
 msgid "Save"
 msgstr "حفظ"
 
 msgid "Saving..."
-msgstr "يتم الحفظ..."
+msgstr "جارٍ الحفظ..."
+
+msgid "segments translated"
+msgstr "مقاطع مترجمة"
+
+msgid "Server error"
+msgstr "خطأ في الخادم"
+
+msgid "Stop Synced translation"
+msgstr "إيقاف الترجمة المتزامنة"
+
+msgid "Stopping Synced translation"
+msgstr "جارٍ إيقاف الترجمة المتزامنة"
+
+msgid "There are unsaved segments. Please save or cancel them before leaving."
+msgstr "هناك مقاطع غير محفوظة. يرجى حفظها أو إلغاؤها قبل المغادرة."
+
+msgid "Translate"
+msgstr "ترجمة"
+
+msgid "Translate all missing strings with "
+msgstr "ترجمة جميع السلاسل الناقصة باستخدام "
+
+msgid "Translate with "
+msgstr "ترجمة باستخدام "
 
 msgid "Unlock"
-msgstr "إزالة القفل"
+msgstr "فتح القفل"
 
 msgid "Unpublish"
-msgstr "غير منشور"
+msgstr "إلغاء النشر"
+
+msgid "Upload PO file"
+msgstr "رفع ملف PO"
+
+msgid "Upload translated PO file to submit translations"
+msgstr "رفع ملف PO المترجم لإرسال الترجمات"
+
+msgid "Uses %s version"
+msgstr "يستخدم الإصدار %s"

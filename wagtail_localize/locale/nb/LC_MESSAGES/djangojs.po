@@ -1,4 +1,3 @@
-#
 # Translators:
 # Eirik Krogstad <eirikkr@gmail.com>, 2021
 # Robin Skahjem-Eriksen <robinds@student.matnat.uio.no>, 2021
@@ -17,9 +16,6 @@ msgstr ""
 
 msgid "Actions"
 msgstr "Handlinger"
-
-msgid "Apply editor lock"
-msgstr "Slå på redigeringslås"
 
 msgid "Cancel"
 msgstr "Avbryt"
@@ -62,9 +58,6 @@ msgstr "Forhåndsvis"
 
 msgid "Publishing..."
 msgstr "Publiserer..."
-
-msgid "Remove editor lock"
-msgstr "Fjern redigeringslås"
 
 msgid "Save"
 msgstr "Lagre"

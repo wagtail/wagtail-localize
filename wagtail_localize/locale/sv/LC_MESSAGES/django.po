@@ -1,14 +1,14 @@
-#
 # Translators:
 # Martin Sandström <martin@marteinn.se>, 2022
 # Philip Andersen <renegadevi@codeofmagi.net>, 2022
 # Thomas Kunambi <kunambi@gmail.com>, 2023
+# Jonathan Lindén, 2025
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Thomas Kunambi <kunambi@gmail.com>, 2023\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Jonathan Lindén, 2025\n"
 "Language-Team: Swedish (https://app.transifex.com/torchbox/teams/8009/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: sv\n"
@@ -143,7 +143,7 @@ msgstr "Översättningar"
 
 #, python-format
 msgid "Editing %(object_type)s %(title)s"
-msgstr "Editerar %(object_type)s %(title)s"
+msgstr "Redigerar %(object_type)s %(title)s"
 
 msgid "Submit"
 msgstr "Skicka"

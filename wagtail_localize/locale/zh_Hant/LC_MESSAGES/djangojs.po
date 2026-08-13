@@ -1,4 +1,3 @@
-#
 # Translators:
 # Ocin Leung, 2021
 # Andy Kong <worminfo@gmail.com>, 2021
@@ -16,9 +15,6 @@ msgstr ""
 
 msgid "Actions"
 msgstr "操作"
-
-msgid "Apply editor lock"
-msgstr "套用編輯鎖定"
 
 msgid "Cancel"
 msgstr "取消"

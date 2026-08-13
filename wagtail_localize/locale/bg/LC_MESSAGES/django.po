@@ -1,17 +1,26 @@
-#
 # Translators:
 # Lyuboslav  Petrov <petrov.lyuboslav@gmail.com>, 2021
+# Maria Mitova, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-20 15:02+0000\n"
-"Last-Translator: Lyuboslav  Petrov <petrov.lyuboslav@gmail.com>, 2021\n"
+"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"Last-Translator: Maria Mitova, 2026\n"
 "Language-Team: Bulgarian (https://app.transifex.com/torchbox/teams/8009/"
 "bg/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Go back"
+msgstr "Обратно"
+
 msgid "Status"
 msgstr "Статус"
+
+msgid "Content"
+msgstr "Съдържание"
+
+msgid "Select all"
+msgstr "Избери всички"

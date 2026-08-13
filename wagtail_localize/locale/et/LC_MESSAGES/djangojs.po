@@ -1,4 +1,3 @@
-#
 # Translators:
 # Erlend Eelmets <debcf78e@opayq.com>, 2024
 #
@@ -12,9 +11,6 @@ msgstr ""
 
 msgid "Actions"
 msgstr "Toimingud"
-
-msgid "Apply editor lock"
-msgstr "Rakenda redaktori lukustus"
 
 msgid "Cancel"
 msgstr "Tühista"
