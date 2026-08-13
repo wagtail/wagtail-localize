@@ -7,6 +7,7 @@ from collections import defaultdict
 
 import polib
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
@@ -345,6 +346,12 @@ def get_segment_location_info(
                 "type": "text",
             }
 
+        elif apps.is_installed("wagtailmedia"):
+            from wagtailmedia.models import AbstractMedia
+
+            if issubclass(field.related_model, AbstractMedia):
+                return {"type": "media_chooser"}
+
         return {"type": "unknown"}
 
     def widget_from_block(block, content_components=None):
@@ -403,6 +410,12 @@ def get_segment_location_info(
             if content_components is not None:
                 return widget_from_block(block.child_block, content_components[1:])
             return widget_from_block(block.child_block)
+
+        elif apps.is_installed("wagtailmedia"):
+            from wagtailmedia.blocks import AudioChooserBlock, VideoChooserBlock
+
+            if isinstance(block, (AudioChooserBlock, VideoChooserBlock)):
+                return {"type": "media_chooser"}
 
         return {"type": "unknown"}
 
