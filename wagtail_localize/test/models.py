@@ -239,6 +239,10 @@ class ImageBlockInStreamBlock(blocks.StreamBlock):
     the_image = ImageBlock()
 
 
+class ImageBlockInNestedStructBlock(StructBlock):
+    nested = ImageBlockInStructBlock()
+
+
 class TestStreamBlock(blocks.StreamBlock):
     test_charblock = blocks.CharBlock(max_length=255)
     test_textblock = blocks.TextBlock(label=gettext_lazy("text block"))
@@ -304,6 +308,7 @@ class TestStreamBlock(blocks.StreamBlock):
     test_imageblock_in_structblock = ImageBlockInStructBlock()
     test_imageblock_in_listblock = ImageBlockInListBlock()
     test_imageblock_in_streamblock = ImageBlockInStreamBlock()
+    test_imageblock_in_nested_structblock = ImageBlockInNestedStructBlock()
 
 
 class TestCustomField(models.TextField):
