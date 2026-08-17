@@ -9,8 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Wagtail 7.3 and 7.4 (LTS) to the test matrix.
-- Django 5.2 to the test matrix.
+- Support for Wagtail 7.4 LTS
+- Provisional support for Wagtail 8.0 (pending its final release)
+- Support for Django 5.2
+- Support for Django 6.0
 
 ### Changed
 
