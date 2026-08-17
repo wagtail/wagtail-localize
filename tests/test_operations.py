@@ -2,10 +2,10 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from wagtail.models import Locale, Page
 
+from tests.testapp.models import TestPage
 from wagtail_localize.models import Translation, TranslationSource
 from wagtail_localize.operations import TranslationCreator
 from wagtail_localize.segments import RelatedObjectSegmentValue
-from wagtail_localize.test.models import TestPage
 
 
 def create_test_page(**kwargs):

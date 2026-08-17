@@ -37,7 +37,7 @@ plugins:
             show_root_toc_entry: false
             show_signature_annotations: true
           paths:
-            - wagtail_localize
+            - src
   - include-markdown
 nav:
   - Home: index.md

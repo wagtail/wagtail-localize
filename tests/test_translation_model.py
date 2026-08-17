@@ -10,6 +10,15 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from wagtail.models import Locale, Page
 
+from tests.testapp.models import (
+    TestNoDraftModel,
+    TestPage,
+    TestParentalSnippet,
+    TestRevisionsButNoDraftModel,
+    TestSnippet,
+    TestUUIDModel,
+    TestUUIDSnippet,
+)
 from wagtail_localize.models import (
     CannotSaveDraftError,
     NoViewRestrictionsError,
@@ -31,15 +40,6 @@ from wagtail_localize.models import (
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
-from wagtail_localize.test.models import (
-    TestNoDraftModel,
-    TestPage,
-    TestParentalSnippet,
-    TestRevisionsButNoDraftModel,
-    TestSnippet,
-    TestUUIDModel,
-    TestUUIDSnippet,
-)
 
 
 def create_test_page(**kwargs):

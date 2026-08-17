@@ -6,7 +6,7 @@ import wagtail.fields
 
 from django.db import migrations, models
 
-import wagtail_localize.test.models
+import tests.testapp.models
 
 
 class Migration(migrations.Migration):
@@ -172,7 +172,7 @@ class Migration(migrations.Migration):
                     ),
                     23: ("wagtail.blocks.StructBlock", [[("nested_stream", 22)]], {}),
                     24: (
-                        "wagtail_localize.test.models.CustomBlockWithoutExtractMethod",
+                        "tests.testapp.models.CustomBlockWithoutExtractMethod",
                         (),
                         {},
                     ),
@@ -190,12 +190,12 @@ class Migration(migrations.Migration):
                     27: ("wagtail.documents.blocks.DocumentChooserBlock", (), {}),
                     28: (
                         "wagtail.snippets.blocks.SnippetChooserBlock",
-                        (wagtail_localize.test.models.TestSnippet,),
+                        (tests.testapp.models.TestSnippet,),
                         {},
                     ),
                     29: (
                         "wagtail.snippets.blocks.SnippetChooserBlock",
-                        (wagtail_localize.test.models.NonTranslatableSnippet,),
+                        (tests.testapp.models.NonTranslatableSnippet,),
                         {},
                     ),
                     30: ("wagtail.embeds.blocks.EmbedBlock", (), {}),
@@ -209,7 +209,7 @@ class Migration(migrations.Migration):
                     38: ("wagtail.blocks.ListBlock", (37,), {}),
                     39: ("wagtail.images.blocks.ImageBlock", [], {}),
                     40: ("wagtail.blocks.StructBlock", [[("the_image", 39)]], {}),
-                    41: ("wagtail_localize.test.models.ImageBlockInListBlock", (), {}),
+                    41: ("tests.testapp.models.ImageBlockInListBlock", (), {}),
                     42: ("wagtail.blocks.StreamBlock", [[("the_image", 39)]], {}),
                 },
             ),
@@ -359,7 +359,7 @@ class Migration(migrations.Migration):
                     ),
                     23: ("wagtail.blocks.StructBlock", [[("nested_stream", 22)]], {}),
                     24: (
-                        "wagtail_localize.test.models.CustomBlockWithoutExtractMethod",
+                        "tests.testapp.models.CustomBlockWithoutExtractMethod",
                         (),
                         {},
                     ),
@@ -377,12 +377,12 @@ class Migration(migrations.Migration):
                     27: ("wagtail.documents.blocks.DocumentChooserBlock", (), {}),
                     28: (
                         "wagtail.snippets.blocks.SnippetChooserBlock",
-                        (wagtail_localize.test.models.TestSnippet,),
+                        (tests.testapp.models.TestSnippet,),
                         {},
                     ),
                     29: (
                         "wagtail.snippets.blocks.SnippetChooserBlock",
-                        (wagtail_localize.test.models.NonTranslatableSnippet,),
+                        (tests.testapp.models.NonTranslatableSnippet,),
                         {},
                     ),
                     30: ("wagtail.embeds.blocks.EmbedBlock", (), {}),
@@ -396,7 +396,7 @@ class Migration(migrations.Migration):
                     38: ("wagtail.blocks.ListBlock", (37,), {}),
                     39: ("wagtail.images.blocks.ImageBlock", [], {}),
                     40: ("wagtail.blocks.StructBlock", [[("the_image", 39)]], {}),
-                    41: ("wagtail_localize.test.models.ImageBlockInListBlock", (), {}),
+                    41: ("tests.testapp.models.ImageBlockInListBlock", (), {}),
                     42: ("wagtail.blocks.StreamBlock", [[("the_image", 39)]], {}),
                 },
             ),
@@ -502,7 +502,7 @@ class Migration(migrations.Migration):
                     ),
                     23: ("wagtail.blocks.StructBlock", [[("nested_stream", 22)]], {}),
                     24: (
-                        "wagtail_localize.test.models.CustomBlockWithoutExtractMethod",
+                        "tests.testapp.models.CustomBlockWithoutExtractMethod",
                         (),
                         {},
                     ),
@@ -520,12 +520,12 @@ class Migration(migrations.Migration):
                     27: ("wagtail.documents.blocks.DocumentChooserBlock", (), {}),
                     28: (
                         "wagtail.snippets.blocks.SnippetChooserBlock",
-                        (wagtail_localize.test.models.TestSnippet,),
+                        (tests.testapp.models.TestSnippet,),
                         {},
                     ),
                     29: (
                         "wagtail.snippets.blocks.SnippetChooserBlock",
-                        (wagtail_localize.test.models.NonTranslatableSnippet,),
+                        (tests.testapp.models.NonTranslatableSnippet,),
                         {},
                     ),
                     30: ("wagtail.embeds.blocks.EmbedBlock", (), {}),
@@ -539,7 +539,7 @@ class Migration(migrations.Migration):
                     38: ("wagtail.blocks.ListBlock", (37,), {}),
                     39: ("wagtail.images.blocks.ImageBlock", [], {}),
                     40: ("wagtail.blocks.StructBlock", [[("the_image", 39)]], {}),
-                    41: ("wagtail_localize.test.models.ImageBlockInListBlock", (), {}),
+                    41: ("tests.testapp.models.ImageBlockInListBlock", (), {}),
                     42: ("wagtail.blocks.StreamBlock", [[("the_image", 39)]], {}),
                 },
             ),
