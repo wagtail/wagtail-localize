@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     permissions:
       contents: read # to fetch code (actions/checkout)
     steps:
@@ -48,7 +48,7 @@ jobs:
     environment: 'publish'
 
     name: ⬆️ Upload release to PyPI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     permissions:
       # Mandatory for trusted publishing
       id-token: write

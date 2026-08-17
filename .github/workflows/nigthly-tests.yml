@@ -12,7 +12,7 @@ jobs:
     # Cannot check the existence of secrets, so limiting to repository name to prevent all forks to run nightly.
     # See: https://github.com/actions/runner/issues/520
     if: ${{ github.repository == 'wagtail/wagtail-localize' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
 
     steps:
       - uses: actions/checkout@v6
