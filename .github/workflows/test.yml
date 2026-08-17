@@ -23,7 +23,7 @@ env:
 
 jobs:
   test-sqlite:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     strategy:
       matrix:
         python: ['3.11', '3.12', '3.13', '3.14']
@@ -55,7 +55,7 @@ jobs:
           retention-days: 1
 
   test-postgres:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     strategy:
       matrix:
         python: ['3.10', '3.11', '3.12', '3.13', '3.14']
@@ -105,7 +105,7 @@ jobs:
           retention-days: 1
 
   coverage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     needs:
       - test-sqlite
       - test-postgres
