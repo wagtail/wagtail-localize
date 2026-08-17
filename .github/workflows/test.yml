@@ -84,6 +84,8 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
+      - name: Install libpq-dev
+        run: sudo apt-get install -y libpq-dev
 
       - name: Install dependencies
         id: install-dependencies
