@@ -176,4 +176,4 @@ class TranslationsReportView(ReportView):
                 )
                 .filter(is_translated=False)
             )
-        )
+        ).order_by("pk")
