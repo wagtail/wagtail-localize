@@ -118,6 +118,8 @@ jobs:
           node-version-file: '.node-version'
       - run: npm ci
       - run: npm run build
+      - run: ./scripts/extract-translatable-strings.js
+      - run: git diff --exit-code src/wagtail_localize/locale/en/LC_MESSAGES/djangojs.po
 
   coverage:
     runs-on: ubuntu-26.04-arm
