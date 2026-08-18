@@ -106,6 +106,22 @@ jobs:
           if-no-files-found: ignore
           retention-days: 1
 
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+      - name: Install dependencies
+        run: npm ci
+      - name: 🏗️ Build static files
+        run: npm run build
+
   coverage:
     runs-on: ubuntu-26.04-arm
     needs:
