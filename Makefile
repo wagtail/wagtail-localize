@@ -21,7 +21,7 @@ dev: npm_deps ## 🧰 - Build front-end assets and watch for changes in developm
 	npm run start
 
 messages:  ## 🔨 - Make messages
-	node ./scripts/extract-translatable-strings.js
+	./scripts/extract-translatable-strings.js
 	cd src/wagtail_localize && python ../../testmanage.py makemessages --locale=en
 
 fetch-translations:  ## 🔨 - Fetch new translations
