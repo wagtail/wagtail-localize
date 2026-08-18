@@ -14,6 +14,11 @@
   },
   "author": "",
   "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "npm"
+    }
+  },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
     "@types/react": "^16.14.62",
