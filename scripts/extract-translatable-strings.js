@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { GettextExtractor, JsExtractors } = require('gettext-extractor');
 
