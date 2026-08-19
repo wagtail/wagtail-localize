@@ -1,12 +1,12 @@
 # Translators:
-# Alex Morega, 2023
 # Dan Braghis, 2023
+# Alex Morega, 2026
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-08 14:25+0000\n"
-"Last-Translator: Dan Braghis, 2023\n"
+"Last-Translator: Alex Morega, 2026\n"
 "Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
@@ -99,10 +99,10 @@ msgstr "Activează"
 
 #, python-format
 msgid "Convert to alias %(title)s"
-msgstr "Convertează în alias %(title)s"
+msgstr "Convertește în alias %(title)s"
 
 msgid "Convert to alias"
-msgstr "Convertează în alias"
+msgstr "Convertește în alias"
 
 #, python-format
 msgid ""
@@ -115,7 +115,7 @@ msgstr ""
 "(%(source_page_locale)s)"
 
 msgid "Yes, convert it"
-msgstr "Da, convertează"
+msgstr "Da, convertește"
 
 msgid "No, leave it as a page"
 msgstr "Nu, păstrează ca pagină"
@@ -273,6 +273,27 @@ msgstr "Pagina '{page_title}' a fost trimisă pentru traducere în {locales}"
 msgid "Publish immediately"
 msgstr "Publichează imediat"
 
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated unless you also select \"Use machine translation\"."
+msgstr ""
+"Aplică actualizările și publică imediat. Modificările vor folosi limba "
+"originală până vor fi traduse dacă nu selectați și \"Folosește traducere "
+"automată\"."
+
+msgid "Use machine translation"
+msgstr "Folosește traducere automată"
+
+msgid "Apply machine translations to the incoming changes."
+msgstr "Aplică traducerea automată pe schimbările care vin."
+
+msgid ""
+"Apply the updates and publish immediately. The changes will use the original "
+"language until translated."
+msgstr ""
+"Aplică actualizările și publică imediat. Modificările vor folosi limba "
+"originală până vor fi traduse."
+
 msgid "Update existing translations"
 msgstr "Actualizează traduceri existente"
 
@@ -295,10 +316,10 @@ msgid "Sync translations of '%(title)s'"
 msgstr "Sincronizează traducerile pentru '%(title)s'"
 
 msgid "Convert to alias page"
-msgstr "Convertează în pagină alias"
+msgstr "Convertește în pagină alias"
 
 msgid "Convert page to alias"
-msgstr "Convertează pagina în pagină alias"
+msgstr "Convertește pagina în pagină alias"
 
 #, python-format
 msgid ""
