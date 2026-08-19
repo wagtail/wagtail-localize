@@ -9,23 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support for Wagtail 7.4 LTS
-- Provisional support for Wagtail 8.0 (pending its final release)
-  - [Custom base page models](https://docs.wagtail.org/en/latest/advanced_topics/customization/custom_base_page_models.html) introduced in Wagtail 8.0 are **not supported** due to incompatibilities in `wagtail-modeladmin` – we are working on a solution for this.
+- Support for Wagtail 7.4 LTS (see [#921](https://github.com/wagtail/wagtail-localize/pull/921)) @nickmoreton
+- Provisional support for Wagtail 8.0 (pending its final release) (see [](https://github.com/wagtail/wagtail-localize/pull/931)) @gasman @stormheg
+  - [Custom base page models](https://docs.wagtail.org/en/latest/advanced_topics/customization/custom_base_page_models.html) introduced in Wagtail 8.0 are **not supported** due to incompatibilities in `wagtail-modeladmin` – we are working on a solution for this
   - [Write API v3](https://docs.wagtail.org/en/latest/extending/reusable_app_base_page.html#adapting-reusable-apps-to-support-custom-base-page-models) introduced in Wagtail 8.0 **has not been tested with Wagtail Localize** yet. If you have a use case for this, please [raise an issue](https://github.com/wagtail/wagtail-localize/issues/new/choose)
-- Support for Django 5.2
-- Support for Django 6.0
+- Support for Django 5.2 and 6.0 (see [#921](https://github.com/wagtail/wagtail-localize/pull/921)) @nickmoreton
+
+### Fixed
+
+- Fixed a unique constraint violation when translating or syncing translations more than two levels of snippets (see [#922](https://github.com/wagtail/wagtail-localize/issues/922) and [#934](https://github.com/wagtail/wagtail-localize/pull/934)) @rypptc
 
 ### Changed
 
-- Minimum supported Wagtail is now 7.0.
-- Minimum supported Django is now 5.2.
-- Moved the project to a `src/` layout.
+- Minimum supported Wagtail is now 7.0 (see [#921](https://github.com/wagtail/wagtail-localize/pull/921)) @nickmoreton
+- Minimum supported Django is now 5.2 (see [#921](https://github.com/wagtail/wagtail-localize/pull/921)) @nickmoreton
+- Moved the project to a `src/` layout (see [#941](https://github.com/wagtail/wagtail-localize/pull/941)) @rypptc
+- Updated translations from Transifex @Stormheg and the many translators
+- The translation editor toolchain has been updated to modern versions of Node.js, Webpack and React (see [#947](https://github.com/wagtail/wagtail-localize/pull/947)) @nickmoreton, @thibaudcolas
 
 ### Removed
 
-- Support for Wagtail < 7.0
-- Support for Django 4.2
+- Support for Wagtail < 7.0 (see [#921](https://github.com/wagtail/wagtail-localize/pull/921)) @nickmoreton
+- Support for Django 4.2 (see [#921](https://github.com/wagtail/wagtail-localize/pull/921)) @nickmoreton
 
 ## [1.13] - 2025-01-25
 
