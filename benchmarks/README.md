@@ -170,21 +170,105 @@ belong in a before/after comparison are the harness's.
 A prescription is a hypothesis with a call site attached, not a verdict. Use it
 to find where to look; use `run.py` to show that a change moved the number.
 
+## Attributing a result with the harness itself
+
+`run_attribution.py` answers the same second question from a different angle. A
+diagnostic tool inspects one execution and applies a heuristic to decide which
+queries look repeated. This command compares the two scale points a flow already
+declares and reports which groups of queries grew with the workload. Growth with
+the workload is not a sign of the cost this project looks for; it is that cost,
+which is why the comparison needs calibrated sizes and cannot be done against a
+single run.
+
+It runs the flow's own call in an isolated child process, once per size, with a
+`connection.execute_wrapper` installed. Each cursor invocation becomes an event
+carrying the statement's normalised shape, the nearest `wagtail_localize` frame
+below it, the arity of any `IN` list, and the batch size of an `executemany`.
+No parameter value enters an event or the JSON report; the run itself still
+holds interpolated SQL in Django's query log while the debug cursor is on.
+Events are grouped by shape and frame, and groups are ranked by how fast each
+grows per unit of workload:
+
+```console
+python benchmarks/run_attribution.py core_page_index
+python benchmarks/run_attribution.py submit_page_post --json report.json
+```
+
+The unit is the flow, not one execution of it, so the command takes no `--size`
+and accepts only a flow declaring exactly two scale points. `--list` prints the
+whole catalog, including flows this command cannot attribute; asking for one of
+those fails immediately and says why.
+
+The command needs no extra dependency: `execute_wrapper` is Django's own. It is
+still separate from `run.py` for the reason `run_query_doctor.py` is separate. A
+baseline comes from one stable, minimal counter, and diagnostic instrumentation
+never produces one.
+
+### Reading the output
+
+The report opens with a reconciliation, because a report that does not add up to
+the number it explains is describing something else:
+
+```
+  small   519 queries  = 515 attributed + 4 outside execute_wrapper
+```
+
+The gap is not a loss. Django's `_commit()` and `_rollback()` call the database
+connection directly and append a synthetic record to the query log, so
+`CaptureQueriesContext` counts them and no wrapper can see them. They are real
+work with a real cost; they have no call site this command can honestly name, so
+it states them instead of dropping them.
+
+Each group then shows its rate, its count at both sizes, and where it ran:
+
+```
+  +1.00/indexed_pages   24 -> 64   synctree.py:77 in from_page_instance
+```
+
+A rate is the secant between two points, not proof that the growth is linear:
+any two points fit a line exactly. Where the two counts imply a non-zero cost at
+zero workload, the row also shows that estimate. It is a description of these
+two points and nothing more: a positive value can be a genuine fixed cost paid
+once, a negative one can mean the group runs for only part of the workload, and
+neither reading is available from the two numbers alone.
+
+A group whose shape hides a width carries it as a side note, because a count
+cannot show it: `[IN arity 2 -> 40]` is one statement carrying twenty times as
+many values, and `[batch …]` is the same for an `executemany`. What that costs
+the database is a separate question this harness does not answer; what it shows
+is that the statement absorbed work the query count no longer reflects.
+
+Groups that shrank are listed separately, and the tail the report does not print
+is summarised with both its net and its gross movement, so churn between two
+sizes stays visible even when it cancels out.
+
+Two limits are worth stating. The frame on each row is the nearest
+`wagtail_localize` frame still on the stack when the statement ran, which is
+neither always where the queryset was built nor always where the SQL came from:
+a queryset created in a method and evaluated later in a loop, a template, or a
+serialiser is attributed to the evaluation, and SQL issued inside Wagtail or
+Django is attributed to the product call that entered them. And a group that
+grows with the workload is not by that fact a defect. A flow that creates one
+object per page is supposed to cost one insert per page. What the report gives
+is a lead, ranked; deciding which leads are legitimate is the reader's.
+
 ## Scope and limitations
 
 - The fixture is deliberately fixed and synthetic. Results describe these
   workloads, not every possible site or content model.
 - SQLite keeps local runs cheap and reproducible, but query cost and database
   behavior can differ in production.
-- A query count says how many statements ran, not how expensive each statement
-  was.
+- A query count is the number of entries in Django's query log, not the number
+  of statements the database ran and not a measure of what each one cost: a
+  commit is one entry, and so is an `executemany` however many rows it carries.
 - Timing includes cold Python and framework state for the measured operation;
   it does not model concurrent traffic or warmed application workers.
 - Core probes exist only when they isolate a selected optimization that a full
   process would hide. They are not a second catalog of internal functions.
-- The harness detects a scaling result but does not attribute its cause. Use
-  query inspection or a diagnostic tool for that separate task, such as the
-  Query Doctor command described above.
+- `run.py` detects a scaling result but does not attribute its cause. That is a
+  separate task, and a separate command: `run_attribution.py` for where a flow's
+  own growth comes from, `run_query_doctor.py` for a second opinion from an
+  outside tool.
 
 ## Changing the catalog
 
