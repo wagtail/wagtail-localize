@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 11:16+0000\n"
+"POT-Creation-Date: 2026-08-19 12:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,7 +58,7 @@ msgstr ""
 msgid "This locale's language code is not supported"
 msgstr ""
 
-#: locales/tests.py:77 locales/views.py:77 locales/wagtail_hooks.py:26
+#: locales/views.py:77 locales/wagtail_hooks.py:26
 msgid "Locales"
 msgstr ""
 
@@ -70,35 +70,35 @@ msgstr ""
 msgid "Add locale"
 msgstr ""
 
-#: locales/views.py:98
+#: locales/views.py:99
 #, python-brace-format
 msgid "Locale '{0}' created."
 msgstr ""
 
-#: locales/views.py:131
+#: locales/views.py:132
 msgid "The locale could not be saved due to errors."
 msgstr ""
 
-#: locales/views.py:132 locales/views.py:177
+#: locales/views.py:133 locales/views.py:179
 msgid "Delete locale"
 msgstr ""
 
-#: locales/views.py:139
+#: locales/views.py:141
 #, python-brace-format
 msgid "Locale '{0}' updated."
 msgstr ""
 
-#: locales/views.py:175
+#: locales/views.py:177
 msgid ""
 "This locale cannot be deleted because there are pages and/or other objects "
 "using it."
 msgstr ""
 
-#: locales/views.py:178
+#: locales/views.py:180
 msgid "Are you sure you want to delete this locale?"
 msgstr ""
 
-#: locales/views.py:184
+#: locales/views.py:186
 #, python-brace-format
 msgid "Locale '{0}' deleted."
 msgstr ""

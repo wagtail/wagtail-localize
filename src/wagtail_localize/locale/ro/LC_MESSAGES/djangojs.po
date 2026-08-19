@@ -1,10 +1,11 @@
 # Translators:
 # Bogdan Mateescu, 2024
 # Dan Braghis, 2024
+# Alex Morega, 2026
 #
 msgid ""
 msgstr ""
-"Last-Translator: Dan Braghis, 2024\n"
+"Last-Translator: Alex Morega, 2026\n"
 "Language-Team: Romanian (https://app.transifex.com/torchbox/teams/8009/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ro\n"
@@ -16,6 +17,9 @@ msgstr "[ȘTERS]"
 
 msgid "Actions"
 msgstr "Acțiuni"
+
+msgid "Applying editor lock"
+msgstr "Se aplică blocajul editorial"
 
 msgid "Cancel"
 msgstr "Anulează"

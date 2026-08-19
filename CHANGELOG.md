@@ -5,12 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.14] - 2026-08-19
 
 ### Added
 
 - Support for Wagtail 7.4 LTS
 - Provisional support for Wagtail 8.0 (pending its final release)
+  - [Custom base page models](https://docs.wagtail.org/en/latest/advanced_topics/customization/custom_base_page_models.html) introduced in Wagtail 8.0 are **not supported** due to incompatibilities in `wagtail-modeladmin` – we are working on a solution for this.
+  - [Write API v3](https://docs.wagtail.org/en/latest/extending/reusable_app_base_page.html#adapting-reusable-apps-to-support-custom-base-page-models) introduced in Wagtail 8.0 **has not been tested with Wagtail Localize** yet. If you have a use case for this, please [raise an issue](https://github.com/wagtail/wagtail-localize/issues/new/choose)
 - Support for Django 5.2
 - Support for Django 6.0
 

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-08 14:25+0000\n"
+"POT-Creation-Date: 2026-08-19 12:46+0000\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "#-#-#-#-#  messages-js.pot  #-#-#-#-#\n"
@@ -17,7 +17,7 @@ msgid "Dummy translator"
 msgstr ""
 
 #: modeladmin/helpers.py:66 modeladmin/helpers.py:68
-#: views/submit_translations.py:74 wagtail_hooks.py:210
+#: views/submit_translations.py:74 wagtail_hooks.py:203
 msgid "Translate"
 msgstr ""
 
@@ -27,68 +27,69 @@ msgid "Sync translated %(model_name)s"
 msgstr ""
 
 #: modeladmin/templates/wagtail_localize/modeladmin/translatable_edit.html:14
-#: wagtail_hooks.py:276 wagtail_hooks.py:363
+#: wagtail_hooks.py:269 wagtail_hooks.py:356
 msgid "Start Synced translation"
 msgstr ""
 
-#: modeladmin/views.py:184 views/submit_translations.py:208
+#: modeladmin/views.py:180 views/submit_translations.py:208
 #, python-brace-format
 msgid "Translate {model_name}"
 msgstr ""
 
-#: modeladmin/views.py:209 views/submit_translations.py:237
+#: modeladmin/views.py:205 views/submit_translations.py:237
 #, python-brace-format
 msgid ""
 "The {model_name} '{object}' was successfully submitted for translation into "
 "{locales}"
 msgstr ""
 
-#: models.py:1166
+#: models.py:1165
 msgid "Up to date"
 msgstr ""
 
-#: models.py:1168 views/report.py:134
+#: models.py:1167 views/report.py:134
 msgid "Waiting for translations"
 msgstr ""
 
-#: models.py:1643
+#: models.py:1640
 msgid "Manual"
 msgstr ""
 
-#: models.py:1644
+#: models.py:1641
 msgid "Machine"
 msgstr ""
 
-#: models.py:1771
+#: models.py:1768
 #, python-brace-format
 msgid "Translated with {tool_name} on {date}"
 msgstr ""
 
-#: models.py:1776
+#: models.py:1773
 #, python-brace-format
 msgid "Translated manually on {date}"
 msgstr ""
 
-#: models.py:1781
+#: models.py:1778
 #, python-brace-format
 msgid "Machine translated on {date}"
 msgstr ""
 
-#: models.py:2306
+#: models.py:2303
 msgid "This locale cannot be synced into itself."
 msgstr ""
 
-#: models.py:2311
+#: models.py:2308
 msgid "Synchronise content from another locale"
 msgstr ""
 
-#: models.py:2313
+#: models.py:2310
 msgid ""
 "Choose a locale to synchronise content from. Any existing and future content "
 "authored in the selected locale will be automatically copied to this one."
 msgstr ""
 
 #: strings.py:48
+#, python-brace-format
 msgid ""
 "<{}> tag is not allowed. Strings can only contain standard HTML inline tags "
 "(such as <b>, <a>)"
@@ -101,6 +102,7 @@ msgid ""
 msgstr ""
 
 #: strings.py:503
+#, python-brace-format
 msgid "Unrecognised id found in an <a> tag: {}"
 msgstr ""
 
@@ -142,7 +144,7 @@ msgid ""
 msgstr ""
 
 #: templates/wagtail_localize/admin/edit_translatable_alias.html:14
-#: wagtail_hooks.py:167
+#: wagtail_hooks.py:160
 msgid "Translate this page"
 msgstr ""
 
@@ -152,7 +154,7 @@ msgid "Translation of %(instance)s into %(locale)s"
 msgstr ""
 
 #: templates/wagtail_localize/admin/edit_translation.html:34
-#: views/report.py:154 wagtail_hooks.py:396
+#: views/report.py:154 wagtail_hooks.py:389
 msgid "Translations"
 msgstr ""
 
@@ -215,6 +217,7 @@ msgid ""
 msgstr ""
 
 #: views/convert.py:84
+#, python-brace-format
 msgid "Page '{}' has been converted into an alias."
 msgstr ""
 
@@ -222,24 +225,24 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#: views/edit_translation.py:569
+#: views/edit_translation.py:567
 #, python-brace-format
 msgid ""
 "New validation errors were found when publishing '{object}' in {locale}. "
 "Please fix them or click publish again to ignore these translations for now."
 msgstr ""
 
-#: views/edit_translation.py:597
+#: views/edit_translation.py:595
 #, python-brace-format
 msgid "Published '{object}' in {locale} with missing translations - see below."
 msgstr ""
 
-#: views/edit_translation.py:607
+#: views/edit_translation.py:605
 #, python-brace-format
 msgid "Published '{object}' in {locale}."
 msgstr ""
 
-#: views/edit_translation.py:883
+#: views/edit_translation.py:881
 #, python-brace-format
 msgid ""
 "The data model for '{model_name}' has been changed since the last "
@@ -247,31 +250,32 @@ msgid ""
 "be visible until the next translation sync."
 msgstr ""
 
-#: views/edit_translation.py:1152
+#: views/edit_translation.py:1150
 msgid "Translation has been stopped."
 msgstr ""
 
-#: views/edit_translation.py:1163
+#: views/edit_translation.py:1161
 msgid "Translation has been restarted."
 msgstr ""
 
-#: views/edit_translation.py:1337
+#: views/edit_translation.py:1335
 msgid "Please upload a valid PO file."
 msgstr ""
 
-#: views/edit_translation.py:1346
+#: views/edit_translation.py:1344
 msgid "Cannot import PO file that was created for a different translation."
 msgstr ""
 
-#: views/edit_translation.py:1353
+#: views/edit_translation.py:1351
 msgid "Successfully imported translations from PO File."
 msgstr ""
 
-#: views/edit_translation.py:1443
+#: views/edit_translation.py:1441
+#, python-brace-format
 msgid "Successfully translated with {}."
 msgstr ""
 
-#: views/edit_translation.py:1449
+#: views/edit_translation.py:1447
 msgid "There isn't anything left to translate."
 msgstr ""
 
@@ -296,12 +300,14 @@ msgid "All child pages will be created."
 msgstr ""
 
 #: views/submit_translations.py:46
+#, python-brace-format
 msgid "Include subtree ({} page)"
 msgid_plural "Include subtree ({} pages)"
 msgstr[0] ""
 msgstr[1] ""
 
 #: views/submit_translations.py:156
+#, python-brace-format
 msgid "{} locales"
 msgstr ""
 
@@ -349,39 +355,39 @@ msgstr ""
 msgid "Successfully updated translations for '{object}'"
 msgstr ""
 
-#: wagtail_hooks.py:181
+#: wagtail_hooks.py:174
 msgid "Sync translated pages"
 msgstr ""
 
-#: wagtail_hooks.py:213
+#: wagtail_hooks.py:206
 #, python-format
 msgid "Translate '%(title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:227
+#: wagtail_hooks.py:220
 msgid "Sync translated snippets"
 msgstr ""
 
-#: wagtail_hooks.py:230
+#: wagtail_hooks.py:223
 #, python-format
 msgid "Sync translations of '%(title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:299
+#: wagtail_hooks.py:292
 msgid "Convert to alias page"
 msgstr ""
 
-#: wagtail_hooks.py:407
+#: wagtail_hooks.py:400
 msgid "Convert page to alias"
 msgstr ""
 
-#: wagtail_hooks.py:412
+#: wagtail_hooks.py:405
 #, python-format
 msgid ""
 "Converted page '%(title)s' to an alias of the translation source page "
 "'%(source_title)s'"
 msgstr ""
 
-#: wagtail_hooks.py:418
+#: wagtail_hooks.py:411
 msgid "Converted page to an alias of the translation source page"
 msgstr ""
