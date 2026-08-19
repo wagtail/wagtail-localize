@@ -22,15 +22,18 @@ from wagtail.models import (
     Page,
     PreviewableMixin,
     RevisionMixin,
+    TranslatableMixin,
 )
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from blog.blocks import BaseStreamBlock
+from wagtail_localize.fields import SynchronizedField
 
 
 @register_snippet
 class Person(
+    TranslatableMixin,
     DraftStateMixin,
     RevisionMixin,
     PreviewableMixin,
@@ -50,6 +53,12 @@ class Person(
         on_delete=models.SET_NULL,
         related_name="+",
     )
+
+    # Names are the same in every language; the job title is not.
+    override_translatable_fields = [
+        SynchronizedField("first_name"),
+        SynchronizedField("last_name"),
+    ]
 
     revisions = GenericRelation(
         "wagtailcore.Revision",
@@ -128,12 +137,12 @@ class Person(
             context["page"] = page
         return context
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta):
         verbose_name = "person"
         verbose_name_plural = "people"
 
 
-class BlogPersonRelationship(Orderable, models.Model):
+class BlogPersonRelationship(TranslatableMixin, Orderable, models.Model):
     page = ParentalKey(
         "blog.BlogPage",
         related_name="blog_person_relationship",
@@ -148,6 +157,9 @@ class BlogPersonRelationship(Orderable, models.Model):
         APIField("page"),
         APIField("person"),
     ]
+
+    class Meta(TranslatableMixin.Meta, Orderable.Meta):
+        pass
 
     def __str__(self):
         return f"{self.page} - {self.person}"
