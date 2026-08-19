@@ -35,6 +35,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           path: ./dist
+          name: dist
 
   # https://docs.pypi.org/trusted-publishers/using-a-publisher/
   pypi-publish:
