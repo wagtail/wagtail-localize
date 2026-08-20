@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing yet.
 
+### Fixed
+
+- Fix `UnorderedObjectListWarning` in translation report view (see [#948](https://github.com/wagtail/wagtail-localize/pull/948/)) @Stormheg
+
 ### Changed
 
 - Nothing yet.
