@@ -1,7 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from wagtail.models import Locale, Page
+from wagtail import VERSION as WAGTAIL_VERSION
+from wagtail.models import Locale
 from wagtail.test.utils import WagtailTestUtils
 
 from tests.testapp.models import TestSnippet
@@ -14,6 +15,14 @@ from wagtail_localize.models import (
 )
 
 from .utils import make_test_page
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 @override_settings(
