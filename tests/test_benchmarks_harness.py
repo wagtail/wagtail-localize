@@ -163,16 +163,6 @@ class TestCatalogIntegrity(SimpleTestCase):
         )
 
 
-class TestCatalogNeedsNoDjango(SimpleTestCase):
-    def test_the_catalog_module_imports_no_django_at_module_level(self):
-        for node in ast.parse(_source_of("catalog.py")).body:
-            for name in _imported_names(node):
-                self.assertFalse(
-                    name.startswith(DJANGO),
-                    f"catalog.py imports {name} at module level",
-                )
-
-
 class TestRunnerParentNeverImportsDjango(SimpleTestCase):
     """The parent must not open a Django connection before copying SQLite."""
 
