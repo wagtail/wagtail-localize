@@ -207,3 +207,10 @@ WAGTAILDOCS_EXTENSIONS = [
     "xlsx",
     "zip",
 ]
+
+WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+    "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
+    "OPTIONS": {
+        "AUTH_KEY": os.environ.get("DEEPL_AUTH_KEY", None),
+    },
+}
