@@ -63,31 +63,31 @@ class PageIndex:
         ]
 
         @classmethod
-        def from_page_instance(cls, page):
+        def from_page_instance(
+            cls, page, locales_by_key, aliased_locales_by_key, translation_key_by_path
+        ):
             """
             Initialises an Entry from the given page instance.
+
+            The three mappings cover the whole tree and are built once by
+            from_database(): which locales have a real page for a translation
+            key, which have an alias, and which translation key belongs to a
+            given path.
             """
             # Get parent, but only if the parent is not the root page. We consider the
             # homepage of each langauge tree to be the roots
-            parent_page = page.get_parent() if page.depth > 2 else None
+            parent_path = page.path[: -Page.steplen] if page.depth > 2 else None
+            parent_translation_key = (
+                translation_key_by_path.get(parent_path) if parent_path else None
+            )
 
             return cls(
                 page.content_type,
                 page.translation_key,
                 page.locale,
-                parent_page.translation_key if parent_page else None,
-                list(
-                    Page.objects.filter(
-                        translation_key=page.translation_key,
-                        alias_of__isnull=True,
-                    ).values_list("locale", flat=True)
-                ),
-                list(
-                    Page.objects.filter(
-                        translation_key=page.translation_key,
-                        alias_of__isnull=False,
-                    ).values_list("locale", flat=True)
-                ),
+                parent_translation_key,
+                locales_by_key.get(page.translation_key, []),
+                aliased_locales_by_key.get(page.translation_key, []),
             )
 
     def __init__(self, pages):
@@ -148,11 +148,35 @@ class PageIndex:
         Populates the index from the database.
         """
         pages = []
+        translation_key_by_path = {}
+        locales_by_key = defaultdict(list)
+        aliased_locales_by_key = defaultdict(list)
 
-        for page in Page.objects.filter(alias_of__isnull=True, depth__gt=1).only(
-            *PageIndex.Entry.REQUIRED_PAGE_FIELDS
+        # Every page in the tree, aliases included: the aliases are what
+        # aliased_locales is built from. Only the root is left out, because it
+        # is not indexed and no page looks it up as a parent.
+        for translation_key, locale_id, alias_of_id, path in Page.objects.filter(
+            depth__gt=1
+        ).values_list("translation_key", "locale_id", "alias_of_id", "path"):
+            translation_key_by_path[path] = translation_key
+            if alias_of_id is None:
+                locales_by_key[translation_key].append(locale_id)
+            else:
+                aliased_locales_by_key[translation_key].append(locale_id)
+
+        for page in (
+            Page.objects.filter(alias_of__isnull=True, depth__gt=1)
+            .select_related("content_type", "locale")
+            .only(*PageIndex.Entry.REQUIRED_PAGE_FIELDS)
         ):
-            pages.append(PageIndex.Entry.from_page_instance(page))
+            pages.append(
+                PageIndex.Entry.from_page_instance(
+                    page,
+                    locales_by_key,
+                    aliased_locales_by_key,
+                    translation_key_by_path,
+                )
+            )
 
         return PageIndex(pages)
 
