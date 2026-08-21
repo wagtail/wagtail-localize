@@ -1,16 +1,17 @@
 import json
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase, TransactionTestCase, override_settings
 from django.utils import timezone
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.blocks import StreamValue
-from wagtail.models import Locale, Page, PageLogEntry
+from wagtail.models import Locale, PageLogEntry
 
 from tests.testapp.models import (
     TestChildObject,
     TestNonParentalChildObject,
-    TestPage,
     TestRevisionsButNoDraftModel,
     TestSnippet,
     TestSynchronizedChildObject,
@@ -26,6 +27,23 @@ from wagtail_localize.models import (
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
+
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestPage,
+    )
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 def create_test_page(**kwargs):

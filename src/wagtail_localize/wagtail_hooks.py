@@ -10,13 +10,14 @@ from django.urls import include, path, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.i18n import JavaScriptCatalog
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
 from wagtail.admin.action_menu import ActionMenuItem as PageActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.admin.widgets.button import Button as ListingButton
 from wagtail.admin.widgets.button import Button as SnippetListingButton
 from wagtail.log_actions import LogFormatter
-from wagtail.models import Locale, Page, TranslatableMixin
+from wagtail.models import Locale, TranslatableMixin
 from wagtail.snippets.action_menu import ActionMenuItem as SnippetActionMenuItem
 
 # Import synctree so it can register its signal handler
@@ -30,6 +31,14 @@ from .views import (
     submit_translations,
     update_translations,
 )
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 @hooks.register("register_admin_urls")

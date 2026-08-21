@@ -4,6 +4,10 @@ Each execution uses a fresh database, so these helpers create but never clear
 data.
 """
 
+from django.conf import settings
+from wagtail import VERSION as WAGTAIL_VERSION
+
+
 TARGET_LANGUAGES = ["en", "fr", "es"]
 HOME_SLUG = "bench-home"
 # Spread leaf pages across a small, non-flat tree.
@@ -36,9 +40,23 @@ def build_snippet_pool(count, locale):
 
 def build_tree(pages, locale, snippets):
     """Build a categorized tree and return its home and flat leaf-page list."""
-    from wagtail.models import Page
+    if WAGTAIL_VERSION >= (8, 0):
+        import swapper
 
-    from tests.testapp.models import TestHomePage, TestPage
+        Page = swapper.load_model("wagtailcore", "Page")
+    else:
+        from wagtail.models import Page
+
+    if settings.USE_CUSTOM_PAGE_MODEL:
+        from tests.testapp.testpages_custombasepage.models import (
+            TestHomePage,
+            TestPage,
+        )
+    else:
+        from tests.testapp.testpages_default.models import (
+            TestHomePage,
+            TestPage,
+        )
 
     root = Page.objects.get(depth=1)
     home = root.add_child(

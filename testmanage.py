@@ -55,6 +55,11 @@ def runtests():
         pass
 
     warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
+    warnings.filterwarnings(
+        "ignore",
+        category=UserWarning,
+        message="Overriding setting DATABASES can lead to unexpected behavior.",
+    )
 
     argv = [sys.argv[0]] + rest
 

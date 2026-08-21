@@ -1,12 +1,33 @@
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
-from wagtail.models import Locale, Page
+from wagtail import VERSION as WAGTAIL_VERSION
+from wagtail.models import Locale
 from wagtail.test.utils import WagtailTestUtils
 
-from tests.testapp.models import TestHomePage, TestPage
+from tests.utils import get_page_ptr_accessor_name
 from wagtail_localize.models import LocaleSynchronization
 from wagtail_localize.synctree import PageIndex
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestHomePage,
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestHomePage,
+        TestPage,
+    )
 
 
 class TestPageIndex(TestCase):
@@ -161,7 +182,7 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         response = self.client.post(
             reverse(
                 "wagtailadmin_pages:add",
-                args=["wagtail_localize_test", "testpage", self.en_homepage.id],
+                args=["testpages", "testpage", self.en_homepage.id],
             ),
             post_data,
         )
@@ -214,7 +235,9 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         es_new_page = TestPage.objects.get(
             translation_key=new_page.translation_key, locale=self.es_locale
         )
-        self.assertEqual(es_new_page.alias_of, new_page.page_ptr)
+        self.assertEqual(
+            es_new_page.alias_of, getattr(new_page, get_page_ptr_accessor_name())
+        )
 
     def test_create_homepage_in_sync_source_locale(self):
         # Test's for a crash that happened when a homepage was created for a locale
@@ -249,7 +272,7 @@ class TestSignalsAndHooks(TestCase, WagtailTestUtils):
         response = self.client.post(
             reverse(
                 "wagtailadmin_pages:add",
-                args=["wagtail_localize_test", "testpage", root.id],
+                args=["testpages", "testpage", root.id],
             ),
             post_data,
         )
