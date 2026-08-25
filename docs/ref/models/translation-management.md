@@ -18,7 +18,7 @@ style F stroke-dasharray: 5 5
 ```
 
 ::: wagtail_localize.models
-    selection:
+    options:
         members:
             - TranslatableObject
             - TranslationSource

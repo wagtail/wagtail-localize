@@ -12,7 +12,7 @@ style B stroke-dasharray: 5 5
 ```
 
 ::: wagtail_localize.models
-    selection:
+    options:
         members:
             - LocaleSynchronization
         filters:

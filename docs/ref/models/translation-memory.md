@@ -16,7 +16,7 @@ style E stroke-dasharray: 5 5
 ```
 
 ::: wagtail_localize.models
-    selection:
+    options:
         members:
             - String
             - TranslationContext
