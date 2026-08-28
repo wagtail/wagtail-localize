@@ -208,9 +208,13 @@ WAGTAILDOCS_EXTENSIONS = [
     "zip",
 ]
 
-WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
-    "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
-    "OPTIONS": {
-        "AUTH_KEY": os.environ.get("DEEPL_AUTH_KEY", None),
-    },
-}
+# Only configured when a key is available, so that the demo runs without a DeepL account.
+DEEPL_AUTH_KEY = os.environ.get("DEEPL_AUTH_KEY")
+
+if DEEPL_AUTH_KEY:
+    WAGTAILLOCALIZE_MACHINE_TRANSLATOR = {
+        "CLASS": "wagtail_localize.machine_translators.deepl.DeepLTranslator",
+        "OPTIONS": {
+            "AUTH_KEY": DEEPL_AUTH_KEY,
+        },
+    }
