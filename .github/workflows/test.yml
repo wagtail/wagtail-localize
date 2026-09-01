@@ -141,7 +141,7 @@ jobs:
       - name: Check for missing demo migrations
         run: python demo/manage.py makemigrations --check --noinput
       - name: Run the demo tests
-        run: python demo/manage.py test home
+        run: python demo/manage.py test home blog
 
   coverage:
     runs-on: ubuntu-26.04-arm
