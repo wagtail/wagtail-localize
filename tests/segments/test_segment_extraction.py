@@ -1,18 +1,19 @@
 import unittest
 import uuid
 
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.blocks import StreamValue
 from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
-from wagtail.models import Page, Site
+from wagtail.models import Site
 
 from tests.testapp.models import (
     TestChildObject,
     TestModelWithInvalidForeignKey,
     TestNonParentalChildObject,
-    TestPage,
     TestSnippet,
 )
 from wagtail_localize.segments import (
@@ -26,6 +27,23 @@ from wagtail_localize.segments.extract import (
     extract_segments,
 )
 from wagtail_localize.strings import StringValue
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestPage,
+    )
 
 
 def make_test_page(**kwargs):

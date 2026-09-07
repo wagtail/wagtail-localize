@@ -6,7 +6,9 @@ from unittest.mock import patch
 
 import polib
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
+from django.contrib.auth import get_permission_codename
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
@@ -24,23 +26,21 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.panels import FieldPanel, TitleFieldPanel
 from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
 from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
-from wagtail.models import Locale, Page, Revision
+from wagtail.models import Locale, Revision
 from wagtail.test.utils import WagtailTestUtils
 
 from tests.testapp.models import (
     Header,
     NavigationLink,
     NonTranslatableSnippet,
-    PageWithCustomEditHandler,
     PageWithCustomEditHandlerChildObject,
     SubNavigationLink,
-    TestHomePage,
-    TestPage,
     TestSnippet,
     TestSnippetOrderable,
 )
@@ -62,6 +62,32 @@ from wagtail_localize.views.edit_translation import (
 )
 
 from .utils import assert_permission_denied
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    swapper.set_app_prefix("wagtailcore", "wagtail")
+    Page = swapper.load_model("wagtailcore", "Page")
+    PAGE_MODEL_NAME = swapper.get_model_name("wagtailcore", "Page").lower()
+else:
+    from wagtail.models import Page
+
+    PAGE_MODEL_NAME = "wagtailcore.page"
+
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        PageWithCustomEditHandler,
+        TestHomePage,
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        PageWithCustomEditHandler,
+        TestHomePage,
+        TestPage,
+    )
 
 
 RICH_TEXT_DATA = '<h1>This is a heading</h1><p>This is a paragraph. &lt;foo&gt; <b>Bold text</b></p><ul><li><a href="http://example.com">This is a link</a>.</li><li>Special characters: \'"!? セキレイ</li></ul>'
@@ -551,13 +577,13 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         }
         self.assertEqual(
             segments_by_content_path["test_page"]["location"]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
         self.assertEqual(
             segments_by_content_path["test_page_specific_type"]["location"]["widget"],
             {
                 "type": "page_chooser",
-                "allowed_page_types": ["wagtail_localize_test.testhomepage"],
+                "allowed_page_types": ["testpages.testhomepage"],
             },
         )
         self.assertEqual(
@@ -567,8 +593,8 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {
                 "type": "page_chooser",
                 "allowed_page_types": [
-                    "wagtail_localize_test.testhomepage",
-                    "wagtail_localize_test.testpage",
+                    "testpages.testhomepage",
+                    "testpages.testpage",
                 ],
             },
         )
@@ -576,7 +602,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             segments_by_content_path[f"test_streamfield.{PAGE_CHOOSER_BLOCK_ID}"][
                 "location"
             ]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
         self.assertEqual(
             segments_by_content_path[
@@ -585,8 +611,8 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {
                 "type": "page_chooser",
                 "allowed_page_types": [
-                    "wagtail_localize_test.testhomepage",
-                    "wagtail_localize_test.testpage",
+                    "testpages.testhomepage",
+                    "testpages.testpage",
                 ],
             },
         )
@@ -627,7 +653,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             {
                 "type": "page_chooser",
                 "allowed_page_types": [
-                    "wagtailcore.page",
+                    PAGE_MODEL_NAME,
                 ],
             },
         )
@@ -759,11 +785,11 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
         self.assertEqual(
             segments_by_content_path[chooser_path]["location"]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
         self.assertEqual(
             segments_by_content_path[nested_chooser_path]["location"]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
     def test_choosers_in_stream_blocks(self):
@@ -838,14 +864,14 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         chooser_path = f"test_streamfield.{chooser_struct_block_id}.page"
         self.assertEqual(
             segments_by_content_path[chooser_path]["location"]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
         nested_chooser_path = (
             f"test_streamfield.{nested_chooser_struct_block_id}.nested_page.page"
         )
         self.assertEqual(
             segments_by_content_path[nested_chooser_path]["location"]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
         chooser_in_streamblock_path = (
@@ -853,7 +879,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         )
         self.assertEqual(
             segments_by_content_path[chooser_in_streamblock_path]["location"]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
         chooser_in_structblock_in_streamblock_path = f"test_streamfield.{streamblock_id}.{nested_streamblock_chooser_struct_block_id}.page"
@@ -861,7 +887,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             segments_by_content_path[chooser_in_structblock_in_streamblock_path][
                 "location"
             ]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
     def test_choosers_in_listblock_in_stream_blocks(self):
@@ -927,7 +953,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             segments_by_content_path[chooser_in_listblock_in_streamblock_path][
                 "location"
             ]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
     def test_choosers_in_structblock_in_listblock(self):
@@ -1018,7 +1044,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             segments_by_content_path[chooser_in_struct_in_listblock]["location"][
                 "widget"
             ],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
         chooser_in_struct_in_list_in_stream_in_listblock = (
@@ -1029,7 +1055,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             segments_by_content_path[chooser_in_struct_in_list_in_stream_in_listblock][
                 "location"
             ]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
     def test_choosers_in_listblock(self):
@@ -1181,7 +1207,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
         chooser_in_streamblock_path = f"test_streamfield.{struct_block_id}.nested_stream.{nested_streamblock_chooser_block_id}"
         self.assertEqual(
             segments_by_content_path[chooser_in_streamblock_path]["location"]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
         chooser_in_structblock_in_streamblock_path = f"test_streamfield.{struct_block_id}.nested_stream.{nested_streamblock_chooser_struct_block_id}.page"
@@ -1189,7 +1215,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             segments_by_content_path[chooser_in_structblock_in_streamblock_path][
                 "location"
             ]["widget"],
-            {"type": "page_chooser", "allowed_page_types": ["wagtailcore.page"]},
+            {"type": "page_chooser", "allowed_page_types": [PAGE_MODEL_NAME]},
         )
 
     def test_manually_translated_related_object(self):
@@ -1309,7 +1335,7 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
                     f"test_streamfield.{page_block_id}",
                     {
                         "type": "page_chooser",
-                        "allowed_page_types": ["wagtailcore.page"],
+                        "allowed_page_types": [PAGE_MODEL_NAME],
                     },
                     self.page.id,
                 ),
@@ -2049,8 +2075,11 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
         self.assertFalse(TranslationLog.objects.exists())
 
     def test_cant_publish_page_translation_without_perms(self):
+
+        codename = get_permission_codename("publish", Page._meta)
+
         self.moderators_group.page_permissions.filter(
-            permission__codename="publish_page"
+            permission__codename=codename
         ).delete()
         response = self.client.post(
             reverse("wagtailadmin_pages:edit", args=[self.fr_page.id]),

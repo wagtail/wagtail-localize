@@ -9,7 +9,7 @@ from django.forms.widgets import CheckboxInput
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail.models import Locale, Page, PageViewRestriction
+from wagtail.models import Locale, PageViewRestriction
 from wagtail.test.utils import WagtailTestUtils
 
 from tests.testapp.models import NonTranslatableSnippet, TestSnippet
@@ -21,6 +21,14 @@ from wagtail_localize.models import (
 )
 
 from .utils import assert_permission_denied, make_test_page
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 def strip_user_perms():

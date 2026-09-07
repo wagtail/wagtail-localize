@@ -10,13 +10,22 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, ngettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.models import Locale, Page, TranslatableMixin
+from wagtail.models import Locale, TranslatableMixin
 from wagtail.snippets.views.snippets import get_snippet_model_from_url_params
 
 from wagtail_localize.components import TranslationComponentManager
 from wagtail_localize.operations import translate_object, translate_page_subtree
 from wagtail_localize.tasks import background
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 class SubmitTranslationForm(forms.Form):

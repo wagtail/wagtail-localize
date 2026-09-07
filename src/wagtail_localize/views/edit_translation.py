@@ -31,6 +31,7 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.admin import messages
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -45,7 +46,7 @@ from wagtail.documents.models import AbstractDocument
 from wagtail.fields import StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import AbstractImage
-from wagtail.models import DraftStateMixin, Page, TranslatableMixin
+from wagtail.models import DraftStateMixin, TranslatableMixin
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
@@ -62,6 +63,14 @@ from wagtail_localize.models import (
     TranslationSource,
 )
 from wagtail_localize.segments import StringSegmentValue
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 class UserSerializer(serializers.ModelSerializer):
