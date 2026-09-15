@@ -1039,9 +1039,16 @@ def edit_translation(request, translation: Translation, instance):
 
     side_panels = []
     if is_page:
-        from wagtail.admin.ui.side_panels import PageStatusSidePanel
+        from wagtail.admin.ui.side_panels import PageStatusSidePanel, PreviewSidePanel
 
         side_panels = [
+            PreviewSidePanel(
+                instance,
+                request,
+                preview_url=reverse(
+                    "wagtail_localize:live_preview", args=[translation.id]
+                ),
+            ),
             PageStatusSidePanel(
                 instance,
                 request,
@@ -1059,7 +1066,7 @@ def edit_translation(request, translation: Translation, instance):
                     for _translation in translations
                     if _translation.permissions_for_user(request.user).can_edit()
                 ],
-            )
+            ),
         ]
     elif hasattr(instance, "snippet_viewset"):
         from wagtail.admin.ui.side_panels import StatusSidePanel

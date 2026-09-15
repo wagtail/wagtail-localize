@@ -223,6 +223,52 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
     };
 
     const [state, dispatch] = React.useReducer(reducer, initialState);
+    const [draftStringTranslations, setDraftStringTranslations] =
+        React.useState<Map<number, string>>(new Map());
+    const [draftSegmentOverrides, setDraftSegmentOverrides] = React.useState<
+        Map<number, SegmentOverride['value']>
+    >(new Map());
+
+    useEffect(() => {
+        const form = document.getElementById(
+            'wagtail-localize-live-preview-form'
+        ) as HTMLFormElement | null;
+        const payload = form?.elements.namedItem(
+            'payload'
+        ) as HTMLInputElement | null;
+        if (!form || !payload) return;
+
+        const stringTranslations = Object.fromEntries(
+            Array.from(state.stringTranslations).map(([id, translation]) => [
+                id,
+                translation.value,
+            ])
+        );
+        draftStringTranslations.forEach((value, id) => {
+            stringTranslations[id] = value;
+        });
+
+        const segmentOverrides = Object.fromEntries(
+            Array.from(state.segmentOverrides).map(([id, override]) => [
+                id,
+                override.value,
+            ])
+        );
+        draftSegmentOverrides.forEach((value, id) => {
+            segmentOverrides[id] = value;
+        });
+
+        payload.value = JSON.stringify({
+            stringTranslations,
+            segmentOverrides,
+        });
+        form.dispatchEvent(new CustomEvent('w-unsaved:add', { bubbles: true }));
+    }, [
+        state.stringTranslations,
+        state.segmentOverrides,
+        draftStringTranslations,
+        draftSegmentOverrides,
+    ]);
 
     // Catch user trying to navigate away with unsaved segments
     useEffect(() => {
@@ -243,6 +289,33 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
             };
         }
     }, [state.editingSegments]);
+
+    const onDraftStringChange = (id: number, value: string | undefined) => {
+        setDraftStringTranslations((drafts) => {
+            const nextDrafts = new Map(drafts);
+            if (value === undefined) {
+                nextDrafts.delete(id);
+            } else {
+                nextDrafts.set(id, value);
+            }
+            return nextDrafts;
+        });
+    };
+
+    const onDraftOverrideChange = (
+        id: number,
+        value: SegmentOverride['value'] | undefined
+    ) => {
+        setDraftSegmentOverrides((drafts) => {
+            const nextDrafts = new Map(drafts);
+            if (value === undefined) {
+                nextDrafts.delete(id);
+            } else {
+                nextDrafts.set(id, value);
+            }
+            return nextDrafts;
+        });
+    };
 
     const tabData = props.tabs
         .map((tab) => {
@@ -284,6 +357,10 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
                                     {...props}
                                     segments={tab.segments}
                                     {...state}
+                                    onDraftStringChange={onDraftStringChange}
+                                    onDraftOverrideChange={
+                                        onDraftOverrideChange
+                                    }
                                     dispatch={dispatch}
                                 />
                             </Section>
@@ -303,6 +380,8 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
                         <EditorSegmentList
                             {...props}
                             {...state}
+                            onDraftStringChange={onDraftStringChange}
+                            onDraftOverrideChange={onDraftOverrideChange}
                             dispatch={dispatch}
                         />
                     </Section>
