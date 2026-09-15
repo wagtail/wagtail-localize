@@ -1066,7 +1066,7 @@ def edit_translation(request, translation: Translation, instance):
                     for _translation in translations
                     if _translation.permissions_for_user(request.user).can_edit()
                 ],
-            )
+            ),
         ]
     elif hasattr(instance, "snippet_viewset"):
         from wagtail.admin.ui.side_panels import StatusSidePanel
