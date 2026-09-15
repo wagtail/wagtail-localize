@@ -224,6 +224,30 @@ const TranslationEditor: FunctionComponent<EditorProps> = (props) => {
 
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
+    useEffect(() => {
+        const form = document.getElementById(
+            'wagtail-localize-live-preview-form'
+        ) as HTMLFormElement | null;
+        const payload = form?.elements.namedItem('payload') as HTMLInputElement | null;
+        if (!form || !payload) return;
+
+        payload.value = JSON.stringify({
+            stringTranslations: Object.fromEntries(
+                Array.from(state.stringTranslations).map(([id, translation]) => [
+                    id,
+                    translation.value,
+                ])
+            ),
+            segmentOverrides: Object.fromEntries(
+                Array.from(state.segmentOverrides).map(([id, override]) => [
+                    id,
+                    override.value,
+                ])
+            ),
+        });
+        form.dispatchEvent(new CustomEvent('w-unsaved:add', { bubbles: true }));
+    }, [state.stringTranslations, state.segmentOverrides]);
+
     // Catch user trying to navigate away with unsaved segments
     useEffect(() => {
         if (state.editingSegments.size > 0) {
