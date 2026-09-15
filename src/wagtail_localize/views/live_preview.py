@@ -17,7 +17,7 @@ from wagtail_localize.segments.types import (
     OverridableSegmentValue,
     StringSegmentValue,
 )
-from wagtail_localize.strings import StringValue
+from wagtail_localize.strings import StringValue, validate_translation_links
 from wagtail_localize.views.edit_translation import user_can_edit_instance
 
 
@@ -48,10 +48,10 @@ def _parse_payload(payload):
 def _get_preview_values(translation, payload):
     string_values, override_values = _parse_payload(payload)
     source = translation.source
-    valid_string_ids = {
-        str(pk)
-        for pk in StringSegment.objects.filter(source=source).values_list("id", flat=True)
-    }
+    string_segments = list(
+        StringSegment.objects.filter(source=source).select_related("string")
+    )
+    valid_string_ids = {str(segment.id) for segment in string_segments}
     valid_override_ids = {
         str(pk)
         for pk in OverridableSegment.objects.filter(source=source).values_list(
@@ -59,10 +59,17 @@ def _get_preview_values(translation, payload):
         )
     }
 
-    if set(string_values) - valid_string_ids or set(override_values) - valid_override_ids:
+    if (
+        set(string_values) - valid_string_ids
+        or set(override_values) - valid_override_ids
+    ):
         raise ValueError
-    if any(not isinstance(value, str) for value in string_values.values()):
-        raise ValueError
+    segments_by_id = {str(segment.id): segment for segment in string_segments}
+    for segment_id, value in string_values.items():
+        if not isinstance(value, str):
+            raise ValueError
+        StringValue.from_translated_html(value)
+        validate_translation_links(segments_by_id[segment_id].string.data, value)
     return string_values, override_values
 
 
@@ -77,7 +84,9 @@ def _replace_ephemeral_values(translation, string_values, override_values):
 
     strings_by_key = {
         (segment.context.path, segment.order): string_values[str(segment.id)]
-        for segment in StringSegment.objects.filter(source=source).select_related("context")
+        for segment in StringSegment.objects.filter(source=source).select_related(
+            "context"
+        )
         if str(segment.id) in string_values
     }
     override_segments = list(
@@ -97,7 +106,7 @@ def _replace_ephemeral_values(translation, string_values, override_values):
             replaced.append(
                 StringSegmentValue(
                     segment.path,
-                    StringValue.from_plaintext(strings_by_key[key]),
+                    StringValue.from_translated_html(strings_by_key[key]),
                     attrs=segment.attrs,
                     order=segment.order,
                 )
@@ -117,7 +126,9 @@ def _replace_ephemeral_values(translation, string_values, override_values):
         if str(segment.id) in override_values and key not in represented_override_keys:
             replaced.append(
                 OverridableSegmentValue(
-                    segment.context.path, override_values[str(segment.id)], order=segment.order
+                    segment.context.path,
+                    override_values[str(segment.id)],
+                    order=segment.order,
                 )
             )
 
@@ -176,5 +187,8 @@ def live_preview(request, translation_id, mode=None):
     return ephemeral.make_preview_request(
         request,
         mode,
-        {"in_preview_panel": request.GET.get("in_preview_panel") == "true", "is_editing": True},
+        {
+            "in_preview_panel": request.GET.get("in_preview_panel") == "true",
+            "is_editing": True,
+        },
     )

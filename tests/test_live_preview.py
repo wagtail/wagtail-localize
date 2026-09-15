@@ -36,6 +36,45 @@ class LivePreviewTests(SimpleTestCase):
             get_target_instance=lambda: target,
         )
 
+    @patch.object(live_preview.OverridableSegment.objects, "filter")
+    @patch.object(live_preview.StringSegment.objects, "filter")
+    def test_accepts_translated_inline_html(self, string_filter, override_filter):
+        source = SimpleNamespace()
+        segment = SimpleNamespace(
+            id=1, string=SimpleNamespace(data='<a id="a1">Source</a>')
+        )
+        string_filter.return_value.select_related.return_value = [segment]
+        override_filter.return_value.values_list.return_value = []
+
+        values = live_preview._get_preview_values(
+            SimpleNamespace(source=source),
+            {
+                "stringTranslations": {"1": '<a id="a1">Translated</a>'},
+                "segmentOverrides": {},
+            },
+        )
+
+        self.assertEqual(values[0]["1"], '<a id="a1">Translated</a>')
+
+    @patch.object(live_preview.OverridableSegment.objects, "filter")
+    @patch.object(live_preview.StringSegment.objects, "filter")
+    def test_rejects_invalid_translated_html(self, string_filter, override_filter):
+        source = SimpleNamespace()
+        segment = SimpleNamespace(
+            id=1, string=SimpleNamespace(data='<a id="a1">Source</a>')
+        )
+        string_filter.return_value.select_related.return_value = [segment]
+        override_filter.return_value.values_list.return_value = []
+
+        with self.assertRaises(ValueError):
+            live_preview._get_preview_values(
+                SimpleNamespace(source=source),
+                {
+                    "stringTranslations": {"1": "<script>Invalid</script>"},
+                    "segmentOverrides": {},
+                },
+            )
+
     @patch.object(live_preview, "user_can_edit_instance", return_value=False)
     @patch.object(live_preview, "get_object_or_404")
     def test_requires_edit_permission(self, get_translation, _can_edit):
@@ -46,9 +85,7 @@ class LivePreviewTests(SimpleTestCase):
     @patch.object(live_preview, "_get_preview_values", side_effect=ValueError)
     @patch.object(live_preview, "user_can_edit_instance", return_value=True)
     @patch.object(live_preview, "get_object_or_404")
-    def test_rejects_invalid_payload(
-        self, get_translation, _can_edit, _get_values
-    ):
+    def test_rejects_invalid_payload(self, get_translation, _can_edit, _get_values):
         get_translation.return_value = self.translation()
         response = live_preview.live_preview(
             self.request(payload={"stringTranslations": []}), translation_id=7
@@ -56,7 +93,9 @@ class LivePreviewTests(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)["is_valid"], False)
 
-    @patch.object(live_preview, "_get_preview_values", return_value=({"1": "draft"}, {}))
+    @patch.object(
+        live_preview, "_get_preview_values", return_value=({"1": "draft"}, {})
+    )
     @patch.object(live_preview, "user_can_edit_instance", return_value=True)
     @patch.object(live_preview, "get_object_or_404")
     def test_stores_unsaved_payload_in_session(
