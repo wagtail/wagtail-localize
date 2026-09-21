@@ -19,11 +19,17 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils.dateparse import parse_datetime
 from home.models import HomePage
 from wagtail.images.models import Image
-from wagtail.models import Collection, Site
+from wagtail.models import Collection, Locale, Site
 from wagtail.rich_text import RichText
 from wagtail.users.models import UserProfile
 
 from blog.models import BlogIndexPage, BlogPage, Person
+from wagtail_localize.models import (
+    StringSegment,
+    StringTranslation,
+    Translation,
+    TranslationSource,
+)
 
 
 IMAGES_DIR = (
@@ -519,6 +525,113 @@ POSTS: list[dict[str, Any]] = [
 ]
 
 
+# French translations for the one post and one author the demo ships translated.
+# Keyed by the exact source string wagtail-localize extracts, which is why the rich
+# text entries keep their markup: `<b>` is part of the string, and `<a id="a1">` is the
+# placeholder the package puts in place of the real href while the text is translated.
+FRENCH_TRANSLATIONS: dict[str, str] = {
+    # BlogPage "Bread and Circuses"
+    "Bread and Circuses": "Du pain et des jeux",
+    "bread-circuses": "du-pain-et-des-jeux",
+    "The art of baking": "L'art de la boulangerie",
+    (
+        "Baking is a method of cooking food that uses prolonged dry heat, normally in "
+        "an oven, but also in hot ashes, or on hot stones. The most common baked item "
+        "is bread but many other types of foods are baked."
+    ): (
+        "La cuisson au four est une méthode de cuisson des aliments qui utilise une "
+        "chaleur sèche prolongée, normalement dans un four, mais aussi dans des cendres "
+        "chaudes ou sur des pierres chaudes. L'aliment cuit au four le plus courant est "
+        "le pain, mais bien d'autres types d'aliments se cuisent ainsi."
+    ),
+    (
+        'Heat is <b>gradually</b> transferred "from the surface of cakes, cookies, and '
+        "breads to their centre. As heat travels through it transforms batters and "
+        'doughs into baked goods with a firm dry crust and a softer centre".[2] Baking '
+        "can be combined with grilling to produce a hybrid barbecue variant by using "
+        "both methods simultaneously, or one after the other. Baking is related to "
+        "barbecuing because the concept of the masonry oven is similar to that of a "
+        "smoke pit."
+    ): (
+        "La chaleur est transmise <b>progressivement</b> « de la surface des gâteaux, "
+        "des biscuits et des pains vers leur centre. En se propageant, elle transforme "
+        "les pâtes en produits cuits dotés d'une croûte ferme et sèche et d'un cœur "
+        "plus tendre ».[2] La cuisson au four peut être combinée au gril pour obtenir "
+        "une variante hybride du barbecue, en employant les deux méthodes en même temps "
+        "ou l'une après l'autre. La cuisson au four s'apparente au barbecue parce que "
+        "le principe du four en maçonnerie est proche de celui du fumoir."
+    ),
+    (
+        'Because of historical social and familial roles,\xa0<a id="a1">baking</a>\xa0has '
+        "traditionally been performed at home by women for domestic consumption and by "
+        "men in bakeries and restaurants for local consumption. When production was "
+        "industrialized, baking was automated by machines in large factories. The art "
+        "of baking remains a fundamental skill and is important for nutrition, as baked "
+        "goods, especially breads, are a common but important food, both from an "
+        "economic and cultural point of view. A person who crafts baked goods as a "
+        "profession is called a baker."
+    ): (
+        "En raison de rôles sociaux et familiaux hérités de l'histoire,"
+        '\xa0<a id="a1">la cuisson au four</a>\xa0a traditionnellement été pratiquée à la '
+        "maison par les femmes pour la consommation domestique, et par les hommes dans "
+        "les boulangeries et les restaurants pour la consommation locale. Lorsque la "
+        "production s'est industrialisée, la cuisson a été automatisée par des machines "
+        "dans de grandes usines. L'art de la boulangerie reste un savoir-faire "
+        "fondamental et joue un rôle important dans l'alimentation, car les produits "
+        "cuits au four, et le pain en particulier, sont un aliment courant mais "
+        "essentiel, tant sur le plan économique que culturel. Celui ou celle qui en "
+        "fait son métier est appelé boulanger ou boulangère."
+    ),
+    "Soda Bread": "Pain au bicarbonate",
+    "Sourdough bread": "Pain au levain",
+    "Creative Commons": "Creative Commons",
+    # Person "Olivia Ava". Only the job title is translated: `Person` declares
+    # first_name and last_name as synchronised fields.
+    "Director": "Directrice",
+}
+
+# The post and author that ship translated. Everything else stays English, which is
+# what a real site looks like part-way through a translation project.
+TRANSLATED_POST_SLUG = "bread-circuses"
+
+
+def translate_to_french(instance, locale: Locale, user) -> Translation:
+    """
+    Create and publish the French translation of `instance`.
+
+    These are the same four steps the admin runs when an editor submits an object for
+    translation, fills in the segments and publishes: take a snapshot of the source,
+    open a translation into the target locale, write a translation for each string
+    segment, then write and publish the translated object.
+    """
+    source, _created = TranslationSource.get_or_create_from_instance(instance)
+    translation, _created = Translation.objects.get_or_create(
+        source=source,
+        target_locale=locale,
+    )
+
+    segments = StringSegment.objects.filter(source=source).select_related(
+        "string", "context"
+    )
+    for segment in segments:
+        french = FRENCH_TRANSLATIONS.get(segment.string.data)
+        if french is None:
+            continue
+        StringTranslation.objects.get_or_create(
+            translation_of=segment.string,
+            locale=locale,
+            context=segment.context,
+            defaults={
+                "data": french,
+                "translation_type": StringTranslation.TRANSLATION_TYPE_MANUAL,
+                "last_translated_by": user,
+            },
+        )
+
+    translation.save_target(user=user, publish=True)
+    return translation
+
+
 def _dimensions_from_path(path: Path) -> tuple[int, int]:
     with path.open("rb") as fh:
         w, h = get_image_dimensions(fh)
@@ -824,3 +937,19 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS("Homepage updated with hero and blog section.")
         )
+
+        french, _created = Locale.objects.get_or_create(language_code="fr")
+        post = BlogPage.objects.filter(
+            slug=TRANSLATED_POST_SLUG, locale=Locale.get_default()
+        ).first()
+        if post:
+            # The author is translated first, so that the post's translation links to
+            # the French author rather than the English one.
+            for relationship in post.blog_person_relationship.all():
+                translate_to_french(relationship.person, french, user)
+            translate_to_french(post, french, user)
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Translated '{post.title}' and its author into French."
+                )
+            )
