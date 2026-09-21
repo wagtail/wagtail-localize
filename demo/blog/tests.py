@@ -1,7 +1,10 @@
 import tempfile
+import uuid
 
 from django.core.management import call_command
-from django.test import TestCase, override_settings
+from django.db import IntegrityError, connection, transaction
+from django.db.migrations.executor import MigrationExecutor
+from django.test import TestCase, TransactionTestCase, override_settings
 from wagtail.models import Locale, Page
 from wagtail.test.utils import WagtailPageTestCase
 
@@ -118,3 +121,143 @@ class LoadInitialDataTests(TestCase):
 
         self.assertTrue(french_post.live)
         self.assertEqual(french_post.authors()[0].locale, french)
+
+
+class MakeAuthorsTranslatableMigrationTestCase(TransactionTestCase):
+    """
+    Check that migration 0004 works on a database that already has authors.
+
+    The rows are created with the models as they were at 0003 and read back
+    with the models at 0004, so what gets tested is the migration itself.
+    """
+
+    BEFORE = [("blog", "0003_alter_blogpage_body")]
+    AFTER = [("blog", "0004_blogpersonrelationship_locale_and_more")]
+
+    def migrate(self, targets):
+        executor = MigrationExecutor(connection)
+        executor.loader.build_graph()
+        executor.migrate(targets)
+        executor.loader.build_graph()
+        return executor.loader.project_state(targets).apps
+
+    def tearDown(self):
+        call_command("migrate", "blog", verbosity=0)
+
+    def make_authors(self, apps):
+        """
+        Create a post with three authors, using the models as they were at 0003.
+        """
+        ContentType = apps.get_model("contenttypes", "ContentType")
+        HistoricLocale = apps.get_model("wagtailcore", "Locale")
+        HistoricBlogPage = apps.get_model("blog", "BlogPage")
+        HistoricPerson = apps.get_model("blog", "Person")
+        HistoricRelationship = apps.get_model("blog", "BlogPersonRelationship")
+
+        locale, _ = HistoricLocale.objects.get_or_create(language_code="en")
+        content_type, _ = ContentType.objects.get_or_create(
+            app_label="blog", model="blogpage"
+        )
+
+        post = HistoricBlogPage.objects.create(
+            title="Post",
+            draft_title="Post",
+            slug="post-migration",
+            path="900100010001",
+            depth=3,
+            numchild=0,
+            url_path="/post-migration/",
+            content_type=content_type,
+            locale=locale,
+            translation_key=uuid.uuid4(),
+            introduction="",
+            body="[]",
+            subtitle="",
+        )
+
+        people = [
+            HistoricPerson.objects.create(
+                first_name=f"First {number}",
+                last_name=f"Last {number}",
+                job_title="Baker",
+            )
+            for number in range(3)
+        ]
+
+        relationships = [
+            HistoricRelationship.objects.create(
+                page=post, person=person, sort_order=number
+            )
+            for number, person in enumerate(people)
+        ]
+
+        return post, people, relationships
+
+    def test_existing_authors_survive_and_get_a_key_each(self):
+        old_apps = self.migrate(self.BEFORE)
+        post, people, relationships = self.make_authors(old_apps)
+
+        expected_people = {
+            (person.first_name, person.last_name, person.job_title) for person in people
+        }
+        expected_links = {
+            (relationship.person_id, relationship.page_id)
+            for relationship in relationships
+        }
+
+        new_apps = self.migrate(self.AFTER)
+
+        Person = new_apps.get_model("blog", "Person")
+        Relationship = new_apps.get_model("blog", "BlogPersonRelationship")
+        HistoricLocale = new_apps.get_model("wagtailcore", "Locale")
+
+        migrated_people = list(Person.objects.all())
+        migrated_links = list(Relationship.objects.all())
+
+        # Nothing is dropped.
+        self.assertEqual(len(migrated_people), 3)
+        self.assertEqual(len(migrated_links), 3)
+
+        # The rows still say what they said.
+        self.assertEqual(
+            {
+                (person.first_name, person.last_name, person.job_title)
+                for person in migrated_people
+            },
+            expected_people,
+        )
+
+        # And each relationship still points at the same author and post.
+        self.assertEqual(
+            {(link.person_id, link.page_id) for link in migrated_links},
+            expected_links,
+        )
+
+        # Each row has a key of its own, which is what lets the constraint
+        # exist at all.
+        self.assertEqual(len({person.translation_key for person in migrated_people}), 3)
+        self.assertEqual(len({link.translation_key for link in migrated_links}), 3)
+
+        # They are all in the site's own language.
+        english = HistoricLocale.objects.get(language_code="en")
+        self.assertEqual({person.locale_id for person in migrated_people}, {english.pk})
+        self.assertEqual({link.locale_id for link in migrated_links}, {english.pk})
+
+        # The uniqueness is really in place on both models, not just declared.
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Person.objects.create(
+                first_name="Duplicate",
+                last_name="Key",
+                job_title="Baker",
+                locale_id=english.pk,
+                translation_key=migrated_people[0].translation_key,
+            )
+
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Relationship.objects.create(
+                page_id=migrated_links[0].page_id,
+                person_id=migrated_links[0].person_id,
+                sort_order=99,
+                locale_id=english.pk,
+                translation_key=migrated_links[0].translation_key,
+            )

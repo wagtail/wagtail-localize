@@ -5,51 +5,98 @@ import uuid
 import django.db.models.deletion
 
 from django.db import migrations, models
+from wagtail.models import BootstrapTranslatableModel
 
 
 class Migration(migrations.Migration):
+    """
+    Make the author snippets and their relationships translatable.
+
+    Written by hand because the generated version fails on a database that
+    already has authors: Django gives every existing row the same key, and
+    they clash once the keys have to be unique.
+
+    The fields are added empty, filled in row by row, and made unique last.
+    """
+
     dependencies = [
         ("blog", "0003_alter_blogpage_body"),
         ("wagtailcore", "0097_baselogentry_uuid_action_timestamp_indexes"),
     ]
 
     operations = [
+        # 1. The fields, nullable for now.
         migrations.AddField(
             model_name="blogpersonrelationship",
             name="locale",
             field=models.ForeignKey(
-                default=1,
+                editable=False,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="wagtailcore.locale",
+                verbose_name="locale",
+            ),
+        ),
+        migrations.AddField(
+            model_name="blogpersonrelationship",
+            name="translation_key",
+            field=models.UUIDField(editable=False, null=True),
+        ),
+        migrations.AddField(
+            model_name="person",
+            name="locale",
+            field=models.ForeignKey(
+                editable=False,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="wagtailcore.locale",
+                verbose_name="locale",
+            ),
+        ),
+        migrations.AddField(
+            model_name="person",
+            name="translation_key",
+            field=models.UUIDField(editable=False, null=True),
+        ),
+        # 2. Fill them in: the default locale, and a key of its own per row.
+        BootstrapTranslatableModel("blog.BlogPersonRelationship"),
+        BootstrapTranslatableModel("blog.Person"),
+        # 3. The fields as the model declares them.
+        migrations.AlterField(
+            model_name="blogpersonrelationship",
+            name="locale",
+            field=models.ForeignKey(
                 editable=False,
                 on_delete=django.db.models.deletion.PROTECT,
                 related_name="+",
                 to="wagtailcore.locale",
                 verbose_name="locale",
             ),
-            preserve_default=False,
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name="blogpersonrelationship",
             name="translation_key",
             field=models.UUIDField(default=uuid.uuid4, editable=False),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name="person",
             name="locale",
             field=models.ForeignKey(
-                default=1,
                 editable=False,
                 on_delete=django.db.models.deletion.PROTECT,
                 related_name="+",
                 to="wagtailcore.locale",
                 verbose_name="locale",
             ),
-            preserve_default=False,
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name="person",
             name="translation_key",
             field=models.UUIDField(default=uuid.uuid4, editable=False),
         ),
+        # 4. And now the keys can be required to differ.
         migrations.AlterUniqueTogether(
             name="blogpersonrelationship",
             unique_together={("translation_key", "locale")},
