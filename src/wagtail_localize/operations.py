@@ -5,9 +5,18 @@ from collections import defaultdict
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from wagtail.models import DraftStateMixin, Page
+from wagtail import VERSION as WAGTAIL_VERSION
+from wagtail.models import DraftStateMixin
 
 from wagtail_localize.models import Translation, TranslationSource
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 class TranslationCreator:

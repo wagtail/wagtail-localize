@@ -6,12 +6,21 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.models import Page, PageLogEntry, TranslatableMixin, _copy_m2m_relations
+from wagtail.models import PageLogEntry, TranslatableMixin, _copy_m2m_relations
 from wagtail.signals import page_published
 
 from wagtail_localize.models import Translation, TranslationSource
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 def convert_to_alias(request, page_id):

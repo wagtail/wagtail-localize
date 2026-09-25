@@ -18,6 +18,9 @@ from dataclasses import dataclass
 from types import SimpleNamespace
 from typing import Any
 
+from django.conf import settings
+from wagtail import VERSION as WAGTAIL_VERSION
+
 
 # ---------------------------------------------------------------------------
 # The model
@@ -1295,7 +1298,12 @@ INDEX_FILLER_PAGES = 40
 def _indexable_pages():
     """The pages PageIndex.from_database() walks: every page below the root
     that is not an alias."""
-    from wagtail.models import Page
+    if WAGTAIL_VERSION >= (8, 0):
+        import swapper
+
+        Page = swapper.load_model("wagtailcore", "Page")
+    else:
+        from wagtail.models import Page
 
     return Page.objects.filter(alias_of__isnull=True, depth__gt=1)
 
@@ -1321,9 +1329,21 @@ def _core_page_index_setup(ctx, size):
     The large size creates its pages here, outside the measured region: the
     probe measures reading the page table, not writing to it.
     """
-    from wagtail.models import Page
+    if WAGTAIL_VERSION >= (8, 0):
+        import swapper
 
-    from tests.testapp.models import TestPage
+        Page = swapper.load_model("wagtailcore", "Page")
+    else:
+        from wagtail.models import Page
+
+    if settings.USE_CUSTOM_PAGE_MODEL:
+        from tests.testapp.testpages_custombasepage.models import (
+            TestPage,
+        )
+    else:
+        from tests.testapp.testpages_default.models import (
+            TestPage,
+        )
 
     if size == "large":
         # prepare() exports the English home as the large subtree root.
