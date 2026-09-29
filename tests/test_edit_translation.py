@@ -43,6 +43,8 @@ from tests.testapp.models import (
     TestPage,
     TestSnippet,
     TestSnippetOrderable,
+    TestUUIDModel,
+    TestUUIDSnippet,
 )
 from wagtail_localize.machine_translators.dummy import translate_html
 from wagtail_localize.models import (
@@ -2128,6 +2130,218 @@ class TestPublishTranslation(EditTranslationTestData, APITestCase):
             messages[0].message,
             "Sorry, you do not have permission to access this area.\n\n\n\n\n",
         )
+
+
+class TestSaveDraftTranslation(EditTranslationTestData, APITestCase):
+    def translate_charfield(self):
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="A char field"),
+            context=TranslationContext.objects.get(path="test_charfield"),
+            locale=self.fr_locale,
+            data="Un champ de caractères",
+            translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL,
+        )
+
+    def fill_remaining_strings(self):
+        string_segments = self.page_translation.source.stringsegment_set.all().order_by(
+            "order"
+        )
+        for segment in string_segments.annotate_translation(self.fr_locale).filter(
+            translation__isnull=True
+        ):
+            StringTranslation.objects.create(
+                translation_of=segment.string,
+                context=segment.context,
+                locale=self.fr_locale,
+                data=segment.string.data,
+                translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL,
+            )
+
+    def save_draft(self, url=None):
+        return self.client.post(
+            url or reverse("wagtailadmin_pages:edit", args=[self.fr_page.id]),
+            {"action": "save_draft"},
+        )
+
+    def test_save_draft_of_live_page_leaves_the_live_page_unchanged(self):
+        self.translate_charfield()
+        self.fill_remaining_strings()
+        self.assertTrue(self.fr_page.live)
+
+        response = self.save_draft()
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, "success")
+        self.assertEqual(
+            messages[0].message,
+            "Saved a draft of &#x27;The title&#x27; in French.\n\n\n\n\n",
+        )
+
+        # The live page still has the previous content...
+        self.fr_page.refresh_from_db()
+        self.assertTrue(self.fr_page.live)
+        self.assertEqual(self.fr_page.test_charfield, "A char field")
+        self.assertTrue(self.fr_page.has_unpublished_changes)
+
+        # ...and the translation is in a new draft revision
+        latest_revision = self.fr_page.get_latest_revision()
+        self.assertEqual(latest_revision.user, self.user)
+        self.assertEqual(
+            latest_revision.as_object().test_charfield, "Un champ de caractères"
+        )
+        self.assertNotEqual(latest_revision, self.fr_page.live_revision)
+
+        log = TranslationLog.objects.get()
+        self.assertEqual(log.source, self.page_source)
+        self.assertEqual(log.locale, self.fr_locale)
+        self.assertEqual(log.revision, latest_revision)
+
+    def test_draft_of_live_page_reaches_the_page_when_published(self):
+        self.translate_charfield()
+        self.fill_remaining_strings()
+        self.save_draft()
+
+        self.fr_page.refresh_from_db()
+        self.fr_page.get_latest_revision().publish()
+
+        self.fr_page.refresh_from_db()
+        self.assertTrue(self.fr_page.live)
+        self.assertEqual(self.fr_page.test_charfield, "Un champ de caractères")
+
+    def test_save_draft_of_unpublished_page_keeps_it_unpublished(self):
+        self.translate_charfield()
+        self.fill_remaining_strings()
+        self.fr_page.unpublish()
+
+        self.save_draft()
+
+        self.fr_page.refresh_from_db()
+        self.assertFalse(self.fr_page.live)
+        self.assertEqual(
+            self.fr_page.get_latest_revision().as_object().test_charfield,
+            "Un champ de caractères",
+        )
+
+    def test_save_draft_with_missing_translations_shows_a_warning(self):
+        self.translate_charfield()
+
+        response = self.save_draft()
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, "warning")
+        self.assertEqual(
+            messages[0].message,
+            "Saved a draft of &#x27;The title&#x27; in French with missing translations - see below.\n\n\n\n\n",
+        )
+        self.fr_page.refresh_from_db()
+        self.assertTrue(self.fr_page.live)
+        self.assertEqual(self.fr_page.test_charfield, "A char field")
+
+    def test_save_draft_with_a_field_error_shows_an_error(self):
+        # A slug field can't contain spaces
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="a-slug-field"),
+            context=TranslationContext.objects.get(path="test_slugfield"),
+            locale=self.fr_locale,
+            data="not a valid slug",
+            translation_type=StringTranslation.TRANSLATION_TYPE_MANUAL,
+        )
+
+        response = self.save_draft()
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, "error")
+        self.assertEqual(
+            messages[0].message,
+            "New validation errors were found when saving a draft of &#x27;The title&#x27; in French. Please fix them or click save draft again to ignore these translations for now.\n\n\n\n\n",
+        )
+
+    def test_cant_save_page_draft_without_edit_permission(self):
+        self.moderators_group.page_permissions.all().delete()
+
+        response = self.save_draft()
+
+        assert_permission_denied(self, response)
+        self.fr_page.refresh_from_db()
+        self.assertEqual(self.fr_page.test_charfield, "A char field")
+
+    def test_save_draft_of_live_snippet_keeps_it_live(self):
+        StringTranslation.objects.create(
+            translation_of=String.objects.get(data="Test snippet"),
+            context=TranslationContext.objects.get(path="field"),
+            locale=self.fr_locale,
+            data="Extrait de test",
+        )
+        self.assertTrue(self.fr_snippet.live)
+        url = reverse(
+            f"wagtailsnippets_{self.fr_snippet._meta.app_label}_{self.fr_snippet._meta.model_name}:edit",
+            args=[quote(self.fr_snippet.pk)],
+        )
+
+        response = self.save_draft(url)
+
+        self.assertRedirects(response, url)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].level_tag, "success")
+        self.assertEqual(
+            messages[0].message,
+            f"Saved a draft of &#x27;TestSnippet object ({self.fr_snippet.id})&#x27; in French.\n\n\n\n\n",
+        )
+
+        self.fr_snippet.refresh_from_db()
+        self.assertTrue(self.fr_snippet.live)
+        self.assertEqual(self.fr_snippet.field, "Test snippet")
+        self.assertEqual(
+            self.fr_snippet.latest_revision.as_object().field, "Extrait de test"
+        )
+
+    def test_save_draft_is_rejected_for_objects_without_draft_state(self):
+        for permission in Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(TestUUIDSnippet)
+        ):
+            self.moderators_group.permissions.add(permission)
+        snippet = TestUUIDSnippet.objects.create(
+            field=TestUUIDModel.objects.create(charfield="No draft")
+        )
+        source, _ = TranslationSource.get_or_create_from_instance(snippet)
+        translation = Translation.objects.create(
+            source=source, target_locale=self.fr_locale
+        )
+        translation.save_target()
+        fr_snippet = snippet.get_translation(self.fr_locale)
+        url = reverse(
+            f"wagtailsnippets_{fr_snippet._meta.app_label}_{fr_snippet._meta.model_name}:edit",
+            args=[quote(fr_snippet.pk)],
+        )
+
+        response = self.save_draft(url)
+
+        self.assertEqual(response.status_code, 400)
+
+        # The editor doesn't offer the action either
+        props = json.loads(self.client.get(url).context["props"])
+        self.assertFalse(props["perms"]["canSaveDraft"])
+
+    def test_editor_offers_save_draft_for_draftable_objects(self):
+        props = json.loads(
+            self.client.get(
+                reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+            ).context["props"]
+        )
+        self.assertTrue(props["perms"]["canSaveDraft"])
+
+        props = json.loads(
+            self.client.get(
+                reverse(
+                    f"wagtailsnippets_{self.fr_snippet._meta.app_label}_{self.fr_snippet._meta.model_name}:edit",
+                    args=[quote(self.fr_snippet.pk)],
+                )
+            ).context["props"]
+        )
+        self.assertTrue(props["perms"]["canSaveDraft"])
 
 
 class TestPreviewTranslationView(EditTranslationTestData, TestCase):
