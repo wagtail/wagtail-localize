@@ -2298,6 +2298,22 @@ class TestSaveDraftTranslation(EditTranslationTestData, APITestCase):
             self.fr_snippet.latest_revision.as_object().field, "Extrait de test"
         )
 
+    def test_unknown_action_does_nothing(self):
+        self.translate_charfield()
+        revisions = self.fr_page.revisions.count()
+
+        response = self.client.post(
+            reverse("wagtailadmin_pages:edit", args=[self.fr_page.id]),
+            {"action": "something-else"},
+        )
+
+        self.assertRedirects(
+            response, reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+        self.assertEqual(list(get_messages(response.wsgi_request)), [])
+        self.assertEqual(self.fr_page.revisions.count(), revisions)
+        self.assertFalse(TranslationLog.objects.exists())
+
     def test_save_draft_is_rejected_for_objects_without_draft_state(self):
         for permission in Permission.objects.filter(
             content_type=ContentType.objects.get_for_model(TestUUIDSnippet)
