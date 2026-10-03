@@ -30,7 +30,7 @@ jobs:
       - name: Test
         id: test
         continue-on-error: true
-        run: tox -e wagtailmain
+        run: tox -e wagtailmain,wagtailmain-custombasepage
 
       - name: Send Slack notification on failure
         if: steps.test.outcome == 'failure'

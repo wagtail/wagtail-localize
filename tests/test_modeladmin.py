@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
@@ -7,10 +8,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
-from wagtail.models import Locale, Page
+from wagtail import VERSION as WAGTAIL_VERSION
+from wagtail.models import Locale
 from wagtail.test.utils import WagtailTestUtils
 
-from tests.testapp.models import NonTranslatableModel, TestModel, TestPage
+from tests.testapp.models import NonTranslatableModel, TestModel
 from tests.testapp.wagtail_hooks import TestModelAdmin, TestPageAdmin
 from tests.utils import assert_permission_denied
 from wagtail_localize.modeladmin import helpers
@@ -20,6 +22,23 @@ from wagtail_localize.modeladmin.views import (
     TranslatableInspectView,
 )
 from wagtail_localize.models import Translation, TranslationSource
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestPage,
+    )
 
 
 def strip_user_perms():
@@ -516,7 +535,7 @@ class TestSubmitModelAdminTranslation(TestCase, WagtailTestUtils):
         response = self.client.get(
             reverse(
                 "wagtail_localize_modeladmin:submit_translation",
-                args=["wagtailcore", "page", 1],
+                args=["wagtailcore", Page._meta.object_name, 1],
             ),
             # Need to follow as Django will initiall redirect to /en/admin/
             follow=True,

@@ -1,13 +1,15 @@
 import unittest
 import uuid
 
+from django.conf import settings
 from django.test import TestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.blocks import StreamValue
 from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
-from wagtail.models import Locale, Page
+from wagtail.models import Locale
 
-from tests.testapp.models import TestChildObject, TestPage, TestSnippet
+from tests.testapp.models import TestChildObject, TestSnippet
 from wagtail_localize.fields import copy_synchronised_fields
 from wagtail_localize.segments import (
     OverridableSegmentValue,
@@ -17,6 +19,23 @@ from wagtail_localize.segments import (
 )
 from wagtail_localize.segments.ingest import ingest_segments
 from wagtail_localize.strings import StringValue
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestPage,
+    )
 
 
 def make_test_page(**kwargs):

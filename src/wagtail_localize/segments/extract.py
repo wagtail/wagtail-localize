@@ -2,9 +2,10 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from modelcluster.fields import ParentalKey
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Page, TranslatableMixin
+from wagtail.models import TranslatableMixin
 
 from wagtail_localize.segments import (
     OverridableSegmentValue,
@@ -15,6 +16,17 @@ from wagtail_localize.segments import (
 
 from ..fields import get_translatable_fields
 from ..strings import extract_strings
+
+
+def _get_page():
+    if WAGTAIL_VERSION >= (8, 0):
+        import swapper
+
+        return swapper.load_model("wagtailcore", "Page")
+    else:
+        from wagtail.models import Page
+
+        return Page
 
 
 def quote_path_component(text):
@@ -122,7 +134,7 @@ class StreamFieldSegmentExtractor:
         # but falls back to the source if it isn't translated yet?
         # Note: This exact same decision was made for regular foreign keys in fields.py
         if isinstance(related_object, TranslatableMixin) and not isinstance(
-            related_object, Page
+            related_object, _get_page()
         ):
             return [RelatedObjectSegmentValue.from_instance("", related_object)]
         else:
