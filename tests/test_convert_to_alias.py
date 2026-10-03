@@ -1,11 +1,29 @@
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
-from wagtail.models import Locale, Page, PageLogEntry
+from wagtail import VERSION as WAGTAIL_VERSION
+from wagtail.models import Locale, PageLogEntry
 from wagtail.test.utils import WagtailTestUtils
 
-from tests.testapp.models import TestPage
 from wagtail_localize.models import LocaleSynchronization, Translation
 from wagtail_localize.wagtail_hooks import ConvertToAliasPageActionMenuItem
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestPage,
+    )
 
 
 class ConvertToAliasTestBase(WagtailTestUtils, TestCase):
