@@ -30,9 +30,9 @@ from wagtail_localize.models import TranslationSource
 from wagtail_localize.segments import StringSegmentValue
 
 
-try:
+if WAGTAIL_VERSION >= (7, 1):
     from wagtail.admin import telepath
-except ImportError:  # Wagtail <7.1
+else:
     from wagtail import telepath
 
 
