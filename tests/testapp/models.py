@@ -14,7 +14,7 @@ from wagtail.admin.panels import (
 from wagtail.blocks import StructBlock
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
-from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.blocks import ImageBlock, ImageChooserBlock
 from wagtail.models import (
     DraftStateMixin,
     Orderable,
@@ -34,17 +34,6 @@ try:
     from wagtail.admin import telepath
 except ImportError:  # Wagtail <7.1
     from wagtail import telepath
-
-if WAGTAIL_VERSION >= (6, 3):
-    from wagtail.images.blocks import ImageBlock
-else:
-
-    class ImageBlock(StructBlock):
-        image = ImageChooserBlock(required=True)
-        decorative = blocks.BooleanBlock(
-            default=False, required=False, label=gettext_lazy("Image is decorative")
-        )
-        alt_text = blocks.CharBlock(required=False, label=gettext_lazy("Alt text"))
 
 
 if WAGTAIL_VERSION >= (8, 0):
