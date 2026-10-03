@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy
 from wagtail import VERSION as WAGTAIL_VERSION
-from wagtail import blocks
 from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
@@ -10,9 +9,7 @@ from wagtail.admin.panels import (
     PageChooserPanel,
     TabbedInterface,
 )
-from wagtail.blocks import StructBlock
 from wagtail.fields import RichTextField, StreamField
-from wagtail.images.blocks import ImageChooserBlock
 
 from tests.testapp.models import (
     NonTranslatableSnippet,
@@ -34,18 +31,6 @@ if WAGTAIL_VERSION >= (8, 0):
     PAGE_MODEL_NAME = swapper.get_model_name("wagtailcore", "Page")
 else:
     PAGE_MODEL_NAME = "wagtailcore.Page"
-
-
-if WAGTAIL_VERSION >= (6, 3):
-    from wagtail.images.blocks import ImageBlock
-else:
-
-    class ImageBlock(StructBlock):
-        image = ImageChooserBlock(required=True)
-        decorative = blocks.BooleanBlock(
-            default=False, required=False, label=gettext_lazy("Image is decorative")
-        )
-        alt_text = blocks.CharBlock(required=False, label=gettext_lazy("Alt text"))
 
 
 class TestPageAbstract(models.Model):
