@@ -3,8 +3,17 @@ import logging
 from collections import defaultdict
 
 from django.utils.functional import cached_property
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import hooks
-from wagtail.models import Locale, Page
+from wagtail.models import Locale
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 logger = logging.getLogger(__name__)

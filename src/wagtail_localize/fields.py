@@ -2,8 +2,20 @@ from django.db import models
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel, get_all_child_relations
 from treebeard.mp_tree import MP_Node
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.fields import RichTextField, StreamField
-from wagtail.models import COMMENTS_RELATION_NAME, Page, TranslatableMixin
+from wagtail.models import COMMENTS_RELATION_NAME, TranslatableMixin
+
+
+def get_page_model():
+    if WAGTAIL_VERSION >= (8, 0):
+        import swapper
+
+        return swapper.load_model("wagtailcore", "Page")
+    else:
+        from wagtail.models import Page
+
+        return Page
 
 
 class BaseTranslatableField:
@@ -135,7 +147,7 @@ def get_translatable_fields(model):
             continue
 
         # Ignore some editable fields defined on Page
-        if issubclass(model, Page) and field.name in [
+        if issubclass(model, get_page_model()) and field.name in [
             "go_live_at",
             "expire_at",
             "first_published_at",
@@ -178,7 +190,7 @@ def get_translatable_fields(model):
             # but falls back to the source if it isn't translated yet?
             # Note: This exact same decision was made for page chooser blocks in segments/extract.py
             if issubclass(field.related_model, TranslatableMixin) and not issubclass(
-                field.related_model, Page
+                field.related_model, get_page_model()
             ):
                 translatable_fields.append(TranslatableField(field.name))
             else:
@@ -197,7 +209,7 @@ def get_translatable_fields(model):
         for child_relation in get_all_child_relations(model):
             # Ignore comments
             if (
-                issubclass(model, Page)
+                issubclass(model, get_page_model())
                 and child_relation.name == COMMENTS_RELATION_NAME
             ):
                 continue
