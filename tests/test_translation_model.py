@@ -8,11 +8,10 @@ from django.db import OperationalError, transaction
 from django.db.migrations.recorder import MigrationRecorder
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from wagtail.models import Locale, Page
+from wagtail.models import Locale
 
 from tests.testapp.models import (
     TestNoDraftModel,
-    TestPage,
     TestParentalSnippet,
     TestRevisionsButNoDraftModel,
     TestSnippet,
@@ -40,6 +39,26 @@ from wagtail_localize.models import (
 )
 from wagtail_localize.segments import RelatedObjectSegmentValue
 from wagtail_localize.strings import StringValue
+
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestPage,
+    )
+
+from wagtail import VERSION as WAGTAIL_VERSION
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 def create_test_page(**kwargs):

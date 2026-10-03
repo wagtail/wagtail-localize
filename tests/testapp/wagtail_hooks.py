@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 try:
     from wagtail_modeladmin.options import (
         ModelAdmin,
@@ -13,7 +16,17 @@ except ImportError:
 
 from wagtail_localize.modeladmin.options import TranslatableModelAdmin
 
-from .models import NonTranslatableModel, TestModel, TestPage
+from .models import NonTranslatableModel, TestModel
+
+
+if settings.USE_CUSTOM_PAGE_MODEL:
+    from tests.testapp.testpages_custombasepage.models import (
+        TestPage,
+    )
+else:
+    from tests.testapp.testpages_default.models import (
+        TestPage,
+    )
 
 
 class TestPageAdmin(TranslatableModelAdmin):
