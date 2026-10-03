@@ -1,4 +1,13 @@
-from wagtail.models import Page, get_translatable_models
+from wagtail import VERSION as WAGTAIL_VERSION
+from wagtail.models import get_translatable_models
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    import swapper
+
+    Page = swapper.load_model("wagtailcore", "Page")
+else:
+    from wagtail.models import Page
 
 
 def get_locale_usage(locale):
