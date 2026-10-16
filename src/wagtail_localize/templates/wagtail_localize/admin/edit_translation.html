@@ -44,6 +44,12 @@
         {# Generates the CSRF token hidden input. This is read by the JavaScript. #}
         {% csrf_token %}
     </div>
+    {% if props %}
+        <form id="wagtail-localize-live-preview-form" method="post" data-edit-form hidden>
+            {% csrf_token %}
+            <input type="hidden" name="payload" value="">
+        </form>
+    {% endif %}
 {% endblock %}
 
 {% block extra_js %}

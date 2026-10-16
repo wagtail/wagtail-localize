@@ -25,6 +25,7 @@ from .models import Translation, TranslationSource
 from .views import (
     convert,
     edit_translation,
+    live_preview,
     report,
     snippets_api,
     submit_translations,
@@ -89,6 +90,16 @@ def register_admin_urls():
             "translate/<int:translation_id>/preview/<str:mode>/",
             edit_translation.preview_translation,
             name="preview_translation",
+        ),
+        path(
+            "translate/<int:translation_id>/live-preview/",
+            live_preview.live_preview,
+            name="live_preview",
+        ),
+        path(
+            "translate/<int:translation_id>/live-preview/<str:mode>/",
+            live_preview.live_preview,
+            name="live_preview_mode",
         ),
         path(
             "translate/<int:translation_id>/disable/",
