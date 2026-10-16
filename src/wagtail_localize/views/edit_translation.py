@@ -31,6 +31,7 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
 from wagtail.admin import messages
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -48,8 +49,14 @@ from wagtail.images.models import AbstractImage
 from wagtail.models import DraftStateMixin, Page, TranslatableMixin
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
-from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
+from wagtail.snippets.permissions import get_permission_name
 from wagtail.utils.decorators import xframe_options_sameorigin_override
+
+
+if WAGTAIL_VERSION >= (8, 0):
+    from wagtail.permissions import policy_registry
+else:
+    from wagtail.snippets.permissions import user_can_edit_snippet_type
 
 from wagtail_localize.compat import DATE_FORMAT
 from wagtail_localize.machine_translators import get_machine_translator
@@ -1103,6 +1110,10 @@ def user_can_edit_instance(user, instance):
 
     else:
         # Snippet
+        if WAGTAIL_VERSION >= (8, 0):
+            return policy_registry.get_by_type(
+                instance.__class__
+            ).user_has_any_permission(user, {"add", "change", "delete"})
         return user_can_edit_snippet_type(user, instance.__class__)
 
 

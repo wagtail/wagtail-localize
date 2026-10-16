@@ -24,6 +24,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.settings import api_settings
 from rest_framework.test import APITestCase
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.panels import FieldPanel, TitleFieldPanel
 from wagtail.blocks import StreamValue
 from wagtail.documents.models import Document
@@ -59,6 +60,7 @@ from wagtail_localize.strings import StringValue
 from wagtail_localize.views.edit_translation import (
     edit_override,
     edit_string_translation,
+    user_can_edit_instance,
 )
 
 from .utils import assert_permission_denied
@@ -2149,6 +2151,34 @@ class TestPreviewTranslationView(EditTranslationTestData, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, TestPage.template)
         self.assertContains(response, "Un champ de caractères")
+
+
+class TestUserCanEditInstance(TestCase):
+    def test_snippet_permissions(self):
+        user = object()
+        snippet = TestSnippet()
+
+        if WAGTAIL_VERSION >= (8, 0):
+            with patch(
+                "wagtail_localize.views.edit_translation.policy_registry"
+            ) as policy_registry:
+                permission_policy = policy_registry.get_by_type.return_value
+                permission_policy.user_has_any_permission.return_value = True
+
+                self.assertTrue(user_can_edit_instance(user, snippet))
+
+                policy_registry.get_by_type.assert_called_once_with(TestSnippet)
+                permission_policy.user_has_any_permission.assert_called_once_with(
+                    user, {"add", "change", "delete"}
+                )
+        else:
+            with patch(
+                "wagtail_localize.views.edit_translation.user_can_edit_snippet_type",
+                return_value=True,
+            ) as user_can_edit_snippet_type:
+                self.assertTrue(user_can_edit_instance(user, snippet))
+
+                user_can_edit_snippet_type.assert_called_once_with(user, TestSnippet)
 
 
 class TestStopTranslationView(EditTranslationTestData, TestCase):
