@@ -124,12 +124,12 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:113
+#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:133
 msgid "Publish in "
 msgstr ""
 
-#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:104
-#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:107
+#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:124
+#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:127
 msgid "Publishing..."
 msgstr ""
 
@@ -144,6 +144,14 @@ msgstr ""
 #: src/wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:444
 #: src/wagtail_localize/static_src/editor/components/TranslationEditor/segments.tsx:615
 msgid "Save"
+msgstr ""
+
+#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:111
+msgid "Save draft in "
+msgstr ""
+
+#: src/wagtail_localize/static_src/editor/components/TranslationEditor/footer.tsx:106
+msgid "Saving draft..."
 msgstr ""
 
 #: src/wagtail_localize/static_src/editor/components/TranslationEditor/reducer.ts:115

@@ -13,7 +13,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -493,6 +493,7 @@ def edit_translation(request, translation: Translation, instance):
         live_url = instance.full_url if instance.live else None
 
         can_publish = page_perms.can_publish()
+        can_save_draft = True
         can_unpublish = page_perms.can_unpublish()
         can_lock = page_perms.can_lock()
         can_unlock = page_perms.can_unlock()
@@ -514,6 +515,7 @@ def edit_translation(request, translation: Translation, instance):
             or request.user.is_superuser
         )
 
+        can_save_draft = True
         can_unpublish = False  # Snippets can't be unpublished
         can_lock = False
         can_unlock = False
@@ -533,6 +535,7 @@ def edit_translation(request, translation: Translation, instance):
         live_url = None
 
         can_publish = True
+        can_save_draft = False  # Only draftable objects can be saved as a draft
         can_unpublish = False
         can_lock = False
         can_unlock = False
@@ -543,8 +546,15 @@ def edit_translation(request, translation: Translation, instance):
     source_instance = translation.source.get_source_instance()
 
     if request.method == "POST":
-        if request.POST.get("action") == "publish":
-            if isinstance(instance, DraftStateMixin):
+        action = request.POST.get("action")
+
+        if action == "save_draft" and not can_save_draft:
+            return HttpResponseBadRequest("This object can't be saved as a draft.")
+
+        if action in ("publish", "save_draft"):
+            publish = action == "publish"
+
+            if publish and isinstance(instance, DraftStateMixin):
                 if isinstance(instance, Page):
                     if not page_perms.can_publish():
                         raise PermissionDenied
@@ -558,14 +568,20 @@ def edit_translation(request, translation: Translation, instance):
                     raise PermissionDenied
 
             try:
-                translation.save_target(user=request.user, publish=True)
+                translation.save_target(user=request.user, publish=publish)
 
             except ValidationError:
+                if publish:
+                    error_message = _(
+                        "New validation errors were found when publishing '{object}' in {locale}. Please fix them or click publish again to ignore these translations for now."
+                    )
+                else:
+                    error_message = _(
+                        "New validation errors were found when saving a draft of '{object}' in {locale}. Please fix them or click save draft again to ignore these translations for now."
+                    )
                 messages.error(
                     request,
-                    _(
-                        "New validation errors were found when publishing '{object}' in {locale}. Please fix them or click publish again to ignore these translations for now."
-                    ).format(
+                    error_message.format(
                         object=str(instance),
                         locale=translation.target_locale.get_display_name(),
                     ),
@@ -589,20 +605,30 @@ def edit_translation(request, translation: Translation, instance):
                     .exists()
                 ):
                     # One or more strings had an error
+                    if publish:
+                        warning_message = _(
+                            "Published '{object}' in {locale} with missing translations - see below."
+                        )
+                    else:
+                        warning_message = _(
+                            "Saved a draft of '{object}' in {locale} with missing translations - see below."
+                        )
                     messages.warning(
                         request,
-                        _(
-                            "Published '{object}' in {locale} with missing translations - see below."
-                        ).format(
+                        warning_message.format(
                             object=str(instance),
                             locale=translation.target_locale.get_display_name(),
                         ),
                     )
 
                 else:
+                    if publish:
+                        success_message = _("Published '{object}' in {locale}.")
+                    else:
+                        success_message = _("Saved a draft of '{object}' in {locale}.")
                     messages.success(
                         request,
-                        _("Published '{object}' in {locale}.").format(
+                        success_message.format(
                             object=str(instance),
                             locale=translation.target_locale.get_display_name(),
                         ),
@@ -964,6 +990,7 @@ def edit_translation(request, translation: Translation, instance):
                 "translations": props_translations,
                 "perms": {
                     "canPublish": can_publish,
+                    "canSaveDraft": can_save_draft,
                     "canUnpublish": can_unpublish,
                     "canLock": can_lock,
                     "canUnlock": can_unlock,

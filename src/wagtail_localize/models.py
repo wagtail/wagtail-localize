@@ -718,7 +718,7 @@ class TranslationSource(models.Model):
         Args:
             locale (Locale): The target locale to generate the translation for.
             user (User, optional): The user who is carrying out this operation. For logging purposes
-            publish (boolean, optional): Set this to False to save a draft of the translation. Pages only.
+            publish (boolean, optional): Set this to False to save a draft of the translation. Only for objects that can be saved as a draft (pages and DraftStateMixin models). If the translation is already live, it stays live and unchanged: the new content is saved as a draft revision.
             copy_parent_pages (boolean, optional): Set this to True to make copies of the parent pages if they are not
                 yet translated.
             fallback (boolean, optional): Set this to True to fallback to source strings/related objects if they are
@@ -792,7 +792,12 @@ class TranslationSource(models.Model):
                         slugify(translation.slug),
                         ignore_page_id=translation.id,
                     )
-                    translation.save()
+
+                    # Saving a draft of a live page must not change what is live:
+                    # the translated content only goes into the new revision, and
+                    # reaches the page itself when that revision is published.
+                    if publish or not translation.live:
+                        translation.save()
 
                     # Create a new revision
                     new_revision = translation.save_revision(user=user)
@@ -803,9 +808,12 @@ class TranslationSource(models.Model):
                         transaction.on_commit(new_revision.publish)
 
                 elif isinstance(translation, DraftStateMixin):
-                    # We copied another instance which may be live, so we make sure this one matches the desired state
-                    translation.live = publish
-                    translation.save()
+                    # A new copy may be live because it copied another instance, so we make
+                    # sure it matches the desired state. An existing live translation stays
+                    # live when saving a draft: the content only goes into the new revision.
+                    if publish or created or not translation.live:
+                        translation.live = publish
+                        translation.save()
 
                     # Create a new revision of the Snippet
                     new_revision = translation.save_revision(user=user)
