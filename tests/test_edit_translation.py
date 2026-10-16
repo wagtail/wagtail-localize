@@ -49,6 +49,7 @@ from wagtail_localize.models import (
     OverridableSegment,
     SegmentOverride,
     String,
+    StringSegment,
     StringTranslation,
     Translation,
     TranslationContext,
@@ -500,6 +501,41 @@ class TestGetEditTranslationView(EditTranslationTestData, TestCase):
             related_object_segment["translationProgress"],
             {"totalSegments": 1, "translatedSegments": 0},
         )
+
+    def test_edit_page_translation_with_removed_field(self):
+        # Simulates a segment referencing a field that was removed/renamed by a
+        # migration after translations were created. This should be skipped
+        # instead of raising FieldDoesNotExist. See wagtail-localize#590.
+        StringSegment.objects.create(
+            source=self.page_source,
+            context=TranslationContext.objects.create(
+                object=self.page_source.object,
+                path="removed_string_field",
+                field_path="removed_string_field",
+            ),
+            order=0,
+            string=String.from_value(self.page.locale, StringValue("Old field")),
+        )
+        OverridableSegment.objects.create(
+            source=self.page_source,
+            context=TranslationContext.objects.create(
+                object=self.page_source.object,
+                path="removed_override_field",
+                field_path="removed_override_field",
+            ),
+            order=0,
+            data_json='"foo"',
+        )
+
+        response = self.client.get(
+            reverse("wagtailadmin_pages:edit", args=[self.fr_page.id])
+        )
+        self.assertEqual(response.status_code, 200)
+
+        props = json.loads(response.context["props"])
+        content_paths = [segment["contentPath"] for segment in props["segments"]]
+        self.assertNotIn("removed_string_field", content_paths)
+        self.assertNotIn("removed_override_field", content_paths)
 
     def test_page_chooser_widgets(self):
         home_page_with_specific_type = self.home_page.add_child(
