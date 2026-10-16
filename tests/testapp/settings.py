@@ -14,6 +14,8 @@ import os
 
 import dj_database_url
 
+from wagtail import VERSION as WAGTAIL_VERSION
+
 
 modeladmin_app = ""
 try:
@@ -202,3 +204,12 @@ WAGTAILSEARCH_BACKENDS = {
 }
 
 WAGTAILADMIN_BASE_URL = "http://example.com"
+if os.environ.get("USE_CUSTOM_PAGE_MODEL") and WAGTAIL_VERSION >= (8, 0):
+    USE_CUSTOM_PAGE_MODEL = True
+    INSTALLED_APPS.insert(2, "tests.testapp.basepage")
+    INSTALLED_APPS.insert(2, "tests.testapp.testpages_custombasepage")
+    WAGTAIL_PAGE_MODEL = "basepage.BasePage"
+    print("Custom base page model active")
+else:
+    USE_CUSTOM_PAGE_MODEL = False
+    INSTALLED_APPS.insert(2, "tests.testapp.testpages_default")
