@@ -9,15 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Nothing yet.
+- Demo site for testing and development (see [#942](https://github.com/wagtail/wagtail-localize/pull/942)) @rypptc
+- Performance benchmark harness (see [#946](https://github.com/wagtail/wagtail-localize/pull/946)) @rypptc
+- Make the demo site's author snippets translatable and ship a translated sample post (see [#959](https://github.com/wagtail/wagtail-localize/pull/959)) @rypptc
 
 ### Fixed
 
-- Fix `UnorderedObjectListWarning` in translation report view (see [#948](https://github.com/wagtail/wagtail-localize/pull/948/)) @Stormheg
+- Fix `UnorderedObjectListWarning` in translation report view (see [#948](https://github.com/wagtail/wagtail-localize/pull/948)) @Stormheg
+- Fix broken member listings on the `docs/ref/models/` pages by using the current mkdocstrings `options:` key (see [#958](https://github.com/wagtail/wagtail-localize/pull/958)) @rypptc
 
 ### Changed
 
-- Nothing yet.
+- Optimize `PageIndex.from_database()` to use a constant query count, reducing it from 5 queries per indexed page to 2 regardless of page tree size (see [#953](https://github.com/wagtail/wagtail-localize/pull/953)) @rypptc
 
 ### Removed
 
