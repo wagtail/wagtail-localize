@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix `UnorderedObjectListWarning` in translation report view (see [#948](https://github.com/wagtail/wagtail-localize/pull/948)) @Stormheg
-- Fix broken member listings on the `docs/ref/models/` pages by using the current mkdocstrings `options:` key (see [#958](https://github.com/wagtail/wagtail-localize/pull/958)) @rypptc
+- Docs: fix broken member listings on the `docs/ref/models/` pages (see [#958](https://github.com/wagtail/wagtail-localize/pull/958)) @rypptc
 
 ### Changed
 
