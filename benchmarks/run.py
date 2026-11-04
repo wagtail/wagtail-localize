@@ -474,7 +474,7 @@ def _provenance(selection):
     dirty = _git("status", "--porcelain")
     return {
         "schema_version": SCHEMA_VERSION,
-        "run_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "run_at": datetime.datetime.now(datetime.UTC).isoformat(),
         "commit": _git("rev-parse", "HEAD"),
         "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
         # Whatever git status reports for this checkout, under the ignore
