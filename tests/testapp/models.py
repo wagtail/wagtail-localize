@@ -6,6 +6,7 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail import blocks
+from wagtail.admin import telepath
 from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
@@ -28,12 +29,6 @@ from wagtail_localize.components import register_translation_component
 from wagtail_localize.fields import SynchronizedField, TranslatableField
 from wagtail_localize.models import TranslationSource
 from wagtail_localize.segments import StringSegmentValue
-
-
-if WAGTAIL_VERSION >= (7, 1):
-    from wagtail.admin import telepath
-else:
-    from wagtail import telepath
 
 
 if WAGTAIL_VERSION >= (8, 0):

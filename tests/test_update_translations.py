@@ -94,7 +94,7 @@ class TestPageUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
             reverse("wagtailadmin_explore", args=[self.en_homepage.id])
         )
 
-        suffix = ' class=""' if WAGTAIL_VERSION >= (7, 1) else ""
+        suffix = ' class=""'
         self.assertContains(
             response,
             (
@@ -165,7 +165,7 @@ class TestSnippetUpdateTranslationsListingButton(TestCase, WagtailTestUtils):
         )
 
         next = "%2Fadmin%2Fsnippets%2Fwagtail_localize_test%2Ftestsnippet%2F"
-        suffix = 'class=""' if WAGTAIL_VERSION >= (7, 1) else ""
+        suffix = 'class=""'
         self.assertContains(
             response,
             (
