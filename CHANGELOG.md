@@ -9,9 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Demo site for testing and development (see [#942](https://github.com/wagtail/wagtail-localize/pull/942)) @rypptc
+- Demo site for testing and development (see [#942](https://github.com/wagtail/wagtail-localize/pull/942) and  [#959](https://github.com/wagtail/wagtail-localize/pull/959)) @rypptc
 - Performance benchmark harness (see [#946](https://github.com/wagtail/wagtail-localize/pull/946)) @rypptc
-- Make the demo site's author snippets translatable and ship a translated sample post (see [#959](https://github.com/wagtail/wagtail-localize/pull/959)) @rypptc
 
 ### Fixed
 
