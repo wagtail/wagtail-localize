@@ -4,7 +4,7 @@ from modelcluster.models import ClusterableModel, get_all_child_relations
 from treebeard.mp_tree import MP_Node
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.fields import RichTextField, StreamField
-from wagtail.models import COMMENTS_RELATION_NAME, TranslatableMixin
+from wagtail.models import COMMENTS_RELATION_NAME, AbstractPage, TranslatableMixin
 
 
 def get_page_model():
@@ -146,8 +146,8 @@ def get_translatable_fields(model):
         if issubclass(model, MP_Node) and field.name in ["path", "depth", "numchild"]:
             continue
 
-        # Ignore some editable fields defined on Page
-        if issubclass(model, get_page_model()) and field.name in [
+        # Ignore some editable fields defined on AbstractPage
+        if issubclass(model, AbstractPage) and field.name in [
             "go_live_at",
             "expire_at",
             "first_published_at",
@@ -209,7 +209,7 @@ def get_translatable_fields(model):
         for child_relation in get_all_child_relations(model):
             # Ignore comments
             if (
-                issubclass(model, get_page_model())
+                issubclass(model, AbstractPage)
                 and child_relation.name == COMMENTS_RELATION_NAME
             ):
                 continue

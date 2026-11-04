@@ -44,6 +44,7 @@ from wagtail.blocks.list_block import ListValue
 from wagtail.coreutils import find_available_slug
 from wagtail.fields import StreamField
 from wagtail.models import (
+    AbstractPage,
     DraftStateMixin,
     PageLogEntry,
     RevisionMixin,
@@ -122,7 +123,7 @@ def get_edit_url(instance):
     Returns:
         str: The URL of the edit page of the given instance.
     """
-    if isinstance(instance, get_page_model()):
+    if isinstance(instance, AbstractPage):
         return reverse("wagtailadmin_pages:edit", args=[instance.id])
 
     elif instance._meta.model in get_snippet_models():
@@ -362,7 +363,7 @@ class TranslationSource(models.Model):
                 the second component is a boolean that is True if the TranslationSource was created.
         """
         # Make sure we're using the specific version of pages
-        if isinstance(instance, get_page_model()):
+        if isinstance(instance, AbstractPage):
             instance = instance.specific
 
         object, created = TranslatableObject.objects.get_or_create_from_instance(
@@ -420,7 +421,7 @@ class TranslationSource(models.Model):
                 the second component is a boolean that is True if the TranslationSource was created.
         """
         # Make sure we're using the specific version of pages
-        if isinstance(instance, get_page_model()):
+        if isinstance(instance, AbstractPage):
             instance = instance.specific
 
         object, created = TranslatableObject.objects.get_or_create_from_instance(
@@ -537,7 +538,7 @@ class TranslationSource(models.Model):
         except models.ObjectDoesNotExist as err:
             raise SourceDeletedError from err
 
-        if isinstance(instance, get_page_model()):
+        if isinstance(instance, AbstractPage):
             # see https://github.com/wagtail/wagtail/pull/8024
             content_json = json.loads(self.content_json)
             return instance.with_content_json(content_json)
@@ -754,7 +755,7 @@ class TranslationSource(models.Model):
         try:
             translation = self.get_translated_instance(locale)
         except models.ObjectDoesNotExist:
-            if isinstance(original, get_page_model()):
+            if isinstance(original, AbstractPage):
                 translation = original.copy_for_translation(
                     locale, copy_parents=copy_parent_pages
                 )
@@ -772,7 +773,7 @@ class TranslationSource(models.Model):
                 # Ingest all translated segments
                 ingest_segments(original, translation, self.locale, locale, segments)
 
-                if isinstance(translation, get_page_model()):
+                if isinstance(translation, AbstractPage):
                     # If the page is an alias, convert it into a regular page
                     if translation.alias_of_id:
                         translation.alias_of_id = None
@@ -938,8 +939,8 @@ class TranslationSource(models.Model):
             original (Page|Snippet): The original instance.
             translation_page (Page|Snippet): The translated instance.
         """
-        if not isinstance(original, get_page_model()) or not isinstance(
-            translation_page, get_page_model()
+        if not isinstance(original, AbstractPage) or not isinstance(
+            translation_page, AbstractPage
         ):
             raise NoViewRestrictionsError
 
@@ -991,7 +992,7 @@ class TranslationSource(models.Model):
         original = self.as_instance()
 
         # Only update restrictions for pages
-        if not isinstance(original, get_page_model()):
+        if not isinstance(original, AbstractPage):
             return
 
         try:
