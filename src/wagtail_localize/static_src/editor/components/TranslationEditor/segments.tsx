@@ -402,6 +402,7 @@ interface EditorStringSegmentProps {
     isLocked: boolean;
     isEditing: boolean;
     setIsEditing(editing: boolean): void;
+    onDraftChange(segmentId: number, value: string | undefined): void;
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
 }
@@ -412,6 +413,7 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
     isLocked,
     isEditing,
     setIsEditing,
+    onDraftChange,
     dispatch,
     csrfToken,
 }) => {
@@ -426,11 +428,13 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
     if (isEditing && !isLocked) {
         const onClickSave = () => {
             setIsEditing(false);
+            onDraftChange(segment.id, undefined);
             saveTranslation(segment, editingValue, csrfToken, dispatch);
         };
 
         const onClickCancel = () => {
             setIsEditing(false);
+            onDraftChange(segment.id, undefined);
         };
 
         buttons = [
@@ -448,7 +452,10 @@ const EditorStringSegment: FunctionComponent<EditorStringSegmentProps> = ({
 
         value = (
             <SingleLineTextArea
-                onChange={setEditingValue}
+                onChange={(value) => {
+                    setEditingValue(value);
+                    onDraftChange(segment.id, value);
+                }}
                 onHitEnter={onClickSave}
                 value={editingValue}
                 focusOnMount={true}
@@ -547,6 +554,10 @@ interface EditorSynchronisedValueSegmentProps {
     isLocked: boolean;
     isEditing: boolean;
     setIsEditing(editing: boolean): void;
+    onDraftChange(
+        segmentId: number,
+        value: SegmentOverride['value'] | undefined
+    ): void;
     dispatch: React.Dispatch<EditorAction>;
     csrfToken: string;
 }
@@ -561,6 +572,7 @@ const EditorSynchronisedValueSegment: FunctionComponent<
     isLocked,
     isEditing,
     setIsEditing,
+    onDraftChange,
     dispatch,
     csrfToken,
 }) => {
@@ -600,11 +612,13 @@ const EditorSynchronisedValueSegment: FunctionComponent<
         if (isEditing && !isLocked) {
             const onClickSave = () => {
                 setIsEditing(false);
+                onDraftChange(segment.id, undefined);
                 saveOverride(segment, editingValue, csrfToken, dispatch);
             };
 
             const onClickCancel = () => {
                 setIsEditing(false);
+                onDraftChange(segment.id, undefined);
             };
 
             buttons = [
@@ -618,7 +632,10 @@ const EditorSynchronisedValueSegment: FunctionComponent<
 
             value = (
                 <SingleLineTextArea
-                    onChange={setEditingValue}
+                    onChange={(value) => {
+                        setEditingValue(value);
+                        onDraftChange(segment.id, value);
+                    }}
                     onHitEnter={onClickSave}
                     value={editingValue}
                     focusOnMount={true}
@@ -903,6 +920,11 @@ const EditorRelatedObjectSegment: FunctionComponent<
 
 interface EditorSegmentListProps extends EditorProps, EditorState {
     dispatch: React.Dispatch<EditorAction>;
+    onDraftStringChange(segmentId: number, value: string | undefined): void;
+    onDraftOverrideChange(
+        segmentId: number,
+        value: SegmentOverride['value'] | undefined
+    ): void;
     csrfToken: string;
 }
 
@@ -915,6 +937,8 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
     segmentOverrides,
     editingSegments,
     dispatch,
+    onDraftStringChange,
+    onDraftOverrideChange,
     csrfToken,
 }) => {
     // Group segments by field/block
@@ -957,6 +981,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                                 setIsEditing={(editing: boolean) =>
                                     setEditingMode(segment.id, editing)
                                 }
+                                onDraftChange={onDraftStringChange}
                                 dispatch={dispatch}
                                 csrfToken={csrfToken}
                             />
@@ -974,6 +999,7 @@ const EditorSegmentList: FunctionComponent<EditorSegmentListProps> = ({
                                 setIsEditing={(editing: boolean) =>
                                     setEditingMode(segment.id, editing)
                                 }
+                                onDraftChange={onDraftOverrideChange}
                                 dispatch={dispatch}
                                 csrfToken={csrfToken}
                             />
