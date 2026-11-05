@@ -19,7 +19,7 @@ env:
   TOX_TESTENV_PASSENV: FORCE_COLOR
   PIP_DISABLE_PIP_VERSION_CHECK: '1'
   PIP_NO_PYTHON_VERSION_WARNING: '1'
-  PYTHON_LATEST: '3.14'
+  PYTHON_LATEST: '3.15'
 
 jobs:
   test-sqlite:
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-26.04-arm
     strategy:
       matrix:
-        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        python: ['3.11', '3.12', '3.13', '3.14', '3.15']
         database: ['postgres']
 
     services:
