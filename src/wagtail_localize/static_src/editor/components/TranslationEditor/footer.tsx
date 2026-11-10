@@ -94,6 +94,26 @@ const EditorFooter: FunctionComponent<EditorProps> = ({
         );
     }
 
+    if (perms.canSaveDraft) {
+        actions.push(
+            <button
+                type="submit"
+                name="action"
+                value="save_draft"
+                className="button button-longrunning action-secondary"
+                data-controller="w-progress"
+                data-action="w-progress#activate w-action#post"
+                data-w-progress-active-value={gettext('Saving draft...')}
+                data-w-action-url-value={window.location.href}
+            >
+                <Icon name="draft" />
+                <em data-w-progress-target="label">
+                    {gettext('Save draft in ') + locale.displayName}
+                </em>
+            </button>
+        );
+    }
+
     if (perms.canPublish) {
         actions.push(
             <button

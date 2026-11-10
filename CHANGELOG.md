@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Nothing yet.
+- Add a "Save draft" action to the translation editor. It applies the current translations to the translated page or snippet as a draft revision without publishing, and leaves an already live translation live and unchanged until the draft is published (see [#963](https://github.com/wagtail/wagtail-localize/issues/963))
 
 ### Fixed
 
