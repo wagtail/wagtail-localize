@@ -18,7 +18,12 @@ from tests.testapp.models import (
 )
 from wagtail_localize.models import Translation, TranslationSource
 
-from .utils import assert_permission_denied, get_page_ptr_accessor_name, make_test_page
+from .utils import (
+    assert_permission_denied,
+    get_page_ptr_accessor_name,
+    make_test_page,
+    make_user_translate_but_not_edit,
+)
 
 
 if WAGTAIL_VERSION >= (8, 0):
@@ -62,20 +67,6 @@ def strip_user_perms():
     user = get_user_model().objects.get()
     user.is_superuser = False
     user.groups.add(editors_group)
-    user.save()
-
-
-def make_user_translate_but_not_edit():
-    """
-    Removes user permissions so they can still access admin and submit translations
-    but can't edit pages or snippets.
-    """
-    user = get_user_model().objects.get()
-    user.is_superuser = False
-    user.user_permissions.add(
-        Permission.objects.get(codename="access_admin"),
-        Permission.objects.get(codename="submit_translation"),
-    )
     user.save()
 
 

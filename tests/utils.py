@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.urls import reverse
 from wagtail import VERSION as WAGTAIL_VERSION
 
@@ -44,3 +46,17 @@ def make_test_page(parent, cls=None, **kwargs):
     cls = cls or TestPage
     kwargs.setdefault("title", "Test page")
     return parent.add_child(instance=cls(**kwargs))
+
+
+def make_user_translate_but_not_edit():
+    """
+    Removes user permissions so they can still access admin and submit translations
+    but can't edit pages or snippets.
+    """
+    user = get_user_model().objects.get()
+    user.is_superuser = False
+    user.user_permissions.add(
+        Permission.objects.get(codename="access_admin"),
+        Permission.objects.get(codename="submit_translation"),
+    )
+    user.save()
