@@ -65,6 +65,20 @@ def strip_user_perms():
     user.save()
 
 
+def make_user_translate_but_not_edit():
+    """
+    Removes user permissions so they can still access admin and submit translations
+    but can't edit pages or snippets.
+    """
+    user = get_user_model().objects.get()
+    user.is_superuser = False
+    user.user_permissions.add(
+        Permission.objects.get(codename="access_admin"),
+        Permission.objects.get(codename="submit_translation"),
+    )
+    user.save()
+
+
 @override_settings(
     LANGUAGES=[
         ("en", "English"),
@@ -253,6 +267,18 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
 
     def test_get_submit_page_translation_without_permissions(self):
         strip_user_perms()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_post_child.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_get_submit_page_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
 
         response = self.client.get(
             reverse(
@@ -882,6 +908,18 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
 
     def test_get_submit_snippet_translation_without_permissions(self):
         strip_user_perms()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:submit_snippet_translation",
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_get_submit_snippet_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
 
         response = self.client.get(
             reverse(
