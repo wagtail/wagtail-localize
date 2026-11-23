@@ -10,7 +10,7 @@ import polib
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import FieldDoesNotExist, PermissionDenied, ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import Http404, HttpResponse
@@ -680,7 +680,7 @@ def edit_translation(request, translation: Translation, instance):
                 segment.context.path,
                 segment.context.get_field_path(source_instance),
             )
-        except FieldHasNoEditPanelError:
+        except (FieldHasNoEditPanelError, FieldDoesNotExist):
             continue
 
         segments.append(
@@ -710,7 +710,7 @@ def edit_translation(request, translation: Translation, instance):
                 segment.context.get_field_path(source_instance),
                 widget=True,
             )
-        except FieldHasNoEditPanelError:
+        except (FieldHasNoEditPanelError, FieldDoesNotExist):
             continue
 
         segments.append(
@@ -854,7 +854,7 @@ def edit_translation(request, translation: Translation, instance):
                 segment.context.path,
                 segment.context.get_field_path(source_instance),
             )
-        except FieldHasNoEditPanelError:
+        except (FieldHasNoEditPanelError, FieldDoesNotExist):
             continue
 
         segments.append(
