@@ -537,6 +537,19 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
 
         assert_permission_denied(self, response)
 
+    def test_post_submit_page_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_post_child.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        assert_permission_denied(self, response)
+
     @patch.object(transaction, "on_commit", side_effect=lambda func: func())
     def test_post_submit_page_translation_reactivates_deleted_translation(
         self, _mock_on_commit
@@ -1040,6 +1053,19 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
 
     def test_post_submit_snippet_translation_without_permissions(self):
         strip_user_perms()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_snippet_translation",
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_post_submit_snippet_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
 
         response = self.client.post(
             reverse(

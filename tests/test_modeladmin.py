@@ -697,6 +697,19 @@ class TestSubmitModelAdminTranslation(TestCase, WagtailTestUtils):
 
         assert_permission_denied(self, response)
 
+    def test_post_submit_modeladmin_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize_modeladmin:submit_translation",
+                args=["wagtail_localize_test", "testmodel", self.en_modeladmin.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        assert_permission_denied(self, response)
+
 
 @override_settings(
     LANGUAGES=[
@@ -761,6 +774,18 @@ class TestUpdateModelAdminTranslations(TestCase, WagtailTestUtils):
         make_user_translate_but_not_edit()
 
         response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.modeladmin_source.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_post_update_modeladmin_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.post(
             reverse(
                 "wagtail_localize:update_translations",
                 args=[self.modeladmin_source.id],

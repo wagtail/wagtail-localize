@@ -340,6 +340,30 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
 
         assert_permission_denied(self, response)
 
+    def test_post_page_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_post_snippet_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.snippet_source.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
     def test_get_with_disabled_translation(self):
         self.page_translation.enabled = False
         self.page_translation.save()
