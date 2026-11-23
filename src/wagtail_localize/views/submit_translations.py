@@ -196,6 +196,9 @@ class SubmitPageTranslationView(SubmitTranslationView):
         if page.is_root():
             raise Http404
 
+        if not page.permissions_for_user(self.request.user).can_edit():
+            raise PermissionDenied
+
         return page
 
     def get_default_success_url(self, translated_page=None):
@@ -226,7 +229,14 @@ class SubmitSnippetTranslationView(SubmitTranslationView):
         if not issubclass(model, TranslatableMixin):
             raise Http404
 
-        return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
+        snippet = get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
+
+        if not model.snippet_viewset.permission_policy.user_has_permission_for_instance(
+            self.request.user, "change", snippet
+        ):
+            raise PermissionDenied
+
+        return snippet
 
     def get_default_success_url(self, translated_snippet=None):
         pk = self.kwargs["pk"]

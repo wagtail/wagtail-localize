@@ -18,7 +18,12 @@ from tests.testapp.models import (
 )
 from wagtail_localize.models import Translation, TranslationSource
 
-from .utils import assert_permission_denied, get_page_ptr_accessor_name, make_test_page
+from .utils import (
+    assert_permission_denied,
+    get_page_ptr_accessor_name,
+    make_test_page,
+    make_user_translate_but_not_edit,
+)
 
 
 if WAGTAIL_VERSION >= (8, 0):
@@ -253,6 +258,18 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
 
     def test_get_submit_page_translation_without_permissions(self):
         strip_user_perms()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_post_child.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_get_submit_page_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
 
         response = self.client.get(
             reverse(
@@ -514,6 +531,19 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
             reverse(
                 "wagtail_localize:submit_page_translation",
                 args=[self.en_blog_index.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_post_submit_page_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_page_translation",
+                args=[self.en_blog_post_child.id],
             ),
             {"locales": [self.fr_locale.id]},
         )
@@ -892,6 +922,18 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
 
         assert_permission_denied(self, response)
 
+    def test_get_submit_snippet_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:submit_snippet_translation",
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
     def test_get_submit_snippet_translation_when_already_translated(self):
         # Locales that have been translated into shouldn't be included
         translation = self.en_snippet.copy_for_translation(self.de_locale)
@@ -1011,6 +1053,19 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
 
     def test_post_submit_snippet_translation_without_permissions(self):
         strip_user_perms()
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:submit_snippet_translation",
+                args=["wagtail_localize_test", "testsnippet", self.en_snippet.id],
+            ),
+            {"locales": [self.fr_locale.id]},
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_post_submit_snippet_translation_without_edit_permission(self):
+        make_user_translate_but_not_edit()
 
         response = self.client.post(
             reverse(
