@@ -712,6 +712,9 @@ class TestSubmitModelAdminTranslation(TestCase, WagtailTestUtils):
     def test_post_submit_modeladmin_translation_without_edit_permission(self):
         make_user_translate_but_not_edit()
 
+        sources_before = list(TranslationSource.objects.order_by("pk").values())
+        translations_before = list(Translation.objects.order_by("pk").values())
+
         response = self.client.post(
             reverse(
                 "wagtail_localize_modeladmin:submit_translation",
@@ -721,6 +724,12 @@ class TestSubmitModelAdminTranslation(TestCase, WagtailTestUtils):
         )
 
         assert_permission_denied(self, response)
+        self.assertEqual(
+            list(TranslationSource.objects.order_by("pk").values()), sources_before
+        )
+        self.assertEqual(
+            list(Translation.objects.order_by("pk").values()), translations_before
+        )
 
 
 @override_settings(
@@ -797,6 +806,9 @@ class TestUpdateModelAdminTranslations(TestCase, WagtailTestUtils):
     def test_post_update_modeladmin_translation_without_edit_permission(self):
         make_user_translate_but_not_edit()
 
+        sources_before = list(TranslationSource.objects.order_by("pk").values())
+        translations_before = list(Translation.objects.order_by("pk").values())
+
         response = self.client.post(
             reverse(
                 "wagtail_localize:update_translations",
@@ -805,6 +817,12 @@ class TestUpdateModelAdminTranslations(TestCase, WagtailTestUtils):
         )
 
         assert_permission_denied(self, response)
+        self.assertEqual(
+            list(TranslationSource.objects.order_by("pk").values()), sources_before
+        )
+        self.assertEqual(
+            list(Translation.objects.order_by("pk").values()), translations_before
+        )
 
     def test_post_update_modeladmin_translation(self):
         self.en_modeladmin.test_textfield = "Edited modeladmin"

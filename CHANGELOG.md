@@ -5,23 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.15.0] - UNRELEASED
+## [1.15] - 2026-11-23
 
 ### Added
 
-- Nothing yet.
+- Support for custom base page models in Wagtail 8.0 ([#949](https://github.com/wagtail/wagtail-localize/pull/949)). Install `wagtail-modeladmin>=2.5` when using the ModelAdmin integration with custom base page models.
+- Support for Python 3.15 and Wagtail 8.1 ([#971](https://github.com/wagtail/wagtail-localize/pull/971), [#974](https://github.com/wagtail/wagtail-localize/pull/974)).
+- A demo site and a repeatable performance benchmark harness for translation workflows.
 
 ### Fixed
 
-- Fix `UnorderedObjectListWarning` in translation report view (see [#948](https://github.com/wagtail/wagtail-localize/pull/948/)) @Stormheg
+- Require edit permission on the source object when submitting or updating translations, and enforce edit permission in ModelAdmin translation views ([#975](https://github.com/wagtail/wagtail-localize/pull/975)).
+- Fix `UnorderedObjectListWarning` in the translation report view ([#948](https://github.com/wagtail/wagtail-localize/pull/948)) @Stormheg
+- Fix documentation builds and model reference configuration ([#958](https://github.com/wagtail/wagtail-localize/pull/958), [#972](https://github.com/wagtail/wagtail-localize/pull/972)).
 
 ### Changed
 
-- Nothing yet.
+- Reduce `PageIndex.from_database()` to a constant number of database queries ([#953](https://github.com/wagtail/wagtail-localize/pull/953)).
+- Raise the minimum supported Python version to 3.11 and Wagtail version to 7.4 ([#971](https://github.com/wagtail/wagtail-localize/pull/971), [#974](https://github.com/wagtail/wagtail-localize/pull/974)).
 
-### Removed
+## [1.14.6] - 2026-11-23
 
-- Nothing yet.
+### Fixed
+
+- Require edit permission on the source object when submitting or updating translations, and enforce edit permission in ModelAdmin translation views ([#975](https://github.com/wagtail/wagtail-localize/pull/975)).
 
 ## [1.14.5] - 2026-08-19
 
