@@ -540,6 +540,9 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
     def test_post_submit_page_translation_without_edit_permission(self):
         make_user_translate_but_not_edit()
 
+        sources_before = list(TranslationSource.objects.order_by("pk").values())
+        translations_before = list(Translation.objects.order_by("pk").values())
+
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_page_translation",
@@ -549,6 +552,12 @@ class TestSubmitPageTranslation(WagtailTestUtils, TestCase):
         )
 
         assert_permission_denied(self, response)
+        self.assertEqual(
+            list(TranslationSource.objects.order_by("pk").values()), sources_before
+        )
+        self.assertEqual(
+            list(Translation.objects.order_by("pk").values()), translations_before
+        )
 
     @patch.object(transaction, "on_commit", side_effect=lambda func: func())
     def test_post_submit_page_translation_reactivates_deleted_translation(
@@ -1067,6 +1076,9 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
     def test_post_submit_snippet_translation_without_edit_permission(self):
         make_user_translate_but_not_edit()
 
+        sources_before = list(TranslationSource.objects.order_by("pk").values())
+        translations_before = list(Translation.objects.order_by("pk").values())
+
         response = self.client.post(
             reverse(
                 "wagtail_localize:submit_snippet_translation",
@@ -1076,3 +1088,9 @@ class TestSubmitSnippetTranslation(WagtailTestUtils, TestCase):
         )
 
         assert_permission_denied(self, response)
+        self.assertEqual(
+            list(TranslationSource.objects.order_by("pk").values()), sources_before
+        )
+        self.assertEqual(
+            list(Translation.objects.order_by("pk").values()), translations_before
+        )
