@@ -2946,6 +2946,44 @@ class TestDownloadPOFileView(EditTranslationTestData, TestCase):
         )
         assert_permission_denied(self, response)
 
+    def test_download_pofile_snippet_with_add_change_or_delete_perm(self):
+        # Any one of these permissions is enough to access the snippet
+        snippet_perms = Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(TestSnippet)
+        )
+        for action in ("add", "change", "delete"):
+            with self.subTest(action=action):
+                self.moderators_group.permissions.remove(*snippet_perms)
+                self.moderators_group.permissions.add(
+                    snippet_perms.get(
+                        codename=get_permission_codename(action, TestSnippet._meta)
+                    )
+                )
+                response = self.client.get(
+                    reverse(
+                        "wagtail_localize:download_pofile",
+                        args=[self.snippet_translation.id],
+                    )
+                )
+                self.assertEqual(response.status_code, 200)
+
+    def test_cant_download_pofile_snippet_with_only_view_perm(self):
+        snippet_perms = Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(TestSnippet)
+        )
+        self.moderators_group.permissions.remove(*snippet_perms)
+        self.moderators_group.permissions.add(
+            snippet_perms.get(
+                codename=get_permission_codename("view", TestSnippet._meta)
+            )
+        )
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:download_pofile", args=[self.snippet_translation.id]
+            )
+        )
+        assert_permission_denied(self, response)
+
 
 class TestUploadPOFileView(EditTranslationTestData, TestCase):
     def test_upload_pofile_page(self):

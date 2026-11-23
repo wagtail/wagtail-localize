@@ -49,7 +49,7 @@ from wagtail.images.models import AbstractImage
 from wagtail.models import DraftStateMixin, TranslatableMixin
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import get_snippet_models
-from wagtail.snippets.permissions import get_permission_name, user_can_edit_snippet_type
+from wagtail.snippets.permissions import get_permission_name
 from wagtail.utils.decorators import xframe_options_sameorigin_override
 
 from wagtail_localize.compat import DATE_FORMAT
@@ -71,6 +71,11 @@ if WAGTAIL_VERSION >= (8, 0):
     Page = swapper.load_model("wagtailcore", "Page")
 else:
     from wagtail.models import Page
+
+if WAGTAIL_VERSION >= (8, 0):
+    from wagtail.permissions import policy_registry
+else:
+    from wagtail.permission_policies import ModelPermissionPolicy
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -1112,7 +1117,11 @@ def user_can_edit_instance(user, instance):
 
     else:
         # Snippet
-        return user_can_edit_snippet_type(user, instance.__class__)
+        if WAGTAIL_VERSION >= (8, 0):
+            policy = policy_registry.get_by_type(instance.__class__)
+        else:
+            policy = ModelPermissionPolicy(instance.__class__)
+        return policy.user_has_any_permission(user, {"add", "change", "delete"})
 
 
 @method_decorator(xframe_options_sameorigin_override)
