@@ -172,6 +172,18 @@ class TestModelAdminViews(TestCase, WagtailTestUtils):
             f"Translation of TestModel object ({self.en_modeladmin.pk}) into French",
         )
 
+    def test_edit_translation_view_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize_test_testmodel_modeladmin_edit",
+                args=[self.fr_modeladmin.pk],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
     def test_inspect_view(self):
         response = self.client.get(
             reverse(

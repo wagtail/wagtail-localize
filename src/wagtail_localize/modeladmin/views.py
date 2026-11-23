@@ -115,6 +115,9 @@ class TranslatableEditView(TranslatableViewMixin, EditView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        if not self.check_action_permitted(request.user):
+            raise PermissionDenied
+
         # Check if the user has clicked the "Start Synced translation" menu item
         if (
             request.method == "POST"
