@@ -50,6 +50,7 @@ documentation = [
     "mkdocs-autorefs>=1.0,<2",
     "mkdocs-include-markdown-plugin>=7.0,<8",
     "pygments>=2.15,<2.16",
+    "pymdown-extensions<12.2",  # See https://github.com/mkdocstrings/mkdocstrings/issues/829
 ]
 testing = [
     "dj-database-url>=2.1.0,<4",
