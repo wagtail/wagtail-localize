@@ -20,7 +20,11 @@ from wagtail_localize.models import (
     TranslationSource,
 )
 
-from .utils import assert_permission_denied, make_test_page
+from .utils import (
+    assert_permission_denied,
+    make_test_page,
+    make_user_translate_but_not_edit,
+)
 
 
 def strip_user_perms():
@@ -303,6 +307,72 @@ class TestUpdateTranslations(TestCase, WagtailTestUtils):
         )
 
         assert_permission_denied(self, response)
+
+    def test_get_page_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_get_snippet_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        response = self.client.get(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.snippet_source.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+
+    def test_post_page_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        sources_before = list(TranslationSource.objects.order_by("pk").values())
+        translations_before = list(Translation.objects.order_by("pk").values())
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.page_source.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+        self.assertEqual(
+            list(TranslationSource.objects.order_by("pk").values()), sources_before
+        )
+        self.assertEqual(
+            list(Translation.objects.order_by("pk").values()), translations_before
+        )
+
+    def test_post_snippet_without_edit_permission(self):
+        make_user_translate_but_not_edit()
+
+        sources_before = list(TranslationSource.objects.order_by("pk").values())
+        translations_before = list(Translation.objects.order_by("pk").values())
+
+        response = self.client.post(
+            reverse(
+                "wagtail_localize:update_translations",
+                args=[self.snippet_source.id],
+            )
+        )
+
+        assert_permission_denied(self, response)
+        self.assertEqual(
+            list(TranslationSource.objects.order_by("pk").values()), sources_before
+        )
+        self.assertEqual(
+            list(Translation.objects.order_by("pk").values()), translations_before
+        )
 
     def test_get_with_disabled_translation(self):
         self.page_translation.enabled = False
