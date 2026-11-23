@@ -19,7 +19,10 @@ from wagtail.utils.version import get_main_version
 
 from wagtail_localize.machine_translators import get_machine_translator
 from wagtail_localize.models import TranslationSource
-from wagtail_localize.views.edit_translation import apply_machine_translation
+from wagtail_localize.views.edit_translation import (
+    apply_machine_translation,
+    user_can_edit_instance,
+)
 from wagtail_localize.views.submit_translations import TranslationComponentManager
 
 
@@ -191,6 +194,10 @@ class UpdateTranslationsView(SingleObjectMixin, TemplateView):
             raise PermissionDenied
 
         self.object = self.get_object()
+
+        if not user_can_edit_instance(request.user, self.object.get_source_instance()):
+            raise PermissionDenied
+
         self.components = TranslationComponentManager.from_request(
             self.request, source_object_instance=self.object
         )
