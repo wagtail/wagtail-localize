@@ -2,13 +2,14 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import unquote
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import NoReverseMatch, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from wagtail.models import Locale, TranslatableMixin
+from wagtail.permission_policies import ModelPermissionPolicy
 from wagtail.utils.version import get_main_version
 from wagtail_modeladmin.views import (
     ChooseParentView,
@@ -188,7 +189,15 @@ class SubmitModelAdminTranslationView(SubmitTranslationView):
             raise Http404 from err
         if not issubclass(model, TranslatableMixin):
             raise Http404
-        return get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
+
+        instance = get_object_or_404(model, pk=unquote(self.kwargs["pk"]))
+
+        if not ModelPermissionPolicy(model).user_has_permission_for_instance(
+            self.request.user, "change", instance
+        ):
+            raise PermissionDenied
+
+        return instance
 
     def get_default_success_url(self, translated_object=None):
         pk = translated_object.pk if translated_object else self.kwargs["pk"]
